@@ -1,1 +1,1 @@
-Debug candidate 0.1.2 (versionCode 3). Runtime appearance and home widget behavior require independent review.
+Debug candidate. Runtime appearance and home widget behavior require independent review.
