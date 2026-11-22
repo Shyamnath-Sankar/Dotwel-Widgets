@@ -49,6 +49,25 @@ jobs:
                   if any(needle.lower() in n.attrib.get(k,'').lower() for k in ('text','content-desc','resource-id')):return n
               return None
           
+          def recover_pixel_dialog(root):
+              title=find(root,"Pixel Launcher isn't responding")
+              if title is None:return False
+              close=find(root,'android:id/aerr_close')
+              if close is None:raise RuntimeError('Pixel Launcher ANR has no close control')
+              capture('00-pixel-launcher-anr');click(close);return True
+          
+          def wait_home():
+              home();stable=0
+              for attempt in range(18):
+                  root=capture('00-home-readiness')
+                  if recover_pixel_dialog(root):home();stable=0;continue
+                  if find(root,"isn't responding") is not None:raise RuntimeError('Non-Pixel ANR during emulator readiness')
+                  ready=any(n.attrib.get('package','')=='com.google.android.apps.nexuslauncher' for n in root.iter('node'))
+                  stable=stable+1 if ready else 0
+                  if stable>=2:return
+                  time.sleep(5)
+              raise RuntimeError('Emulator home did not stabilize within bounded readiness wait')
+          
           def start():
               adb('shell','am','start','-W','-n',PKG+'/.MainActivity');time.sleep(2)
           
@@ -57,8 +76,10 @@ jobs:
           
           report={'install':False,'settings':[], 'placed':[], 'caveats':['Screenshots require human review. No resize, midnight or reboot test claimed.']}
           try:
+              adb('shell','input','keyevent','82');wait_home()
               print(adb('install','-r','checkpoints/dotwel-widgets-0.1.0-debug.apk').decode());report['install']=True
-              start();root=capture('01-settings-black')
+              wait_home();start();root=capture('01-settings-black')
+              if recover_pixel_dialog(root):start();root=capture('01-settings-black')
               if find(root,'style_black') is None: raise RuntimeError('Expected settings controls not visible')
               report['settings'].append('black')
               for i,style in enumerate(('translucent','transparent','black'),2):
@@ -85,6 +106,7 @@ jobs:
                   click(item);root=capture('14-widget-selected-'+str(idx))
                   add=find(root,'Add to home screen')
                   if add is None: add=find(root,'Add widget')
+                  if add is None: add=next((n for n in root.iter('node') if n.attrib.get('text','').lower()=='add'),None)
                   if add is not None:click(add)
                   else:
                       item=find(root,label)
@@ -104,8 +126,10 @@ jobs:
               report['error']=str(e);capture('99-failure');print('RUNTIME BLOCKER',str(e))
           finally:
               (OUT/'RESULT.json').write_text(json.dumps(report,indent=2))
-              (OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','600',check=False))
+              (OUT/'logcat.txt').write_bytes(adb('logcat','-d','-s','AndroidRuntime','ActivityManager','ActivityTaskManager',check=False))
               print(json.dumps(report,indent=2))
+          
+          if 'error' in report:raise SystemExit(1)
           PYCODE
       - name: Install and inspect widgets on Android 15
         timeout-minutes: 12
