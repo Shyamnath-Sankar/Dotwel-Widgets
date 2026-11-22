@@ -1,0 +1,9 @@
+{
+  "install": true,
+  "settings": [],
+  "placed": [],
+  "caveats": [
+    "Screenshots require human review. No resize, midnight or reboot test claimed."
+  ],
+  "error": "Expected settings controls not visible"
+}
