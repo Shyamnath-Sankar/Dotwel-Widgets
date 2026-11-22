@@ -10,6 +10,7 @@ object WidgetUpdater {
         val manager = AppWidgetManager.getInstance(context)
         updateProvider(context, manager, ClockWidgetProvider::class.java)
         updateProvider(context, manager, DateWidgetProvider::class.java)
+        ClockTickScheduler.schedule(context)
     }
 
     private fun updateProvider(

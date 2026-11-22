@@ -1,16 +1,25 @@
 package com.dotwelwidgets.dotwellabs
 
 import android.app.Activity
+import android.app.AlarmManager
+import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.View
 import android.view.WindowInsets
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
 import java.util.Calendar
 
@@ -18,6 +27,20 @@ class MainActivity : Activity() {
     private val handler = Handler(Looper.getMainLooper())
     private var clockBitmap: Bitmap? = null
     private var dateBitmap: Bitmap? = null
+    private var lastExactAccess = false
+    private var exactAlarmReceiverRegistered = false
+
+    private val exactAlarmReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action ==
+                AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
+            ) {
+                lastExactAccess = ClockTickScheduler.hasExactAccess(this@MainActivity)
+                updateExactAlarmUi()
+                WidgetUpdater.updateAll(this@MainActivity)
+            }
+        }
+    }
 
     private val tick = object : Runnable {
         override fun run() {
@@ -51,13 +74,54 @@ class MainActivity : Activity() {
             Toast.makeText(this, R.string.widgets_refreshed, Toast.LENGTH_SHORT).show()
         }
 
+        findViewById<Button>(R.id.exact_alarm_button).setOnClickListener {
+            requestExactAlarmAccess()
+        }
+        lastExactAccess = ClockTickScheduler.hasExactAccess(this)
+        updateExactAlarmUi()
+
         findViewById<View>(R.id.preview_card_clock).post { renderPreviews() }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val filter = IntentFilter(
+                AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED,
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(
+                    exactAlarmReceiver,
+                    filter,
+                    Context.RECEIVER_NOT_EXPORTED,
+                )
+            } else {
+                registerReceiver(exactAlarmReceiver, filter)
+            }
+            exactAlarmReceiverRegistered = true
+        }
+    }
+
+    override fun onStop() {
+        if (exactAlarmReceiverRegistered) {
+            unregisterReceiver(exactAlarmReceiver)
+            exactAlarmReceiverRegistered = false
+        }
+        super.onStop()
     }
 
     override fun onResume() {
         super.onResume()
         handler.removeCallbacks(tick)
         handler.post(tick)
+        val access = ClockTickScheduler.hasExactAccess(this)
+        if (access != lastExactAccess) {
+            lastExactAccess = access
+            updateExactAlarmUi()
+            WidgetUpdater.updateAll(this)
+        } else {
+            updateExactAlarmUi()
+        }
     }
 
     override fun onPause() {
@@ -101,6 +165,43 @@ class MainActivity : Activity() {
             .setBackgroundResource(style.backgroundRes)
         findViewById<View>(R.id.preview_card_date)
             .setBackgroundResource(style.backgroundRes)
+    }
+
+    private fun updateExactAlarmUi() {
+        val status = findViewById<TextView>(R.id.exact_alarm_status)
+        val button = findViewById<Button>(R.id.exact_alarm_button)
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.S -> {
+                status.setText(R.string.exact_alarm_status_always)
+                button.visibility = View.GONE
+            }
+            ClockTickScheduler.hasExactAccess(this) -> {
+                status.setText(R.string.exact_alarm_status_enabled)
+                button.visibility = View.GONE
+            }
+            else -> {
+                status.setText(R.string.exact_alarm_status_disabled)
+                button.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun requestExactAlarmAccess() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        val packageUri = Uri.parse("package:$packageName")
+        try {
+            startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, packageUri))
+        } catch (_: ActivityNotFoundException) {
+            try {
+                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageUri))
+            } catch (_: ActivityNotFoundException) {
+                Toast.makeText(
+                    this,
+                    R.string.exact_alarm_unavailable,
+                    Toast.LENGTH_LONG,
+                ).show()
+            }
+        }
     }
 
     private fun renderPreviews() {
