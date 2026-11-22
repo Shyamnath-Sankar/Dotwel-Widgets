@@ -102,16 +102,16 @@ jobs:
           
           def toggle_alarm_ui(desired,name):
               root=capture(name+'-before')
-              switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and ('switch' in n.attrib.get('resource-id','').lower() or 'Switch' in n.attrib.get('class',''))),None)
+              switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and find(n,'Allow setting alarms and reminders') is not None),None)
               for attempt in range(6):
                   if switch is not None:break
                   time.sleep(2)
                   root=capture(name+'-readiness-'+str(attempt))
-                  switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and ('switch' in n.attrib.get('resource-id','').lower() or 'Switch' in n.attrib.get('class',''))),None)
+                  switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and find(n,'Allow setting alarms and reminders') is not None),None)
               if switch is None:raise RuntimeError('Android alarm-access switch missing after bounded readiness wait')
               if (switch.attrib.get('checked')=='true')!=desired:click(switch)
               root=capture(name+'-after')
-              switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and ('switch' in n.attrib.get('resource-id','').lower() or 'Switch' in n.attrib.get('class',''))),None)
+              switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and find(n,'Allow setting alarms and reminders') is not None),None)
               if switch is None or (switch.attrib.get('checked')=='true')!=desired:raise RuntimeError('Android access state not confirmed')
               adb('shell','input','keyevent','4');time.sleep(2)
           
@@ -172,6 +172,15 @@ jobs:
               after=find(root,'widget_clock_bitmap').attrib.get('content-desc','')
               report['bitmap_minute']={'before':before,'after':after,'background_am_kill_requested':True}
               if not before or before==after:raise RuntimeError('Actual bitmap description failed to advance after background65seconds')
+              (OUT/'CORE-RESULT.json').write_text(json.dumps(report,indent=2))
+              sp.run(['git','config','user.name','github-actions[bot]'],check=True)
+              sp.run(['git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com'],check=True)
+              import os
+              core_branch='checkpoint/dot-core-'+os.environ['GITHUB_RUN_ID']
+              sp.run(['git','switch','-c',core_branch],check=True)
+              sp.run(['git','add','-f','runtime-evidence'],check=True)
+              sp.run(['git','commit','-m','test: preserve actual dotted minute evidence before remaining checks'],check=True)
+              sp.run(['git','push','origin',core_branch],check=True)
               for style in ('transparent','translucent','black'):
                   start();click(settings_find('style_'+style));home()
                   locate('widget_clock_bitmap','24-clock-'+style);locate('date_day','25-date-'+style);report['styles'].append(style)
