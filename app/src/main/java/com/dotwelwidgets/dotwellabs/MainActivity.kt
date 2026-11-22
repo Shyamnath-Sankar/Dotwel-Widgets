@@ -40,7 +40,7 @@ class MainActivity : Activity() {
     }
 
     private fun applyLocaleDateFormat() {
-        val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), "yMMMMEEEEd")
+        val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), "yyyyMMMMEEEEd")
         findViewById<TextClock>(R.id.preview_date).apply {
             format12Hour = pattern
             format24Hour = pattern

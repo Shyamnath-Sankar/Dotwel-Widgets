@@ -1,31 +1,40 @@
 # Build state
 
 - phase: 1 - first widget checkpoint
-- branch: agent/live-date-45044779859
-- version: 0.1.1 (versionCode 2)
+- branch: agent/compat-polish-45047829143
+- version: 0.1.2 (versionCode 3)
 
 ## Done
-- Dotwel Clock and Dotwel Date widgets, three styles, and the settings/preview
-  activity are implemented.
-- The settings preview date is now a live `TextClock` showing weekday, month,
-  day-of-month and year. The pattern comes from
-  `DateFormat.getBestDateTimePattern(Locale.getDefault(), "yMMMMEEEEd")` so
-  ordering follows the device locale; the system `TextClock` handles time-zone
-  changes without alarm or service permissions.
-- Removed the stale hardcoded `preview_date_caption` string.
-- The preview card can grow beyond its 220dp minimum, so the date wraps without
-  clipping at larger font scales.
+- Removed the redundant `android:windowLightNavigationBar` `false` item from
+  `values/themes.xml`. It is the dark default, so dropping it preserves behavior;
+  the attribute does not exist on API 26. No lint suppression, minSdk change, or
+  lint failure relaxation was used.
+- The settings live full-date preview now requests the `yyyyMMMMEEEEd` skeleton,
+  so the `TextClock` renders a four-digit year (for example 2026) instead of a
+  two-digit year. Locale-specific field order, weekday, month and day-of-month
+  still come from `DateFormat.getBestDateTimePattern`, and the preview remains a
+  live `TextClock`.
+- Bumped to versionCode 3 / versionName 0.1.2.
+- Replaced the checkpoint debug APK and checksum with the 0.1.2 build.
 
 ## Checks (actual)
-- `./gradlew assembleDebug` (JDK 21): BUILD SUCCESSFUL, debug APK produced.
-- `./gradlew lintDebug`: 1 pre-existing `NewApi` error in `values/themes.xml`
-  (`windowLightNavigationBar`, API 27 vs minSdk 26) plus existing warnings. No
-  new issue comes from this change; the lint error was left alone as out of scope.
+- `./gradlew assembleDebug` (JDK 21, Gradle 9.9.1): BUILD SUCCESSFUL;
+  `app/build/outputs/apk/debug/app-debug.apk` was produced.
+- `aapt2 dump badging` on the APK: package `com.dotwelwidgets.dotwellabs`,
+  versionCode 3, versionName 0.1.2, minSdk 26, targetSdk 36.
+- `./gradlew lintDebug` (JDK 21): BUILD SUCCESSFUL; 0 errors, 15 warnings. The
+  prior `NewApi` error for `windowLightNavigationBar` is gone. Remaining
+  warnings are existing categories: OldTargetApi (targetSdk 36 while 37 is
+  available), UnusedAttribute for API 31 widget metadata, Gradle/plugin update
+  notices, root overdraw, unused raw license texts, and UselessParent.
+- Checkpoint APK SHA-256:
+  `a3aaab4efd18a575813fd4a068c2e6975986650e794bc946cadb18b622d45e80`.
 
 ## Next / remaining gaps
-- Home-widget placement, update, resize and style behavior on an Android host are
-  still under separate runtime validation. No emulator work was done in this step.
-- Not Play-ready.
+- Runtime validation of the four-digit year on an API 35 host and home-widget
+  placement, update, resize and style behavior remain unverified in this slice.
+  No emulator work or runtime screenshot was done here.
+- Not Play-ready. The host typography design decision is still pending.
 
 ## Blockers
 - None for this coding step.
