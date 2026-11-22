@@ -96,11 +96,15 @@ jobs:
                   root=capture('10-menu-'+str(idx));n=find(root,'Widgets')
                   if n is None:raise RuntimeError('Home Widgets menu not visible')
                   click(n);root=capture('11-picker-'+str(idx))
-                  search=find(root,'Search widgets')
+                  search=find(root,'widgets_search_bar_edit_text')
                   if search is not None:
                       click(search);adb('shell','input','text','Dotwel');adb('shell','input','keyevent','4');time.sleep(1);root=capture('12-search-'+str(idx))
                   app=find(root,'Dotwel Widgets')
-                  if app is not None:click(app);root=capture('13-expanded-'+str(idx))
+                  if app is not None:
+                      b=box(app)
+                      if b[3]>h*0.8:
+                          adb('shell','input','swipe',str(w//2),str(h*8//10),str(w//2),str(h*4//10),'500');time.sleep(1);root=capture('12-scrolled-'+str(idx));app=find(root,'Dotwel Widgets')
+                      if app is not None:click(app);root=capture('13-expanded-'+str(idx))
                   item=find(root,label)
                   if item is None:raise RuntimeError('Widget label missing: '+label)
                   click(item);root=capture('14-widget-selected-'+str(idx))
