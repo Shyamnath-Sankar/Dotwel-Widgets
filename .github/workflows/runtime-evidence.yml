@@ -1,0 +1,133 @@
+name: Widget runtime evidence
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-runtime
+  cancel-in-progress: false
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: checkpoint/debug-45039696593
+      - name: Enable emulator acceleration
+        run: sudo chmod 666 /dev/kvm
+      - name: Prepare bounded evidence script
+        run: |
+          cat > /tmp/widget-runtime-smoke.py <<'PYCODE'
+          import subprocess as sp, pathlib, time, re, xml.etree.ElementTree as ET, json
+          OUT=pathlib.Path('runtime-evidence'); OUT.mkdir(exist_ok=True)
+          PKG='com.dotwelwidgets.dotwellabs'
+          
+          def adb(*a,check=True):
+              r=sp.run(['adb',*a],capture_output=True,timeout=35)
+              if check and r.returncode: raise RuntimeError(r.stderr.decode(errors='replace'))
+              return r.stdout
+          
+          def capture(name):
+              (OUT/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'))
+              adb('shell','uiautomator','dump','/sdcard/window.xml',check=False)
+              raw=adb('exec-out','cat','/sdcard/window.xml',check=False)
+              (OUT/(name+'.xml')).write_bytes(raw)
+              try:return ET.fromstring(raw)
+              except:return ET.Element('empty')
+          
+          def box(n):
+              return list(map(int,re.findall(r'\d+',n.attrib.get('bounds',''))))
+          
+          def click(n):
+              b=box(n)
+              if len(b)!=4:raise RuntimeError('No tap bounds')
+              adb('shell','input','tap',str((b[0]+b[2])//2),str((b[1]+b[3])//2));time.sleep(1)
+          
+          def find(root,needle):
+              for n in root.iter('node'):
+                  if any(needle.lower() in n.attrib.get(k,'').lower() for k in ('text','content-desc','resource-id')):return n
+              return None
+          
+          def start():
+              adb('shell','am','start','-W','-n',PKG+'/.MainActivity');time.sleep(2)
+          
+          def home():
+              adb('shell','input','keyevent','3');time.sleep(2)
+          
+          report={'install':False,'settings':[], 'placed':[], 'caveats':['Screenshots require human review. No resize, midnight or reboot test claimed.']}
+          try:
+              print(adb('install','-r','checkpoints/dotwel-widgets-0.1.0-debug.apk').decode());report['install']=True
+              start();root=capture('01-settings-black')
+              if find(root,'style_black') is None: raise RuntimeError('Expected settings controls not visible')
+              report['settings'].append('black')
+              for i,style in enumerate(('translucent','transparent','black'),2):
+                  n=find(root,'style_'+style)
+                  if n is None:raise RuntimeError('Style control missing '+style)
+                  click(n);root=capture(str(i).zfill(2)+'-settings-'+style);report['settings'].append(style)
+              home();capture('05-initial-home')
+              size=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))
+              w,h=size[-2:];print('screen',w,h)
+              for idx,label in enumerate(('Dotwel Clock','Dotwel Date')):
+                  home()
+                  x,y=w//2,h//3
+                  adb('shell','input','swipe',str(x),str(y),str(x),str(y),'1400');time.sleep(1)
+                  root=capture('10-menu-'+str(idx));n=find(root,'Widgets')
+                  if n is None:raise RuntimeError('Home Widgets menu not visible')
+                  click(n);root=capture('11-picker-'+str(idx))
+                  search=find(root,'Search widgets')
+                  if search is not None:
+                      click(search);adb('shell','input','text','Dotwel');adb('shell','input','keyevent','4');time.sleep(1);root=capture('12-search-'+str(idx))
+                  app=find(root,'Dotwel Widgets')
+                  if app is not None:click(app);root=capture('13-expanded-'+str(idx))
+                  item=find(root,label)
+                  if item is None:raise RuntimeError('Widget label missing: '+label)
+                  click(item);root=capture('14-widget-selected-'+str(idx))
+                  add=find(root,'Add to home screen')
+                  if add is None: add=find(root,'Add widget')
+                  if add is not None:click(add)
+                  else:
+                      item=find(root,label)
+                      if item is None:raise RuntimeError('No selected widget to drag')
+                      b=box(item);sx=(b[0]+b[2])//2;sy=max(100,b[1]-100)
+                      adb('shell','input','draganddrop',str(sx),str(sy),str(w//2),str(h*(3 if idx==0 else 6)//10),'1800')
+                  time.sleep(2);home();root=capture('15-home-after-'+str(idx))
+                  dump=adb('shell','dumpsys','appwidget').decode(errors='replace')
+                  (OUT/('appwidget-'+str(idx)+'.txt')).write_text(dump)
+                  if PKG not in dump:raise RuntimeError('Provider not recorded in appwidget service')
+                  report['placed'].append({'requested':label,'status':'attempted, inspect screenshot and service dump'})
+              time.sleep(65);capture('20-home-after-minute')
+              start();root=capture('21-settings-before-style');n=find(root,'style_translucent')
+              if n is not None:click(n)
+              home();capture('22-home-translucent')
+          except Exception as e:
+              report['error']=str(e);capture('99-failure');print('RUNTIME BLOCKER',str(e))
+          finally:
+              (OUT/'RESULT.json').write_text(json.dumps(report,indent=2))
+              (OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','600',check=False))
+              print(json.dumps(report,indent=2))
+          PYCODE
+      - name: Install and inspect widgets on Android 15
+        timeout-minutes: 12
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          emulator-boot-timeout: 300
+          disable-animations: true
+          script: python3 /tmp/widget-runtime-smoke.py
+      - name: Preserve actual runtime captures even after a failed check
+        if: always()
+        run: |
+          set -eu
+          test -d runtime-evidence || { echo 'Emulator never produced runtime evidence'; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          branch="checkpoint/runtime-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git add -f runtime-evidence
+          git commit -m 'test: preserve actual emulator screenshots and behavior evidence'
+          git push origin "$branch"
+          printf 'Evidence branch: %s\nScreenshots require human inspection before any pass claim.\n' "$branch" >> "$GITHUB_STEP_SUMMARY"
