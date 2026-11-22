@@ -1,1 +1,1 @@
-Debug candidate 0.1.4. Placed Dotwel Clock renders the circular-dot bitmap only when the user enables optional Alarms & reminders access; otherwise it uses the live system TextClock fallback. Runtime HOME behavior, the denied/granted access flow, minute-boundary updates, resize/style, 12/24-hour, restart, and revocation were not executed in this build-only coding step. Not polished or Play-approved.
+Debug candidate. Runtime appearance and home widget behavior require independent review.
