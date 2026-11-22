@@ -1,0 +1,22 @@
+{
+  "install": true,
+  "settings": [
+    "black",
+    "translucent",
+    "transparent",
+    "black"
+  ],
+  "placed": [
+    {
+      "requested": "Dotwel Clock",
+      "status": "attempted, inspect screenshot and service dump"
+    },
+    {
+      "requested": "Dotwel Date",
+      "status": "attempted, inspect screenshot and service dump"
+    }
+  ],
+  "caveats": [
+    "Screenshots require human review. No resize, midnight or reboot test claimed."
+  ]
+}
