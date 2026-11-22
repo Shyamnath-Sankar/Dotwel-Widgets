@@ -1,0 +1,42 @@
+name: Save widget debug checkpoint
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-checkpoint
+  cancel-in-progress: false
+jobs:
+  build-save:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: agent/build-the-first-tangible-dotwe
+      - uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - name: Build the reviewed source
+        run: bash ./gradlew assembleDebug --stacktrace --no-daemon
+      - name: Preserve APK before any runtime work
+        run: |
+          set -eu
+          source_sha=$(git rev-parse HEAD)
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-0.1.0-debug.apk
+          sha256sum checkpoints/dotwel-widgets-0.1.0-debug.apk > checkpoints/SHA256SUMS
+          printf 'Source commit: %s\nDebug test build. Runtime widget appearance not verified. Not Play-ready.\n' "$source_sha" > checkpoints/BUILD.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          branch="checkpoint/debug-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git add -f checkpoints
+          git commit -m 'build: preserve widget debug APK before runtime verification'
+          git push origin "$branch"
+          printf 'Saved checkpoint branch: %s\n' "$branch" >> "$GITHUB_STEP_SUMMARY"
