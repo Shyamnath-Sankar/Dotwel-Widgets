@@ -1,0 +1,19 @@
+{
+  "install": true,
+  "settings": [
+    "black",
+    "translucent",
+    "transparent",
+    "black"
+  ],
+  "placed": [
+    {
+      "requested": "Dotwel Clock",
+      "status": "provider view present, independent pixel inspection required"
+    }
+  ],
+  "caveats": [
+    "Screenshots require human review. No resize, midnight or reboot test claimed."
+  ],
+  "error": "Exact WidgetCell missing: Dotwel Date"
+}
