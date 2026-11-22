@@ -1,0 +1,50 @@
+{
+  "version_expected": "0.1.5",
+  "install": true,
+  "placed": [
+    {
+      "requested": "Dotwel Clock",
+      "status": "actual provider view visible, pixels require review"
+    },
+    {
+      "requested": "Dotwel Date",
+      "status": "actual provider view visible, pixels require review"
+    }
+  ],
+  "styles": [],
+  "caveats": [
+    "Actual screenshots require independent pixel review. Idle precision and instant fallback after external revocation are not claimed.",
+    "Shrink did not produce a shorter-than-default host; no compact resize pass claimed."
+  ],
+  "apk_sha256": "9edb8b744810eaa40856eb47d4b505eb50a57e55f6ee25b4d21154523ba53df3",
+  "denied_fallback": "Actual clock_time TextClock visible before Android access grant",
+  "prior_exact_candidate_checks": "45061373320: sized HOME minute after process kill, revoke/fallback/regrant, styles and font checks already preserved",
+  "resize_bounds": {
+    "before": [
+      67,
+      546,
+      519,
+      1134
+    ],
+    "grown": [
+      67,
+      546,
+      519,
+      1449
+    ],
+    "shrunk": [
+      67,
+      546,
+      519,
+      1134
+    ]
+  },
+  "idle_force_reply": "Now forced in to deep idle mode",
+  "idle_return": {
+    "device_time": "20:01",
+    "bitmap_description": "Dotwel clock, 20:01",
+    "matches_device_time": true,
+    "note": "Bounded emulator observation, not a guarantee of deep-idle minute precision"
+  },
+  "reboot_bitmap": "Dotwel clock, 20:02"
+}
