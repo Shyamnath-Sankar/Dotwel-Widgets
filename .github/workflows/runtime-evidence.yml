@@ -103,7 +103,12 @@ jobs:
           def toggle_alarm_ui(desired,name):
               root=capture(name+'-before')
               switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and ('switch' in n.attrib.get('resource-id','').lower() or 'Switch' in n.attrib.get('class',''))),None)
-              if switch is None:raise RuntimeError('Android alarm-access switch missing')
+              for attempt in range(6):
+                  if switch is not None:break
+                  time.sleep(2)
+                  root=capture(name+'-readiness-'+str(attempt))
+                  switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and ('switch' in n.attrib.get('resource-id','').lower() or 'Switch' in n.attrib.get('class',''))),None)
+              if switch is None:raise RuntimeError('Android alarm-access switch missing after bounded readiness wait')
               if (switch.attrib.get('checked')=='true')!=desired:click(switch)
               root=capture(name+'-after')
               switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and ('switch' in n.attrib.get('resource-id','').lower() or 'Switch' in n.attrib.get('class',''))),None)
