@@ -1,0 +1,501 @@
+--------- beginning of main
+11-22 19:09:35.130   371   371 D AndroidRuntime: >>>>>> START com.android.internal.os.ZygoteInit uid 0 <<<<<<
+11-22 19:09:35.168   371   371 I AndroidRuntime: Using default boot image
+11-22 19:09:35.168   371   371 I AndroidRuntime: Leaving lock profiling enabled
+--------- beginning of system
+11-22 19:09:42.594   574   574 D ActivityManager: StatsPullAtomService not ready yet
+11-22 19:09:42.617   574   615 I ActivityManager: Connection with lmkd established
+11-22 19:09:42.618   574   574 D ActivityManager: StatsPullAtomService not ready yet
+11-22 19:09:42.953   574   598 W ActivityTaskManager: Skip updateConfiguration because mWindowManager isn't set
+11-22 19:09:43.374   574   574 D ActivityManager: Checking cgroup freezer: /sys/fs/cgroup/uid_1000/pid_574/cgroup.freeze
+11-22 19:09:43.374   574   574 D ActivityManager: Checking binder freezer ioctl
+11-22 19:09:43.374   574   574 D ActivityManager: Checking freezer profiles
+11-22 19:09:43.374   574   574 D ActivityManager: Freezer supported: true
+11-22 19:09:43.375   574   574 D ActivityManager: Freezer timeout set to 10000
+11-22 19:09:43.375   574   574 D ActivityManager: Freezer exemption set to false
+11-22 19:09:43.375   574   613 D ActivityManager: Freezer enabled
+11-22 19:09:43.375   574   613 D ActivityManager: freezer override set to false
+11-22 19:09:43.742   574   574 I ActivityTaskManager: Config changes=20005df8 {1.0 ?mcc0mnc [en_US] ldltr sw411dp w411dp h914dp 420dpi nrml long port ?uimode ?night finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2400) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.2 ?fontWeightAdjustment}
+11-22 19:09:44.342   574   574 W ActivityManager: Unable to start service Intent { act=android.service.notification.NotificationListenerService cmp=com.google.android.apps.nexuslauncher/com.android.launcher3.notification.NotificationListener } U=0: not found
+11-22 19:09:44.344   574   574 W ActivityManager: Unable to start service Intent { act=android.service.notification.NotificationListenerService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.common.notification.service.AiAiNotificationListenerService } U=0: not found
+11-22 19:09:44.344   574   574 W ActivityManager: Unable to start service Intent { act=android.service.notification.NotificationAssistantService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.common.notification.service.AiAiNotificationAssistantService } U=0: not found
+11-22 19:09:44.360   574   574 D ActivityManager: StatsPullAtomService not ready yet
+11-22 19:09:45.584   574   574 I ActivityTaskManager: Config changes=200 {1.0 ?mcc0mnc [en_US] ldltr sw411dp w411dp h914dp 420dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2400) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.4 ?fontWeightAdjustment}
+11-22 19:09:46.042   574   574 I ActivityManager: System now ready
+11-22 19:09:46.051   574   574 I ActivityTaskManager: Config changes=10008100 {1.0 ?mcc0mnc [en_US] ldltr sw411dp w411dp h914dp 420dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2400) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.6 fontWeightAdjustment=0}
+11-22 19:09:46.088   574   574 W ActivityManager: Too early to start/bind service in system_server: Phase=550 ComponentInfo{com.android.server.telecom/com.android.server.telecom.components.TelecomService}
+11-22 19:09:46.091   574   574 W ActivityManager: Too early to start/bind service in system_server: Phase=550 ComponentInfo{com.android.server.telecom/com.android.server.telecom.components.TelecomService}
+11-22 19:09:46.274   574   614 I ActivityManager: Start proc 810:com.android.systemui/u0a181 for service {com.android.systemui/com.android.systemui.wallpapers.ImageWallpaper}
+11-22 19:09:46.365   574   614 I ActivityManager: Start proc 824:WebViewLoader-x86_64/1037 [android.webkit.WebViewLibraryLoader$RelroFileCreator] for 
+11-22 19:09:46.521   574   574 D ActivityManager: ThemeHomeDelay: Home launch is not delayable, skipping timeout creation
+11-22 19:09:46.907   574   614 W ActivityManager: Slow operation: 51ms so far, now at startProcess: building log message
+11-22 19:09:46.907   574   614 I ActivityManager: Start proc 852:com.android.networkstack.process/1073 for service {com.google.android.networkstack/com.android.server.NetworkStackService}
+11-22 19:09:46.907   574   614 W ActivityManager: Slow operation: 51ms so far, now at startProcess: starting to update pids map
+11-22 19:09:46.907   574   614 W ActivityManager: Slow operation: 51ms so far, now at startProcess: done updating pids map
+11-22 19:09:47.060   574   574 I ActivityManager: Current user:0
+11-22 19:09:47.249   574   574 W ActivityTaskManager: callingPackage for (uid=-1, pid=0) has no WPC
+11-22 19:09:47.268   824   824 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+11-22 19:09:47.452   574   574 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.HOME] flg=0x10000100 cmp=com.android.settings/.FallbackHome (has extras)} with LAUNCH_MULTIPLE from uid 0 (BAL_ALLOW_ALLOWLISTED_UID) result code=0
+11-22 19:09:47.519   574   614 W ActivityManager: Slow operation: 273ms so far, now at startProcess: returned from zygote!
+11-22 19:09:47.519   574   614 W ActivityManager: Slow operation: 273ms so far, now at startProcess: done updating battery stats
+11-22 19:09:47.519   574   614 W ActivityManager: Slow operation: 273ms so far, now at startProcess: building log message
+11-22 19:09:47.519   574   614 I ActivityManager: Start proc 886:com.android.se/1068 for added application com.android.se
+11-22 19:09:47.519   574   614 W ActivityManager: Slow operation: 273ms so far, now at startProcess: starting to update pids map
+11-22 19:09:47.523   574   614 W ActivityManager: Slow operation: 277ms so far, now at startProcess: done updating pids map
+11-22 19:09:47.523   574   614 W ActivityManager: Slow operation: 276ms so far, now at startProcess: asking zygote to start proc
+11-22 19:09:47.525   574   650 I ActivityManager: Process WebViewLoader-x86_64 (pid 824) has died: psvc PER 
+11-22 19:09:47.563   574   614 W ActivityManager: Slow operation: 316ms so far, now at startProcess: returned from zygote!
+11-22 19:09:47.563   574   614 W ActivityManager: Slow operation: 316ms so far, now at startProcess: done updating battery stats
+11-22 19:09:47.563   574   614 W ActivityManager: Slow operation: 316ms so far, now at startProcess: building log message
+11-22 19:09:47.563   574   614 I ActivityManager: Start proc 887:com.android.phone/1001 for added application com.android.phone
+11-22 19:09:47.563   574   614 W ActivityManager: Slow operation: 316ms so far, now at startProcess: starting to update pids map
+11-22 19:09:47.563   574   614 W ActivityManager: Slow operation: 316ms so far, now at startProcess: done updating pids map
+11-22 19:09:47.563   574   614 W ActivityManager: Slow operation: 87ms so far, now at startProcess: asking zygote to start proc
+11-22 19:09:47.601   574   614 W ActivityManager: Slow operation: 125ms so far, now at startProcess: returned from zygote!
+11-22 19:09:47.601   574   614 W ActivityManager: Slow operation: 125ms so far, now at startProcess: done updating battery stats
+11-22 19:09:47.601   574   614 W ActivityManager: Slow operation: 125ms so far, now at startProcess: building log message
+11-22 19:09:47.601   574   614 I ActivityManager: Start proc 893:com.android.settings/1000 for top-activity {com.android.settings/com.android.settings.FallbackHome}
+11-22 19:09:47.601   574   614 W ActivityManager: Slow operation: 125ms so far, now at startProcess: starting to update pids map
+11-22 19:09:47.601   574   614 W ActivityManager: Slow operation: 125ms so far, now at startProcess: done updating pids map
+11-22 19:09:47.601   574   614 W ActivityManager: Slow operation: 110ms so far, now at startProcess: asking zygote to start proc
+11-22 19:09:47.623   574   614 W ActivityManager: Slow operation: 132ms so far, now at startProcess: returned from zygote!
+11-22 19:09:47.623   574   614 W ActivityManager: Slow operation: 132ms so far, now at startProcess: done updating battery stats
+11-22 19:09:47.623   574   614 W ActivityManager: Slow operation: 132ms so far, now at startProcess: building log message
+11-22 19:09:47.623   574   614 I ActivityManager: Start proc 908:com.google.android.bluetooth/1002 for service {com.google.android.bluetooth/com.android.bluetooth.btservice.AdapterService}
+11-22 19:09:47.623   574   614 W ActivityManager: Slow operation: 132ms so far, now at startProcess: starting to update pids map
+11-22 19:09:47.623   574   614 W ActivityManager: Slow operation: 132ms so far, now at startProcess: done updating pids map
+11-22 19:09:47.795   574   590 W ActivityManager: Slow operation: 53ms so far, now at attachApplicationLocked: immediately after bindApplication
+11-22 19:09:47.799   574   590 W ActivityManager: Slow operation: 57ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+11-22 19:09:47.803   574   590 W ActivityManager: Slow operation: 61ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+11-22 19:09:48.313   574   614 I ActivityManager: Start proc 973:com.google.android.ext.services/u0a207 for service {com.google.android.ext.services/android.ext.services.autofill.InlineSuggestionRenderServiceImpl}
+11-22 19:09:48.320   574   614 W ActivityManager: Slow operation: 56ms so far, now at startProcess: starting to update pids map
+11-22 19:09:48.320   574   614 W ActivityManager: Slow operation: 56ms so far, now at startProcess: done updating pids map
+11-22 19:09:48.804   574   598 I ActivityTaskManager: Displayed com.android.settings/.FallbackHome for user 0: +1s542ms
+11-22 19:09:48.820   574   651 W ActivityManager: Slow operation: 51ms so far, now at attachApplicationLocked: immediately before bindApplication
+11-22 19:09:48.837   574   651 W ActivityManager: Slow operation: 68ms so far, now at attachApplicationLocked: immediately after bindApplication
+11-22 19:09:48.846   574   651 W ActivityManager: Slow operation: 77ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+11-22 19:09:48.850   574   651 W ActivityManager: Slow operation: 81ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+11-22 19:09:50.014   574   574 W ActivityManager: Unable to start service Intent { act=android.service.notification.NotificationListenerService cmp=com.google.android.apps.nexuslauncher/com.android.launcher3.notification.NotificationListener } U=0: not found
+11-22 19:09:50.018   574   574 W ActivityManager: Unable to start service Intent { act=android.service.notification.NotificationListenerService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.common.notification.service.AiAiNotificationListenerService } U=0: not found
+11-22 19:09:50.019   574   574 W ActivityManager: Unable to start service Intent { act=android.service.notification.NotificationAssistantService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.common.notification.service.AiAiNotificationAssistantService } U=0: not found
+11-22 19:09:50.177   574   614 W ActivityManager: Slow operation: 90ms so far, now at startProcess: returned from zygote!
+11-22 19:09:50.178   574   614 W ActivityManager: Slow operation: 94ms so far, now at startProcess: done updating battery stats
+11-22 19:09:50.178   574   614 W ActivityManager: Slow operation: 95ms so far, now at startProcess: building log message
+11-22 19:09:50.178   574   614 I ActivityManager: Start proc 1033:com.google.android.gms.persistent/u0a143 for broadcast {com.google.android.gms/com.google.android.gms.chimera.GmsIntentOperationService$PersistentTrustedReceiver}
+11-22 19:09:50.178   574   614 W ActivityManager: Slow operation: 95ms so far, now at startProcess: starting to update pids map
+11-22 19:09:50.178   574   614 W ActivityManager: Slow operation: 95ms so far, now at startProcess: done updating pids map
+11-22 19:09:50.332   574   651 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+11-22 19:09:50.463   574   651 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+11-22 19:09:50.463   574   574 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@865038d
+11-22 19:09:50.464   574   651 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+11-22 19:09:50.474   574   574 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@e43690
+11-22 19:09:50.475   574   651 W ActivityManager: Unable to start service Intent { act=android.service.smartspace.SmartspaceService cmp=com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiSmartspaceService } U=0: not found
+11-22 19:09:50.476   574   574 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@169178e
+11-22 19:09:50.476   574   574 W ActivityManager: Unbind failed: could not find connection for android.app.LoadedApk$ServiceDispatcher$InnerConnection@4c07baf
+11-22 19:09:52.976   574   614 I ActivityManager: Start proc 1145:com.google.android.permissioncontroller/u0a204 for broadcast {com.google.android.permissioncontroller/com.android.permissioncontroller.privacysources.SafetyCenterReceiver}
+11-22 19:09:53.097   574   651 W ActivityManager: Unable to start service Intent { act=com.google.android.chimera.BoundService.START dat=chimera-action: cmp=com.google.android.gms/.chimera.PersistentApiService } U=0: not found
+11-22 19:09:53.132   574   651 W ActivityManager: Unbind failed: could not find connection for android.os.BinderProxy@5f19f0a
+11-22 19:09:53.457   574   650 W ActivityManager: pid 887 com.android.phone sent binder code 54 with flags 2 to frozen apps and got error -74
+11-22 19:09:53.560   574   614 I ActivityManager: Start proc 1175:com.google.android.cellbroadcastreceiver/u0a198 for broadcast {com.google.android.cellbroadcastreceiver/com.android.cellbroadcastreceiver.CellBroadcastReceiver}
+11-22 19:09:54.470   574   591 I ActivityTaskManager: Config changes=3 {1.0 310mcc260mnc [en_US] ldltr sw411dp w411dp h914dp 420dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2400) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.8 fontWeightAdjustment=0}
+11-22 19:09:58.716   574   601 I ActivityTaskManager: Config changes=100 {1.0 310mcc260mnc [en_US] ldltr sw411dp w411dp h914dp 420dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2400) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.20 fontWeightAdjustment=0}
+11-22 19:09:58.763   574   849 W ActivityManager: Slow operation: 110ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+11-22 19:09:58.763   574   849 W ActivityManager: Slow operation: 110ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:09:59.162   574   601 I ActivityManager: About to commit checkpoint
+11-22 19:09:59.423   574   614 W ActivityManager: Slow operation: 86ms so far, now at startProcess: returned from zygote!
+11-22 19:09:59.425   574   614 W ActivityManager: Slow operation: 88ms so far, now at startProcess: done updating battery stats
+11-22 19:09:59.426   574   614 W ActivityManager: Slow operation: 88ms so far, now at startProcess: building log message
+11-22 19:09:59.426   574   614 I ActivityManager: Start proc 1233:com.google.android.apps.nexuslauncher/u0a179 for service {com.google.android.apps.nexuslauncher/com.android.quickstep.TouchInteractionService}
+11-22 19:09:59.426   574   614 W ActivityManager: Slow operation: 89ms so far, now at startProcess: starting to update pids map
+11-22 19:09:59.469   574   614 W ActivityManager: Slow operation: 132ms so far, now at startProcess: done updating pids map
+11-22 19:09:59.476   574   614 W ActivityManager: Slow operation: 130ms so far, now at startProcess: asking zygote to start proc
+11-22 19:09:59.632   574  1047 W ActivityManager: Slow operation: 68ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+11-22 19:09:59.633   574   614 W ActivityManager: Slow operation: 179ms so far, now at startProcess: returned from zygote!
+11-22 19:09:59.633   574   614 W ActivityManager: Slow operation: 287ms so far, now at startProcess: done updating battery stats
+11-22 19:09:59.633   574   614 W ActivityManager: Slow operation: 287ms so far, now at startProcess: building log message
+11-22 19:09:59.633   574   614 I ActivityManager: Start proc 1245:com.google.android.inputmethod.latin/u0a154 for service {com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME}
+11-22 19:09:59.633   574   614 W ActivityManager: Slow operation: 287ms so far, now at startProcess: starting to update pids map
+11-22 19:09:59.633   574   614 W ActivityManager: Slow operation: 287ms so far, now at startProcess: done updating pids map
+11-22 19:09:59.683   574   601 I ActivityManager: User 0 state changed from BOOTING to RUNNING_LOCKED
+11-22 19:09:59.826   574   601 D ActivityManager: Started unlocking user 0
+11-22 19:09:59.826   574   601 D ActivityManager: Unlocking user 0 progress 0
+11-22 19:09:59.826   574   601 D ActivityManager: Unlocking user 0 progress 5
+11-22 19:09:59.835   574   614 W ActivityManager: Slow operation: 157ms so far, now at startProcess: done updating battery stats
+11-22 19:09:59.835   574   614 W ActivityManager: Slow operation: 157ms so far, now at startProcess: building log message
+11-22 19:09:59.835   574   614 I ActivityManager: Start proc 1262:com.google.android.apps.wellbeing/u0a142 for on-hold
+11-22 19:09:59.835   574   614 W ActivityManager: Slow operation: 157ms so far, now at startProcess: starting to update pids map
+11-22 19:09:59.835   574   614 W ActivityManager: Slow operation: 157ms so far, now at startProcess: done updating pids map
+11-22 19:10:00.003   574   968 W ActivityManager: Unable to start service Intent { act=com.google.android.chimera.BoundService.START dat=chimera-action: cmp=com.google.android.gms/.chimera.PersistentApiService } U=0: not found
+11-22 19:10:00.003   574  1047 W ActivityManager: Unbind failed: could not find connection for android.os.BinderProxy@ec405f9
+11-22 19:10:00.221   574   598 I ActivityManager: User 0 state changed from RUNNING_LOCKED to RUNNING_UNLOCKING
+11-22 19:10:00.247   574   598 D ActivityManager: Unlocking user 0 progress 20
+11-22 19:10:00.462   574   614 W ActivityManager: Slow operation: 51ms so far, now at startProcess: done updating battery stats
+11-22 19:10:00.462   574   614 W ActivityManager: Slow operation: 94ms so far, now at startProcess: building log message
+11-22 19:10:00.462   574   614 I ActivityManager: Start proc 1302:com.google.android.providers.media.module/u0a197 for service {com.google.android.providers.media.module/com.android.providers.media.fuse.ExternalStorageServiceImpl}
+11-22 19:10:00.462   574   614 W ActivityManager: Slow operation: 94ms so far, now at startProcess: starting to update pids map
+11-22 19:10:00.463   574   614 W ActivityManager: Slow operation: 95ms so far, now at startProcess: done updating pids map
+11-22 19:10:00.763   574   574 W ActivityManager: Slow operation: 153ms so far, now at startProcess: done creating new process record
+11-22 19:10:00.763   574   574 W ActivityManager: Slow operation: 153ms so far, now at startProcess: stepping in to startProcess
+11-22 19:10:00.763   574   574 W ActivityManager: Slow operation: 153ms so far, now at startProcess: done starting proc!
+11-22 19:10:00.835   574   614 W ActivityManager: Slow operation: 72ms so far, now at startProcess: returned from zygote!
+11-22 19:10:00.835   574   614 W ActivityManager: Slow operation: 72ms so far, now at startProcess: done updating battery stats
+11-22 19:10:00.835   574   614 W ActivityManager: Slow operation: 72ms so far, now at startProcess: building log message
+11-22 19:10:00.835   574   614 I ActivityManager: Start proc 1318:com.google.android.as/u0a136 for service {com.google.android.as/com.google.android.apps.miphone.aiai.app.AiAiContentCaptureService}
+11-22 19:10:00.835   574   614 W ActivityManager: Slow operation: 72ms so far, now at startProcess: starting to update pids map
+11-22 19:10:00.835   574   614 W ActivityManager: Slow operation: 72ms so far, now at startProcess: done updating pids map
+11-22 19:10:00.836   574   847 W ActivityManager: Slow operation: 105ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+11-22 19:10:00.836   574   847 W ActivityManager: Slow operation: 105ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:01.032   574   614 W ActivityManager: Slow operation: 113ms so far, now at startProcess: returned from zygote!
+11-22 19:10:01.032   574   614 W ActivityManager: Slow operation: 113ms so far, now at startProcess: done updating battery stats
+11-22 19:10:01.032   574   614 W ActivityManager: Slow operation: 113ms so far, now at startProcess: building log message
+11-22 19:10:01.032   574   614 I ActivityManager: Start proc 1322:android.process.acore/u0a91 for content provider {com.android.providers.contacts/com.android.providers.contacts.ContactsProvider2}
+11-22 19:10:01.032   574   614 W ActivityManager: Slow operation: 113ms so far, now at startProcess: starting to update pids map
+11-22 19:10:01.032   574   614 W ActivityManager: Slow operation: 113ms so far, now at startProcess: done updating pids map
+11-22 19:10:01.365   574   614 W ActivityManager: Slow operation: 133ms so far, now at startProcess: returned from zygote!
+11-22 19:10:01.365   574   614 W ActivityManager: Slow operation: 134ms so far, now at startProcess: done updating battery stats
+11-22 19:10:01.365   574   614 W ActivityManager: Slow operation: 134ms so far, now at startProcess: building log message
+11-22 19:10:01.365   574   614 I ActivityManager: Start proc 1324:com.google.android.googlequicksearchbox:interactor/u0a144 for service {com.google.android.googlequicksearchbox/com.google.android.voiceinteraction.GsaVoiceInteractionService}
+11-22 19:10:01.365   574   614 W ActivityManager: Slow operation: 134ms so far, now at startProcess: starting to update pids map
+11-22 19:10:01.365   574   614 W ActivityManager: Slow operation: 134ms so far, now at startProcess: done updating pids map
+11-22 19:10:01.847   574  1047 W ActivityManager: Slow operation: 54ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+11-22 19:10:01.847   574  1047 W ActivityManager: Slow operation: 54ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:01.892   574   614 W ActivityManager: Slow operation: 52ms so far, now at startProcess: returned from zygote!
+11-22 19:10:01.898   574   614 W ActivityManager: Slow operation: 57ms so far, now at startProcess: done updating battery stats
+11-22 19:10:01.898   574   614 W ActivityManager: Slow operation: 58ms so far, now at startProcess: building log message
+11-22 19:10:01.898   574   614 I ActivityManager: Start proc 1368:com.google.android.apps.messaging:rcs/u0a139 for service {com.google.android.apps.messaging/com.google.android.ims.binding.SystemBindingService}
+11-22 19:10:01.898   574   614 W ActivityManager: Slow operation: 58ms so far, now at startProcess: starting to update pids map
+11-22 19:10:01.898   574   614 W ActivityManager: Slow operation: 58ms so far, now at startProcess: done updating pids map
+11-22 19:10:01.961   574   613 I ActivityManager: User 0 state changed from RUNNING_UNLOCKING to RUNNING_UNLOCKED
+11-22 19:10:02.134   574   598 I ActivityTaskManager: Restoring recents for user 0
+11-22 19:10:02.166   574   614 I ActivityManager: Start proc 1390:com.android.emulator.multidisplay/1000 for added application com.android.emulator.multidisplay
+11-22 19:10:02.192   574   614 W ActivityManager: Slow operation: 201ms so far, now at startProcess: starting to update pids map
+11-22 19:10:02.193   574   614 W ActivityManager: Slow operation: 202ms so far, now at startProcess: done updating pids map
+11-22 19:10:02.222   574   613 I ActivityManager: Posting BOOT_COMPLETED user #0
+11-22 19:10:02.496   574   614 W ActivityManager: Slow operation: 87ms so far, now at startProcess: returned from zygote!
+11-22 19:10:02.497   574   614 W ActivityManager: Slow operation: 89ms so far, now at startProcess: done updating battery stats
+11-22 19:10:02.499   574   614 W ActivityManager: Slow operation: 91ms so far, now at startProcess: building log message
+11-22 19:10:02.499   574   614 I ActivityManager: Start proc 1433:com.android.printspooler/u0a127 for service {com.android.printspooler/com.android.printspooler.model.PrintSpoolerService}
+11-22 19:10:02.499   574   614 W ActivityManager: Slow operation: 91ms so far, now at startProcess: starting to update pids map
+11-22 19:10:02.503   574   614 W ActivityManager: Slow operation: 95ms so far, now at startProcess: done updating pids map
+11-22 19:10:02.778   574   614 W ActivityManager: Slow operation: 51ms so far, now at startProcess: returned from zygote!
+11-22 19:10:02.805   574   614 W ActivityManager: Slow operation: 78ms so far, now at startProcess: done updating battery stats
+11-22 19:10:02.806   574   614 W ActivityManager: Slow operation: 79ms so far, now at startProcess: building log message
+11-22 19:10:02.807   574   614 I ActivityManager: Start proc 1462:com.dotwelwidgets.dotwellabs/u0a209 for broadcast {com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.ClockWidgetProvider}
+11-22 19:10:02.808   574   614 W ActivityManager: Slow operation: 81ms so far, now at startProcess: starting to update pids map
+11-22 19:10:02.808   574   968 W ActivityTaskManager: callingPackage for (uid=-1, pid=0) has no WPC
+11-22 19:10:02.959   574   968 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.HOME] flg=0x10000100 cmp=com.google.android.apps.nexuslauncher/.NexusLauncherActivity (has extras)} with LAUNCH_SINGLE_TASK from uid 0 (BAL_ALLOW_ALLOWLISTED_UID) result code=0
+11-22 19:10:02.971   574   614 W ActivityManager: Slow operation: 244ms so far, now at startProcess: done updating pids map
+11-22 19:10:03.199   574   614 W ActivityManager: Slow operation: 189ms so far, now at startProcess: returned from zygote!
+11-22 19:10:03.286   574   614 W ActivityManager: Slow operation: 233ms so far, now at startProcess: done updating battery stats
+11-22 19:10:03.286   574   614 W ActivityManager: Slow operation: 277ms so far, now at startProcess: building log message
+11-22 19:10:03.286   574   614 I ActivityManager: Start proc 1486:com.google.android.googlequicksearchbox:search/u0a144 for service {com.google.android.googlequicksearchbox/com.google.android.apps.search.podcasts.browser.PodcastBrowserService}
+11-22 19:10:03.286   574   614 W ActivityManager: Slow operation: 277ms so far, now at startProcess: starting to update pids map
+11-22 19:10:03.286   574   614 W ActivityManager: Slow operation: 277ms so far, now at startProcess: done updating pids map
+11-22 19:10:03.480   574   590 W ActivityManager: Slow operation: 145ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+11-22 19:10:03.522   574   849 W ActivityManager: Slow operation: 107ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+11-22 19:10:03.524   574   849 W ActivityManager: Slow operation: 109ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:03.716   574  1236 W ActivityManager: Slow operation: 109ms so far, now at finishAttachApplicationInner: after updateOomAdjLocked
+11-22 19:10:04.069   574   614 W ActivityManager: Slow operation: 248ms so far, now at startProcess: returned from zygote!
+11-22 19:10:04.184   574   614 W ActivityManager: Slow operation: 363ms so far, now at startProcess: done updating battery stats
+11-22 19:10:04.184   574   614 W ActivityManager: Slow operation: 363ms so far, now at startProcess: building log message
+11-22 19:10:04.184   574   614 I ActivityManager: Start proc 1522:com.google.android.gms/u0a143 for content provider {com.google.android.gms/com.google.android.gms.core.providersettings.GoogleSettingsProvider}
+11-22 19:10:04.184   574   614 W ActivityManager: Slow operation: 363ms so far, now at startProcess: starting to update pids map
+11-22 19:10:04.184   574   614 W ActivityManager: Slow operation: 363ms so far, now at startProcess: done updating pids map
+11-22 19:10:04.185   574   614 W ActivityManager: Slow operation: 325ms so far, now at startProcess: asking zygote to start proc
+11-22 19:10:04.214   574   614 W ActivityManager: Slow operation: 355ms so far, now at startProcess: returned from zygote!
+11-22 19:10:04.219   574   614 W ActivityManager: Slow operation: 360ms so far, now at startProcess: done updating battery stats
+11-22 19:10:04.219   574   614 W ActivityManager: Slow operation: 360ms so far, now at startProcess: building log message
+11-22 19:10:04.219   574   614 I ActivityManager: Start proc 1532:com.android.keychain/1000 for service {com.android.keychain/com.android.keychain.KeyChainService}
+11-22 19:10:04.219   574   614 W ActivityManager: Slow operation: 360ms so far, now at startProcess: starting to update pids map
+11-22 19:10:04.219   574   614 W ActivityManager: Slow operation: 360ms so far, now at startProcess: done updating pids map
+11-22 19:10:05.128   574   847 I ActivityManager: Broadcasting: Intent { act=com.android.emulator.multidisplay.START flg=0x400000 cmp=com.android.emulator.multidisplay/.MultiDisplayServiceReceiver }
+11-22 19:10:05.244   574  1502 W ActivityManager: Slow operation: 59ms so far, now at attachApplicationLocked: immediately before bindApplication
+11-22 19:10:05.244   574  1502 W ActivityManager: Slow operation: 59ms so far, now at attachApplicationLocked: immediately after bindApplication
+11-22 19:10:05.245   574  1502 W ActivityManager: Slow operation: 59ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+11-22 19:10:05.245   574  1502 W ActivityManager: Slow operation: 60ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+11-22 19:10:05.343   574   847 I ActivityManager: Enqueued broadcast Intent { act=com.android.emulator.multidisplay.START flg=0x400000 cmp=com.android.emulator.multidisplay/.MultiDisplayServiceReceiver }: 0
+11-22 19:10:06.920   574   651 W ActivityManager: Slow operation: 61ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:07.056   574   614 W ActivityManager: Slow operation: 73ms so far, now at startProcess: returned from zygote!
+11-22 19:10:07.057   574   614 W ActivityManager: Slow operation: 73ms so far, now at startProcess: done updating battery stats
+11-22 19:10:07.057   574   614 W ActivityManager: Slow operation: 74ms so far, now at startProcess: building log message
+11-22 19:10:07.057   574   614 I ActivityManager: Start proc 1644:com.android.localtransport/1000 for service {com.android.localtransport/com.android.localtransport.LocalTransportService}
+11-22 19:10:07.057   574   614 W ActivityManager: Slow operation: 74ms so far, now at startProcess: starting to update pids map
+11-22 19:10:07.057   574   614 W ActivityManager: Slow operation: 74ms so far, now at startProcess: done updating pids map
+11-22 19:10:07.140  1637  1637 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:10:07.152  1637  1637 I AndroidRuntime: Using default boot image
+11-22 19:10:07.152  1637  1637 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:10:07.683  1637  1637 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:10:07.689   574   613 I ActivityManager: reportOnUserCompletedEvent(0): stored=10, eligible=111
+11-22 19:10:07.769   574  1621 W ActivityManager: Slow operation: 58ms so far, now at attachApplicationLocked: before bindApplication
+11-22 19:10:07.783   574  1621 W ActivityManager: Slow operation: 72ms so far, now at attachApplicationLocked: immediately before bindApplication
+11-22 19:10:07.783   574  1621 W ActivityManager: Slow operation: 72ms so far, now at attachApplicationLocked: immediately after bindApplication
+11-22 19:10:07.783   574  1621 W ActivityManager: Slow operation: 72ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+11-22 19:10:07.792   574  1621 W ActivityManager: Slow operation: 81ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+11-22 19:10:07.991   574  1581 W ActivityManager: Slow operation: 86ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+11-22 19:10:07.991   574  1581 W ActivityManager: Slow operation: 86ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:08.670   574   968 W ActivityManager: Slow operation: 929ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+11-22 19:10:08.670   574   968 W ActivityManager: Slow operation: 929ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:09.101   574   614 I ActivityManager: Start proc 1755:com.google.android.apps.messaging/u0a139 for broadcast {com.google.android.apps.messaging/com.google.android.apps.messaging.shared.simstatetracker.AsyncTelephonySimStateReceiver}
+11-22 19:10:09.337   574   598 I ActivityManager: Broadcast completed: result=0
+11-22 19:10:09.512   574   968 W ActivityManager: Slow operation: 118ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+11-22 19:10:09.512   574   968 W ActivityManager: Slow operation: 119ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:10.405  1637  1637 D AndroidRuntime: Shutting down VM
+11-22 19:10:10.527   574  1502 W ActivityManager: Slow operation: 67ms so far, now at startProcess: done creating new process record
+11-22 19:10:10.527   574  1502 W ActivityManager: Slow operation: 67ms so far, now at startProcess: stepping in to startProcess
+11-22 19:10:10.528   574  1502 W ActivityManager: Slow operation: 68ms so far, now at startProcess: done starting proc!
+11-22 19:10:10.574   574   614 I ActivityManager: Start proc 1847:com.google.android.apps.wallpaper/u0a176 for content provider {com.google.android.apps.wallpaper/com.google.android.apps.wallpaper.provider.RecentWallpapersProvider}
+11-22 19:10:10.584   574   614 W ActivityManager: Slow operation: 57ms so far, now at startProcess: done updating pids map
+11-22 19:10:11.851   574   598 I ActivityTaskManager: Displayed com.google.android.apps.nexuslauncher/.NexusLauncherActivity for user 0: +8s818ms
+11-22 19:10:12.798   574   601 W ActivityTaskManager: Launch timeout has expired, giving up wake lock!
+11-22 19:10:13.027   574   614 W ActivityManager: Slow operation: 109ms so far, now at startProcess: returned from zygote!
+11-22 19:10:13.053   574   614 W ActivityManager: Slow operation: 135ms so far, now at startProcess: done updating battery stats
+11-22 19:10:13.053   574   614 W ActivityManager: Slow operation: 135ms so far, now at startProcess: building log message
+11-22 19:10:13.053   574   614 I ActivityManager: Start proc 1924:com.android.imsserviceentitlement/u0a138 for broadcast {com.android.imsserviceentitlement/com.android.imsserviceentitlement.ImsEntitlementReceiver}
+11-22 19:10:13.053   574   614 W ActivityManager: Slow operation: 135ms so far, now at startProcess: starting to update pids map
+11-22 19:10:13.080   574   614 W ActivityManager: Slow operation: 161ms so far, now at startProcess: done updating pids map
+11-22 19:10:14.520   574   613 W ActivityManager: Slow operation: 145ms so far, now at startProcess: done creating new process record
+11-22 19:10:14.520   574   613 W ActivityManager: Slow operation: 145ms so far, now at startProcess: stepping in to startProcess
+11-22 19:10:14.521   574   613 W ActivityManager: Slow operation: 146ms so far, now at startProcess: done starting proc!
+11-22 19:10:14.524   574   591 W ActivityManager: Slow operation: 117ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+11-22 19:10:14.524   574   591 W ActivityManager: Slow operation: 117ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:14.541   574   614 I ActivityManager: Start proc 1951:com.android.traceur/u0a126 for broadcast {com.android.traceur/com.android.traceur.Receiver}
+11-22 19:10:15.247   574   847 W ActivityManager: Unable to start service Intent { act=com.google.android.play.core.splitinstall.BIND_SPLIT_INSTALL_SERVICE pkg=com.android.vending } U=0: not found
+11-22 19:10:15.258   574   847 W ActivityManager: Unable to start service Intent { act=com.google.android.play.core.splitinstall.BIND_SPLIT_INSTALL_SERVICE pkg=com.android.vending } U=0: not found
+11-22 19:10:16.119   574  1502 W ActivityManager: Slow operation: 577ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:16.263   574  1547 W ActivityManager: Slow operation: 121ms so far, now at startProcess: done creating new process record
+11-22 19:10:16.263   574  1547 W ActivityManager: Slow operation: 121ms so far, now at startProcess: stepping in to startProcess
+11-22 19:10:16.297   574  1547 W ActivityManager: Slow operation: 156ms so far, now at startProcess: done starting proc!
+11-22 19:10:16.311   574   614 I ActivityManager: Start proc 2016:com.google.android.as.oss/u0a130 for service {com.google.android.as.oss/com.google.android.apps.miphone.astrea.grpc.AstreaGrpcService}
+11-22 19:10:16.551   574   614 W ActivityManager: Slow operation: 89ms so far, now at startProcess: returned from zygote!
+11-22 19:10:16.551   574   614 W ActivityManager: Slow operation: 89ms so far, now at startProcess: done updating battery stats
+11-22 19:10:16.551   574   614 W ActivityManager: Slow operation: 89ms so far, now at startProcess: building log message
+11-22 19:10:16.551   574   614 I ActivityManager: Start proc 2028:com.google.android.onetimeinitializer/u0a128 for broadcast {com.google.android.onetimeinitializer/com.google.android.onetimeinitializer.OneTimeInitializerReceiver}
+11-22 19:10:16.551   574   614 W ActivityManager: Slow operation: 89ms so far, now at startProcess: starting to update pids map
+11-22 19:10:16.551   574   614 W ActivityManager: Slow operation: 89ms so far, now at startProcess: done updating pids map
+11-22 19:10:18.336  2091  2091 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:10:18.348   574   613 W ActivityManager: Slow operation: 54ms so far, now at startProcess: done creating new process record
+11-22 19:10:18.358  2091  2091 I AndroidRuntime: Using default boot image
+11-22 19:10:18.362  2091  2091 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:10:18.366   574   613 W ActivityManager: Slow operation: 72ms so far, now at startProcess: stepping in to startProcess
+11-22 19:10:18.390   574   613 W ActivityManager: Slow operation: 96ms so far, now at startProcess: done starting proc!
+11-22 19:10:18.430   574   614 W ActivityManager: Slow operation: 64ms so far, now at startProcess: done updating battery stats
+11-22 19:10:18.430   574   614 W ActivityManager: Slow operation: 64ms so far, now at startProcess: building log message
+11-22 19:10:18.430   574   614 I ActivityManager: Start proc 2107:com.android.externalstorage/u0a104 for broadcast {com.android.externalstorage/com.android.externalstorage.MountReceiver}
+11-22 19:10:18.430   574   614 W ActivityManager: Slow operation: 64ms so far, now at startProcess: starting to update pids map
+11-22 19:10:18.430   574   614 W ActivityManager: Slow operation: 64ms so far, now at startProcess: done updating pids map
+11-22 19:10:18.773  2091  2091 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:10:19.413   574   614 I ActivityManager: Start proc 2145:android.process.media/u0a95 for broadcast {com.android.providers.downloads/com.android.providers.downloads.DownloadReceiver}
+11-22 19:10:19.438   574   614 W ActivityManager: Slow operation: 60ms so far, now at startProcess: done updating pids map
+11-22 19:10:19.717   574   668 D ActivityManager: freezing 1433 com.android.printspooler
+11-22 19:10:20.272   574   668 D ActivityManager: freezing 1462 com.dotwelwidgets.dotwellabs
+11-22 19:10:20.273   574   668 D ActivityManager: freezing 1644 com.android.localtransport
+11-22 19:10:20.273   574   668 D ActivityManager: freezing 1532 com.android.keychain
+11-22 19:10:20.273   574   668 D ActivityManager: freezing 893 com.android.settings
+11-22 19:10:20.979   574   613 D ActivityManager: sync unfroze 893 com.android.settings for 10
+11-22 19:10:20.979   574   613 D ActivityManager: sync unfroze 1644 com.android.localtransport for 10
+11-22 19:10:20.986   574   613 D ActivityManager: sync unfroze 1532 com.android.keychain for 10
+11-22 19:10:21.074  2091  2091 D AndroidRuntime: Shutting down VM
+11-22 19:10:21.590   574   614 W ActivityManager: Slow operation: 128ms so far, now at startProcess: done updating battery stats
+11-22 19:10:21.590   574   614 W ActivityManager: Slow operation: 128ms so far, now at startProcess: building log message
+11-22 19:10:21.590   574   614 I ActivityManager: Start proc 2210:com.google.android.gms.unstable/u0a143 for service {com.google.android.gms/com.google.android.gms.droidguard.DroidGuardService}
+11-22 19:10:21.590   574   614 W ActivityManager: Slow operation: 128ms so far, now at startProcess: starting to update pids map
+11-22 19:10:21.590   574   614 W ActivityManager: Slow operation: 128ms so far, now at startProcess: done updating pids map
+11-22 19:10:22.362   574   574 W ActivityManager: Slow operation: 99ms so far, now at startProcess: done creating new process record
+11-22 19:10:22.363   574   574 W ActivityManager: Slow operation: 100ms so far, now at startProcess: stepping in to startProcess
+11-22 19:10:22.423   574   614 W ActivityManager: Slow operation: 60ms so far, now at startProcess: asking zygote to start proc
+11-22 19:10:22.436   574   574 W ActivityManager: Slow operation: 173ms so far, now at startProcess: done starting proc!
+11-22 19:10:22.465   574   614 W ActivityManager: Slow operation: 98ms so far, now at startProcess: returned from zygote!
+11-22 19:10:22.468   574   614 W ActivityManager: Slow operation: 105ms so far, now at startProcess: done updating battery stats
+11-22 19:10:22.490   574   614 W ActivityManager: Slow operation: 127ms so far, now at startProcess: building log message
+11-22 19:10:22.499   574   614 I ActivityManager: Start proc 2250:com.google.android.tts/u0a165 for service {com.google.android.tts/com.google.android.apps.speech.tts.googletts.service.GoogleTtsService}
+11-22 19:10:22.499   574   614 W ActivityManager: Slow operation: 136ms so far, now at startProcess: starting to update pids map
+11-22 19:10:22.512   574   614 W ActivityManager: Slow operation: 149ms so far, now at startProcess: done updating pids map
+11-22 19:10:24.788   574   668 D ActivityManager: freezing 1175 com.google.android.cellbroadcastreceiver
+11-22 19:10:24.810  2312  2312 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:10:24.818  2312  2312 I AndroidRuntime: Using default boot image
+11-22 19:10:24.818  2312  2312 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:10:24.822   574   668 D ActivityManager: freezing 1145 com.google.android.permissioncontroller
+11-22 19:10:24.826   574   668 D ActivityManager: freezing 1924 com.android.imsserviceentitlement
+11-22 19:10:25.214  2312  2312 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:10:26.454  2312  2312 D AndroidRuntime: Shutting down VM
+11-22 19:10:29.379   574   668 D ActivityManager: freezing 2107 com.android.externalstorage
+11-22 19:10:30.153   574   613 D ActivityManager: sync unfroze 1924 com.android.imsserviceentitlement for 3
+11-22 19:10:30.315   574   614 W ActivityManager: Slow operation: 194ms so far, now at startProcess: returned from zygote!
+11-22 19:10:30.386   574   614 W ActivityManager: Slow operation: 265ms so far, now at startProcess: done updating battery stats
+11-22 19:10:30.387   574   614 W ActivityManager: Slow operation: 265ms so far, now at startProcess: building log message
+11-22 19:10:30.388   574   614 I ActivityManager: Start proc 2366:com.android.camera2/u0a157 for broadcast {com.android.camera2/com.android.camera.SetActivitiesCameraReceiver}
+11-22 19:10:30.389   574   614 W ActivityManager: Slow operation: 267ms so far, now at startProcess: starting to update pids map
+11-22 19:10:30.389   574   614 W ActivityManager: Slow operation: 268ms so far, now at startProcess: done updating pids map
+11-22 19:10:30.844  2368  2368 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:10:30.850  2368  2368 I AndroidRuntime: Using default boot image
+11-22 19:10:30.850  2368  2368 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:10:31.074  2368  2368 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:10:31.605   574   613 D ActivityManager: sync unfroze 1175 com.google.android.cellbroadcastreceiver for 3
+11-22 19:10:33.148  2368  2368 D AndroidRuntime: Shutting down VM
+11-22 19:10:33.849   574   614 W ActivityManager: Slow operation: 80ms so far, now at startProcess: returned from zygote!
+11-22 19:10:33.849   574   614 W ActivityManager: Slow operation: 80ms so far, now at startProcess: done updating battery stats
+11-22 19:10:33.849   574   614 W ActivityManager: Slow operation: 80ms so far, now at startProcess: building log message
+11-22 19:10:33.849   574   614 I ActivityManager: Start proc 2414:com.android.dynsystem/1000 for broadcast {com.android.dynsystem/com.android.dynsystem.BootCompletedReceiver}
+11-22 19:10:33.849   574   614 W ActivityManager: Slow operation: 80ms so far, now at startProcess: starting to update pids map
+11-22 19:10:33.852   574   614 W ActivityManager: Slow operation: 83ms so far, now at startProcess: done updating pids map
+11-22 19:10:34.240   574   614 I ActivityManager: Start proc 2434:com.android.dynsystem:dynsystem/1000 for service {com.android.dynsystem/com.android.dynsystem.DynamicSystemInstallationService}
+11-22 19:10:34.267   574   614 W ActivityManager: Slow operation: 70ms so far, now at startProcess: starting to update pids map
+11-22 19:10:34.267   574   614 W ActivityManager: Slow operation: 70ms so far, now at startProcess: done updating pids map
+11-22 19:10:34.332   574   613 W ActivityManager: Slow operation: 64ms so far, now at startProcess: done starting proc!
+11-22 19:10:34.429   574   614 W ActivityManager: Slow operation: 118ms so far, now at startProcess: returned from zygote!
+11-22 19:10:34.440   574   614 W ActivityManager: Slow operation: 129ms so far, now at startProcess: done updating battery stats
+11-22 19:10:34.440   574   614 W ActivityManager: Slow operation: 129ms so far, now at startProcess: building log message
+11-22 19:10:34.441   574   614 I ActivityManager: Start proc 2452:com.android.managedprovisioning/u0a103 for broadcast {com.android.managedprovisioning/com.android.managedprovisioning.BootReminder}
+11-22 19:10:34.441   574   614 W ActivityManager: Slow operation: 129ms so far, now at startProcess: starting to update pids map
+11-22 19:10:34.448   574   614 W ActivityManager: Slow operation: 137ms so far, now at startProcess: done updating pids map
+11-22 19:10:34.616   574  1511 W ActivityTaskManager: callingPackage for (uid=2000, pid=2473) has no WPC
+11-22 19:10:34.634   574  1511 I ActivityTaskManager: START u0 {act=android.settings.REQUEST_SCHEDULE_EXACT_ALARM dat=package: flg=0x10000000 cmp=com.android.settings/.Settings$AlarmsAndRemindersAppActivity} with LAUNCH_MULTIPLE from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+11-22 19:10:35.264   574  2011 W ActivityManager: Unable to start service Intent { cmp=com.google.android.apps.tachyon/.clientapi.ClientApiService } U=0: not found
+11-22 19:10:35.846   574   848 I ActivityTaskManager: START u0 {cmp=com.android.settings/.spa.SpaActivity (has extras)} with LAUNCH_MULTIPLE from uid 1000 (BAL_ALLOW_VISIBLE_WINDOW) result code=0
+11-22 19:10:35.941   574  2011 W ActivityManager: Slow operation: 57ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:36.166   574   613 W ActivityManager: Slow operation: 134ms so far, now at startProcess: done creating new process record
+11-22 19:10:36.166   574   613 W ActivityManager: Slow operation: 134ms so far, now at startProcess: stepping in to startProcess
+11-22 19:10:36.167   574   613 W ActivityManager: Slow operation: 135ms so far, now at startProcess: done starting proc!
+11-22 19:10:37.620   574   792 D ActivityManager: sync unfroze 1145 com.google.android.permissioncontroller for 6
+11-22 19:10:37.620   574   792 I ActivityManager: PendingStartActivityUids startActivity to updateOomAdj delay:1501ms, uid:1000
+11-22 19:10:37.647   574   614 W ActivityManager: Slow operation: 1481ms so far, now at startProcess: done updating battery stats
+11-22 19:10:37.647   574   614 W ActivityManager: Slow operation: 1481ms so far, now at startProcess: building log message
+11-22 19:10:37.647   574   614 I ActivityManager: Start proc 2491:com.android.providers.calendar/u0a101 for broadcast {com.android.providers.calendar/com.android.providers.calendar.CalendarReceiver}
+11-22 19:10:37.647   574   614 W ActivityManager: Slow operation: 1481ms so far, now at startProcess: starting to update pids map
+11-22 19:10:37.671   574   614 W ActivityManager: Slow operation: 1505ms so far, now at startProcess: done updating pids map
+11-22 19:10:37.789   574   598 I ActivityTaskManager: Config changes=80000000 {1.0 310mcc260mnc [en_US] ldltr sw411dp w411dp h914dp 420dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2400) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.32 fontWeightAdjustment=0}
+11-22 19:10:37.932   574   598 V ActivityTaskManager: Sending to IME proc com.google.android.inputmethod.latin new config {1.0 310mcc260mnc [en_US] ldltr sw411dp w411dp h890dp 420dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2337) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.60 fontWeightAdjustment=0}
+11-22 19:10:38.058   574   598 W ActivityTaskManager: Current config: {1.0 310mcc260mnc [en_US] ldltr sw411dp w411dp h890dp 420dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2337) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.32 fontWeightAdjustment=0} unchanged for IME proc com.google.android.inputmethod.latin
+11-22 19:10:38.137   574  2395 W ActivityManager: Slow operation: 57ms so far, now at attachApplicationLocked: immediately before bindApplication
+11-22 19:10:38.137   574  2395 W ActivityManager: Slow operation: 57ms so far, now at attachApplicationLocked: immediately after bindApplication
+11-22 19:10:38.141   574  2395 W ActivityManager: Slow operation: 61ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+11-22 19:10:38.141   574  2395 W ActivityManager: Slow operation: 61ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+11-22 19:10:38.236   574  2010 I ActivityManager: Background started FGS: Allowed [callingPackage: com.google.android.apps.messaging; callingUid: 10139; uidState: BFGS; uidBFSL: [BFSL]; intent: Intent { cmp=com.google.android.apps.messaging/com.google.apps.tiktok.concurrent.InternalForegroundService (has extras) }; code:PROC_STATE_BFGS; tempAllowListReason:<50b4850 android.intent.action.BOOT_COMPLETED/u0,reasonCode:BOOT_COMPLETED,duration:20000,callingUid:1000>; targetSdkVersion:35; callerTargetSdkVersion:35; startForegroundCount:0; bindFromPackage:null: isBindService:false]
+11-22 19:10:38.427   574  2010 W ActivityManager: Foreground service started from background can not have location/camera/microphone access: service com.google.android.apps.messaging/com.google.apps.tiktok.concurrent.InternalForegroundService
+11-22 19:10:39.335   574   614 W ActivityManager: Slow operation: 108ms so far, now at startProcess: returned from zygote!
+11-22 19:10:39.411   574   614 W ActivityManager: Slow operation: 184ms so far, now at startProcess: done updating battery stats
+11-22 19:10:39.411   574   614 W ActivityManager: Slow operation: 184ms so far, now at startProcess: building log message
+11-22 19:10:39.411   574   614 I ActivityManager: Start proc 2542:com.android.shell/2000 for broadcast {com.android.shell/com.android.shell.HeapDumpReceiver}
+11-22 19:10:39.411   574   614 W ActivityManager: Slow operation: 184ms so far, now at startProcess: starting to update pids map
+11-22 19:10:39.419   574   614 W ActivityManager: Slow operation: 192ms so far, now at startProcess: done updating pids map
+11-22 19:10:39.976   574   598 I ActivityTaskManager: Displayed com.android.settings/.spa.SpaActivity for user 0: +5s208ms
+11-22 19:10:40.266   574  1540 D ActivityManager: ThemeHomeDelay: Home launch is not delayable, ignoring setThemeOverlayReady() call
+11-22 19:10:40.724   574  2011 W ActivityManager: Slow operation: 60ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+11-22 19:10:40.725   574  2011 W ActivityManager: Slow operation: 61ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-22 19:10:40.821   574   614 W ActivityManager: Slow operation: 65ms so far, now at startProcess: returned from zygote!
+11-22 19:10:40.822   574   614 W ActivityManager: Slow operation: 66ms so far, now at startProcess: done updating battery stats
+11-22 19:10:40.822   574   614 W ActivityManager: Slow operation: 66ms so far, now at startProcess: building log message
+11-22 19:10:40.822   574   614 I ActivityManager: Start proc 2580:com.google.android.apps.safetyhub/u0a132 for broadcast {com.google.android.apps.safetyhub/com.google.android.apps.safetyhub.startup.StartupBroadcastReceiver_Receiver}
+11-22 19:10:40.822   574   614 W ActivityManager: Slow operation: 66ms so far, now at startProcess: starting to update pids map
+11-22 19:10:40.822   574   614 W ActivityManager: Slow operation: 66ms so far, now at startProcess: done updating pids map
+11-22 19:10:43.064   574   614 W ActivityManager: Slow operation: 163ms so far, now at startProcess: returned from zygote!
+11-22 19:10:43.064   574   614 W ActivityManager: Slow operation: 163ms so far, now at startProcess: done updating battery stats
+11-22 19:10:43.064   574   614 W ActivityManager: Slow operation: 163ms so far, now at startProcess: building log message
+11-22 19:10:43.064   574   614 I ActivityManager: Start proc 2644:com.google.android.configupdater/u0a135 for broadcast {com.google.android.configupdater/com.google.android.configupdater.MainReceiver}
+11-22 19:10:43.064   574   614 W ActivityManager: Slow operation: 163ms so far, now at startProcess: starting to update pids map
+11-22 19:10:43.064   574   614 W ActivityManager: Slow operation: 163ms so far, now at startProcess: done updating pids map
+11-22 19:10:43.251   574   613 D ActivityManager: sync unfroze 1462 com.dotwelwidgets.dotwellabs for 3
+11-22 19:10:43.568   574   940 W ActivityManager: Slow operation: 86ms so far, now at attachApplicationLocked: immediately before bindApplication
+11-22 19:10:43.571   574   940 W ActivityManager: Slow operation: 90ms so far, now at attachApplicationLocked: immediately after bindApplication
+11-22 19:10:43.571   574   940 W ActivityManager: Slow operation: 90ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+11-22 19:10:43.575   574   940 W ActivityManager: Slow operation: 94ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+11-22 19:10:43.631  2661  2661 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:10:43.654  2661  2661 I AndroidRuntime: Using default boot image
+11-22 19:10:43.654  2661  2661 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:10:44.019   574   614 W ActivityManager: Slow operation: 75ms so far, now at startProcess: returned from zygote!
+11-22 19:10:44.019   574   614 W ActivityManager: Slow operation: 75ms so far, now at startProcess: done updating battery stats
+11-22 19:10:44.019   574   614 W ActivityManager: Slow operation: 75ms so far, now at startProcess: building log message
+11-22 19:10:44.019   574   614 I ActivityManager: Start proc 2669:com.google.android.federatedcompute/u0a190 for broadcast {com.google.android.federatedcompute/com.android.federatedcompute.services.FederatedComputeBroadcastReceiver}
+11-22 19:10:44.019   574   614 W ActivityManager: Slow operation: 75ms so far, now at startProcess: starting to update pids map
+11-22 19:10:44.020   574   614 W ActivityManager: Slow operation: 76ms so far, now at startProcess: done updating pids map
+11-22 19:10:44.148  2661  2661 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:10:44.398   574   614 I ActivityManager: Start proc 2694:com.google.android.healthconnect.controller/u0a201 for broadcast {com.google.android.healthconnect.controller/com.android.healthconnect.controller.safetycenter.SafetySourceBroadcastReceiver}
+11-22 19:10:44.689   574   614 I ActivityManager: Start proc 2706:com.google.android.ondevicepersonalization.services/u0a189 for broadcast {com.google.android.ondevicepersonalization.services/com.android.ondevicepersonalization.services.OnDevicePersonalizationBroadcastReceiver}
+11-22 19:10:44.819   574   614 I ActivityManager: Start proc 2717:com.google.android.packageinstaller/u0a100 for broadcast {com.google.android.packageinstaller/com.android.packageinstaller.common.TemporaryFileManager}
+11-22 19:10:45.243  2661  2661 D AndroidRuntime: Shutting down VM
+11-22 19:10:45.541   574   614 I ActivityManager: Start proc 2736:com.google.android.partnersetup/u0a131 for broadcast {com.google.android.partnersetup/com.google.android.partnersetup.BootReceiver}
+11-22 19:10:45.948   574   614 W ActivityManager: Slow operation: 76ms so far, now at startProcess: returned from zygote!
+11-22 19:10:45.948   574   614 W ActivityManager: Slow operation: 76ms so far, now at startProcess: done updating battery stats
+11-22 19:10:45.948   574   614 W ActivityManager: Slow operation: 76ms so far, now at startProcess: building log message
+11-22 19:10:45.948   574   614 I ActivityManager: Start proc 2757:com.google.android.rkpdapp/u0a208 for broadcast {com.google.android.rkpdapp/com.android.rkpdapp.BootReceiver}
+11-22 19:10:45.948   574   614 W ActivityManager: Slow operation: 76ms so far, now at startProcess: starting to update pids map
+11-22 19:10:45.948   574   614 W ActivityManager: Slow operation: 76ms so far, now at startProcess: done updating pids map
+11-22 19:10:46.378   574   940 W ActivityManager: Unable to start service Intent { cmp=com.google.android.apps.tachyon/.clientapi.ClientApiService } U=0: not found
+11-22 19:10:46.383   574   614 I ActivityManager: Start proc 2782:com.google.android.settings.intelligence/u0a140 for broadcast {com.google.android.settings.intelligence/com.google.android.settings.intelligence.modules.batterywidget.impl.BatteryWidgetBootBroadcastReceiver}
+11-22 19:10:47.826   574   598 I ActivityManager: Finished processing BOOT_COMPLETED for u0
+11-22 19:10:48.104   574   668 D ActivityManager: freezing 1951 com.android.traceur
+11-22 19:10:48.290   574   668 D ActivityManager: freezing 2028 com.google.android.onetimeinitializer
+11-22 19:10:49.475  2893  2893 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:10:49.489  2893  2893 I AndroidRuntime: Using default boot image
+11-22 19:10:49.489  2893  2893 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:10:50.123  2893  2893 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:10:51.252  2893  2893 D AndroidRuntime: Shutting down VM
+11-22 19:10:51.816   574  1581 W ActivityManager: Unable to start service Intent { cmp=com.google.android.apps.tachyon/.clientapi.ClientApiService } U=0: not found
+11-22 19:10:51.832   574  1581 D ActivityManager: sync unfroze 1951 com.android.traceur for 7
+11-22 19:10:52.130   574   614 W ActivityManager: Slow operation: 69ms so far, now at startProcess: returned from zygote!
+11-22 19:10:52.130   574   614 W ActivityManager: Slow operation: 70ms so far, now at startProcess: done updating battery stats
+11-22 19:10:52.130   574   614 W ActivityManager: Slow operation: 70ms so far, now at startProcess: building log message
+11-22 19:10:52.130   574   614 I ActivityManager: Start proc 2986:com.google.android.gms.ui/u0a143 for content provider {com.google.android.gms/com.google.android.gms.app.search.GmsSearchIndexablesProvider}
+11-22 19:10:52.130   574   614 W ActivityManager: Slow operation: 70ms so far, now at startProcess: starting to update pids map
+11-22 19:10:52.135   574   614 W ActivityManager: Slow operation: 75ms so far, now at startProcess: done updating pids map
+11-22 19:10:52.238   574  2010 I ActivityManager: Start proc 3014:com.google.android.marvin.talkback/u0a167 for content provider {com.google.android.marvin.talkback/com.google.android.accessibility.talkback.preference.search.TalkBackSearchIndexablesProvider}
+11-22 19:10:52.639   574   614 I ActivityManager: Start proc 3109:com.android.chrome/u0a145 for broadcast {com.android.chrome/com.google.android.apps.chrome.rlz.RevenueStatsConfigurationUpdateReceiver}
+11-22 19:10:53.651   574   668 D ActivityManager: freezing 1462 com.dotwelwidgets.dotwellabs
+11-22 19:10:54.436   574  2011 W ActivityManager: pid 1522 com.google.android.gms sent binder code 1 with flags 2 to frozen apps and got error -2147483646
+11-22 19:10:54.929  3202  3202 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:10:54.943  3202  3202 I AndroidRuntime: Using default boot image
+11-22 19:10:54.946  3202  3202 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:10:55.341  3202  3202 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:10:56.430  3202  3202 D AndroidRuntime: Shutting down VM
+11-22 19:10:56.919   574  1581 W ActivityManager: Unable to start service Intent { cmp=com.google.android.apps.tachyon/.clientapi.ClientApiService } U=0: not found
+11-22 19:11:00.090   574   613 D ActivityManager: sync unfroze 1462 com.dotwelwidgets.dotwellabs for 3
+11-22 19:11:00.166   574   668 D ActivityManager: freezing 1924 com.android.imsserviceentitlement
+11-22 19:11:00.388  3276  3276 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:11:00.401  3276  3276 I AndroidRuntime: Using default boot image
+11-22 19:11:00.402  3276  3276 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:11:00.419   574   668 D ActivityManager: freezing 2145 android.process.media
+11-22 19:11:00.615  3276  3276 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:11:01.704  3276  3276 D AndroidRuntime: Shutting down VM
+11-22 19:11:02.018   574   847 W ActivityManager: Unable to start service Intent { cmp=com.google.android.apps.tachyon/.clientapi.ClientApiService } U=0: not found
+11-22 19:11:03.360   574   668 D ActivityManager: freezing 1847 com.google.android.apps.wallpaper
+11-22 19:11:03.773   574   668 D ActivityManager: freezing 2366 com.android.camera2
+11-22 19:11:04.204   574   668 D ActivityManager: freezing 2434 com.android.dynsystem:dynsystem
+11-22 19:11:04.205   574   668 D ActivityManager: freezing 2414 com.android.dynsystem
+11-22 19:11:04.205   574   668 D ActivityManager: freezing 1532 com.android.keychain
+11-22 19:11:04.282   574   668 D ActivityManager: freezing 1644 com.android.localtransport
+11-22 19:11:05.459  3330  3330 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:11:05.474  3330  3330 I AndroidRuntime: Using default boot image
+11-22 19:11:05.477  3330  3330 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:11:05.999   574   668 D ActivityManager: freezing 2452 com.android.managedprovisioning
+11-22 19:11:06.014  3330  3330 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:11:07.152  3330  3330 D AndroidRuntime: Shutting down VM
+11-22 19:11:07.432   574   940 W ActivityManager: Unable to start service Intent { cmp=com.google.android.apps.tachyon/.clientapi.ClientApiService } U=0: not found
+11-22 19:11:08.790   574   668 D ActivityManager: freezing 2491 com.android.providers.calendar
+11-22 19:11:09.226   574   668 D ActivityManager: freezing 3109 com.android.chrome
+11-22 19:11:10.731   574   668 D ActivityManager: freezing 2542 com.android.shell
+11-22 19:11:11.267   574   668 D ActivityManager: freezing 2250 com.google.android.tts
+11-22 19:11:11.376  3354  3354 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:11:11.390  3354  3354 I AndroidRuntime: Using default boot image
+11-22 19:11:11.392  3354  3354 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:11:11.658  3354  3354 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:11:12.761  3354  3354 D AndroidRuntime: Shutting down VM
+11-22 19:11:12.928   574   847 W ActivityManager: Unable to start service Intent { cmp=com.google.android.apps.tachyon/.clientapi.ClientApiService } U=0: not found
+11-22 19:11:14.079   574   668 D ActivityManager: freezing 2644 com.google.android.configupdater
+11-22 19:11:14.366   574   668 D ActivityManager: freezing 2669 com.google.android.federatedcompute
+11-22 19:11:14.805   574   668 D ActivityManager: freezing 2706 com.google.android.ondevicepersonalization.services
+11-22 19:11:15.536   574   668 D ActivityManager: freezing 2717 com.google.android.packageinstaller
+11-22 19:11:16.283   574   668 D ActivityManager: freezing 2736 com.google.android.partnersetup
+11-22 19:11:16.347  3376  3376 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:11:16.354  3376  3376 I AndroidRuntime: Using default boot image
+11-22 19:11:16.354  3376  3376 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:11:16.376   574   668 D ActivityManager: freezing 2757 com.google.android.rkpdapp
+11-22 19:11:16.542  3376  3376 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:11:17.621  3376  3376 D AndroidRuntime: Shutting down VM
+11-22 19:11:17.753   574  1511 W ActivityManager: Unable to start service Intent { cmp=com.google.android.apps.tachyon/.clientapi.ClientApiService } U=0: not found
+11-22 19:11:19.126  3396  3396 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-22 19:11:19.134  3396  3396 I AndroidRuntime: Using default boot image
+11-22 19:11:19.135  3396  3396 I AndroidRuntime: Leaving lock profiling enabled
+11-22 19:11:19.335  3396  3396 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-22 19:11:20.128   574   668 D ActivityManager: freezing 1462 com.dotwelwidgets.dotwellabs
+11-22 19:11:20.389  3396  3396 D AndroidRuntime: Shutting down VM
+11-22 19:11:20.482   574  2010 W ActivityManager: Unable to start service Intent { cmp=com.google.android.apps.tachyon/.clientapi.ClientApiService } U=0: not found

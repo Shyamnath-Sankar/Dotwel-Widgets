@@ -1,0 +1,46 @@
+{
+  "install": true,
+  "placed": [
+    {
+      "requested": "Dotwel Clock",
+      "status": "actual provider view visible, pixels require review"
+    },
+    {
+      "requested": "Dotwel Date",
+      "status": "actual provider view visible, pixels require review"
+    }
+  ],
+  "styles": [
+    "transparent",
+    "translucent",
+    "black"
+  ],
+  "caveats": [
+    "Actual screenshots require independent pixel review. Idle precision and instant fallback after external revocation are not claimed.",
+    "Resize drag did not change bounds; no resize pass claimed."
+  ],
+  "denied_fallback": "Actual clock_time TextClock visible before Android access grant",
+  "pid_before_kill": "2973",
+  "pid_after_kill": "",
+  "bitmap_minute": {
+    "before": "Dotwel clock, 7:06 PM",
+    "after": "Dotwel clock, 7:07 PM",
+    "background_am_kill_requested": true
+  },
+  "resize_bounds": {
+    "before": [
+      67,
+      546,
+      519,
+      1134
+    ],
+    "after": [
+      67,
+      546,
+      519,
+      1134
+    ]
+  },
+  "reboot_bitmap": "Dotwel clock, 19:10",
+  "error": "Android alarm-access switch missing after bounded readiness wait"
+}
