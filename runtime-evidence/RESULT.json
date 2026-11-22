@@ -1,0 +1,51 @@
+{
+  "install": true,
+  "settings": [
+    "black",
+    "translucent",
+    "transparent",
+    "black"
+  ],
+  "placed": [
+    {
+      "requested": "Dotwel Clock",
+      "status": "actual provider view visible, pixels require review"
+    },
+    {
+      "requested": "Dotwel Date",
+      "status": "actual provider view visible, pixels require review"
+    }
+  ],
+  "styles": [
+    "translucent",
+    "transparent",
+    "black"
+  ],
+  "caveats": [
+    "Screenshots require independent pixel review. Native platform behavior, not every OEM host, is tested."
+  ],
+  "clock_minute_text": {
+    "before": "5:43",
+    "after": "5:44"
+  },
+  "timezone_transition": {
+    "before_day": "22",
+    "after_day": "23",
+    "zone": "Pacific/Kiritimati"
+  },
+  "reboot": "both actual provider views restored",
+  "resize_bounds": {
+    "before": [
+      67,
+      546,
+      1013,
+      1134
+    ],
+    "after": [
+      314,
+      546,
+      1013,
+      1134
+    ]
+  }
+}
