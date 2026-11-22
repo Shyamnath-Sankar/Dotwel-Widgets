@@ -9,9 +9,9 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 object ClockWidgetRenderer {
-    // RemoteViews parcels bitmaps through Binder. Keep the total far below the
-    // 1.5 MB RemoteViews bitmap budget so launchers accept every update.
-    private const val MAX_BITMAP_PIXELS = 512 * 512
+    // RemoteViews parcels bitmaps through Binder. Keep the total clearly under
+    // the 1 MB bitmap budget so every launcher accepts the update.
+    private const val MAX_BITMAP_PIXELS = 480 * 480
     private const val MIN_BITMAP_SIDE = 48
     private const val FALLBACK_SIDE_DP = 110
 

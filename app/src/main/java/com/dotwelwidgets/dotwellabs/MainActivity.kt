@@ -27,7 +27,6 @@ class MainActivity : Activity() {
     private val handler = Handler(Looper.getMainLooper())
     private var clockBitmap: Bitmap? = null
     private var dateBitmap: Bitmap? = null
-    private var lastExactAccess = false
     private var exactAlarmReceiverRegistered = false
 
     private val exactAlarmReceiver = object : BroadcastReceiver() {
@@ -35,7 +34,6 @@ class MainActivity : Activity() {
             if (intent.action ==
                 AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
             ) {
-                lastExactAccess = ClockTickScheduler.hasExactAccess(this@MainActivity)
                 updateExactAlarmUi()
                 WidgetUpdater.updateAll(this@MainActivity)
             }
@@ -77,7 +75,6 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.exact_alarm_button).setOnClickListener {
             requestExactAlarmAccess()
         }
-        lastExactAccess = ClockTickScheduler.hasExactAccess(this)
         updateExactAlarmUi()
 
         findViewById<View>(R.id.preview_card_clock).post { renderPreviews() }
@@ -114,14 +111,8 @@ class MainActivity : Activity() {
         super.onResume()
         handler.removeCallbacks(tick)
         handler.post(tick)
-        val access = ClockTickScheduler.hasExactAccess(this)
-        if (access != lastExactAccess) {
-            lastExactAccess = access
-            updateExactAlarmUi()
-            WidgetUpdater.updateAll(this)
-        } else {
-            updateExactAlarmUi()
-        }
+        updateExactAlarmUi()
+        WidgetUpdater.updateAll(this)
     }
 
     override fun onPause() {
