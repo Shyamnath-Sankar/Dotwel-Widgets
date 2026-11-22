@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settings_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/settings_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dotgothic16_regular"
+            android:letterSpacing="0.02"
+            android:text="@string/app_name"
+            android:textColor="@color/widget_ink"
+            android:textSize="30sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/settings_subtitle"
+            android:textColor="@color/widget_muted"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:letterSpacing="0.18"
+            android:text="@string/preview_label"
+            android:textColor="@color/widget_muted"
+            android:textSize="11sp" />
+
+        <FrameLayout
+            android:id="@+id/preview_card"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_widget_black"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/dot_accent" />
+
+                <TextClock
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/dotgothic16_regular"
+                    android:format12Hour="h:mm"
+                    android:format24Hour="HH:mm"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="0.06"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="58sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/dotgothic16_regular"
+                    android:gravity="center"
+                    android:letterSpacing="0.04"
+                    android:text="@string/preview_date_caption"
+                    android:textColor="@color/widget_muted"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:letterSpacing="0.18"
+            android:text="@string/style_label"
+            android:textColor="@color/widget_muted"
+            android:textSize="11sp" />
+
+        <RadioGroup
+            android:id="@+id/style_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/style_black"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:buttonTint="@color/dot_accent"
+                android:text="@string/style_black"
+                android:textColor="@color/widget_ink"
+                android:textSize="16sp" />
+
+            <RadioButton
+                android:id="@+id/style_translucent"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:buttonTint="@color/dot_accent"
+                android:text="@string/style_translucent"
+                android:textColor="@color/widget_ink"
+                android:textSize="16sp" />
+
+            <RadioButton
+                android:id="@+id/style_transparent"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:buttonTint="@color/dot_accent"
+                android:text="@string/style_transparent"
+                android:textColor="@color/widget_ink"
+                android:textSize="16sp" />
+
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/refresh_widgets"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/dot_accent"
+            android:text="@string/refresh_widgets"
+            android:textColor="@android:color/white"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:lineSpacingExtra="4dp"
+            android:text="@string/settings_hint"
+            android:textColor="@color/widget_muted"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="@string/attribution_short"
+            android:textColor="@color/settings_faint"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+
+</ScrollView>

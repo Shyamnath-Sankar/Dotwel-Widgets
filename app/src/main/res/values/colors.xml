@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dot_accent">#D71921</color>
+    <color name="widget_ink">#F4F4F2</color>
+    <color name="widget_muted">#A8A8A3</color>
+    <color name="settings_bg">#050505</color>
+    <color name="settings_faint">#6E6E69</color>
+    <color name="widget_translucent">#B3000000</color>
+    <color name="widget_transparent">#00000000</color>
+</resources>
