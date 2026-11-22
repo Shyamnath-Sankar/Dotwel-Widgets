@@ -1,4 +1,4 @@
-name: Actual dotted clock runtime evidence
+name: Final sized dotted clock runtime evidence
 on:
   workflow_dispatch:
 permissions:
@@ -13,13 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 5ebaae967efb6110c1d11a5e43130ee3457dd7ac
+          ref: c46d54754af46cd833975d1f80f74e337e11b7cd
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
         run: |
           cat > /tmp/widget-runtime-smoke.py <<'PYCODE'
-          import subprocess as sp, pathlib, time, re, xml.etree.ElementTree as ET, json
+          import subprocess as sp, pathlib, time, re, xml.etree.ElementTree as ET, json, hashlib
           OUT=pathlib.Path('runtime-evidence'); OUT.mkdir(exist_ok=True)
           PKG='com.dotwelwidgets.dotwellabs'
           
@@ -115,10 +115,17 @@ jobs:
               if switch is None or (switch.attrib.get('checked')=='true')!=desired:raise RuntimeError('Android access state not confirmed')
               adb('shell','input','keyevent','4');time.sleep(2)
           
-          report={'install':False,'placed':[],'styles':[],'caveats':['Actual screenshots require independent pixel review. Idle precision and instant fallback after external revocation are not claimed.']}
+          report={'version_expected':'0.1.5','install':False,'placed':[],'styles':[],'caveats':['Actual screenshots require independent pixel review. Idle precision and instant fallback after external revocation are not claimed.']}
           try:
               adb('shell','input','keyevent','82');wait_home()
-              print(adb('install','-r','checkpoints/dotwel-widgets-polish-debug.apk').decode());report['install']=True
+              apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk')
+              report['apk_sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
+              checksum=pathlib.Path('checkpoints/POLISH-SHA256SUMS').read_text().split()[0]
+              if report['apk_sha256']!=checksum:raise RuntimeError('Pinned candidate checksum mismatch')
+              print(adb('install','-r',str(apk)).decode());report['install']=True
+              package_state=adb('shell','dumpsys','package',PKG).decode(errors='replace')
+              (OUT/'installed-package.txt').write_text(package_state)
+              if 'versionName=0.1.5' not in package_state:raise RuntimeError('Installed version is not the reviewed0.1.5 candidate')
               size=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))
               w,h=size[-2:]
               start();capture('01-settings-initial');home()
@@ -176,11 +183,19 @@ jobs:
               sp.run(['git','config','user.name','github-actions[bot]'],check=True)
               sp.run(['git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com'],check=True)
               import os
-              core_branch='checkpoint/dot-core-'+os.environ['GITHUB_RUN_ID']
+              core_branch='checkpoint/sized-dot-core-'+os.environ['GITHUB_RUN_ID']
               sp.run(['git','switch','-c',core_branch],check=True)
               sp.run(['git','add','-f','runtime-evidence'],check=True)
               sp.run(['git','commit','-m','test: preserve actual dotted minute evidence before remaining checks'],check=True)
               sp.run(['git','push','origin',core_branch],check=True)
+              adb('shell','am','start','-W','-a','android.settings.REQUEST_SCHEDULE_EXACT_ALARM','-d','package:'+PKG);time.sleep(2)
+              toggle_alarm_ui(False,'40-android-access-revoke')
+              # No instant dead-process fallback claim. App resume is the documented recovery point.
+              start();capture('41-settings-after-revocation');home();locate('clock_time','42-native-fallback-after-resume')
+              report['revocation']='Native live fallback confirmed after explicit app resume, not instantly while stopped'
+              start();click(settings_find('exact_alarm_button'));toggle_alarm_ui(True,'43-android-access-regrant')
+              start();home();locate('widget_clock_bitmap','44-dot-clock-after-regrant')
+              report['regrant']='Actual bitmap restored after user-facing Android access grant and app resume'
               for style in ('transparent','translucent','black'):
                   start();click(settings_find('style_'+style));home()
                   locate('widget_clock_bitmap','24-clock-'+style);locate('date_day','25-date-'+style);report['styles'].append(style)
@@ -195,12 +210,44 @@ jobs:
               if host is None:raise RuntimeError('Actual bitmap host bounds missing')
               b=box(host);cx=(b[0]+b[2])//2;cy=(b[1]+b[3])//2
               adb('shell','input','swipe',str(cx),str(cy),str(cx),str(cy),'1500');time.sleep(1);capture('30-resize-handles')
-              adb('shell','input','swipe',str(b[2]-2),str(cy),str(min(w-30,b[2]+w//4)),str(cy),'1000');time.sleep(1)
+              adb('shell','input','swipe',str(cx),str(b[3]+1),str(cx),str(min(h*6//10,b[3]+h//8)),'1200');time.sleep(2)
               adb('shell','input','tap',str(w//2),str(h*9//10));time.sleep(1)
-              root=locate('widget_clock_bitmap','31-clock-after-resize')
+              root=locate('widget_clock_bitmap','31-clock-grown-vertical')
               host=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'widget_clock_bitmap') is not None),None)
-              report['resize_bounds']={'before':b,'after':box(host) if host is not None else []}
-              if report['resize_bounds']['after']==b:report['caveats'].append('Resize drag did not change bounds; no resize pass claimed.')
+              grown=box(host) if host is not None else []
+              report['resize_bounds']={'before':b,'grown':grown}
+              if len(grown)==4 and grown[3]-grown[1]>b[3]-b[1]:
+                  gx=(grown[0]+grown[2])//2;gy=(grown[1]+grown[3])//2
+                  adb('shell','input','swipe',str(gx),str(gy),str(gx),str(gy),'1500');time.sleep(1);capture('31b-grown-resize-handles')
+                  adb('shell','input','swipe',str(gx),str(grown[3]+1),str(gx),str(max(grown[1]+h//12,b[3]-h//10)),'1200');time.sleep(2)
+                  adb('shell','input','tap',str(w//2),str(h*9//10));time.sleep(1)
+                  root=locate('widget_clock_bitmap','31c-clock-shrunk-vertical')
+                  host=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'widget_clock_bitmap') is not None),None)
+                  shrunk=box(host) if host is not None else []
+                  report['resize_bounds']['shrunk']=shrunk
+                  if len(shrunk)!=4 or shrunk[3]-shrunk[1]>=b[3]-b[1]:report['caveats'].append('Shrink did not produce a shorter-than-default host; no compact resize pass claimed.')
+              else:report['caveats'].append('Vertical drag did not grow the actual host; no resize pass claimed.')
+              # Bounded deep-idle observation. No exact minute delivery promise during idle.
+              adb('shell','dumpsys','battery','unplug',check=False)
+              adb('shell','input','keyevent','223');time.sleep(2)
+              idle_reply=adb('shell','dumpsys','deviceidle','force-idle',check=False).decode(errors='replace')
+              report['idle_force_reply']=idle_reply.strip()
+              (OUT/'idle-state-before.txt').write_bytes(adb('shell','dumpsys','deviceidle',check=False))
+              time.sleep(75)
+              (OUT/'alarm-during-idle.txt').write_bytes(adb('shell','dumpsys','alarm',check=False))
+              adb('shell','dumpsys','deviceidle','unforce',check=False)
+              adb('shell','dumpsys','battery','reset',check=False)
+              adb('shell','input','keyevent','224');adb('shell','input','keyevent','82');wait_home()
+              root=locate('widget_clock_bitmap','45-clock-after-idle-return')
+              actual=find(root,'widget_clock_bitmap').attrib.get('content-desc','')
+              expected=adb('shell','date','+%H:%M').decode().strip()
+              for retry in range(3):
+                  if expected in actual:break
+                  time.sleep(5);root=locate('widget_clock_bitmap','45-clock-after-idle-return-'+str(retry));actual=find(root,'widget_clock_bitmap').attrib.get('content-desc','');expected=adb('shell','date','+%H:%M').decode().strip()
+              report['idle_return']={'device_time':expected,'bitmap_description':actual,'matches_device_time':expected in actual,'note':'Bounded emulator observation, not a guarantee of deep-idle minute precision'}
+              if expected not in actual:
+                  report['caveats'].append('Bitmap remained behind device time in the bounded idle-return check; app-resume recovery checked separately.')
+                  start();home();locate('widget_clock_bitmap','46-clock-after-idle-explicit-resume')
               adb('reboot');sp.run(['adb','wait-for-device'],check=True,timeout=180)
               for attempt in range(30):
                   if adb('shell','getprop','sys.boot_completed',check=False).decode().strip()=='1':break
@@ -210,14 +257,13 @@ jobs:
               root=locate('widget_clock_bitmap','32-clock-after-reboot');report['reboot_bitmap']=find(root,'widget_clock_bitmap').attrib.get('content-desc','')
               locate('date_day','33-date-after-reboot')
               (OUT/'alarm-after-reboot.txt').write_bytes(adb('shell','dumpsys','alarm'))
-              adb('shell','am','start','-W','-a','android.settings.REQUEST_SCHEDULE_EXACT_ALARM','-d','package:'+PKG);time.sleep(2)
-              toggle_alarm_ui(False,'34-android-access-revoke')
-              # No instant dead-process fallback claim. App resume is the documented recovery point.
-              start();capture('35-settings-after-revocation');home();locate('clock_time','36-native-fallback-after-resume')
-              report['revocation']='Native live fallback confirmed after explicit app resume, not instantly while stopped'
+          
           except Exception as e:
               report['error']=str(e);capture('99-failure');print('RUNTIME BLOCKER',str(e))
           finally:
+              adb('shell','dumpsys','deviceidle','unforce',check=False)
+              adb('shell','dumpsys','battery','reset',check=False)
+              (OUT/'render-diagnostic-logcat.txt').write_bytes(adb('logcat','-d','-t','2500',check=False))
               (OUT/'RESULT.json').write_text(json.dumps(report,indent=2))
               (OUT/'logcat.txt').write_bytes(adb('logcat','-d','-s','AndroidRuntime','ActivityManager','ActivityTaskManager',check=False))
               print(json.dumps(report,indent=2))
