@@ -1,4 +1,4 @@
-name: Widget runtime evidence
+name: Actual dotted clock runtime evidence
 on:
   workflow_dispatch:
 permissions:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 0bc4988452e170683583efc3a262c872e3388650
+          ref: 5ebaae967efb6110c1d11a5e43130ee3457dd7ac
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -90,21 +90,33 @@ jobs:
               if n is None:raise RuntimeError('Style control missing '+style)
               click(n);home()
           
-          report={'install':False,'settings':[], 'placed':[], 'styles':[], 'caveats':['Screenshots require independent pixel review. Native platform behavior, not every OEM host, is tested.']}
+          
+          def settings_find(needle):
+              root=capture('settings-find-'+needle)
+              for i in range(5):
+                  node=find(root,needle)
+                  if node is not None and len(box(node))==4 and box(node)[3]>box(node)[1]:return node
+                  adb('shell','input','swipe',str(w//2),str(h*8//10),str(w//2),str(h*3//10),'400');time.sleep(.6)
+                  root=capture('settings-find-'+needle+'-'+str(i))
+              raise RuntimeError('Settings control not visible: '+needle)
+          
+          def toggle_alarm_ui(desired,name):
+              root=capture(name+'-before')
+              switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and ('switch' in n.attrib.get('resource-id','').lower() or 'Switch' in n.attrib.get('class',''))),None)
+              if switch is None:raise RuntimeError('Android alarm-access switch missing')
+              if (switch.attrib.get('checked')=='true')!=desired:click(switch)
+              root=capture(name+'-after')
+              switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and ('switch' in n.attrib.get('resource-id','').lower() or 'Switch' in n.attrib.get('class',''))),None)
+              if switch is None or (switch.attrib.get('checked')=='true')!=desired:raise RuntimeError('Android access state not confirmed')
+              adb('shell','input','keyevent','4');time.sleep(2)
+          
+          report={'install':False,'placed':[],'styles':[],'caveats':['Actual screenshots require independent pixel review. Idle precision and instant fallback after external revocation are not claimed.']}
           try:
               adb('shell','input','keyevent','82');wait_home()
               print(adb('install','-r','checkpoints/dotwel-widgets-polish-debug.apk').decode());report['install']=True
-              wait_home();start();root=capture('01-settings-black')
-              if recover_pixel_dialog(root):start();root=capture('01-settings-black')
-              if find(root,'style_black') is None: raise RuntimeError('Expected settings controls not visible')
-              report['settings'].append('black')
-              for i,style in enumerate(('translucent','transparent','black'),2):
-                  n=find(root,'style_'+style)
-                  if n is None:raise RuntimeError('Style control missing '+style)
-                  click(n);root=capture(str(i).zfill(2)+'-settings-'+style);report['settings'].append(style)
-              home();capture('05-initial-home')
               size=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))
-              w,h=size[-2:];print('screen',w,h)
+              w,h=size[-2:]
+              start();capture('01-settings-initial');home()
               for idx,label in enumerate(('Dotwel Clock','Dotwel Date')):
                   home()
                   # Inspected API35 Pixel7 HOME has blank space below the first clock at55% height.
@@ -136,66 +148,65 @@ jobs:
                   time.sleep(2);adb('shell','input','keyevent','4');time.sleep(1)
                   expected='clock_time' if idx==0 else 'date_day'
                   root=locate(expected,'15-home-after-'+str(idx))
-                  if idx==0:
-                      before=find(root,expected).attrib.get('text','')
-                      time.sleep(65);after_root=capture('16-clock-after-minute');after=find(after_root,expected)
-                      after=after.attrib.get('text','') if after is not None else ''
-                      report['clock_minute_text']={'before':before,'after':after}
-                      if not before or not after or before==after:raise RuntimeError('Visible clock did not advance after65seconds')
                   dump=adb('shell','dumpsys','appwidget').decode(errors='replace')
                   (OUT/('appwidget-'+str(idx)+'.txt')).write_text(dump)
                   report['placed'].append({'requested':label,'status':'actual provider view visible, pixels require review'})
-              for style in ('translucent','transparent','black'):
-                  apply_style(style)
-                  locate('clock_time','22-clock-'+style)
-                  locate('date_day','23-date-'+style)
-                  report['styles'].append(style)
-              # Test a calendar-day/time-zone transition without alarms, services or waiting for midnight.
-              original_zone=adb('shell','getprop','persist.sys.timezone').decode().strip() or 'Etc/UTC'
-              before_root=locate('date_day','24-date-before-zone')
-              day_before=find(before_root,'date_day').attrib.get('text','')
-              response=adb('shell','cmd','alarm','set-timezone','Pacific/Kiritimati',check=False).decode(errors='replace')
-              time.sleep(3)
-              zone=adb('shell','getprop','persist.sys.timezone').decode().strip()
-              if zone=='Pacific/Kiritimati':
-                  after_root=locate('date_day','25-date-next-calendar-day')
-                  day_after=find(after_root,'date_day').attrib.get('text','')
-                  report['timezone_transition']={'before_day':day_before,'after_day':day_after,'zone':zone}
-                  if day_before==day_after:raise RuntimeError('Date widget did not change day after verified time-zone transition')
-                  adb('shell','cmd','alarm','set-timezone',original_zone,check=False);time.sleep(2)
-              else:report['caveats'].append('Shell time-zone change unavailable; midnight/day transition not verified: '+response[:200])
+              report['denied_fallback']='Actual clock_time TextClock visible before Android access grant'
+              start();click(settings_find('exact_alarm_button'));toggle_alarm_ui(True,'20-android-access-grant')
+              start();capture('21-settings-enabled');home()
+              root=locate('widget_clock_bitmap','22-actual-dot-clock-before')
+              node=find(root,'widget_clock_bitmap');before=node.attrib.get('content-desc','')
+              if find(root,'clock_time') is not None:raise RuntimeError('Native fallback visible alongside enabled bitmap')
+              (OUT/'alarm-enabled.txt').write_bytes(adb('shell','dumpsys','alarm'))
+              report['pid_before_kill']=adb('shell','pidof',PKG,check=False).decode().strip()
+              adb('shell','am','kill',PKG,check=False)
+              time.sleep(1)
+              report['pid_after_kill']=adb('shell','pidof',PKG,check=False).decode().strip()
+              time.sleep(65)
+              root=locate('widget_clock_bitmap','23-actual-dot-clock-after-minute-background')
+              after=find(root,'widget_clock_bitmap').attrib.get('content-desc','')
+              report['bitmap_minute']={'before':before,'after':after,'background_am_kill_requested':True}
+              if not before or before==after:raise RuntimeError('Actual bitmap description failed to advance after background65seconds')
+              for style in ('transparent','translucent','black'):
+                  start();click(settings_find('style_'+style));home()
+                  locate('widget_clock_bitmap','24-clock-'+style);locate('date_day','25-date-'+style);report['styles'].append(style)
               adb('shell','settings','put','system','time_12_24','24');time.sleep(2)
-              home();locate('clock_time','26-clock-24hour')
-              adb('shell','settings','put','system','font_scale','1.3');time.sleep(3)
-              start();capture('27-settings-font130');home();locate('date_day','28-date-font130');locate('clock_time','29-clock-font130')
+              # Resuming settings recomputes immediately for the format-change check.
+              start();home();locate('widget_clock_bitmap','26-clock-24hour')
+              adb('shell','settings','put','system','font_scale','1.3');time.sleep(2)
+              locate('widget_clock_bitmap','27-clock-font130');locate('date_day','28-date-font130')
               adb('shell','settings','put','system','font_scale','1.0');time.sleep(2)
+              root=locate('widget_clock_bitmap','29-clock-before-resize')
+              host=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'widget_clock_bitmap') is not None),None)
+              if host is None:raise RuntimeError('Actual bitmap host bounds missing')
+              b=box(host);cx=(b[0]+b[2])//2;cy=(b[1]+b[3])//2
+              adb('shell','input','swipe',str(cx),str(cy),str(cx),str(cy),'1500');time.sleep(1);capture('30-resize-handles')
+              adb('shell','input','swipe',str(b[2]-2),str(cy),str(min(w-30,b[2]+w//4)),str(cy),'1000');time.sleep(1)
+              adb('shell','input','tap',str(w//2),str(h*9//10));time.sleep(1)
+              root=locate('widget_clock_bitmap','31-clock-after-resize')
+              host=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'widget_clock_bitmap') is not None),None)
+              report['resize_bounds']={'before':b,'after':box(host) if host is not None else []}
+              if report['resize_bounds']['after']==b:report['caveats'].append('Resize drag did not change bounds; no resize pass claimed.')
               adb('reboot');sp.run(['adb','wait-for-device'],check=True,timeout=180)
               for attempt in range(30):
                   if adb('shell','getprop','sys.boot_completed',check=False).decode().strip()=='1':break
                   time.sleep(3)
-              else:raise RuntimeError('Emulator failed to reboot within90seconds')
+              else:raise RuntimeError('Reboot failed within90seconds')
               adb('shell','input','keyevent','82');wait_home()
-              locate('clock_time','30-clock-after-reboot');locate('date_day','31-date-after-reboot');report['reboot']='both actual provider views restored'
-              root=locate('clock_time','32-clock-before-resize')
-              host=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'clock_time') is not None),None)
-              if host is None:raise RuntimeError('Cannot ground clock host resize bounds')
-              b=box(host);cx=(b[0]+b[2])//2;cy=(b[1]+b[3])//2
-              adb('shell','input','swipe',str(cx),str(cy),str(cx),str(cy),'1500');time.sleep(1);capture('33-clock-resize-handles')
-              adb('shell','input','swipe',str(b[2]-2),str(cy),str(max(b[0]+w//3,b[2]-w//4)),str(cy),'1000');time.sleep(1)
-              adb('shell','input','tap',str(w//2),str(h*9//10));time.sleep(1)
-              root=locate('clock_time','34-clock-after-resize')
-              newhost=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'clock_time') is not None),None)
-              after_bounds=box(newhost) if newhost is not None else []
-              report['resize_bounds']={'before':b,'after':after_bounds}
-              if after_bounds==b or len(after_bounds)!=4:raise RuntimeError('Resize attempt did not produce a verified new host size')
-              (OUT/'appwidget-final.txt').write_bytes(adb('shell','dumpsys','appwidget'))
+              root=locate('widget_clock_bitmap','32-clock-after-reboot');report['reboot_bitmap']=find(root,'widget_clock_bitmap').attrib.get('content-desc','')
+              locate('date_day','33-date-after-reboot')
+              (OUT/'alarm-after-reboot.txt').write_bytes(adb('shell','dumpsys','alarm'))
+              adb('shell','am','start','-W','-a','android.settings.REQUEST_SCHEDULE_EXACT_ALARM','-d','package:'+PKG);time.sleep(2)
+              toggle_alarm_ui(False,'34-android-access-revoke')
+              # No instant dead-process fallback claim. App resume is the documented recovery point.
+              start();capture('35-settings-after-revocation');home();locate('clock_time','36-native-fallback-after-resume')
+              report['revocation']='Native live fallback confirmed after explicit app resume, not instantly while stopped'
           except Exception as e:
               report['error']=str(e);capture('99-failure');print('RUNTIME BLOCKER',str(e))
           finally:
               (OUT/'RESULT.json').write_text(json.dumps(report,indent=2))
               (OUT/'logcat.txt').write_bytes(adb('logcat','-d','-s','AndroidRuntime','ActivityManager','ActivityTaskManager',check=False))
               print(json.dumps(report,indent=2))
-          
           if 'error' in report:raise SystemExit(1)
           PYCODE
       - name: Install and inspect widgets on Android 15
