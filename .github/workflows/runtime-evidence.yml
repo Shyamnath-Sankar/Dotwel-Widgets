@@ -9,11 +9,11 @@ concurrency:
 jobs:
   runtime:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: agent/live-date-45044779859
+          ref: 0bc4988452e170683583efc3a262c872e3388650
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -74,7 +74,23 @@ jobs:
           def home():
               adb('shell','input','keyevent','3');time.sleep(2)
           
-          report={'install':False,'settings':[], 'placed':[], 'caveats':['Screenshots require human review. No resize, midnight or reboot test claimed.']}
+          def locate(expected,name):
+              root=capture(name)
+              if find(root,expected) is not None:return root
+              for i,direction in enumerate(('left','right','right')):
+                  xa,xb=(w*8//10,w*2//10) if direction=='left' else (w*2//10,w*8//10)
+                  adb('shell','input','swipe',str(xa),str(h//2),str(xb),str(h//2),'450');time.sleep(1)
+                  root=capture(name+'-page-'+str(i))
+                  if find(root,expected) is not None:return root
+              raise RuntimeError('Actual provider view not visible on bounded HOME pages: '+expected)
+          
+          def apply_style(style):
+              start();root=capture('style-controls-'+style)
+              n=find(root,'style_'+style)
+              if n is None:raise RuntimeError('Style control missing '+style)
+              click(n);home()
+          
+          report={'install':False,'settings':[], 'placed':[], 'styles':[], 'caveats':['Screenshots require independent pixel review. Native platform behavior, not every OEM host, is tested.']}
           try:
               adb('shell','input','keyevent','82');wait_home()
               print(adb('install','-r','checkpoints/dotwel-widgets-polish-debug.apk').decode());report['install']=True
@@ -91,10 +107,13 @@ jobs:
               w,h=size[-2:];print('screen',w,h)
               for idx,label in enumerate(('Dotwel Clock','Dotwel Date')):
                   home()
-                  x,y=w//2,h//3
+                  # Inspected API35 Pixel7 HOME has blank space below the first clock at55% height.
+                  # The old one-third-height coordinate was inside the already-placed clock.
+                  x,y=w//2,h*55//100
                   adb('shell','input','swipe',str(x),str(y),str(x),str(y),'1400');time.sleep(1)
-                  root=capture('10-menu-'+str(idx));n=find(root,'Widgets')
-                  if n is None:raise RuntimeError('Home Widgets menu not visible')
+                  root=capture('10-menu-'+str(idx))
+                  n=next((n for n in root.iter('node') if n.attrib.get('package','')=='com.google.android.apps.nexuslauncher' and n.attrib.get('text','')=='Widgets' and n.attrib.get('resource-id','').endswith('/bubble_text')),None)
+                  if n is None:raise RuntimeError('Exact Pixel HOME Widgets menu not visible')
                   click(n);root=capture('11-picker-'+str(idx))
                   search=find(root,'widgets_search_bar_edit_text')
                   if search is not None:
@@ -114,19 +133,62 @@ jobs:
                   if add is None:add=next((n for n in root.iter('node') if n.attrib.get('text','').lower()=='add'),None)
                   if add is not None:click(add)
                   else:adb('shell','input','draganddrop',str(sx),str(sy),str(w//2),str(h*(3 if idx==0 else 6)//10),'1800')
-                  time.sleep(2);adb('shell','input','keyevent','4');time.sleep(1);root=capture('15-home-after-'+str(idx))
+                  time.sleep(2);adb('shell','input','keyevent','4');time.sleep(1)
                   expected='clock_time' if idx==0 else 'date_day'
-                  if find(root,expected) is None:raise RuntimeError('Placed widget view not visible: '+expected)
+                  root=locate(expected,'15-home-after-'+str(idx))
                   if idx==0:
-                      time.sleep(65);capture('16-clock-after-minute')
+                      before=find(root,expected).attrib.get('text','')
+                      time.sleep(65);after_root=capture('16-clock-after-minute');after=find(after_root,expected)
+                      after=after.attrib.get('text','') if after is not None else ''
+                      report['clock_minute_text']={'before':before,'after':after}
+                      if not before or not after or before==after:raise RuntimeError('Visible clock did not advance after65seconds')
                   dump=adb('shell','dumpsys','appwidget').decode(errors='replace')
                   (OUT/('appwidget-'+str(idx)+'.txt')).write_text(dump)
-                  if PKG not in dump:raise RuntimeError('Provider not recorded in appwidget service')
-                  report['placed'].append({'requested':label,'status':'provider view present, independent pixel inspection required'})
-              time.sleep(65);capture('20-home-after-minute')
-              start();root=capture('21-settings-before-style');n=find(root,'style_translucent')
-              if n is not None:click(n)
-              home();capture('22-home-translucent')
+                  report['placed'].append({'requested':label,'status':'actual provider view visible, pixels require review'})
+              for style in ('translucent','transparent','black'):
+                  apply_style(style)
+                  locate('clock_time','22-clock-'+style)
+                  locate('date_day','23-date-'+style)
+                  report['styles'].append(style)
+              # Test a calendar-day/time-zone transition without alarms, services or waiting for midnight.
+              original_zone=adb('shell','getprop','persist.sys.timezone').decode().strip() or 'Etc/UTC'
+              before_root=locate('date_day','24-date-before-zone')
+              day_before=find(before_root,'date_day').attrib.get('text','')
+              response=adb('shell','cmd','alarm','set-timezone','Pacific/Kiritimati',check=False).decode(errors='replace')
+              time.sleep(3)
+              zone=adb('shell','getprop','persist.sys.timezone').decode().strip()
+              if zone=='Pacific/Kiritimati':
+                  after_root=locate('date_day','25-date-next-calendar-day')
+                  day_after=find(after_root,'date_day').attrib.get('text','')
+                  report['timezone_transition']={'before_day':day_before,'after_day':day_after,'zone':zone}
+                  if day_before==day_after:raise RuntimeError('Date widget did not change day after verified time-zone transition')
+                  adb('shell','cmd','alarm','set-timezone',original_zone,check=False);time.sleep(2)
+              else:report['caveats'].append('Shell time-zone change unavailable; midnight/day transition not verified: '+response[:200])
+              adb('shell','settings','put','system','time_12_24','24');time.sleep(2)
+              home();locate('clock_time','26-clock-24hour')
+              adb('shell','settings','put','system','font_scale','1.3');time.sleep(3)
+              start();capture('27-settings-font130');home();locate('date_day','28-date-font130');locate('clock_time','29-clock-font130')
+              adb('shell','settings','put','system','font_scale','1.0');time.sleep(2)
+              adb('reboot');sp.run(['adb','wait-for-device'],check=True,timeout=180)
+              for attempt in range(30):
+                  if adb('shell','getprop','sys.boot_completed',check=False).decode().strip()=='1':break
+                  time.sleep(3)
+              else:raise RuntimeError('Emulator failed to reboot within90seconds')
+              adb('shell','input','keyevent','82');wait_home()
+              locate('clock_time','30-clock-after-reboot');locate('date_day','31-date-after-reboot');report['reboot']='both actual provider views restored'
+              root=locate('clock_time','32-clock-before-resize')
+              host=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'clock_time') is not None),None)
+              if host is None:raise RuntimeError('Cannot ground clock host resize bounds')
+              b=box(host);cx=(b[0]+b[2])//2;cy=(b[1]+b[3])//2
+              adb('shell','input','swipe',str(cx),str(cy),str(cx),str(cy),'1500');time.sleep(1);capture('33-clock-resize-handles')
+              adb('shell','input','swipe',str(b[2]-2),str(cy),str(max(b[0]+w//3,b[2]-w//4)),str(cy),'1000');time.sleep(1)
+              adb('shell','input','tap',str(w//2),str(h*9//10));time.sleep(1)
+              root=locate('clock_time','34-clock-after-resize')
+              newhost=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'clock_time') is not None),None)
+              after_bounds=box(newhost) if newhost is not None else []
+              report['resize_bounds']={'before':b,'after':after_bounds}
+              if after_bounds==b or len(after_bounds)!=4:raise RuntimeError('Resize attempt did not produce a verified new host size')
+              (OUT/'appwidget-final.txt').write_bytes(adb('shell','dumpsys','appwidget'))
           except Exception as e:
               report['error']=str(e);capture('99-failure');print('RUNTIME BLOCKER',str(e))
           finally:
@@ -137,7 +199,7 @@ jobs:
           if 'error' in report:raise SystemExit(1)
           PYCODE
       - name: Install and inspect widgets on Android 15
-        timeout-minutes: 12
+        timeout-minutes: 17
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
