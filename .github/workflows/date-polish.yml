@@ -1,0 +1,79 @@
+name: Live date preview polish
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: agent/build-the-first-tangible-dotwe
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/live-date-${GITHUB_RUN_ID}"
+      - name: Make only the live full-date preview fix
+        timeout-minutes: 9
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          cat > /tmp/widget-task.txt <<'TASK'
+          Work only in Dotwel Widgets, following AGENTS.md. The app already builds and settings renders. Fix one confirmed UI bug: activity_main.xml has a static preview_date_caption TextView with hardcoded weekday/month. Replace this with a genuinely live TextClock full-date preview including day-of-month, weekday, month and year, respecting locale and time-zone changes without alarm/service permissions. Use a legible single-line or wrapping layout without clipping at normal and large font scales. Keep existing dot typeface, clock, styles and settings intact. Remove the stale hardcoded preview-date string if unused. Increment app version to versionCode2/versionName0.1.1. No other feature, API, dependency, asset, permission, package, minSdk, targetSdk, or workflow change. No emulator work in this coding step. Add a concise source/state note stating actual checks and that home-widget placement/update/resize is still under separate runtime validation. Keep repository private. Commit and push this small fix if finished, otherwise leave honest preserved progress. Do not call the app finished or Play-ready. Do not save this prompt into the repository.
+          TASK
+          timeout --kill-after=15s 480s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          bash ./gradlew assembleDebug --no-daemon
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: live full-date preview and preserved debug candidate'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
