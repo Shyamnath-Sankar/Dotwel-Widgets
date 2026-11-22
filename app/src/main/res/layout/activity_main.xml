@@ -41,9 +41,10 @@
         <FrameLayout
             android:id="@+id/preview_card"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_widget_black"
+            android:minHeight="220dp"
             android:padding="16dp">
 
             <LinearLayout
@@ -73,13 +74,16 @@
                     android:textColor="@color/widget_ink"
                     android:textSize="58sp" />
 
-                <TextView
+                <TextClock
+                    android:id="@+id/preview_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/dotgothic16_regular"
+                    android:format12Hour="EEEE, MMMM d, yyyy"
+                    android:format24Hour="EEEE, MMMM d, yyyy"
                     android:gravity="center"
+                    android:includeFontPadding="false"
                     android:letterSpacing="0.04"
-                    android:text="@string/preview_date_caption"
                     android:textColor="@color/widget_muted"
                     android:textSize="13sp" />
 

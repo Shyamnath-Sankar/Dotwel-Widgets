@@ -3,7 +3,6 @@
     <string name="app_name">Dotwel Widgets</string>
     <string name="settings_subtitle">Dot-matrix clock and date for your home screen.</string>
     <string name="preview_label">LIVE PREVIEW</string>
-    <string name="preview_date_caption">Sunday, November</string>
     <string name="style_label">WIDGET STYLE</string>
     <string name="style_black">Black</string>
     <string name="style_translucent">Translucent</string>

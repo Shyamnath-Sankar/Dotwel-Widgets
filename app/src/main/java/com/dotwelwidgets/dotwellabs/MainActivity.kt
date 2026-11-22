@@ -3,17 +3,21 @@ package com.dotwelwidgets.dotwellabs
 import android.app.Activity
 import android.os.Build
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.View
 import android.view.WindowInsets
 import android.widget.Button
 import android.widget.RadioGroup
+import android.widget.TextClock
 import android.widget.Toast
+import java.util.Locale
 
 class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         applySystemBarInsets()
+        applyLocaleDateFormat()
 
         val preview = findViewById<View>(R.id.preview_card)
         val group = findViewById<RadioGroup>(R.id.style_group)
@@ -32,6 +36,14 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.refresh_widgets).setOnClickListener {
             WidgetUpdater.updateAll(this)
             Toast.makeText(this, R.string.widgets_refreshed, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun applyLocaleDateFormat() {
+        val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), "yMMMMEEEEd")
+        findViewById<TextClock>(R.id.preview_date).apply {
+            format12Hour = pattern
+            format24Hour = pattern
         }
     }
 
