@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: checkpoint/debug-45039696593
+          ref: agent/live-date-45044779859
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -77,7 +77,7 @@ jobs:
           report={'install':False,'settings':[], 'placed':[], 'caveats':['Screenshots require human review. No resize, midnight or reboot test claimed.']}
           try:
               adb('shell','input','keyevent','82');wait_home()
-              print(adb('install','-r','checkpoints/dotwel-widgets-0.1.0-debug.apk').decode());report['install']=True
+              print(adb('install','-r','checkpoints/dotwel-widgets-polish-debug.apk').decode());report['install']=True
               wait_home();start();root=capture('01-settings-black')
               if recover_pixel_dialog(root):start();root=capture('01-settings-black')
               if find(root,'style_black') is None: raise RuntimeError('Expected settings controls not visible')
@@ -105,23 +105,24 @@ jobs:
                       if b[3]>h*0.8:
                           adb('shell','input','swipe',str(w//2),str(h*8//10),str(w//2),str(h*4//10),'500');time.sleep(1);root=capture('12-scrolled-'+str(idx));app=find(root,'Dotwel Widgets')
                       if app is not None:click(app);root=capture('13-expanded-'+str(idx))
-                  item=find(root,label)
-                  if item is None:raise RuntimeError('Widget label missing: '+label)
-                  click(item);root=capture('14-widget-selected-'+str(idx))
+                  cell=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('WidgetCell') and n.attrib.get('content-desc','').startswith(label+' widget,')),None)
+                  if cell is None:raise RuntimeError('Exact WidgetCell missing: '+label)
+                  b=box(cell);sx=(b[0]+b[2])//2;sy=(b[1]+b[3])//2
+                  click(cell);root=capture('14-widget-selected-'+str(idx))
                   add=find(root,'Add to home screen')
-                  if add is None: add=find(root,'Add widget')
-                  if add is None: add=next((n for n in root.iter('node') if n.attrib.get('text','').lower()=='add'),None)
+                  if add is None:add=find(root,'Add widget')
+                  if add is None:add=next((n for n in root.iter('node') if n.attrib.get('text','').lower()=='add'),None)
                   if add is not None:click(add)
-                  else:
-                      item=find(root,label)
-                      if item is None:raise RuntimeError('No selected widget to drag')
-                      b=box(item);sx=(b[0]+b[2])//2;sy=max(100,b[1]-100)
-                      adb('shell','input','draganddrop',str(sx),str(sy),str(w//2),str(h*(3 if idx==0 else 6)//10),'1800')
-                  time.sleep(2);home();root=capture('15-home-after-'+str(idx))
+                  else:adb('shell','input','draganddrop',str(sx),str(sy),str(w//2),str(h*(3 if idx==0 else 6)//10),'1800')
+                  time.sleep(2);adb('shell','input','keyevent','4');time.sleep(1);root=capture('15-home-after-'+str(idx))
+                  expected='clock_time' if idx==0 else 'date_day'
+                  if find(root,expected) is None:raise RuntimeError('Placed widget view not visible: '+expected)
+                  if idx==0:
+                      time.sleep(65);capture('16-clock-after-minute')
                   dump=adb('shell','dumpsys','appwidget').decode(errors='replace')
                   (OUT/('appwidget-'+str(idx)+'.txt')).write_text(dump)
                   if PKG not in dump:raise RuntimeError('Provider not recorded in appwidget service')
-                  report['placed'].append({'requested':label,'status':'attempted, inspect screenshot and service dump'})
+                  report['placed'].append({'requested':label,'status':'provider view present, independent pixel inspection required'})
               time.sleep(65);capture('20-home-after-minute')
               start();root=capture('21-settings-before-style');n=find(root,'style_translucent')
               if n is not None:click(n)
