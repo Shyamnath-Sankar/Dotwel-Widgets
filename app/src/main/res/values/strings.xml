@@ -5,7 +5,7 @@
     <string name="preview_label">LIVE PREVIEW</string>
     <string name="clock_format_12">hh\nmm</string>
     <string name="clock_format_24">HH\nmm</string>
-    <string name="preview_note">Previews are rendered live in the app. When Alarms &amp; reminders access is enabled, placed clocks use the dotted bitmap updated each minute; otherwise they use the live system text clock.</string>
+    <string name="preview_note">Previews are rendered live in the app. When Alarms &amp; reminders access is enabled, placed clocks use the dotted bitmap updated about once a minute; deep idle can delay an update. Otherwise they use the live system text clock.</string>
     <string name="clock_preview_description">Rendered circular-dot clock preview</string>
     <string name="date_preview_description">Rendered serif date preview</string>
     <string name="clock_content_description">Dotwel clock, %1$s</string>
@@ -13,19 +13,19 @@
     <string name="style_black">Black</string>
     <string name="style_translucent">Translucent</string>
     <string name="style_transparent">Transparent</string>
-    <string name="exact_alarm_label">PRECISE MINUTE UPDATES</string>
-    <string name="exact_alarm_status_enabled">Alarms &amp; reminders access is enabled. Placed clocks draw the circular-dot bitmap and refresh each minute.</string>
+    <string name="exact_alarm_label">MINUTE UPDATES</string>
+    <string name="exact_alarm_status_enabled">Alarms &amp; reminders access is enabled. Placed clocks draw the circular-dot bitmap and refresh about once a minute. Deep idle can delay an update.</string>
     <string name="exact_alarm_status_disabled">Alarms &amp; reminders access is off. Placed clocks use the live system text clock. This optional access only enables the dotted minute-update bitmap.</string>
     <string name="exact_alarm_status_always">This Android version does not need Alarms &amp; reminders access for dotted minute updates.</string>
-    <string name="exact_alarm_enable">Enable precise minute updates</string>
-    <string name="exact_alarm_explainer">Tap to open this app\x2019s Alarms &amp; reminders settings in Android; the app never grants access itself. You can revoke it at any time. Android cancels the app\x2019s updates when access is revoked, so a placed clock falls back to the live system text clock on its next update or resize.</string>
+    <string name="exact_alarm_enable">Enable minute updates</string>
+    <string name="exact_alarm_explainer">Tap to open the Alarms and reminders settings for this app in Android; the app never grants access itself. You can revoke it at any time. Android cancels updates for this app when access is revoked, so a placed clock falls back to the live system text clock on its next update or resize. Updates are best-effort: deep idle or Doze can delay them.</string>
     <string name="exact_alarm_unavailable">Android settings could not be opened. Open App info &gt; Alarms &amp; reminders for Dotwel Widgets.</string>
     <string name="refresh_widgets">Refresh widgets</string>
     <string name="widgets_refreshed">Widgets refreshed</string>
     <string name="settings_hint">Long-press your home screen, open Widgets, then choose Dotwel Clock or Dotwel Date. Resize either widget from its handles. Style changes apply to every placed widget.</string>
     <string name="attribution_short">Original dot-matrix geometry and platform serif. Design inspired by Nothing OS; this app is not affiliated with Nothing Technology Limited.</string>
     <string name="widget_clock_label">Dotwel Clock</string>
-    <string name="widget_clock_description">A live stacked-hours-and-minutes clock. Dotted bitmap updates each minute when Alarms &amp; reminders access is enabled, otherwise the system text clock is shown.</string>
+    <string name="widget_clock_description">A live stacked-hours-and-minutes clock. The dotted bitmap updates about once a minute when Alarms &amp; reminders access is enabled; deep idle can delay an update. Otherwise the system text clock is shown.</string>
     <string name="widget_date_label">Dotwel Date</string>
     <string name="widget_date_description">A live serif date with a red abbreviated weekday and black, translucent or transparent styling.</string>
 </resources>

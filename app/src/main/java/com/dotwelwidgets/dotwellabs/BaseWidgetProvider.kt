@@ -5,8 +5,11 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.os.Build
 import android.provider.AlarmClock
 import android.text.format.DateFormat
+import android.util.SizeF
 import android.view.View
 import android.widget.RemoteViews
 import java.util.Calendar
@@ -130,28 +133,63 @@ class ClockWidgetProvider : BaseWidgetProvider() {
     }
 
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
-        val views = super.buildViews(context, appWidgetId)
-        val now = Calendar.getInstance()
-        val bitmap = if (ClockTickScheduler.hasExactAccess(context)) {
+        if (ClockTickScheduler.hasExactAccess(context)) {
             val manager = AppWidgetManager.getInstance(context)
             val options = manager.getAppWidgetOptions(appWidgetId)
-            ClockWidgetRenderer.render(context, options, WidgetPrefs.style(context), now)
-        } else {
-            null
+            val now = Calendar.getInstance()
+            val style = WidgetPrefs.style(context)
+            val exactSizes = ClockWidgetRenderer.exactSizesFromOptions(options)
+            val targets = ClockWidgetRenderer.targets(context, options, exactSizes)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && exactSizes.isNotEmpty()) {
+                val mapping = LinkedHashMap<SizeF, RemoteViews>()
+                targets.forEach { target ->
+                    val bitmap = ClockWidgetRenderer.render(
+                        context,
+                        target.widthPx,
+                        target.heightPx,
+                        style,
+                        now,
+                    ) ?: return@forEach
+                    mapping[target.hostSize] = bitmapViews(context, appWidgetId, bitmap, now)
+                }
+                if (mapping.isNotEmpty()) {
+                    return RemoteViews(mapping)
+                }
+            } else {
+                val target = targets.firstOrNull()
+                val bitmap = target?.let {
+                    ClockWidgetRenderer.render(context, it.widthPx, it.heightPx, style, now)
+                }
+                if (bitmap != null) {
+                    return bitmapViews(context, appWidgetId, bitmap, now)
+                }
+            }
         }
-        if (bitmap != null) {
-            views.setViewVisibility(R.id.widget_clock_bitmap, View.VISIBLE)
-            views.setImageViewBitmap(R.id.widget_clock_bitmap, bitmap)
-            views.setViewVisibility(R.id.clock_time, View.GONE)
-            val spokenTime = DateFormat.getTimeFormat(context).format(now.time)
-            views.setContentDescription(
-                R.id.widget_clock_bitmap,
-                context.getString(R.string.clock_content_description, spokenTime),
-            )
-        } else {
-            views.setViewVisibility(R.id.widget_clock_bitmap, View.GONE)
-            views.setViewVisibility(R.id.clock_time, View.VISIBLE)
-        }
+        return fallbackViews(context, appWidgetId)
+    }
+
+    private fun bitmapViews(
+        context: Context,
+        appWidgetId: Int,
+        bitmap: Bitmap,
+        now: Calendar,
+    ): RemoteViews {
+        val views = super.buildViews(context, appWidgetId)
+        views.setViewVisibility(R.id.widget_clock_bitmap, View.VISIBLE)
+        views.setImageViewBitmap(R.id.widget_clock_bitmap, bitmap)
+        views.setViewVisibility(R.id.clock_time, View.GONE)
+        val spokenTime = DateFormat.getTimeFormat(context).format(now.time)
+        views.setContentDescription(
+            R.id.widget_clock_bitmap,
+            context.getString(R.string.clock_content_description, spokenTime),
+        )
+        return views
+    }
+
+    private fun fallbackViews(context: Context, appWidgetId: Int): RemoteViews {
+        val views = super.buildViews(context, appWidgetId)
+        views.setViewVisibility(R.id.widget_clock_bitmap, View.GONE)
+        views.setViewVisibility(R.id.clock_time, View.VISIBLE)
         return views
     }
 }
