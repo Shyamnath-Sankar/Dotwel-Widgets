@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Dotwel Widgets</string>
-    <string name="settings_subtitle">Dot-matrix clock and date for your home screen.</string>
+    <string name="settings_subtitle">Circular-dot clock and serif date for your home screen.</string>
     <string name="preview_label">LIVE PREVIEW</string>
+    <string name="clock_format_12">hh\nmm</string>
+    <string name="clock_format_24">HH\nmm</string>
+    <string name="preview_note">Previews are rendered live in the app. Placed widgets use the system clock so they stay accurate without alarms or extra permissions.</string>
+    <string name="clock_preview_description">Rendered circular-dot clock preview</string>
+    <string name="date_preview_description">Rendered serif date preview</string>
     <string name="style_label">WIDGET STYLE</string>
     <string name="style_black">Black</string>
     <string name="style_translucent">Translucent</string>
@@ -10,9 +15,9 @@
     <string name="refresh_widgets">Refresh widgets</string>
     <string name="widgets_refreshed">Widgets refreshed</string>
     <string name="settings_hint">Long-press your home screen, open Widgets, then choose Dotwel Clock or Dotwel Date. Resize either widget from its handles. Style changes apply to every placed widget.</string>
-    <string name="attribution_short">Typeface: DotGothic16 (SIL OFL 1.1). Design inspired by Nothing OS; this app is not affiliated with Nothing Technology Limited.</string>
+    <string name="attribution_short">Original dot-matrix geometry and platform serif. Design inspired by Nothing OS; this app is not affiliated with Nothing Technology Limited.</string>
     <string name="widget_clock_label">Dotwel Clock</string>
-    <string name="widget_clock_description">A dot-matrix digital clock with black, translucent or transparent styling.</string>
+    <string name="widget_clock_description">A live stacked-hours-and-minutes clock with black, translucent or transparent styling.</string>
     <string name="widget_date_label">Dotwel Date</string>
-    <string name="widget_date_description">A dot-matrix date widget with black, translucent or transparent styling.</string>
+    <string name="widget_date_description">A live serif date with a red abbreviated weekday and black, translucent or transparent styling.</string>
 </resources>

@@ -4,7 +4,7 @@
     android:initialLayout="@layout/widget_date"
     android:minHeight="110dp"
     android:minResizeHeight="70dp"
-    android:minResizeWidth="90dp"
+    android:minResizeWidth="70dp"
     android:minWidth="110dp"
     android:previewLayout="@layout/widget_date"
     android:resizeMode="horizontal|vertical"

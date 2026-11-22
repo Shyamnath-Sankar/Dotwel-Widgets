@@ -4,53 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_widget_black"
-    android:padding="12dp">
+    android:padding="10dp">
 
-    <LinearLayout
+    <TextClock
+        android:id="@+id/date_day"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:autoSizeMaxTextSize="104sp"
+        android:autoSizeMinTextSize="32sp"
+        android:autoSizeStepGranularity="2sp"
+        android:autoSizeTextType="uniform"
+        android:fontFamily="serif"
+        android:format12Hour="d"
+        android:format24Hour="d"
         android:gravity="center"
-        android:orientation="vertical">
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:padding="0dp"
+        android:textColor="@color/widget_ink"
+        android:textSize="84sp" />
 
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="8dp"
-            android:layout_marginBottom="4dp"
-            android:contentDescription="@null"
-            android:src="@drawable/dot_accent" />
-
-        <TextClock
-            android:id="@+id/date_day"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autoSizeMaxTextSize="84sp"
-            android:autoSizeMinTextSize="28sp"
-            android:autoSizeStepGranularity="2sp"
-            android:autoSizeTextType="uniform"
-            android:fontFamily="@font/dotgothic16_regular"
-            android:format12Hour="d"
-            android:format24Hour="d"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:textColor="@color/widget_ink"
-            android:textSize="56sp" />
-
-        <TextClock
-            android:id="@+id/date_weekday"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/dotgothic16_regular"
-            android:format12Hour="EEEE, MMMM"
-            android:format24Hour="EEEE, MMMM"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:letterSpacing="0.04"
-            android:maxLines="1"
-            android:textColor="@color/widget_muted"
-            android:textSize="13sp" />
-
-    </LinearLayout>
+    <TextClock
+        android:id="@+id/date_weekday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:fontFamily="serif"
+        android:format12Hour="EEE"
+        android:format24Hour="EEE"
+        android:gravity="end"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:padding="0dp"
+        android:textColor="@color/dot_accent"
+        android:textSize="18sp" />
 
 </FrameLayout>
