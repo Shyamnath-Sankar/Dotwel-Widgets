@@ -1,0 +1,19 @@
+{
+  "install": true,
+  "placed": [
+    {
+      "requested": "Dotwel Clock",
+      "status": "actual provider view visible, pixels require review"
+    },
+    {
+      "requested": "Dotwel Date",
+      "status": "actual provider view visible, pixels require review"
+    }
+  ],
+  "styles": [],
+  "caveats": [
+    "Actual screenshots require independent pixel review. Idle precision and instant fallback after external revocation are not claimed."
+  ],
+  "denied_fallback": "Actual clock_time TextClock visible before Android access grant",
+  "error": "Android alarm-access switch missing"
+}
