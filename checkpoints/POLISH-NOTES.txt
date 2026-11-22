@@ -1,0 +1,1 @@
+Debug candidate. Runtime appearance and home widget behavior require independent review.
