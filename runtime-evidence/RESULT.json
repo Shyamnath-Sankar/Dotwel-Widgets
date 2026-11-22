@@ -1,0 +1,14 @@
+{
+  "install": true,
+  "settings": [
+    "black",
+    "translucent",
+    "transparent",
+    "black"
+  ],
+  "placed": [],
+  "caveats": [
+    "Screenshots require human review. No resize, midnight or reboot test claimed."
+  ],
+  "error": "Widget label missing: Dotwel Clock"
+}
