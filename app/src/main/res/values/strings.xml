@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Dotwel Widgets</string>
-    <string name="settings_subtitle">Offline clock, date, world, battery and KWGT date/time widgets. Debug candidate.</string>
+    <string name="settings_subtitle">Offline clock, calendar, battery and quotes widgets. Pick a category, preview the real renderer, then add. Debug candidate.</string>
 
     <string name="gallery_label">AVAILABLE NOW</string>
     <string name="gallery_available_count">AVAILABLE NOW · %1$d OF %2$d</string>
@@ -133,11 +133,11 @@
     <string name="pin_unavailable_title">Place widget manually</string>
     <string name="pin_unavailable_message">Your launcher did not open a placement prompt. You can add the widget manually:\n\n1. Go to your home screen.\n2. Long-press an empty area.\n3. Tap Widgets.\n4. Choose Dotwel Widgets.\n5. Pick the widget you want.\n\nNo Alarms &amp; reminders access is needed to place a widget.</string>
     <string name="pin_unavailable_close">Got it</string>
-    <string name="settings_hint">Add from a card. If your launcher shows no prompt, long-press the home screen and choose Widgets.</string>
+    <string name="settings_hint">Tap a category to preview its widgets and add the selected one. If your launcher shows no prompt, long-press the home screen and choose Widgets.</string>
 
     <string name="about_button">About &amp; source credits</string>
     <string name="about_title">About &amp; source credits</string>
-    <string name="about_body">Dotwel Widgets is an independent app. It is not affiliated with, endorsed by, or sponsored by Nothing Technology Limited, OnePlus, Kustom, or the referenced authors. This is a debug candidate, not Play-approved or runtime-verified.\n\nGallery previews use the same renderers as placed widgets. Dotted clocks and styled analog/world previews are bitmaps refreshed about once a minute when optional Alarms &amp; reminders access is on; otherwise the live platform clock is shown. Battery readouts come from the system battery level. The Mini preset has no text layer, so Dotwel adds the real level in its own dot glyphs; no charge state is invented.\n\nAwesomeAWidgets (MIT)\nPinned commit 0fae60722764bda790f89bd94119c6dab854d90e\nCopyright (c) 2026 Sameer Al Sahab.\nAdapted author-written behaviour: NtDraw.SCHEME/color/surface/fit/center/paint/shadow to UpstreamNtDraw.kt; NtDigital.build to NtDigitalRenderer.kt; NtDate.build to NtDateRenderer.kt; NtAnalogBold.build and NtAnalogScale.build to NtAnalogRenderer.kt and BaseWidgetProvider.kt; NtWorld.build to NtWorldRenderer.kt; NtQuotes.build drawing block to NtQuotesRenderer.kt; NtProvider update loop/resize/tap to BaseWidgetProvider.kt; NtStyle to WidgetPrefs.kt; NtTick to MinuteTickScheduler.kt. No smali bytecode, APK resources, fonts or artwork are included.\n\nKWGT-Widgets (MIT)\nPinned commit 96ca27be4cbff35efec5a86c64dd39fd065c958f\nCopyright (c) 2024 Om Gupta.\nAdapted presets: Nothing_Battery.kwgt!preset.json to KwgtBatteryRenderer.kt, BatteryWidgetProvider.kt and sanitized data; Nothing_Battery_Mini.kwgt!preset.json to KwgtBatteryMiniRenderer.kt, BatteryMiniWidgetProvider.kt and sanitized data. Only 3 of 40 presets are implemented; the remaining 37 stay pending or dependency-blocked and are not claimed as imported.\n\nOriginal substitutions: Dotwel\u2019s 5x7 circular-dot glyphs replace upstream fonts. Platform serif and sans-serif-condensed families replace NType, Lettera and Ndot. No upstream screenshots, logos, fonts, presets, APK, or OEM OnePlus code/assets are bundled.\n\nThe exact adapted-file mapping and the 40-preset ledger are retained in docs/ATTRIBUTION.md and docs/KWGT-LEDGER.md.</string>
+    <string name="about_body">Dotwel Widgets is an independent app. It is not affiliated with, endorsed by, or sponsored by Nothing Technology Limited, OnePlus, Kustom, or the referenced authors. This is a debug candidate, not Play-approved or runtime-verified.\n\nCategory previews use the same renderers as placed widgets. Dotted clocks and styled analog/world previews are bitmaps refreshed about once a minute when optional Alarms &amp; reminders access is on; otherwise the live platform clock is shown. Battery readouts come from the system battery level. The Mini preset has no text layer, so Dotwel adds the real level in its own dot glyphs; no charge state is invented.\n\nAwesomeAWidgets (MIT)\nPinned commit 0fae60722764bda790f89bd94119c6dab854d90e\nCopyright (c) 2026 Sameer Al Sahab.\nAdapted author-written behaviour: NtDraw.SCHEME/color/surface/fit/center/paint/shadow to UpstreamNtDraw.kt; NtDigital.build to NtDigitalRenderer.kt; NtDate.build to NtDateRenderer.kt; NtAnalogBold.build and NtAnalogScale.build to NtAnalogRenderer.kt and BaseWidgetProvider.kt; NtWorld.build to NtWorldRenderer.kt; NtQuotes.build drawing block to NtQuotesRenderer.kt; NtProvider update loop/resize/tap to BaseWidgetProvider.kt; NtStyle to WidgetPrefs.kt; NtTick to MinuteTickScheduler.kt. No smali bytecode, APK resources, fonts or artwork are included.\n\nKWGT-Widgets (MIT)\nPinned commit 96ca27be4cbff35efec5a86c64dd39fd065c958f\nCopyright (c) 2024 Om Gupta.\nAdapted presets: Nothing_Battery.kwgt!preset.json to KwgtBatteryRenderer.kt, BatteryWidgetProvider.kt and sanitized data; Nothing_Battery_Mini.kwgt!preset.json to KwgtBatteryMiniRenderer.kt, BatteryMiniWidgetProvider.kt and sanitized data; Nothing_Date_Time.kwgt!preset.json to KwgtDateTimeRenderer.kt, KwgtDateTimeWidgetProvider.kt and sanitized data. Only 3 of 40 presets are implemented; the remaining 37 stay pending or dependency-blocked and are not claimed as imported.\n\nOriginal substitutions: Dotwel\u2019s 5x7 circular-dot glyphs replace upstream fonts. Platform serif and sans-serif-condensed families replace NType, Lettera and Ndot. No upstream screenshots, logos, fonts, presets, APK, or OEM OnePlus code/assets are bundled.\n\nThe exact adapted-file mapping and the 40-preset ledger are retained in docs/ATTRIBUTION.md and docs/KWGT-LEDGER.md.</string>
     <string name="about_licenses">View MIT license texts</string>
     <string name="about_license_title">MIT licenses</string>
     <string name="about_close">Close</string>
@@ -195,4 +195,38 @@
     <string name="category_media">Photos, quotes &amp; live</string>
     <string name="category_kwgt">KWGT source ports</string>
     <string name="category_oem">OnePlus OEM (unavailable)</string>
+
+    <string name="home_categories_label">CATEGORIES</string>
+    <string name="home_ready_summary">%1$d widgets ready · %2$d categories</string>
+    <string name="category_clock">Clock</string>
+    <string name="category_calendar">Calendar</string>
+    <string name="category_battery">Battery</string>
+    <string name="category_quotes">Quotes</string>
+    <string name="category_photos">Photos</string>
+    <string name="category_bluetooth">Bluetooth</string>
+    <string name="category_wifi">Wi-Fi</string>
+    <string name="category_live">Live extras</string>
+    <string name="category_ready_count_format">%1$d ready</string>
+    <string name="category_unavailable_count">0 ready · not available</string>
+    <string name="category_open_format">Open %1$s, %2$d ready</string>
+    <string name="category_unavailable_format">%1$s is not available in this build. 0 widgets ready.</string>
+
+    <string name="sheet_add_widget">Add widget</string>
+    <string name="sheet_add_widget_format">Add %1$s</string>
+    <string name="sheet_size_cells_format">%1$d × %2$d cells · %3$d × %4$d dp minimum</string>
+    <string name="sheet_size_format">%1$d × %2$d dp minimum · resizable</string>
+    <string name="sheet_size_unknown">Resizable widget · size unavailable</string>
+    <string name="sheet_previous">Prev</string>
+    <string name="sheet_next">Next</string>
+    <string name="sheet_previous_description">Previous widget</string>
+    <string name="sheet_next_description">Next widget</string>
+    <string name="sheet_close_description">Close category</string>
+    <string name="sheet_position_format">%1$d of %2$d</string>
+    <string name="sheet_preview_description_format">Preview of %1$s</string>
+    <string name="sheet_hint">Previews use the selected style and current permission mode.</string>
+
+    <string name="kwgt_datetime_access_dialog_title">Styled date &amp; time needs minute updates</string>
+    <string name="kwgt_datetime_access_dialog_message">The styled KWGT date &amp; time bitmap refreshes about once a minute and uses the same optional Alarms &amp; reminders access. Without it, Add places a live date &amp; time widget built from system text clocks. Dotwel never grants access for you.</string>
+    <string name="kwgt_datetime_access_dialog_enable">Enable styled updates</string>
+    <string name="kwgt_datetime_access_dialog_plain">Add live date &amp; time</string>
 </resources>

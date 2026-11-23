@@ -1,5 +1,10 @@
 package com.dotwelwidgets.dotwellabs
 
+import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProviderInfo
+import android.content.ComponentName
+import android.content.Context
+
 enum class WidgetGroup(val labelRes: Int) {
     CLOCKS(R.string.category_clocks),
     TIME(R.string.category_time),
@@ -302,4 +307,121 @@ object WidgetCatalog {
             detailRes = R.string.ledger_pending_weather,
             previewKind = PreviewKind.PLACEHOLDER,
         )
+
+    fun entryById(id: String): CatalogEntry? = entries.firstOrNull { it.id == id }
+
+    fun readyEntries(category: WidgetCategory): List<CatalogEntry> =
+        category.entryIds
+            .mapNotNull(::entryById)
+            .filter { it.state == ImportState.READY && it.providerClass != null }
+
+    fun providerInfo(context: Context, entry: CatalogEntry): AppWidgetProviderInfo? {
+        val provider = entry.providerClass ?: return null
+        val component = ComponentName(context, provider)
+        return AppWidgetManager.getInstance(context)
+            .installedProviders
+            .firstOrNull { it.provider == component }
+    }
+}
+
+/**
+ * Functional HOME categories, deliberately independent of the upstream group
+ * names. Only the first four currently contain ready providers. The remaining
+ * categories stay visible with a truthful zero-ready count so nothing is
+ * silently hidden, but they never invent devices, readings or providers.
+ */
+enum class WidgetCategory(
+    val id: String,
+    val labelRes: Int,
+    val entryIds: List<String>,
+) {
+    CLOCK(
+        "clock",
+        R.string.category_clock,
+        listOf("digital", "analog_bold", "analog_scale", "world"),
+    ),
+    CALENDAR(
+        "calendar",
+        R.string.category_calendar,
+        listOf("date", "kwgt_nothing_date_time"),
+    ),
+    BATTERY(
+        "battery",
+        R.string.category_battery,
+        listOf("kwgt_nothing_battery", "kwgt_nothing_battery_mini"),
+    ),
+    QUOTES(
+        "quotes",
+        R.string.category_quotes,
+        listOf("quotes"),
+    ),
+    WEATHER(
+        "weather",
+        R.string.category_weather,
+        listOf(
+            "wx_circle",
+            "wx_square",
+            "wx_rect",
+            "wx_combo",
+            "wx_sunset",
+            "wx_air",
+            "wx_w1temp",
+            "wx_w1status",
+            "wx_w1rain",
+        ),
+    ),
+    PHOTOS(
+        "photos",
+        R.string.category_photos,
+        listOf("photo_circle", "photo_rect"),
+    ),
+    BLUETOOTH(
+        "bluetooth",
+        R.string.category_bluetooth,
+        emptyList(),
+    ),
+    WIFI(
+        "wifi",
+        R.string.category_wifi,
+        emptyList(),
+    ),
+    LIVE(
+        "live",
+        R.string.category_live,
+        listOf("compass", "snake"),
+    ),
+    OEM(
+        "oem",
+        R.string.category_oem,
+        listOf("oem_clock", "oem_weather", "oem_weather_clock"),
+    );
+
+    val representativeId: String?
+        get() = entryIds.firstOrNull()
+}
+
+object WidgetModeLabels {
+    fun labelRes(context: Context, entry: CatalogEntry): Int {
+        val access = MinuteTickScheduler.hasExactAccess(context)
+        return when (entry.previewKind) {
+            PreviewKind.CLOCK -> if (access) R.string.mode_dotted_clock else R.string.mode_live_clock
+            PreviewKind.ANALOG_BOLD,
+            PreviewKind.ANALOG_SCALE,
+            -> if (access) R.string.mode_styled_analog else R.string.mode_live_analog
+            PreviewKind.WORLD -> if (access) R.string.mode_styled_world else R.string.mode_live_world
+            PreviewKind.DATE -> R.string.mode_date
+            PreviewKind.QUOTES -> R.string.mode_quote
+            PreviewKind.KWGT_BATTERY -> R.string.mode_battery
+            PreviewKind.KWGT_BATTERY_MINI -> R.string.mode_battery_mini
+            PreviewKind.KWGT_DATE_TIME -> if (access) {
+                R.string.mode_kwgt_datetime_styled
+            } else {
+                R.string.mode_kwgt_datetime_live
+            }
+            PreviewKind.PLACEHOLDER -> entry.state.labelRes
+        }
+    }
+
+    fun label(context: Context, entry: CatalogEntry): String =
+        context.getString(labelRes(context, entry))
 }
