@@ -1,6 +1,1 @@
-Dotwel Widgets 0.1.7 (versionCode 8) debug candidate.
-Source built in this run; debug APK only.
-Runtime appearance, launcher pinning, battery refresh timing and HOME widget
-behavior still require independent review. This build is not Play-approved.
-The previous 0.1.6 APK was removed from this candidate checkpoint before saving,
-so no stale artifact is present here.
+Debug candidate. Runtime appearance and home widget behavior require independent review.
