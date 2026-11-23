@@ -19,7 +19,7 @@
     "fg": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$",
     "primary": "#FFD71921"
   },
-  "missing_global_adaptation": "The source references h for the background, clip and overlay heights but does not define h. The native dial uses the 277 square side for the background and clip heights. The two background overlays are kept as the square rounded rectangles their own source widths describe, so the 60/12 tick ring remains visible as in the source preview. No new height meaning beyond the source square is introduced.",
+  "missing_global_adaptation": "Source references h but defines no h global. Native adaptation uses square277 background/clip and square overlays sized to each source width, retaining source tick layers. This is a documented port choice, not proof of the missing original height or source-preview parity.",
   "layers": [
     {
       "internal_type": "ShapeModule",
@@ -127,5 +127,15 @@
     "minute_height": "$gv(side)/2.77$ = 100 at side 277",
     "minute_center_y": "138.5 - ($gv(side)/3.112) / 2",
     "tap": "removed; the native provider uses ACTION_SHOW_ALARMS"
+  },
+  "native_277_evaluation": {
+    "hour_width": "277/13.19",
+    "hour_height": "277/4.134",
+    "hour_bottom_padding": "277/6.155",
+    "minute_width": "277/25.18",
+    "minute_height": "277/2.77",
+    "minute_bottom_padding": "277/3.112",
+    "precision": "Native hour/minute movement at platform minute resolution; source smooth-hour rotation is quantized.",
+    "status": "Runtime and source missing-height interpretation need independent review."
   }
 }
