@@ -56,8 +56,9 @@ translated into Kotlin using standard Android widget APIs:
 
 ### Original substitutions
 
-- `DotGlyphFont.kt` contains Dotwel's original 5x7 circular-dot digit, colon and
-  percent geometry. No third-party font file is bundled or loaded.
+- `DotGlyphFont.kt` contains Dotwel's original 5x7 circular-dot digit, colon,
+  percent and DOTWEL heading glyphs. No third-party font file is bundled or
+  loaded.
 - `NtDateRenderer.kt` and the native date widget use the Android platform
   `serif` family; `NtWorldRenderer.kt` uses `sans-serif-condensed`; no font file
   is bundled.
@@ -80,19 +81,23 @@ the app from About & source credits > View MIT license texts.
 - `widgets/Nothing_Battery.kwgt!preset.json` -> `KwgtBatteryRenderer.kt`,
   `BatteryWidgetProvider.kt`, and the sanitized data model
   `app/src/main/assets/kwgt/nothing_battery.sanitized.json`. Retained: the
-  `side` global, `side / 2` circle diameter, 4-pixel vertical offset,
-  `level * 3.6` rotation, `cm(215, max(level,25)*2.55, max(level,33)*2.55)`
-  colour formula, and `side / 9` text size. Battery level is read from the real
-  system battery state, not a placeholder value.
+  `side`-relative composition, 4/415 vertical offset, `level * 3.6` rotation and
+  `cm(215, max(level,25)*2.55, max(level,33)*2.55)` colour formula. The whole
+  gauge is proportionally fitted to 92% of the short side (ring diameter about
+  66% of the short side) instead of the literal `side / 2`, and the percent text
+  is fitted to that ring, so a 2x2 host is not mostly empty. Battery level is
+  read from the real system battery state, not a placeholder value.
 - `widgets/Nothing_Battery_Mini.kwgt!preset.json` -> `KwgtBatteryMiniRenderer.kt`,
   `BatteryMiniWidgetProvider.kt`, and the sanitized data model
   `app/src/main/assets/kwgt/nothing_battery_mini.sanitized.json`. Retained: the
   eleven `w / {1.38, 1.23, 1.1, 1.1, 1.005, 1.005, 1.005, 1.1, 1.1, 1.23, 1.38}`
   concentric rings, `progress_level = bi(level)`, primary `#FFD71921` foreground
-  and translucent accent track. The source preset has no text layer.
+  and translucent accent track. The source preset has no text layer; Dotwel adds
+  a centered real-level dot readout for legibility, so no charge state or number
+  is invented.
 - The author's sweep-gradient disc is rendered as a level-scaled arc plus a faint
-  disc so the gauge remains readable at small widget sizes. This is a documented
-  rendering substitution, not a claim of pixel-identical output.
+  disc and track so the gauge remains readable at small widget sizes. This is a
+  documented rendering substitution, not a claim of pixel-identical output.
 - Sanitized out: the author email in `preset_info`, the background `SINGLE_TAP`
   intent string, and the bundled `ndot-47.ttf` font reference. Dotwel's original
   dot glyphs replace the font.

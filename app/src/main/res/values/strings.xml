@@ -7,7 +7,18 @@
     <string name="gallery_available_count">AVAILABLE NOW · %1$d OF %2$d</string>
     <string name="gallery_note">Previews use the selected style and current permission mode.</string>
     <string name="gallery_preview_description">Widget preview</string>
+    <string name="gallery_preview_open_format">Open larger preview of %1$s</string>
     <string name="gallery_add_format">Add %1$s</string>
+    <string name="gallery_add_short">Add</string>
+    <string name="filter_all">All</string>
+    <string name="filter_clocks">Clocks</string>
+    <string name="filter_date">Date</string>
+    <string name="filter_battery">Battery</string>
+    <string name="filter_quotes">Quotes</string>
+    <string name="filter_count_format">%1$s %2$d</string>
+    <string name="nav_widgets">Widgets</string>
+    <string name="nav_style">Style</string>
+    <string name="nav_about">About</string>
     <string name="gallery_configure_world">Choose time zones</string>
     <string name="gallery_not_ready">Unavailable in this build</string>
     <string name="gallery_unavailable">Unavailable</string>
@@ -20,6 +31,16 @@
     <string name="preview_badge_styled">Preview · styled</string>
     <string name="preview_badge_live">Preview · live</string>
     <string name="preview_badge_unavailable">Preview · failed</string>
+    <string name="mode_dotted_clock">Dotted clock</string>
+    <string name="mode_live_clock">Live system clock</string>
+    <string name="mode_styled_analog">Styled analog</string>
+    <string name="mode_live_analog">Live analog clock</string>
+    <string name="mode_styled_world">Styled world</string>
+    <string name="mode_live_world">Live world clock</string>
+    <string name="mode_date">Live date</string>
+    <string name="mode_quote">Daily quote</string>
+    <string name="mode_battery">Live battery</string>
+    <string name="mode_battery_mini">Live battery rings</string>
 
     <string name="status_ready">Available</string>
     <string name="status_pending">Pending</string>
@@ -111,7 +132,7 @@
 
     <string name="about_button">About &amp; source credits</string>
     <string name="about_title">About &amp; source credits</string>
-    <string name="about_body">Dotwel Widgets is an independent app. It is not affiliated with, endorsed by, or sponsored by Nothing Technology Limited, OnePlus, Kustom, or the referenced authors. This is a debug candidate, not Play-approved or runtime-verified.\n\nAwesomeAWidgets (MIT)\nPinned commit 0fae60722764bda790f89bd94119c6dab854d90e\nCopyright (c) 2026 Sameer Al Sahab.\nAdapted author-written behaviour: NtDraw.SCHEME/color/surface/fit/center/paint/shadow to UpstreamNtDraw.kt; NtDigital.build to NtDigitalRenderer.kt; NtDate.build to NtDateRenderer.kt; NtAnalogBold.build and NtAnalogScale.build to NtAnalogRenderer.kt and BaseWidgetProvider.kt; NtWorld.build to NtWorldRenderer.kt; NtQuotes.build drawing block to NtQuotesRenderer.kt; NtProvider update loop/resize/tap to BaseWidgetProvider.kt; NtStyle to WidgetPrefs.kt; NtTick to MinuteTickScheduler.kt. No smali bytecode, APK resources, fonts or artwork are included.\n\nKWGT-Widgets (MIT)\nPinned commit 96ca27be4cbff35efec5a86c64dd39fd065c958f\nCopyright (c) 2024 Om Gupta.\nAdapted presets: Nothing_Battery.kwgt!preset.json to KwgtBatteryRenderer.kt, BatteryWidgetProvider.kt and sanitized data; Nothing_Battery_Mini.kwgt!preset.json to KwgtBatteryMiniRenderer.kt, BatteryMiniWidgetProvider.kt and sanitized data. Only 2 of 40 presets are implemented; the remaining 38 stay pending or dependency-blocked and are not claimed as imported.\n\nOriginal substitutions: Dotwel\u2019s 5x7 circular-dot glyphs replace upstream fonts. Platform serif and sans-serif-condensed families replace NType, Lettera and Ndot. No upstream screenshots, logos, fonts, presets, APK, or OEM OnePlus code/assets are bundled.\n\nThe exact adapted-file mapping and the 40-preset ledger are retained in docs/ATTRIBUTION.md and docs/KWGT-LEDGER.md.</string>
+    <string name="about_body">Dotwel Widgets is an independent app. It is not affiliated with, endorsed by, or sponsored by Nothing Technology Limited, OnePlus, Kustom, or the referenced authors. This is a debug candidate, not Play-approved or runtime-verified.\n\nGallery previews use the same renderers as placed widgets. Dotted clocks and styled analog/world previews are bitmaps refreshed about once a minute when optional Alarms &amp; reminders access is on; otherwise the live platform clock is shown. Battery readouts come from the system battery level. The Mini preset has no text layer, so Dotwel adds the real level in its own dot glyphs; no charge state is invented.\n\nAwesomeAWidgets (MIT)\nPinned commit 0fae60722764bda790f89bd94119c6dab854d90e\nCopyright (c) 2026 Sameer Al Sahab.\nAdapted author-written behaviour: NtDraw.SCHEME/color/surface/fit/center/paint/shadow to UpstreamNtDraw.kt; NtDigital.build to NtDigitalRenderer.kt; NtDate.build to NtDateRenderer.kt; NtAnalogBold.build and NtAnalogScale.build to NtAnalogRenderer.kt and BaseWidgetProvider.kt; NtWorld.build to NtWorldRenderer.kt; NtQuotes.build drawing block to NtQuotesRenderer.kt; NtProvider update loop/resize/tap to BaseWidgetProvider.kt; NtStyle to WidgetPrefs.kt; NtTick to MinuteTickScheduler.kt. No smali bytecode, APK resources, fonts or artwork are included.\n\nKWGT-Widgets (MIT)\nPinned commit 96ca27be4cbff35efec5a86c64dd39fd065c958f\nCopyright (c) 2024 Om Gupta.\nAdapted presets: Nothing_Battery.kwgt!preset.json to KwgtBatteryRenderer.kt, BatteryWidgetProvider.kt and sanitized data; Nothing_Battery_Mini.kwgt!preset.json to KwgtBatteryMiniRenderer.kt, BatteryMiniWidgetProvider.kt and sanitized data. Only 2 of 40 presets are implemented; the remaining 38 stay pending or dependency-blocked and are not claimed as imported.\n\nOriginal substitutions: Dotwel\u2019s 5x7 circular-dot glyphs replace upstream fonts. Platform serif and sans-serif-condensed families replace NType, Lettera and Ndot. No upstream screenshots, logos, fonts, presets, APK, or OEM OnePlus code/assets are bundled.\n\nThe exact adapted-file mapping and the 40-preset ledger are retained in docs/ATTRIBUTION.md and docs/KWGT-LEDGER.md.</string>
     <string name="about_licenses">View MIT license texts</string>
     <string name="about_license_title">MIT licenses</string>
     <string name="about_close">Close</string>

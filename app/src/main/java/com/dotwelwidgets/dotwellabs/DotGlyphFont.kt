@@ -29,6 +29,12 @@ object DotGlyphFont {
         ':' to arrayOf("00000", "00100", "00100", "00000", "00100", "00100", "00000"),
         '%' to arrayOf("11001", "11011", "00110", "00100", "01100", "11011", "10011"),
         ' ' to arrayOf("00000", "00000", "00000", "00000", "00000", "00000", "00000"),
+        'D' to arrayOf("11110", "10001", "10001", "10001", "10001", "10001", "11110"),
+        'E' to arrayOf("11111", "10000", "10000", "11110", "10000", "10000", "11111"),
+        'L' to arrayOf("10000", "10000", "10000", "10000", "10000", "10000", "11111"),
+        'O' to arrayOf("01110", "10001", "10001", "10001", "10001", "10001", "01110"),
+        'T' to arrayOf("11111", "00100", "00100", "00100", "00100", "00100", "00100"),
+        'W' to arrayOf("10001", "10001", "10001", "10101", "10101", "10101", "01010"),
     )
 
     fun columnsFor(text: String): Int =
@@ -43,6 +49,20 @@ object DotGlyphFont {
         return min(byWidth, byHeight).coerceAtLeast(0f)
     }
 
+    fun drawLeft(
+        canvas: Canvas,
+        text: String,
+        left: Float,
+        centerY: Float,
+        pitch: Float,
+        paint: Paint,
+    ) {
+        if (pitch <= 0f) return
+        val columns = columnsFor(text)
+        if (columns <= 0) return
+        draw(canvas, text, left + pitch * 0.5f, centerY, pitch, paint)
+    }
+
     fun drawCentered(
         canvas: Canvas,
         text: String,
@@ -54,8 +74,18 @@ object DotGlyphFont {
         if (pitch <= 0f) return
         val columns = columnsFor(text)
         if (columns <= 0) return
+        draw(canvas, text, centerX - (columns - 1) * pitch / 2f, centerY, pitch, paint)
+    }
+
+    private fun draw(
+        canvas: Canvas,
+        text: String,
+        startX: Float,
+        centerY: Float,
+        pitch: Float,
+        paint: Paint,
+    ) {
         val radius = pitch * 0.40f
-        val startX = centerX - (columns - 1) * pitch / 2f
         val startY = centerY - (ROWS - 1) * pitch / 2f
         var cursor = 0
         text.forEach { character ->

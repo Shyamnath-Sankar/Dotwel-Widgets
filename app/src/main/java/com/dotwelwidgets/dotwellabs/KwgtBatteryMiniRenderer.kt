@@ -17,7 +17,9 @@ import kotlin.math.min
  * concentric ProgressModule rings with `style_size = w / {1.38, 1.23, 1.1, 1.1,
  * 1.005, 1.005, 1.005, 1.1, 1.1, 1.23, 1.38}` and `progress_level = bi(level)`.
  * The foreground colour is the author primary `#FFD71921`; the track is the
- * author accent formula `ce(fg, alpha, 20)`. The preset contains no text layer.
+ * author accent formula `ce(fg, alpha, 20)`. The preset contains no text layer;
+ * Dotwel adds a centered real-level dot readout for legibility, so no charge
+ * state or number is invented and the ring geometry stays the author's.
  *
  * Sanitized source data: assets/kwgt/nothing_battery_mini.sanitized.json.
  */
@@ -91,6 +93,28 @@ object KwgtBatteryMiniRenderer {
                 canvas.drawArc(bounds, -90f, safeLevel * 3.6f, false, arc)
             }
         }
+
+        // Dotwel addition for legibility: the preset has no text layer, so show
+        // the real system level with the app-owned dot glyphs. No charge state or
+        // number is invented. The ring geometry above stays the author's.
+        val label = "$safeLevel%"
+        val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = UpstreamNtDraw.ink(context, style)
+            UpstreamNtDraw.shadow(style, this)
+        }
+        val pitch = DotGlyphFont.fitPitch(
+            label,
+            baseDiameter * 0.50f,
+            baseDiameter * 0.30f,
+        )
+        DotGlyphFont.drawCentered(
+            canvas,
+            label,
+            centerX,
+            centerY,
+            pitch,
+            labelPaint,
+        )
         return bitmap
     }
 

@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.ScrollView
 import android.widget.Spinner
@@ -50,6 +51,7 @@ class MainActivity : Activity() {
         it.state == ImportState.READY && it.providerClass != null
     }
     private var exactAlarmReceiverRegistered = false
+    private var activeFilter = GalleryFilter.ALL
     private var pendingEntryAfterAccess: CatalogEntry? = null
     private var upcomingBuilt = false
     private val initialRender = Runnable { renderVisiblePreviews() }
@@ -76,22 +78,14 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.setBackgroundDrawable(
+            DottedBackgroundDrawable(resources.displayMetrics.density),
+        )
         setContentView(R.layout.activity_main)
         applySystemBarInsets()
 
-        val group = findViewById<RadioGroup>(R.id.style_group)
-        val current = WidgetPrefs.style(this)
-        group.check(buttonFor(current))
-
         buildGallery()
-        applyStyleToFrames(current)
-        group.setOnCheckedChangeListener { _, checkedId ->
-            val style = styleFor(checkedId) ?: return@setOnCheckedChangeListener
-            WidgetPrefs.setStyle(this, style)
-            applyStyleToFrames(style)
-            renderVisiblePreviews()
-            WidgetUpdater.updateAll(this)
-        }
+        applyStyleToFrames(WidgetPrefs.style(this))
 
         findViewById<Button>(R.id.refresh_widgets).setOnClickListener {
             WidgetUpdater.updateAll(this)
@@ -105,6 +99,15 @@ class MainActivity : Activity() {
             toggleUpcoming()
         }
         findViewById<Button>(R.id.about_button).setOnClickListener {
+            showAboutDialog()
+        }
+        findViewById<TextView>(R.id.nav_widgets).setOnClickListener {
+            findViewById<ScrollView>(R.id.settings_root).smoothScrollTo(0, 0)
+        }
+        findViewById<TextView>(R.id.nav_style).setOnClickListener {
+            showStyleDialog()
+        }
+        findViewById<TextView>(R.id.nav_about).setOnClickListener {
             showAboutDialog()
         }
         findViewById<ScrollView>(R.id.settings_root).setOnScrollChangeListener { _, _, _, _, _ ->
@@ -172,10 +175,15 @@ class MainActivity : Activity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
         window.setDecorFitsSystemWindows(false)
         val root = findViewById<View>(R.id.settings_root)
+        val nav = findViewById<View>(R.id.bottom_nav)
+        val navParams = nav.layoutParams as android.view.ViewGroup.MarginLayoutParams
         val baseLeft = root.paddingLeft
         val baseTop = root.paddingTop
         val baseRight = root.paddingRight
         val baseBottom = root.paddingBottom
+        val navLeft = navParams.leftMargin
+        val navRight = navParams.rightMargin
+        val navBottom = navParams.bottomMargin
         root.setOnApplyWindowInsetsListener { view, insets ->
             val bars = insets.getInsets(
                 WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout(),
@@ -186,19 +194,20 @@ class MainActivity : Activity() {
                 baseRight + bars.right,
                 baseBottom + bars.bottom,
             )
+            navParams.setMargins(
+                navLeft + bars.left,
+                navParams.topMargin,
+                navRight + bars.right,
+                navBottom + bars.bottom,
+            )
+            nav.layoutParams = navParams
             insets
         }
     }
 
     private fun buildGallery() {
-        val container = findViewById<LinearLayout>(R.id.gallery_container)
-        val inflater = LayoutInflater.from(this)
-        availableEntries.forEach { entry ->
-            val root = inflater.inflate(R.layout.item_widget_card, container, false)
-            container.addView(root)
-            cards += CardHolder(entry, root)
-        }
-        cards.forEach { bindCard(it) }
+        populateFilters()
+        rebuildGallery()
         findViewById<TextView>(R.id.gallery_label).text = getString(
             R.string.gallery_available_count,
             availableEntries.size,
@@ -208,6 +217,107 @@ class MainActivity : Activity() {
         toggle.visibility = if (upcomingEntries.isEmpty()) View.GONE else View.VISIBLE
         toggle.text = getString(R.string.upcoming_toggle_format, upcomingEntries.size)
     }
+
+    private fun populateFilters() {
+        val group = findViewById<RadioGroup>(R.id.filter_group)
+        group.removeAllViews()
+        val counts = GalleryFilter.entries.associateWith { filter ->
+            availableEntries.count { matchesFilter(it, filter) }
+        }
+        GalleryFilter.entries.forEachIndexed { index, filter ->
+            val button = RadioButton(this).apply {
+                id = View.generateViewId()
+                text = getString(
+                    R.string.filter_count_format,
+                    getString(filter.labelRes),
+                    counts.getValue(filter),
+                )
+                background = getDrawable(R.drawable.bg_style_chip)
+                buttonDrawable = null
+                gravity = android.view.Gravity.CENTER
+                minHeight = dp(48)
+                minWidth = dp(72)
+                setPadding(dp(12), 0, dp(12), 0)
+                setTextColor(getColor(R.color.widget_ink))
+                textSize = 12f
+            }
+            val params = RadioGroup.LayoutParams(
+                RadioGroup.LayoutParams.WRAP_CONTENT,
+                RadioGroup.LayoutParams.WRAP_CONTENT,
+            )
+            if (index > 0) params.marginStart = dp(6)
+            group.addView(button, params)
+            if (filter == activeFilter) group.check(button.id)
+        }
+        group.setOnCheckedChangeListener { radio, checkedId ->
+            val selected = (0 until radio.childCount)
+                .map { radio.getChildAt(it) }
+                .firstOrNull { it.id == checkedId }
+                ?.let { child -> GalleryFilter.entries.getOrNull(radio.indexOfChild(child)) }
+                ?: return@setOnCheckedChangeListener
+            if (selected == activeFilter) return@setOnCheckedChangeListener
+            activeFilter = selected
+            rebuildGallery()
+        }
+    }
+
+    private fun rebuildGallery() {
+        val container = findViewById<LinearLayout>(R.id.gallery_container)
+        container.removeAllViews()
+        cards.clear()
+        previewBitmaps.clear()
+        val filtered = availableEntries.filter { matchesFilter(it, activeFilter) }
+        val inflater = LayoutInflater.from(this)
+        if (useTwoColumns()) {
+            filtered.chunked(2).forEach { pair ->
+                val row = LinearLayout(this).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                    )
+                }
+                pair.forEachIndexed { index, entry ->
+                    val card = inflater.inflate(R.layout.item_widget_card, row, false)
+                    val params = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                    if (index == 0) params.marginEnd = dp(10)
+                    card.layoutParams = params
+                    row.addView(card)
+                    cards += CardHolder(entry, card)
+                }
+                if (pair.size == 1) {
+                    row.addView(
+                        View(this),
+                        LinearLayout.LayoutParams(0, 0, 1f),
+                    )
+                }
+                container.addView(row)
+            }
+        } else {
+            filtered.forEach { entry ->
+                val card = inflater.inflate(R.layout.item_widget_card, container, false)
+                container.addView(card)
+                cards += CardHolder(entry, card)
+            }
+        }
+        cards.forEach { bindCard(it) }
+        applyStyleToFrames(WidgetPrefs.style(this))
+        findViewById<View>(R.id.settings_root).post { renderVisiblePreviews() }
+    }
+
+    private fun useTwoColumns(): Boolean {
+        val config = resources.configuration
+        return config.fontScale < 1.3f && config.screenWidthDp >= 360
+    }
+
+    private fun matchesFilter(entry: CatalogEntry, filter: GalleryFilter): Boolean =
+        when (filter) {
+            GalleryFilter.ALL -> true
+            GalleryFilter.CLOCKS -> entry.group == WidgetGroup.CLOCKS
+            GalleryFilter.DATE -> entry.group == WidgetGroup.TIME
+            GalleryFilter.BATTERY -> entry.id.startsWith("kwgt_nothing_battery")
+            GalleryFilter.QUOTES -> entry.id == "quotes"
+        }
 
     private fun toggleUpcoming() {
         val container = findViewById<LinearLayout>(R.id.upcoming_container)
@@ -246,19 +356,21 @@ class MainActivity : Activity() {
         val entry = holder.entry
         val root = holder.root
         root.findViewById<TextView>(R.id.card_title).text = entry.name
-        val chip = root.findViewById<TextView>(R.id.card_status_chip)
-        chip.text = getString(entry.state.labelRes)
-        chip.backgroundTintList = ColorStateList.valueOf(stateColor(entry.state))
 
         val add = root.findViewById<Button>(R.id.card_add)
         val ready = entry.state == ImportState.READY && entry.providerClass != null
         add.isEnabled = ready
         add.text = if (ready) {
-            getString(R.string.gallery_add_format, entry.name)
+            getString(R.string.gallery_add_short)
         } else {
             getString(R.string.gallery_not_ready)
         }
+        add.contentDescription = getString(R.string.gallery_add_format, entry.name)
         add.setOnClickListener { onAdd(entry) }
+        root.findViewById<View>(R.id.card_preview_frame).apply {
+            contentDescription = getString(R.string.gallery_preview_open_format, entry.name)
+            setOnClickListener { showDetailDialog(entry) }
+        }
 
         val secondary = root.findViewById<Button>(R.id.card_secondary)
         when (entry.action) {
@@ -275,6 +387,90 @@ class MainActivity : Activity() {
             secondary.setText(R.string.gallery_configure_world)
         }
         updateCardState(holder)
+    }
+
+    private fun showDetailDialog(entry: CatalogEntry) {
+        val style = WidgetPrefs.style(this)
+        val content = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(8), dp(20), 0)
+        }
+        val frame = android.widget.FrameLayout(this).apply {
+            setBackgroundResource(style.backgroundRes)
+            setPadding(dp(10), dp(10), dp(10), dp(10))
+        }
+        val width = (resources.displayMetrics.widthPixels - dp(88)).coerceAtLeast(dp(220))
+        val height = dp(220)
+        val bitmap = try {
+            WidgetPreviewRenderer.render(this, entry, width, height, style)
+        } catch (_: RuntimeException) {
+            null
+        } catch (_: OutOfMemoryError) {
+            null
+        }
+        if (bitmap != null) {
+            frame.addView(
+                ImageView(this).apply {
+                    setImageBitmap(bitmap)
+                    scaleType = ImageView.ScaleType.FIT_CENTER
+                    contentDescription = getString(R.string.gallery_preview_description)
+                },
+                android.widget.FrameLayout.LayoutParams(
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                ),
+            )
+        } else {
+            frame.addView(
+                TextView(this).apply {
+                    text = getString(modeLabelRes(entry))
+                    gravity = android.view.Gravity.CENTER
+                    setTextColor(getColor(R.color.widget_muted))
+                    textSize = 13f
+                },
+                android.widget.FrameLayout.LayoutParams(
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                ),
+            )
+        }
+        content.addView(
+            frame,
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                height,
+            ),
+        )
+        content.addView(
+            TextView(this).apply {
+                text = getString(R.string.gallery_note)
+                setTextColor(getColor(R.color.widget_muted))
+                textSize = 12f
+                setPadding(0, dp(10), 0, 0)
+            },
+        )
+        AlertDialog.Builder(this)
+            .setTitle(entry.name)
+            .setView(content)
+            .setPositiveButton(R.string.gallery_add_short) { _, _ -> onAdd(entry) }
+            .setNegativeButton(R.string.about_close, null)
+            .show()
+    }
+
+    private fun modeLabelRes(entry: CatalogEntry): Int {
+        val access = MinuteTickScheduler.hasExactAccess(this)
+        return when (entry.previewKind) {
+            PreviewKind.CLOCK -> if (access) R.string.mode_dotted_clock else R.string.mode_live_clock
+            PreviewKind.ANALOG_BOLD,
+            PreviewKind.ANALOG_SCALE,
+            -> if (access) R.string.mode_styled_analog else R.string.mode_live_analog
+            PreviewKind.WORLD -> if (access) R.string.mode_styled_world else R.string.mode_live_world
+            PreviewKind.DATE -> R.string.mode_date
+            PreviewKind.QUOTES -> R.string.mode_quote
+            PreviewKind.KWGT_BATTERY -> R.string.mode_battery
+            PreviewKind.KWGT_BATTERY_MINI -> R.string.mode_battery_mini
+            PreviewKind.PLACEHOLDER -> entry.state.labelRes
+        }
     }
 
     private fun onAdd(entry: CatalogEntry) {
@@ -435,6 +631,28 @@ class MainActivity : Activity() {
             .show()
     }
 
+    private fun showStyleDialog() {
+        val styles = WidgetStyle.entries
+        val labels = arrayOf(
+            getString(R.string.style_black),
+            getString(R.string.style_translucent),
+            getString(R.string.style_transparent),
+        )
+        val checked = styles.indexOf(WidgetPrefs.style(this)).coerceAtLeast(0)
+        AlertDialog.Builder(this)
+            .setTitle(R.string.style_label)
+            .setSingleChoiceItems(labels, checked) { dialog, which ->
+                val style = styles.getOrNull(which) ?: return@setSingleChoiceItems
+                WidgetPrefs.setStyle(this, style)
+                applyStyleToFrames(style)
+                renderVisiblePreviews()
+                WidgetUpdater.updateAll(this)
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.about_close, null)
+            .show()
+    }
+
     private fun showAboutDialog() {
         AlertDialog.Builder(this)
             .setTitle(R.string.about_title)
@@ -494,57 +712,17 @@ class MainActivity : Activity() {
                 },
             )
         }
+        if (holder.lastRenderFailed) return
+        detail.setText(modeLabelRes(entry))
+        badge.setText(R.string.preview_badge)
         when (entry.action) {
             CardAction.CLOCK_ACCESS -> {
                 val access = MinuteTickScheduler.hasExactAccess(this)
                 secondary.visibility = if (access) View.GONE else View.VISIBLE
                 secondary.setText(R.string.exact_alarm_enable)
-                val clock = entry.id == "digital"
-                if (!holder.lastRenderFailed) {
-                    detail.setText(
-                        when {
-                            access && clock -> R.string.clock_dotted_detail
-                            access -> R.string.analog_dotted_detail
-                            clock -> R.string.clock_plain_detail
-                            else -> R.string.analog_fallback_detail
-                        },
-                    )
-                    badge.setText(
-                        when {
-                            access && clock -> R.string.preview_badge_dotted
-                            access -> R.string.preview_badge_styled
-                            else -> R.string.preview_badge_live
-                        },
-                    )
-                }
             }
-            CardAction.WORLD_ZONES -> {
-                secondary.visibility = View.VISIBLE
-                if (!holder.lastRenderFailed) {
-                    val access = MinuteTickScheduler.hasExactAccess(this)
-                    detail.setText(
-                        if (access) {
-                            R.string.world_dotted_detail
-                        } else {
-                            R.string.world_live_detail
-                        },
-                    )
-                    badge.setText(
-                        if (access) {
-                            R.string.preview_badge_styled
-                        } else {
-                            R.string.preview_badge_live
-                        },
-                    )
-                }
-            }
-            CardAction.NONE -> {
-                secondary.visibility = View.GONE
-                if (!holder.lastRenderFailed) {
-                    detail.setText(entry.detailRes)
-                    badge.setText(R.string.preview_badge)
-                }
-            }
+            CardAction.WORLD_ZONES -> secondary.visibility = View.VISIBLE
+            CardAction.NONE -> secondary.visibility = View.GONE
         }
     }
 
@@ -605,9 +783,9 @@ class MainActivity : Activity() {
                 } else {
                     holder.lastRenderFailed = false
                     holder.root.findViewById<TextView>(R.id.card_status_detail)
-                        .setText(R.string.clock_dotted_detail)
+                        .setText(modeLabelRes(entry))
                     holder.root.findViewById<TextView>(R.id.card_preview_badge)
-                        .setText(R.string.preview_badge_dotted)
+                        .setText(R.string.preview_badge)
                 }
             }
             PreviewKind.ANALOG_BOLD,
@@ -622,9 +800,9 @@ class MainActivity : Activity() {
                 } else {
                     holder.lastRenderFailed = false
                     holder.root.findViewById<TextView>(R.id.card_status_detail)
-                        .setText(R.string.analog_dotted_detail)
+                        .setText(modeLabelRes(entry))
                     holder.root.findViewById<TextView>(R.id.card_preview_badge)
-                        .setText(R.string.preview_badge_styled)
+                        .setText(R.string.preview_badge)
                 }
             }
             PreviewKind.WORLD -> {
@@ -637,16 +815,16 @@ class MainActivity : Activity() {
                 } else {
                     holder.lastRenderFailed = false
                     holder.root.findViewById<TextView>(R.id.card_status_detail)
-                        .setText(R.string.world_dotted_detail)
+                        .setText(modeLabelRes(entry))
                     holder.root.findViewById<TextView>(R.id.card_preview_badge)
-                        .setText(R.string.preview_badge_styled)
+                        .setText(R.string.preview_badge)
                 }
             }
             else -> {
                 if (renderBitmap(holder, style, width, height)) {
                     holder.lastRenderFailed = false
                     holder.root.findViewById<TextView>(R.id.card_status_detail)
-                        .setText(entry.detailRes)
+                        .setText(modeLabelRes(entry))
                     holder.root.findViewById<TextView>(R.id.card_preview_badge)
                         .setText(R.string.preview_badge)
                 } else {
@@ -756,11 +934,11 @@ class MainActivity : Activity() {
             if (failed) {
                 R.string.preview_render_failed_detail
             } else {
-                R.string.clock_plain_detail
+                modeLabelRes(holder.entry)
             },
         )
         holder.root.findViewById<TextView>(R.id.card_preview_badge)
-            .setText(R.string.preview_badge_live)
+            .setText(R.string.preview_badge)
     }
 
     private fun showAnalogFallback(holder: CardHolder, failed: Boolean) {
@@ -775,11 +953,11 @@ class MainActivity : Activity() {
             if (failed) {
                 R.string.preview_render_failed_detail
             } else {
-                R.string.analog_fallback_detail
+                modeLabelRes(holder.entry)
             },
         )
         holder.root.findViewById<TextView>(R.id.card_preview_badge)
-            .setText(R.string.preview_badge_live)
+            .setText(R.string.preview_badge)
     }
 
     private fun showWorldFallback(holder: CardHolder, style: WidgetStyle, failed: Boolean) {
@@ -809,11 +987,11 @@ class MainActivity : Activity() {
             if (failed) {
                 R.string.preview_render_failed_detail
             } else {
-                R.string.world_live_detail
+                modeLabelRes(holder.entry)
             },
         )
         holder.root.findViewById<TextView>(R.id.card_preview_badge)
-            .setText(R.string.preview_badge_live)
+            .setText(R.string.preview_badge)
     }
 
     private fun bindWorldPreviewZone(
@@ -863,21 +1041,16 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun buttonFor(style: WidgetStyle): Int = when (style) {
-        WidgetStyle.BLACK -> R.id.style_black
-        WidgetStyle.TRANSLUCENT -> R.id.style_translucent
-        WidgetStyle.TRANSPARENT -> R.id.style_transparent
-    }
-
-    private fun styleFor(buttonId: Int): WidgetStyle? = when (buttonId) {
-        R.id.style_black -> WidgetStyle.BLACK
-        R.id.style_translucent -> WidgetStyle.TRANSLUCENT
-        R.id.style_transparent -> WidgetStyle.TRANSPARENT
-        else -> null
-    }
-
     private fun dp(value: Int): Int =
         (value * resources.displayMetrics.density).toInt()
+
+    private enum class GalleryFilter(val labelRes: Int) {
+        ALL(R.string.filter_all),
+        CLOCKS(R.string.filter_clocks),
+        DATE(R.string.filter_date),
+        BATTERY(R.string.filter_battery),
+        QUOTES(R.string.filter_quotes),
+    }
 
     private class CardHolder(val entry: CatalogEntry, val root: View) {
         var lastRenderKey: String? = null

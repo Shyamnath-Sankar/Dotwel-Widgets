@@ -203,7 +203,7 @@ object WidgetCatalog {
         ),
         CatalogEntry(
             id = "kwgt_nothing_battery",
-            name = "Nothing Battery (KWGT)",
+            name = "Battery Gauge",
             group = WidgetGroup.KWGT,
             state = ImportState.READY,
             upstream = "KWGT Nothing_Battery · level*3.6 gauge · cm(215,g,b)",
@@ -215,7 +215,7 @@ object WidgetCatalog {
         ),
         CatalogEntry(
             id = "kwgt_nothing_battery_mini",
-            name = "Nothing Battery Mini (KWGT)",
+            name = "Battery Mini",
             group = WidgetGroup.KWGT,
             state = ImportState.READY,
             upstream = "KWGT Nothing_Battery_Mini · 11 concentric level rings",

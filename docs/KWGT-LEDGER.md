@@ -65,19 +65,24 @@ without a prohibited capability or unresolved third-party rights.
 `app/src/main/assets/kwgt/nothing_battery.sanitized.json` and
 `app/src/main/assets/kwgt/nothing_battery_mini.sanitized.json`.
 
-Nothing_Battery keeps these author values:
+Nothing_Battery keeps these author relationships:
 
 - `side = if(rwidth > rheight, rheight, rwidth)`
-- circle diameter `side / 2`
-- vertical offset `4` preset pixels
 - level rotation `level * 3.6`
 - colour `cm(215, max(level,25)*2.55, max(level,33)*2.55)`
-- percent text size `side / 9`
+- the 4/415 vertical offset as a fraction of the fitted gauge
+- the numeric readout, fitted to the ring
+
+Dotwel proportionally scales the whole gauge to 92% of the short side (ring
+diameter about 66% of the short side) instead of the literal `side / 2`, so a
+2x2 host surface is filled without stretching. The gallery preview calls the
+same fitted renderer as the provider.
 
 Nothing_Battery_Mini keeps the author's eleven `ProgressModule` sizes
 `w / {1.38, 1.23, 1.1, 1.1, 1.005, 1.005, 1.005, 1.1, 1.1, 1.23, 1.38}`,
 `progress_level = bi(level)`, primary `#FFD71921` arc and translucent accent
-track. It has no text layer in the source preset.
+track. It has no text layer in the source preset; Dotwel adds a centered
+real-level dot readout for legibility without inventing charge state.
 
 Sanitized out of the assets and implementations: the author email, the background
 `SINGLE_TAP` intent string, and the bundled `ndot-47.ttf`. Dotwel's original

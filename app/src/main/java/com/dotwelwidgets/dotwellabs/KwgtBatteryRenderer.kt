@@ -23,7 +23,9 @@ import kotlin.math.roundToInt
  *
  * Substitutions: the bundled ndot-47.ttf is replaced by Dotwel's original
  * circular-dot glyphs. The author's sweep-gradient disc is rendered as the same
- * level-scaled arc plus a faint disc so the gauge reads clearly at small sizes.
+ * level-scaled arc plus a faint disc and track. Dotwel scales the whole gauge
+ * proportionally to 92% of the short side so a 2x2 host is filled without
+ * stretch, while the arc, colour formula, offset and text ratios are retained.
  * Sanitized source data: assets/kwgt/nothing_battery.sanitized.json.
  */
 object KwgtBatteryRenderer {
@@ -45,17 +47,35 @@ object KwgtBatteryRenderer {
         }
         val canvas = Canvas(bitmap)
         val side = min(safeWidth, safeHeight).toFloat()
+        // Fit the authored gauge to the available surface. The level arc, colour
+        // formula, text and 4/415 offset keep their preset proportions; only the
+        // overall scale is enlarged so a 2x2 host is not mostly empty.
+        val gaugeSide = side * 0.92f
         val centerX = safeWidth / 2f
-        val centerY = safeHeight / 2f + side * (4f / 415f)
-        val radius = side / 4f
+        val centerY = safeHeight / 2f + gaugeSide * (4f / 415f)
+        val radius = gaugeSide * 0.36f
+        val strokeWidth = (radius * 0.10f).coerceAtLeast(2f)
+        val inset = strokeWidth / 2f
+        val bounds = RectF(
+            centerX - radius + inset,
+            centerY - radius + inset,
+            centerX + radius - inset,
+            centerY + radius - inset,
+        )
 
         val discPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = withAlpha(UpstreamNtDraw.muted(context, style), 0x30)
         }
         canvas.drawCircle(centerX, centerY, radius, discPaint)
 
+        val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = withAlpha(UpstreamNtDraw.muted(context, style), 0x24)
+            this.style = Paint.Style.STROKE
+            this.strokeWidth = strokeWidth
+        }
+        canvas.drawArc(bounds, 0f, 360f, false, trackPaint)
+
         if (safeLevel > 0) {
-            val strokeWidth = (side * 0.035f).coerceAtLeast(2f)
             val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 this.color = batteryColor(safeLevel)
                 this.style = Paint.Style.STROKE
@@ -63,29 +83,18 @@ object KwgtBatteryRenderer {
                 this.strokeCap = Paint.Cap.ROUND
                 UpstreamNtDraw.shadow(style, this)
             }
-            val inset = strokeWidth / 2f
-            canvas.drawArc(
-                RectF(
-                    centerX - radius + inset,
-                    centerY - radius + inset,
-                    centerX + radius - inset,
-                    centerY + radius - inset,
-                ),
-                -90f,
-                safeLevel * 3.6f,
-                false,
-                ringPaint,
-            )
+            canvas.drawArc(bounds, -90f, safeLevel * 3.6f, false, ringPaint)
         }
 
         val percentPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = UpstreamNtDraw.ink(context, style)
             UpstreamNtDraw.shadow(style, this)
         }
-        val pitch = (side / 9f) / DotGlyphFont.ROWS
+        val label = "$safeLevel%"
+        val pitch = DotGlyphFont.fitPitch(label, radius * 1.45f, radius * 0.95f)
         DotGlyphFont.drawCentered(
             canvas,
-            "$safeLevel%",
+            label,
             centerX,
             centerY,
             pitch,
