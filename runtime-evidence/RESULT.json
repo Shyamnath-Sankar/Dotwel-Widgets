@@ -1,0 +1,18 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "pin_kwgt-datetime": "Native confirmation accepted",
+    "kwgt_datetime": "passed",
+    "kwgt_live_minute": "passed",
+    "styled_after_process_kill": "captured, image time comparison required"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "1f4320bbf0905371fd603f095745f01c51ba23a0a4d40849bb79eaf71eafad33",
+  "kwgt_live_minute": {
+    "before": "09:06AM",
+    "after": "09:07AM",
+    "device": "09:07AM"
+  }
+}
