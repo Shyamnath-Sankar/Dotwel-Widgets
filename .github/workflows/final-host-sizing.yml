@@ -1,4 +1,4 @@
-name: Reference-led widget UI and UX
+name: Import two actual KWGT date-time presets
 on:
   workflow_dispatch:
 permissions:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 3d3d637e91488e7f2a2b24a2964806ff46db421f
+          ref: 27d6e458c1076a6f2cd5520b1492679c1d38aafe
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -37,22 +37,17 @@ jobs:
           if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -c "agent/reference-ui-${GITHUB_RUN_ID}"
-      - name: Apply reference-led widget browser and renderer polish
+          git switch -c "agent/kwgt-date-pair-${GITHUB_RUN_ID}"
+      - name: Adapt two source KWGT date-time widgets
         timeout-minutes: 11
         env:
           OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
         run: |
           cat > /tmp/widget-task.txt <<'TASK'
-          Implement focused user-requested UI/UX refinement on preserved provider-repair source3d3d637e91488e7f2a2b24a2964806ff46db421f. Do actual edits early and commit increments, no prolonged planning. Current8providers only,2/40KWGT, fullcollection remains unfinished/assigned. Do not add arbitrary features or claim completion. Private repo only, launcher untouched, freeonly, no new permissions/dependencies/services/purchases. Preserve Quotes per-child callback repair and World denied nativeTextClock fallback, existing digital nativepin/cancel/access flow, source licenses. Runtime repair check is independent/inflight, no runtime claims here.
-          
-          User explicitly supplied Something KWGT Play listing and two screenshots as UI/UX reference. Pixels inspected: dark subtly dotted background; dotted allcap HOME heading; generous rounded two-column category tiles with large preview art and labels beneath; restrained vivid red; floating rounded bottom navigation. Do not copy proprietary images, photos, fonts, icons, code or paid assets. No wallpaper feature, unlock banners, subscriptions/crowns, fake system readout, fake Active count, background-access requests or status clutter. Those are NOT scope. Use app-owned DotGlyphFont to draw a small dotted heading or original custom canvas text with accessible label, system text for body. Use app-owned actual widget previews only. Need genuine product design rather than changing serif text color.
-          
-          Create coherent compact2column visual widget browser with useful category filters (All, Clocks, Date, Battery, Quotes as backed by actual catalog) and clear About/source access. Every widget retains own preview with Add directly underneath. Touch48dp. Full width detail/preview available when needed, singlecolumn at font130percent or narrowwidth if2columns harms text/buttons. No cropped Add, content not covered by bottomnav/systembar, natural scrolling, readable contrast. Compact optional minute setup, concise truthful mode badge. Move remaining implementation prose such as bitmap rendering into About, short user labels such as Live system clock or Dotted clock. Keep incoming actual accessmode previews truthful for digital/analog/world. Available counts refer real implementations only, no silent hiding unfinished catalog.
-          
-          Actual HOME visuals show battery ring tiny centered inside tall2x2 surface while most is blank; Mini fills but no numeric charge. Improve actual widget renderers/host sizing, not only gallery. Preserve distinct actual MIT preset geometry/provenance, use proportional fitting/padding so meaningful graphic occupies majority of intended surface without stretch/clipping. Add visible accessible real level where preset has numeric layer, do not invent fake data. Digital dot composition must use consistent circular dots with strong readable scale; analog bold/scale distinct; date hierarchy balanced. Current black/translucent/transparent styles remain. Adapt same renderer for preview and HOME so gallery is honest. No broad font/art import.
-          
-          Target only manageable polish in10minute budget. No new provider implementation this pass, original fullcollection still future. Existing initial nativepicker error placeholder should become neutral named/static preview if touched, preserve true rendererror fallback. Build assembleDebug lintDebug no suppression, preserve finalAPK/checksum only after all sources, honest STATE with pending tests. Need independent actual pixels atnormal130font + HOME before any delivery. No feature promises in docs.
+          Add actual KWGT widget providers to Dotwel, exactly Nothing_Date_Time.kwgt and Nothing_Date_Time2.kwgt from AumGupta/KWGT-Widgets pinned96ca27be4cbff35efec5a86c64dd39fd065c958f. Do this small batch fully, no other cosmetic pass. Current source has8providers/two KWGT battery conversions. User wants KWGT additions then tested APK, full collection remains assigned beyond this pair.
+          First download original public pinned repository using git into /tmp/kwgt-original and unzip these two archives. Extract actual preset.json geometry, layers, globals, date/time formulas. Preserve MIT license and provenance by source filename/SHA plus meaningful sanitized preset data. Do not copy embedded font/image assets with unclear rights; use app-owned dot font or system font and explicitly document substitution. Real native adaptation, not a renamed generic existing clock. Distinct compositions from the two presets must remain recognizable, including relative positions and text hierarchy. Do not stop at an inventory or plan, implement now.
+          Create two separate registered AppWidgetProviders, resource metadata/initial layouts, meaningful labels, actual renderer implementations, catalog entries and per-card preview/Add, minute scheduler/updater registration, boot/time-change routing as needed using existing shared framework. Derive real device time/date. Reuse fixed Quotes callback and World native-live behavior. Optional alarm access only, no new permissions/service/access escalation: denied mode must be genuine native live TextClock composition, not frozen bitmap. Enabled mode source-derived styled minute bitmaps, label seconds adaptations honestly. Don't silently alias to existing digital/date. Existing UI two-column/filter/Add accessibility remains. Native Add names must be distinct and source identifiable. Keep current preview UI truthful for selected mode.
+          Build assembleDebug/lintDebug with no suppression and keep provider count accurate (expected10if both completed). Update40preset ledger only for actual completed implementations, retain remaining unfinished rows. Save final APK/checksum after final source. No runtime/bugfree claims in source state. Source only coding runs on free tool here. Repo private, NothingWidgetPort excluded, launcher untouched. Commit first working preset before second if needed, avoid broad refactor and broad research. Pin original source before copying data.
           TASK
           timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
       - uses: actions/setup-java@v6
