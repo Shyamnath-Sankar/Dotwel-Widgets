@@ -3,6 +3,9 @@
 - Candidate: Dotwel Widgets 0.1.7 (versionCode 8). Package name is unchanged.
 - Branch: `agent/collection-repair-45121252124`, based on the saved
   upstream-render commit `237d043`.
+- APK-producing source commits: `107cd50` (build repair, world configuration,
+  first battery port) and `ddff29e` (Battery Mini). Documentation-only commits
+  after `ddff29e` do not change the recorded APK bytes.
 - This is a debug candidate, not a Play-approved or production-ready release.
 - Default main and the separate launcher repository are unchanged.
 
