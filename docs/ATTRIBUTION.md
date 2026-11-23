@@ -132,6 +132,19 @@ the app from About & source credits > View MIT license texts.
   all three app surfaces. Without optional exact-alarm access the provider uses
   live platform TextClocks over a time-free static gradient surface. Runtime is
   not claimed here.
+- `widgets/Nothing_Digital3.kwgt!preset.json` -> `KwgtDigital3Renderer.kt`,
+  `KwgtDigital3WidgetProvider.kt`, and the sanitized data model
+  `app/src/main/assets/kwgt/nothing_digital3.sanitized.json`. Retained: the
+  rounded `side / 5` surface, the 4 by 4 grid of `side * 48 / 277` circles at
+  `side * 12 / 277` margins, the `side / 8.5` right and `side / 21.875` up
+  Pattern offset, the primary `#FFD71921` hh/mm cells, the uppercase aa cell,
+  accent ink at 35% alpha and accent2 at 15% alpha, and the source minute
+  thresholds `mm > 9`, `mm > 29`, `mm > 39` and `mm > 49`. The author's
+  `ndot-47.ttf` is replaced by Dotwel's original dot glyphs, and the source
+  helper joint layers stay in the sanitized data without separate rasterization.
+  Without optional exact-alarm access the provider draws the same time-free dot
+  matrix under three live platform TextClocks for hh, mm and aa, so no frozen
+  bitmap time is presented as live. Runtime is not claimed here.
 - `widgets/Nothing_Mini_Calender.kwgt!preset.json` -> `KwgtMiniCalendarRenderer.kt`,
   `KwgtMiniCalendarDates.kt`, `KwgtMiniCalendarWidgetProvider.kt`, and the
   sanitized data model
@@ -159,9 +172,10 @@ the app from About & source credits > View MIT license texts.
   replace the fonts.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
   `Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
-  `Nothing_Date_Time2`, `Nothing_Digital4`, `Nothing_Digital`, and
-  `Nothing_Mini_Calender` are implemented in this checkpoint; the rest remain
-  pending or dependency-blocked and are not claimed as imported.
+  `Nothing_Date_Time2`, `Nothing_Digital4`, `Nothing_Digital3`,
+  `Nothing_Digital`, and `Nothing_Mini_Calender` are implemented in this
+  checkpoint; the rest remain pending or dependency-blocked and are not claimed
+  as imported.
 
 ## Not included
 

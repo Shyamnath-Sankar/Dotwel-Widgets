@@ -3,7 +3,6 @@ package com.dotwelwidgets.dotwellabs
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
@@ -129,7 +128,7 @@ object KwgtDigital3Renderer {
             WidgetStyle.TRANSLUCENT -> LIGHT_INK
             WidgetStyle.TRANSPARENT -> WHITE
         }
-        val contrastInk = if (Color.alpha(background) >= 0x80) background else WHITE
+        val contrastInk = if (((background ushr 24) and 0xFF) >= 0x80) background else WHITE
         return Palette(
             background = background,
             foreground = foreground,
@@ -289,7 +288,7 @@ object KwgtDigital3Renderer {
         boundary: Digital3Layout,
     ) {
         val background = palette(style).background
-        if (Color.alpha(background) == 0) return
+        if (((background ushr 24) and 0xFF) == 0) return
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = background }
         canvas.drawRoundRect(
             RectF(0f, 0f, boundary.width, boundary.height),
@@ -386,10 +385,6 @@ object KwgtDigital3Renderer {
         )
     }
 
-    private fun withAlpha(color: Int, percent: Int): Int = Color.argb(
-        (255f * percent / 100f).roundToInt(),
-        Color.red(color),
-        Color.green(color),
-        Color.blue(color),
-    )
+    private fun withAlpha(color: Int, percent: Int): Int =
+        ((255f * percent / 100f).roundToInt() shl 24) or (color and 0x00FFFFFF)
 }

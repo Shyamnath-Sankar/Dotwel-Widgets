@@ -119,8 +119,8 @@ class KwgtDigital3RendererLayoutTest {
     @Test
     fun accentAlphasFollowAuthorPercentages() {
         val palette = KwgtDigital3Renderer.palette(WidgetStyle.BLACK)
-        assertEquals(89, android.graphics.Color.alpha(palette.accent))
-        assertEquals(38, android.graphics.Color.alpha(palette.accent2))
+        assertEquals(89, (palette.accent ushr 24) and 0xFF)
+        assertEquals(38, (palette.accent2 ushr 24) and 0xFF)
         assertEquals(KwgtDigital3Renderer.RED, palette.primary)
     }
 

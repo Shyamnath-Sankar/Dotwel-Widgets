@@ -43,7 +43,7 @@ without a prohibited capability or unresolved third-party rights.
 | 24 | `Nothing_Date_Time3` | pending | Depends on the pending Open-Meteo weather/temperature/AQI path. |
 | 25 | `Nothing_Digital` | **implemented** | Native `KwgtGradientClockWidgetProvider`; right-edge gradient circles, 12-hour hh and red minute chip; live text fallback without exact-alarm access; runtime unverified. |
 | 26 | `Nothing_Digital2` | pending | Digital layer conversion queued; can reuse the existing minute schedule. |
-| 27 | `Nothing_Digital3` | pending | Digital layer conversion queued. |
+| 27 | `Nothing_Digital3` | **implemented** | Native `KwgtDigital3WidgetProvider`; 4x4 minute-lit dot matrix with red hh/mm, uppercase aa and source thresholds; live TextClock fallback without exact-alarm access; runtime unverified. |
 | 28 | `Nothing_Digital4` | **implemented** | Native `KwgtDigital4WidgetProvider`; red hh / centre divider / ink mm split; live text fallback without exact-alarm access; runtime unverified. |
 | 29 | `Nothing_Digital_Clock` | pending | Digital layer conversion queued. |
 | 30 | `Nothing_Future_Clock` | pending | Layer conversion queued. |
