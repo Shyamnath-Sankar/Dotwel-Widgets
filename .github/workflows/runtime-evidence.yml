@@ -1,4 +1,4 @@
-name: Focused DateTime2 tap destinations
+name: Settled DateTime2 tap-only gate
 on:
   workflow_dispatch:
 permissions:
@@ -91,14 +91,19 @@ jobs:
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
            if report['sha256']!='381e8302205e36fcc12dee780df2cb75dc2ee00e87df7644de482f76b7e79a96':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
-           adb('shell','settings','put','system','font_scale','1.3');adb('shell','am','force-stop',PKG);start();wait_target('Open Clock,',False);cap('02-gallery-large-font')
            def category(name):
-            adb('shell','am','force-stop',PKG);start()
-            for attempt in range(12):
-             r=tree();n=find(r,'Open '+name+',')
-             if n is not None:click(n);return
-             scroll()
-            raise RuntimeError('Missing category '+name)
+            for retry in range(3):
+             adb('shell','am','force-stop',PKG);start();wait_target('Open '+name+',',False)
+             for attempt in range(12):
+              r=tree();n=find(r,'Open '+name+',')
+              if n is not None:
+               prior=n.get('bounds');time.sleep(.5);n=find(tree(),'Open '+name+',')
+               if n is None or n.get('bounds')!=prior:continue
+               click(n)
+               try:wait_target('Close category');return
+               except RuntimeError:break
+              scroll()
+            raise RuntimeError('Category did not open '+name)
            adb('shell','settings','put','system','font_scale','1.0');category('Calendar');wait_target('Add Date');cap('07-calendar-first');click(wait_target('Next'));wait_target('Add KWGT Date Time');click(wait_target('Next'));wait_target('Add KWGT Date Time 2');cap('08-calendar-kwgt')
            click(wait_target('Add KWGT Date Time 2'));click(wait_target('Add live date & time'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected third Calendar variant and confirmed'
            r=locate('kwgt2_minute','home-kwgt-live-before');before=find(r,'kwgt2_minute').get('text','')
