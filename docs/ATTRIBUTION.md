@@ -166,6 +166,23 @@ the app from About & source credits > View MIT license texts.
   the same time-free dot matrix under three live platform TextClocks for hh, mm
   and aa, positioned in true host content pixels, so no frozen bitmap time is
   presented as live. Runtime is not claimed here.
+- `widgets/Nothing_Analog_3.kwgt!preset.json` -> `KwgtAnalog3WidgetProvider.kt`,
+  the three `widget_kwgt_analog3_{black,translucent,transparent}.xml` layouts,
+  the dial/hand vector resources and the sanitized data model
+  `app/src/main/assets/kwgt/nothing_analog3.sanitized.json`. Retained: the 277
+  square design viewport, the `side = min(width,height)` composition, the
+  `side / 13.85` hand width (20), `side / 138.5` stroke (2), `side / 2.475` and
+  `side / 3.3765` hand heights with their exact
+  `138.5 - (side / 2.988) / 2` and `138.5 - (side / 4.4675) / 2` centred-Y
+  formulas, and the 10-unit capsule corner radius. The source has no seconds
+  layer. Black uses `#1B1B1D` with white hands, translucent `#A6FFFFFF` with dark
+  hands, transparent no dial with white hands. The RemoteViews layouts embed a
+  native `android.widget.AnalogClock` with vector `android:dial`,
+  `android:hand_hour` and `android:hand_minute`, so the platform rotates the
+  hands automatically. No runtime AnalogClock setter, bitmap time, minute alarm,
+  service, permission or new dependency is used. The gallery preview inflates
+  the same native layout. Runtime inflation on a launcher and actual hand
+  movement are not claimed here.
 - `widgets/Nothing_Mini_Calender.kwgt!preset.json` -> `KwgtMiniCalendarRenderer.kt`,
   `KwgtMiniCalendarDates.kt`, `KwgtMiniCalendarWidgetProvider.kt`, and the
   sanitized data model
@@ -211,12 +228,13 @@ the app from About & source credits > View MIT license texts.
   Dotwel's original dot glyphs or the documented platform font substitution
   replace the fonts.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
-  `Clean_Time_Date_Info`, `Nothing_Battery`, `Nothing_Battery2`,
-  `Nothing_Battery_Mini`, `Nothing_Date_Time`, `Nothing_Date_Time2`,
-  `Nothing_Digital4`, `Nothing_Digital3`, `Nothing_Digital`, and
-  `Nothing_Mini_Calender` are implemented in this checkpoint (10 of 40); the
-  rest remain pending or dependency-blocked and are not claimed as imported. All
-  16 registered providers are build-verified only and remain runtime-unverified.
+  `Clean_Time_Date_Info`, `Nothing_Analog_3`, `Nothing_Battery`,
+  `Nothing_Battery2`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
+  `Nothing_Date_Time2`, `Nothing_Digital4`, `Nothing_Digital3`,
+  `Nothing_Digital`, and `Nothing_Mini_Calender` are implemented in this
+  checkpoint (11 of 40); the rest remain pending or dependency-blocked and are
+  not claimed as imported. All 17 registered providers are build-verified only
+  and remain runtime-unverified.
 
 ## Not included
 

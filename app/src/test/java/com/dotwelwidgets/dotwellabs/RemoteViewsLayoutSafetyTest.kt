@@ -22,6 +22,9 @@ class RemoteViewsLayoutSafetyTest {
         "widget_kwgt_gradient_clock.xml",
         "widget_kwgt_mini_calendar.xml",
         "widget_kwgt_battery2.xml",
+        "widget_kwgt_analog3_black.xml",
+        "widget_kwgt_analog3_translucent.xml",
+        "widget_kwgt_analog3_transparent.xml",
     )
 
     private val remoteViewsSafeTags = setOf(

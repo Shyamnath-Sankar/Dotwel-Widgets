@@ -2,9 +2,70 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/battery2-refresh-45251301569`, based on `5b733ea`.
+- Branch: `agent/analog3-finish-45278310728`, based on the verified Battery2
+  branch.
 - No launcher repository, visibility, workflow, signing key, permission,
-  dependency or provider rendering was changed in this run.
+  dependency or existing provider rendering was changed in this run.
+
+## KWGT Nothing_Analog_3 native port
+
+- Added the 17th provider and 11th KWGT source port, `KwgtAnalog3WidgetProvider`,
+  as a distinct catalog entry `KWGT Analog3` (`kwgt_nothing_analog3`) in the
+  existing Clock category. No alias of `AnalogBoldWidgetProvider` or
+  `AnalogScaleWidgetProvider`; their files and behaviour are unchanged.
+- Source: `Nothing_Analog_3.kwgt!preset.json` at
+  `96ca27be4cbff35efec5a86c64dd39fd065c958f`. Actual canvas 415x542,
+  `side = min(width, height)`, 277 square design viewport with a 138.5 dial
+  radius. The source has a circle plus two hollow rounded capsule hands and no
+  seconds layer. Sanitized actual JSON is
+  `app/src/main/assets/kwgt/nothing_analog3.sanitized.json`; author email and the
+  launch-app tap intent are removed.
+- Hands retain the source formulas: width `side / 13.85` (20), stroke
+  `side / 138.5` (2), minute height `side / 2.475` centred at
+  `138.5 - (side / 2.988) / 2`, hour height `side / 3.3765` centred at
+  `138.5 - (side / 4.4675) / 2`, capsule corner radius 10, transparent fill and
+  foreground stroke.
+- Three layouts ship: black with a filled `#FF1B1B1D` vector dial and white
+  hands, translucent with a filled `#A6FFFFFF` vector dial and dark `#FF1B1B1D`
+  hands, transparent with a transparent vector dial and white hands. Each layout
+  embeds one native `android.widget.AnalogClock`
+  (`@id/kwgt_analog3_clock`) using public `android:dial`, `android:hand_hour` and
+  `android:hand_minute` vector resources. The platform clock rotates the hands
+  automatically; no runtime AnalogClock setter, bitmap time, minute alarm,
+  exact-alarm access, service, dependency or new permission is used.
+- `KwgtAnalog3WidgetProvider` overrides `buildViews` instead of using the base
+  card: it selects the style layout and sets the root click
+  `PendingIntent` to `AlarmClock.ACTION_SHOW_ALARMS` without calling
+  `setBackgroundResource`. The gallery preview inflates the same native layout
+  so it shares the vectors and current time.
+- Catalog, manifest receiver (`kwgt_analog3_widget_info`), `PinResultReceiver`
+  kind `kwgt_analog_3`, `WidgetUpdater` provider list, strings, attribution and
+  ledger are updated to 11 of 40 presets / 17 registered providers. All 16
+  earlier renderers and the Battery2 refresh lifecycle are preserved.
+
+### Verified here (Analog3)
+
+```
+./gradlew assembleDebug -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+./gradlew :app:testDebugUnitTest :app:lintDebug -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+```
+
+Result: first command `BUILD SUCCESSFUL`. Second command `BUILD SUCCESSFUL`;
+51 unit/layout tests passed (0 failures, 0 errors, 0 skipped), including the new
+`KwgtAnalog3LayoutTest` style/dial/hand/vector assertions and the existing
+RemoteViews tag allowlist now covering the three analog3 layouts; lint 135
+warnings, 0 errors. Debug APK:
+`app/build/outputs/apk/debug/app-debug.apk`,
+sha256 `8df01a3db9d46b86acb025b79edbd4cae6bc7ae10c4b3c6e39406570f86375ba`.
+
+### Not verified here (Analog3)
+
+- No Android host or emulator is available in this runner. RemoteViews inflation
+  of the native `AnalogClock` with the three vector drawables, placement on a
+  launcher, resize behaviour, style switching, tap opening Alarms, and actual
+  hour/minute hand movement are **not** runtime-verified and are not claimed.
+- The source has no seconds layer and none was added; no future-seconds
+  interpretation was introduced.
 
 ## Battery refresh lifecycle reliability (from 5b733ea)
 
@@ -215,8 +276,8 @@ build-verified only, not runtime-verified.
   minute advance, process-kill recovery, boot/timezone refresh, tap behaviour and
   visual output for CleanInfo (and the other providers) are not runtime-verified.
   No screenshot or runtime pass is claimed.
-- The KWGT collection is still incomplete: 10 of 40 presets are implemented; the
-  remaining 30 stay pending or dependency-blocked and are not claimed as
+- The KWGT collection is still incomplete: 11 of 40 presets are implemented; the
+  remaining 29 stay pending or dependency-blocked and are not claimed as
   imported.
 - Weather, Photo, Away, Compass, Snake, media/notification, CPU and iOS
   Komponent presets remain pending or blocked.

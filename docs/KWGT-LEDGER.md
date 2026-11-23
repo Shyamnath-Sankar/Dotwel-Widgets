@@ -31,7 +31,7 @@ without a prohibited capability or unresolved third-party rights.
 | 12 | `Minimal_Media_Player_3` | dependency | Media/notification access is prohibited for this app. |
 | 13 | `Nothing_Analog_` | pending | Analog layer conversion queued behind the battery/time ports. |
 | 14 | `Nothing_Analog_2` | pending | Analog layer conversion queued. |
-| 15 | `Nothing_Analog_3` | pending | Analog layer conversion queued. |
+| 15 | `Nothing_Analog_3` | **implemented** | Native `KwgtAnalog3WidgetProvider`; 277 vector dial with two hollow rounded capsule hands in a platform `android.widget.AnalogClock`, which rotates the hands automatically. Black `#1B1B1D` / white hands, translucent `#A6FFFFFF` / dark hands, transparent no dial / white hands. No seconds, bitmap time, minute alarm, permission or service; runtime unverified. |
 | 16 | `Nothing_Analog_5` | pending | Analog layer conversion queued. |
 | 17 | `Nothing_Analog_5_Transparent` | pending | Analog layer conversion queued. |
 | 18 | `Nothing_Battery` | **implemented** | Native `BatteryWidgetProvider`; real system level with bounded best-effort `BatteryRefreshScheduler` (inexact ELAPSED_REALTIME ~15 min + 10 min flex, does not wake the device); runtime unverified. |
@@ -60,13 +60,14 @@ without a prohibited capability or unresolved third-party rights.
 
 ## Implemented in this checkpoint
 
-Ten of the 40 presets now have native providers: `Clean_Time_Date_Info`,
-`Nothing_Battery`, `Nothing_Battery2`, `Nothing_Battery_Mini`,
-`Nothing_Date_Time`, `Nothing_Date_Time2`, `Nothing_Digital`, `Nothing_Digital3`,
-`Nothing_Digital4` and `Nothing_Mini_Calender`. All 16 registered providers are
-build-verified only and remain runtime-unverified in this checkpoint. The
-sanitized transcriptions are under `app/src/main/assets/kwgt/`, including
-`clean_time_date_info.sanitized.json`,
+Eleven of the 40 presets now have native providers: `Clean_Time_Date_Info`,
+`Nothing_Analog_3`, `Nothing_Battery`, `Nothing_Battery2`,
+`Nothing_Battery_Mini`, `Nothing_Date_Time`, `Nothing_Date_Time2`,
+`Nothing_Digital`, `Nothing_Digital3`, `Nothing_Digital4` and
+`Nothing_Mini_Calender`. All 17 registered providers are build-verified only and
+remain runtime-unverified in this checkpoint. The sanitized transcriptions are
+under `app/src/main/assets/kwgt/`, including
+`clean_time_date_info.sanitized.json`, `nothing_analog3.sanitized.json`,
 `nothing_battery.sanitized.json`, `nothing_battery2.sanitized.json`,
 `nothing_battery_mini.sanitized.json`,
 `nothing_date_time.sanitized.json`, `nothing_date_time2.sanitized.json`,
@@ -187,6 +188,29 @@ upstream output. The provider is date-only and does not request calendar or
 exact-alarm permission. Android's inexact `updatePeriodMillis` is backed up by
 DATE/TIME/TIMEZONE/BOOT broadcasts, app refresh and resize updates; it is not
 promised as an exact midnight alarm.
+
+Nothing_Analog_3 keeps these author relationships:
+
+- source canvas 415 x 542; `side = min(width, height)`; 277 square design viewport
+- dial radius 138.5 in the 277 viewport; the native port uses a filled vector
+  dial in the source `bg` colour rather than the source 3-unit stroke
+- minute hand width `side / 13.85` (20), stroke `side / 138.5` (2), height
+  `side / 2.475`, capsule corner radius 10, centred at
+  `138.5 - (side / 2.988) / 2`
+- hour hand same width/stroke/radius, height `side / 3.3765`, centred at
+  `138.5 - (side / 4.4675) / 2`
+- minute rotation `CLOCK_MINUTE`, smooth hour rotation `CLOCK_HOUR_SMOOTH` are
+  provided by the platform `AnalogClock`; the source has no seconds layer
+
+Black uses the source dark `#FF1B1B1D` dial with white foreground hands,
+translucent uses a `#A6FFFFFF` dial with the dark `#FF1B1B1D` hands, and
+transparent uses no dial with white hands. The three RemoteViews layouts embed a
+native `android.widget.AnalogClock` with vector `android:dial`,
+`android:hand_hour` and `android:hand_minute` resources; no runtime AnalogClock
+setter, bitmap time, minute alarm, permission, service or dependency is used.
+The preview inflates the same native layout so it shows the same vectors and the
+current time. Runtime inflation on a launcher and actual minute-hand movement
+are not verified in this checkpoint.
 
 Sanitized out of the assets and implementations: the author email, the background
 `SINGLE_TAP` intent string, and the bundled `ndot-47.ttf`. Dotwel's original

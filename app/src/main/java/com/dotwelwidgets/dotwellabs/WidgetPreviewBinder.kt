@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.AnalogClock
 import android.widget.FrameLayout
@@ -38,6 +39,10 @@ object WidgetPreviewBinder {
             R.string.sheet_preview_description_format,
             entry.name,
         )
+        if (entry.previewKind == PreviewKind.KWGT_ANALOG_3) {
+            bindNativeAnalog3(context, container, style)
+            return
+        }
         if (WidgetPreviewRenderer.usesMinuteBitmap(entry.previewKind) &&
             !MinuteTickScheduler.hasExactAccess(context)
         ) {
@@ -68,6 +73,18 @@ object WidgetPreviewBinder {
         } else {
             bindNativeFallback(context, container, entry, style, failed = true)
         }
+    }
+
+    private fun bindNativeAnalog3(
+        context: Context,
+        container: FrameLayout,
+        style: WidgetStyle,
+    ) {
+        val layout = KwgtAnalog3WidgetProvider.layoutFor(style)
+        container.addView(
+            LayoutInflater.from(context).inflate(layout, container, false),
+            matchParams(),
+        )
     }
 
     private fun bindNativeFallback(
