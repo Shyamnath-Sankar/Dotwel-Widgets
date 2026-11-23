@@ -36,6 +36,7 @@ class PinResultReceiver : BroadcastReceiver() {
             PIN_KIND_KWGT_DATE_TIME -> R.string.pin_kwgt_datetime_confirmed
             PIN_KIND_KWGT_DATE_TIME_2 -> R.string.pin_kwgt_datetime2_confirmed
             PIN_KIND_KWGT_DIGITAL_4 -> R.string.pin_kwgt_digital4_confirmed
+            PIN_KIND_KWGT_DIGITAL_3 -> R.string.pin_kwgt_digital3_confirmed
             PIN_KIND_KWGT_GRADIENT_CLOCK -> R.string.pin_kwgt_gradient_confirmed
             PIN_KIND_KWGT_MINI_CALENDAR -> R.string.pin_kwgt_mini_calendar_confirmed
             else -> R.string.pin_widget_confirmed
@@ -61,6 +62,7 @@ class PinResultReceiver : BroadcastReceiver() {
         const val PIN_KIND_KWGT_DATE_TIME = "kwgt_date_time"
         const val PIN_KIND_KWGT_DATE_TIME_2 = "kwgt_date_time_2"
         const val PIN_KIND_KWGT_DIGITAL_4 = "kwgt_digital_4"
+        const val PIN_KIND_KWGT_DIGITAL_3 = "kwgt_digital_3"
         const val PIN_KIND_KWGT_GRADIENT_CLOCK = "kwgt_gradient_clock"
         const val PIN_KIND_KWGT_MINI_CALENDAR = "kwgt_mini_calendar"
     }

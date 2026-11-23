@@ -15,9 +15,11 @@ import javax.xml.parsers.DocumentBuilderFactory
  */
 class RemoteViewsLayoutSafetyTest {
     private val providerLayouts = listOf(
+        "widget_kwgt_digital3.xml",
         "widget_kwgt_digital4.xml",
         "widget_kwgt_datetime.xml",
         "widget_kwgt_datetime2.xml",
+        "widget_kwgt_gradient_clock.xml",
         "widget_kwgt_mini_calendar.xml",
     )
 

@@ -16,6 +16,7 @@ import android.widget.TextView
 import java.util.Calendar
 import java.util.Locale
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Shared preview host for the HOME category tiles and the category sheet.
@@ -126,6 +127,12 @@ object WidgetPreviewBinder {
             PreviewKind.KWGT_DIGITAL_4 -> {
                 container.addView(
                     splitClockFallback(context, ink),
+                    matchParams(),
+                )
+            }
+            PreviewKind.KWGT_DIGITAL_3 -> {
+                container.addView(
+                    digital3Fallback(context, style, width, height),
                     matchParams(),
                 )
             }
@@ -417,6 +424,109 @@ object WidgetPreviewBinder {
             ),
         )
         return root
+    }
+
+    private fun digital3Fallback(
+        context: Context,
+        style: WidgetStyle,
+        widthPx: Int,
+        heightPx: Int,
+    ): FrameLayout {
+        val root = FrameLayout(context)
+        val background = try {
+            KwgtDigital3Renderer.renderDots(
+                context,
+                widthPx,
+                heightPx,
+                style,
+                Calendar.getInstance(),
+                includeBackground = true,
+            )
+        } catch (_: OutOfMemoryError) {
+            null
+        } catch (_: RuntimeException) {
+            null
+        }
+        if (background != null) {
+            root.addView(
+                ImageView(context).apply {
+                    setImageBitmap(background)
+                    scaleType = ImageView.ScaleType.FIT_CENTER
+                    contentDescription = null
+                    importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                },
+                matchParams(),
+            )
+        }
+        val boundary = KwgtDigital3Renderer.layout(
+            widthPx.toFloat(),
+            heightPx.toFloat(),
+        )
+        val palette = KwgtDigital3Renderer.palette(style)
+        root.addView(
+            digital3Clock(
+                context,
+                "hh",
+                palette.foreground,
+                boundary.hourRegion,
+                widthPx,
+                heightPx,
+            ),
+            matchParams(),
+        )
+        root.addView(
+            digital3Clock(
+                context,
+                "mm",
+                palette.foreground,
+                boundary.minuteRegion,
+                widthPx,
+                heightPx,
+            ),
+            matchParams(),
+        )
+        root.addView(
+            digital3Clock(
+                context,
+                "a",
+                palette.contrastInk,
+                boundary.ampmRegion,
+                widthPx,
+                heightPx,
+            ),
+            matchParams(),
+        )
+        return root
+    }
+
+    private fun digital3Clock(
+        context: Context,
+        format: String,
+        color: Int,
+        region: KwgtDigital3Renderer.TextRegion,
+        widthPx: Int,
+        heightPx: Int,
+    ): TextClock = TextClock(context).apply {
+        setFormat12Hour(format)
+        setFormat24Hour(format)
+        setTextColor(color)
+        gravity = Gravity.CENTER
+        includeFontPadding = false
+        maxLines = 1
+        typeface = Typeface.MONOSPACE
+        setTypeface(typeface, Typeface.BOLD)
+        setPadding(
+            region.left.roundToInt().coerceIn(0, widthPx),
+            region.top.roundToInt().coerceIn(0, heightPx),
+            (widthPx - region.right).roundToInt().coerceIn(0, widthPx),
+            (heightPx - region.bottom).roundToInt().coerceIn(0, heightPx),
+        )
+        setAutoSizeTextTypeUniformWithConfiguration(
+            7,
+            72,
+            1,
+            TypedValue.COMPLEX_UNIT_SP,
+        )
     }
 
     private fun splitClockFallback(

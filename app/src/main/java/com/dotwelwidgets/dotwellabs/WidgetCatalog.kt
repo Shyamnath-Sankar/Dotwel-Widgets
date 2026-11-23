@@ -32,6 +32,7 @@ enum class PreviewKind {
     KWGT_BATTERY_MINI,
     KWGT_DATE_TIME,
     KWGT_DATE_TIME_2,
+    KWGT_DIGITAL_3,
     KWGT_DIGITAL_4,
     KWGT_GRADIENT_CLOCK,
     KWGT_MINI_CALENDAR,
@@ -275,6 +276,19 @@ object WidgetCatalog {
             action = CardAction.CLOCK_ACCESS,
         ),
         CatalogEntry(
+            id = "kwgt_nothing_digital3",
+            name = "KWGT Digital3 Dot Clock",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Digital3 · 4x4 minute-lit dot matrix / hh / mm / aa",
+            descriptionRes = R.string.catalog_kwgt_digital3_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_DIGITAL_3,
+            providerClass = KwgtDigital3WidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_DIGITAL_3,
+            action = CardAction.CLOCK_ACCESS,
+        ),
+        CatalogEntry(
             id = "kwgt_gradient_clock",
             name = "KWGT Gradient Clock",
             group = WidgetGroup.KWGT,
@@ -399,6 +413,7 @@ enum class WidgetCategory(
             "analog_scale",
             "world",
             "kwgt_nothing_digital4",
+            "kwgt_nothing_digital3",
             "kwgt_gradient_clock",
         ),
     ),
@@ -491,6 +506,11 @@ object WidgetModeLabels {
                 R.string.mode_kwgt_split_styled
             } else {
                 R.string.mode_kwgt_split_live
+            }
+            PreviewKind.KWGT_DIGITAL_3 -> if (access) {
+                R.string.mode_kwgt_digital3_styled
+            } else {
+                R.string.mode_kwgt_digital3_live
             }
             PreviewKind.KWGT_GRADIENT_CLOCK -> if (access) {
                 R.string.mode_kwgt_gradient_styled
