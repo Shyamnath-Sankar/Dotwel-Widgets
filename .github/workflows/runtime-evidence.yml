@@ -1,4 +1,4 @@
-name: Read-only publication safety audit
+name: Read-only publication inventory
 on:
   workflow_dispatch:
 permissions:
@@ -11,47 +11,24 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Inspect all committed objects without printing sensitive values
+      - name: Inventory historical publication surface
         run: |
           git fetch origin '+refs/heads/*:refs/remotes/origin/*' --prune
           python3 - <<'PY'
-          import subprocess as sp,re,json,zipfile,io
+          import subprocess as sp,json,re
           def git(*a):return sp.check_output(['git',*a])
-          refs=git('for-each-ref','--format=%(refname)','refs/remotes/origin').decode().splitlines()
           objects=git('rev-list','--objects','--all').decode().splitlines()
-          findings=[];counts={'objects':len(objects),'text_blobs':0,'apk_blobs':0};seen=set()
-          patterns={
-            'github_credential':rb'(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,})',
-            'private_key':rb'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',
-            'aws_access_key':rb'AKIA[0-9A-Z]{16}',
-            'google_api_key':rb'AIza[0-9A-Za-z_-]{30,}',
-            'meta_token':rb'EA[A-Za-z0-9]{60,}',
-          }
+          files=[];reviews=[];seen=set()
           for row in objects:
-              parts=row.split(' ',1)
-              if len(parts)!=2:continue
-              oid,path=parts
-              if oid in seen:continue
-              seen.add(oid)
-              typ=git('cat-file','-t',oid).decode().strip()
-              if typ!='blob':continue
-              size=int(git('cat-file','-s',oid))
-              if any(x in path.lower() for x in ('.keystore','.jks','.p12','.pem','.env')):findings.append({'kind':'sensitive_path_review','path':path,'oid':oid})
-              if path.lower().endswith(('.ttf','.otf')):findings.append({'kind':'font_rights_review','path':path,'oid':oid})
-              if size>3000000:continue
-              data=git('cat-file','blob',oid)
-              if path.endswith('.apk'):
-                  counts['apk_blobs']+=1
-                  try:
-                      z=zipfile.ZipFile(io.BytesIO(data));names=z.namelist()
-                      suspect=[n for n in names if n.lower().endswith(('.ttf','.otf','.jks','.keystore','.pem'))]
-                      if suspect:findings.append({'kind':'apk_asset_review','path':path,'oid':oid,'entries':suspect})
-                  except:findings.append({'kind':'invalid_apk','path':path,'oid':oid})
-                  continue
-              if b'\0' in data[:4096]:continue
-              counts['text_blobs']+=1
-              for kind,pattern in patterns.items():
-                  if re.search(pattern,data):findings.append({'kind':kind,'path':path,'oid':oid})
-              if path.endswith(('.png','.jpg','.jpeg','.webp')):findings.append({'kind':'visual_review','path':path,'oid':oid})
-          print(json.dumps({'refs':refs,'counts':counts,'findings':findings},indent=2))
+            p=row.split(' ',1)
+            if len(p)!=2:continue
+            oid,path=p
+            if oid in seen or git('cat-file','-t',oid).strip()!=b'blob':continue
+            seen.add(oid);size=int(git('cat-file','-s',oid));files.append({'oid':oid,'path':path,'size':size})
+            if size>3000000:continue
+            data=git('cat-file','blob',oid)
+            if b'\0' in data[:4096]:continue
+            for kind,pat in {'personal_contact':rb'(?:\+919361899061|9361899061|shyamnathsankar[^\s<>"\x27]*@)','build_internal':rb'(?i)(?:/memory/|agent-01[A-Z0-9]{20,}|chat-sessions/|system prompt|tools CLI|parent agent|task agent)','rights_license':rb'(?i)(?:SIL OPEN FONT|Copyright.*Font|DotGothic|NothingWidgetPort)','encoded_bitmap':rb'bitmap_url=data:image/'}.items():
+              if re.search(pat,data):reviews.append({'kind':kind,'path':path,'oid':oid})
+          print(json.dumps({'files':files,'reviews':reviews},indent=2))
           PY
