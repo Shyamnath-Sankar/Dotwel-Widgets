@@ -1,4 +1,4 @@
-name: Actual split clock pin minute and tap gate
+name: Repaired split clock native and minute gate
 on:
   workflow_dispatch:
 permissions:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 525b5de4d9ce304b7fc006354032672a3b6e923d
+          ref: bc869a10e1e5f291a57b75d7ecb0e61ad45da0e2
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -89,7 +89,7 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='f1b66d3db677afc881925d8d1d75dbb0948eee10e11068ff3ec2e8836f8f4a5a':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='3a01a32429298f217f6ed9371cec4719a2fcd40cbfac40aedd82491589b4b3f4':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            def category(name):
             for retry in range(3):
