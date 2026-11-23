@@ -1,0 +1,9 @@
+{
+  "version": "0.1.7",
+  "tests": {},
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "381e8302205e36fcc12dee780df2cb75dc2ee00e87df7644de482f76b7e79a96",
+  "error": "UI target not ready: Add Date"
+}
