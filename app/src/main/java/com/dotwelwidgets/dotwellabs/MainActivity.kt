@@ -36,6 +36,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import java.util.Calendar
+import java.util.UUID
 
 class MainActivity : Activity() {
     private val handler = Handler(Looper.getMainLooper())
@@ -315,32 +316,42 @@ class MainActivity : Activity() {
                     zones[first.selectedItemPosition],
                     zones[second.selectedItemPosition],
                 )
-                WorldPrefs.setPending(this, chosen)
+                val token = UUID.randomUUID().toString()
+                WorldPrefs.setPending(this, token, chosen)
                 renderAllPreviews()
-                requestPin(entry)
+                requestPin(entry, token)
             }
             .setNegativeButton(R.string.world_cancel, null)
             .show()
     }
 
-    private fun requestPin(entry: CatalogEntry) {
+    private fun requestPin(entry: CatalogEntry, pendingToken: String? = null) {
         val provider = entry.providerClass ?: return
         val kind = entry.pinKind ?: return
+        fun abandonPending() {
+            if (pendingToken != null) WorldPrefs.clearPending(this, pendingToken)
+        }
         if (isDebugForcePinUnsupported()) {
+            abandonPending()
             showPinFallbackDialog()
             return
         }
         val manager = AppWidgetManager.getInstance(this)
         if (!manager.isRequestPinAppWidgetSupported) {
+            abandonPending()
             showPinFallbackDialog()
             return
         }
+        val requestCode = (kind + (pendingToken ?: "")).hashCode() and 0x7FFF
         val callback = PendingIntent.getBroadcast(
             this,
-            kind.hashCode() and 0x7FFF,
+            requestCode,
             Intent(this, PinResultReceiver::class.java).apply {
                 action = PinResultReceiver.ACTION_PIN_RESULT
                 putExtra(PinResultReceiver.EXTRA_PIN_KIND, kind)
+                if (pendingToken != null) {
+                    putExtra(PinResultReceiver.EXTRA_PIN_TOKEN, pendingToken)
+                }
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
@@ -356,6 +367,7 @@ class MainActivity : Activity() {
         if (requested) {
             Toast.makeText(this, R.string.pin_request_sent, Toast.LENGTH_LONG).show()
         } else {
+            abandonPending()
             showPinFallbackDialog()
         }
     }

@@ -215,9 +215,10 @@ class ClockWidgetProvider : BaseWidgetProvider() {
             appWidgetId,
             R.id.widget_clock_bitmap,
             R.id.clock_time,
-        ) { widthPx, heightPx ->
-            NtDigitalRenderer.render(context, widthPx, heightPx, style, now, false)
-        } decorate@{ views, usedBitmap ->
+            render = { widthPx, heightPx ->
+                NtDigitalRenderer.render(context, widthPx, heightPx, style, now, false)
+            },
+        ) decorate@{ views, usedBitmap ->
             views.setTextColor(R.id.clock_time, UpstreamNtDraw.ink(context, style))
             views.setViewVisibility(
                 R.id.clock_fallback_note,
@@ -275,9 +276,10 @@ class DateWidgetProvider : BaseWidgetProvider() {
             appWidgetId,
             R.id.widget_date_bitmap,
             R.id.date_fallback,
-        ) { widthPx, heightPx ->
-            NtDateRenderer.render(context, widthPx, heightPx, style, now, false)
-        } decorate@{ views, _ ->
+            render = { widthPx, heightPx ->
+                NtDateRenderer.render(context, widthPx, heightPx, style, now, false)
+            },
+        ) decorate@{ views, _ ->
             views.setTextColor(R.id.date_fallback, UpstreamNtDraw.ink(context, style))
         }
     }
@@ -339,21 +341,22 @@ class AnalogBoldWidgetProvider : BaseWidgetProvider() {
             appWidgetId,
             R.id.widget_analog_bitmap,
             R.id.analog_fallback,
-        ) { widthPx, heightPx ->
-            if (drawDots) {
-                NtAnalogRenderer.render(
-                    context,
-                    widthPx,
-                    heightPx,
-                    style,
-                    now,
-                    bold = true,
-                    includeBackground = false,
-                )
-            } else {
-                null
-            }
-        } decorate@{ views, usedBitmap ->
+            render = { widthPx, heightPx ->
+                if (drawDots) {
+                    NtAnalogRenderer.render(
+                        context,
+                        widthPx,
+                        heightPx,
+                        style,
+                        now,
+                        bold = true,
+                        includeBackground = false,
+                    )
+                } else {
+                    null
+                }
+            },
+        ) decorate@{ views, usedBitmap ->
             views.setInt(
                 R.id.widget_root,
                 "setBackgroundResource",
@@ -419,21 +422,22 @@ class AnalogScaleWidgetProvider : BaseWidgetProvider() {
             appWidgetId,
             R.id.widget_analog_bitmap,
             R.id.analog_fallback,
-        ) { widthPx, heightPx ->
-            if (drawDots) {
-                NtAnalogRenderer.render(
-                    context,
-                    widthPx,
-                    heightPx,
-                    style,
-                    now,
-                    bold = false,
-                    includeBackground = false,
-                )
-            } else {
-                null
-            }
-        } decorate@{ views, usedBitmap ->
+            render = { widthPx, heightPx ->
+                if (drawDots) {
+                    NtAnalogRenderer.render(
+                        context,
+                        widthPx,
+                        heightPx,
+                        style,
+                        now,
+                        bold = false,
+                        includeBackground = false,
+                    )
+                } else {
+                    null
+                }
+            },
+        ) decorate@{ views, usedBitmap ->
             views.setInt(
                 R.id.widget_root,
                 "setBackgroundResource",

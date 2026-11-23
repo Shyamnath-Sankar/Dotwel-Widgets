@@ -14,6 +14,7 @@ object WidgetUpdater {
         AnalogScaleWidgetProvider::class.java,
         WorldWidgetProvider::class.java,
         QuotesWidgetProvider::class.java,
+        BatteryWidgetProvider::class.java,
     )
 
     fun updateAll(context: Context) {

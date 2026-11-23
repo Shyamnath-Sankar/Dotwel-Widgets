@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Dotwel Widgets</string>
-    <string name="settings_subtitle">Nothing-inspired home-screen gallery, adapted from the MIT AwesomeAWidgets author renderer.</string>
+    <string name="settings_subtitle">Nothing-inspired home-screen gallery, adapted from the MIT AwesomeAWidgets author renderer and the MIT KWGT-Widgets author presets.</string>
 
-    <string name="gallery_label">GALLERY · 23 WIDGETS</string>
+    <string name="gallery_label">GALLERY · 24 WIDGETS</string>
     <string name="gallery_note">Add buttons pin that widget directly below its preview. Ready items are functional now; pending, blocked and unavailable items are labeled with the exact remaining work.</string>
     <string name="gallery_preview_description">Widget gallery preview</string>
     <string name="gallery_add_format">Add %1$s</string>
@@ -57,6 +57,9 @@
     <string name="analog_preview_description">Rendered analog clock preview</string>
     <string name="world_preview_description">Rendered world clock preview</string>
     <string name="quotes_preview_description">Rendered quotes preview</string>
+    <string name="battery_preview_description">Rendered battery gauge preview</string>
+    <string name="battery_fallback_format">Battery %1$d%%</string>
+    <string name="battery_content_description">Battery %1$d percent</string>
     <string name="clock_content_description">Dotwel clock, %1$s</string>
 
     <string name="style_label">WIDGET STYLE</string>
@@ -82,11 +85,12 @@
     <string name="pin_analog_scale_confirmed">Analog Scale added to your home screen.</string>
     <string name="pin_world_confirmed">World clock added to your home screen.</string>
     <string name="pin_quotes_confirmed">Quotes added to your home screen.</string>
+    <string name="pin_battery_confirmed">Battery added to your home screen.</string>
     <string name="pin_unavailable_title">Place widget manually</string>
     <string name="pin_unavailable_message">Your launcher did not open a placement prompt. You can add the widget manually:\n\n1. Go to your home screen.\n2. Long-press an empty area.\n3. Tap Widgets.\n4. Choose Dotwel Widgets.\n5. Pick the widget you want.\n\nNo Alarms &amp; reminders access is needed to place a widget.</string>
     <string name="pin_unavailable_close">Got it</string>
     <string name="settings_hint">Use each gallery card\'s Add button. If your launcher does not show a placement prompt, long-press an empty area of the home screen, open Widgets, choose Dotwel Widgets, then pick a widget. Resize placed widgets from their handles. Style changes apply to every placed widget.</string>
-    <string name="attribution_short">Renderer adapted from the MIT AwesomeAWidgets author code; original circular-dot glyphs and Android platform serif/condensed fonts substitute the upstream Ndot/NType/Lettera fonts. Not affiliated with Nothing Technology Limited.</string>
+    <string name="attribution_short">Clocks adapted from the MIT AwesomeAWidgets author code; the Nothing Battery card is converted from the MIT KWGT-Widgets author preset. Original circular-dot glyphs and Android platform serif/condensed fonts substitute the upstream fonts. Not affiliated with Nothing Technology Limited.</string>
 
     <string name="widget_clock_label">Dotwel Clock</string>
     <string name="widget_clock_description">A live stacked-hours-and-minutes clock. The dotted bitmap updates about once a minute when Alarms &amp; reminders access is enabled; deep idle can delay an update. Otherwise the system text clock is shown.</string>
@@ -100,6 +104,8 @@
     <string name="widget_world_description">Two configurable time zones with the translated NtWorld row composition.</string>
     <string name="widget_quotes_label">Dotwel Quotes</string>
     <string name="widget_quotes_description">A daily quote from the AwesomeAWidgets author data file; tap to advance.</string>
+    <string name="widget_battery_label">Dotwel Battery</string>
+    <string name="widget_battery_description">A circular battery gauge translated from the KWGT Nothing_Battery preset. The level comes from the system battery state; tap opens power settings where supported.</string>
 
     <string name="catalog_digital_desc">Stacked hour and minute dots: upstream NtDigital fit and centre composition with Dotwel\'s original dot glyphs.</string>
     <string name="catalog_date_desc">Day number and abbreviated red weekday using the translated NtDate fitting and baseline geometry.</string>
@@ -107,6 +113,7 @@
     <string name="catalog_analog_scale_desc">NtAnalogScale provider wiring with a sixty-tick scale, redrawn without the upstream dial/hand drawables.</string>
     <string name="catalog_world_desc">NtWorld two-row world clock with per-widget zone choice before the native pin request.</string>
     <string name="catalog_quotes_desc">NtQuotes layout with the upstream assets/nt_quotes.csv author data; tap cycles the daily offset.</string>
+    <string name="catalog_kwgt_battery_desc">KWGT Nothing_Battery layer geometry and level formula converted to a native provider: side/2 circle, level*3.6 arc and the author cm(215,g,b) colour, with Dotwel dot glyphs in place of ndot-47.ttf.</string>
     <string name="catalog_photo_circle_desc">NtPhotoCircle is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_photo_rect_desc">NtPhotoRect is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_away_desc">NtAway screen-interactive sampling needs a durable background observation path before it can be honest.</string>
@@ -118,6 +125,7 @@
     <string name="catalog_oem_weather_clock_desc">OEM OnePlus WeatherClockProvider code and assets have no independent redistribution grant, so this entry is listed but not bundled.</string>
 
     <string name="ledger_ready">Provider imported and buildable; runtime not yet verified in this run.</string>
+    <string name="ledger_ready_kwgt">Native provider registered; battery level is read from the system. Runtime not yet verified in this run.</string>
     <string name="ledger_pending_photo">Provider not added: picker/config lifecycle not yet implemented.</string>
     <string name="ledger_pending_away">Provider not added: background sampling policy and configuration incomplete.</string>
     <string name="ledger_pending_weather">Provider not added: widget UI import pending. Data layer only.</string>
@@ -129,5 +137,6 @@
     <string name="category_time">Date &amp; world time</string>
     <string name="category_weather">Weather</string>
     <string name="category_media">Photos, quotes &amp; live</string>
+    <string name="category_kwgt">KWGT source ports</string>
     <string name="category_oem">OnePlus OEM (unavailable)</string>
 </resources>

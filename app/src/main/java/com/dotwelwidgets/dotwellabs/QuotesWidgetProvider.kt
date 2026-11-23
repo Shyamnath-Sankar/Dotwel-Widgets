@@ -81,9 +81,10 @@ class QuotesWidgetProvider : BaseWidgetProvider() {
             appWidgetId,
             R.id.widget_quotes_bitmap,
             R.id.quotes_fallback,
-        ) { widthPx, heightPx ->
-            NtQuotesRenderer.render(context, widthPx, heightPx, style, quote, false)
-        } decorate@{ remote, _ ->
+            render = { widthPx, heightPx ->
+                NtQuotesRenderer.render(context, widthPx, heightPx, style, quote, false)
+            },
+        ) decorate@{ remote, _ ->
             remote.setTextColor(R.id.quotes_fallback, UpstreamNtDraw.ink(context, style))
         }
         val pendingIntent = PendingIntent.getBroadcast(

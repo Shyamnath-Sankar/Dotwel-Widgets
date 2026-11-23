@@ -9,8 +9,11 @@ import java.util.TimeZone
 
 object WorldPrefs {
     private const val PREFS = "dotwel_world"
-    private const val PENDING = "pending_zones"
-    private const val DEFAULT = "London|Europe/London;Tokyo|Asia/Tokyo"
+    private const val PREVIEW = "preview_zones"
+    private const val PENDING_PREFIX = "pending_"
+    private const val PENDING_TS_PREFIX = "pending_ts_"
+    private const val ZONES_PREFIX = "zones_"
+    private const val PENDING_TTL_MS = 10 * 60 * 1000L
 
     val choices: List<NtWorldRenderer.Zone> = listOf(
         NtWorldRenderer.Zone("London", "Europe/London"),
@@ -29,35 +32,83 @@ object WorldPrefs {
 
     fun localChoice(): NtWorldRenderer.Zone {
         val zone = TimeZone.getDefault()
-        return NtWorldRenderer.Zone(zone.getDisplayName(false, TimeZone.SHORT), zone.id)
+        return NtWorldRenderer.Zone("Local", zone.id)
     }
 
-    fun zones(context: Context, appWidgetId: Int): List<NtWorldRenderer.Zone> =
-        parse(prefs(context).getString("zones_$appWidgetId", DEFAULT) ?: DEFAULT)
+    /**
+     * Safe default used when a World widget is placed straight from the system
+     * widget picker instead of the in-app zone dialog. It reflects the device's
+     * real timezone plus UTC, so no unselected city ever appears as if chosen.
+     */
+    fun defaultZones(): List<NtWorldRenderer.Zone> =
+        listOf(localChoice(), NtWorldRenderer.Zone("UTC", "UTC"))
+            .distinctBy { it.zoneId }
+            .take(2)
+
+    fun zones(context: Context, appWidgetId: Int): List<NtWorldRenderer.Zone> {
+        val key = "$ZONES_PREFIX$appWidgetId"
+        val stored = prefs(context).getString(key, null)
+        if (stored != null) return parse(stored).ifEmpty { defaultZones() }
+        val defaults = defaultZones()
+        prefs(context).edit().putString(key, encode(defaults)).apply()
+        return defaults
+    }
 
     fun setZones(context: Context, appWidgetId: Int, zones: List<NtWorldRenderer.Zone>) {
-        prefs(context).edit().putString("zones_$appWidgetId", encode(zones)).apply()
+        prefs(context).edit().putString("$ZONES_PREFIX$appWidgetId", encode(zones)).apply()
     }
 
     fun remove(context: Context, appWidgetId: Int) {
-        prefs(context).edit().remove("zones_$appWidgetId").apply()
+        prefs(context).edit().remove("$ZONES_PREFIX$appWidgetId").apply()
     }
 
-    fun setPending(context: Context, zones: List<NtWorldRenderer.Zone>) {
-        prefs(context).edit().putString(PENDING, encode(zones)).apply()
+    fun setPending(context: Context, token: String, zones: List<NtWorldRenderer.Zone>) {
+        pruneExpired(context)
+        prefs(context).edit()
+            .putString(PENDING_PREFIX + token, encode(zones))
+            .putLong(PENDING_TS_PREFIX + token, System.currentTimeMillis())
+            .putString(PREVIEW, encode(zones))
+            .apply()
     }
 
-    fun clearPending(context: Context) {
-        prefs(context).edit().remove(PENDING).apply()
+    fun takePending(context: Context, token: String): List<NtWorldRenderer.Zone>? {
+        val key = PENDING_PREFIX + token
+        val stored = prefs(context).getString(key, null)
+        prefs(context).edit()
+            .remove(key)
+            .remove(PENDING_TS_PREFIX + token)
+            .apply()
+        return stored?.let { parse(it) }
+    }
+
+    fun clearPending(context: Context, token: String) {
+        prefs(context).edit()
+            .remove(PENDING_PREFIX + token)
+            .remove(PENDING_TS_PREFIX + token)
+            .apply()
     }
 
     fun previewZones(context: Context): List<NtWorldRenderer.Zone> =
-        prefs(context).getString(PENDING, null)?.let { parse(it) } ?: parse(DEFAULT)
+        prefs(context).getString(PREVIEW, null)?.let { parse(it).ifEmpty { null } }
+            ?: defaultZones()
 
-    fun takePending(context: Context): List<NtWorldRenderer.Zone>? {
-        val stored = prefs(context).getString(PENDING, null) ?: return null
-        clearPending(context)
-        return parse(stored)
+    private fun pruneExpired(context: Context) {
+        val prefs = prefs(context)
+        val now = System.currentTimeMillis()
+        val editor = prefs.edit()
+        var pruning = false
+        prefs.all.forEach { (key, value) ->
+            if (key.startsWith(PENDING_TS_PREFIX) &&
+                value is Long &&
+                now - value > PENDING_TTL_MS
+            ) {
+                val token = key.removePrefix(PENDING_TS_PREFIX)
+                editor.remove(PENDING_PREFIX + token)
+                editor.remove(key)
+                pruning = true
+            }
+        }
+        if (pruning) editor.apply()
     }
 
     private fun prefs(context: Context) =
@@ -71,7 +122,7 @@ object WorldPrefs {
             val parts = entry.split("|")
             if (parts.size != 2 || parts[1].isBlank()) null
             else NtWorldRenderer.Zone(parts[0], parts[1])
-        }.ifEmpty { parse(DEFAULT) }
+        }
 }
 
 class WorldWidgetProvider : BaseWidgetProvider() {
@@ -130,9 +181,10 @@ class WorldWidgetProvider : BaseWidgetProvider() {
             appWidgetId,
             R.id.widget_world_bitmap,
             R.id.world_fallback,
-        ) { widthPx, heightPx ->
-            NtWorldRenderer.render(context, widthPx, heightPx, style, zones, false)
-        } decorate@{ views, _ ->
+            render = { widthPx, heightPx ->
+                NtWorldRenderer.render(context, widthPx, heightPx, style, zones, false)
+            },
+        ) decorate@{ views, _ ->
             views.setTextColor(R.id.world_fallback, UpstreamNtDraw.ink(context, style))
         }
     }

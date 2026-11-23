@@ -5,6 +5,7 @@ enum class WidgetGroup(val labelRes: Int) {
     TIME(R.string.category_time),
     WEATHER(R.string.category_weather),
     MEDIA(R.string.category_media),
+    KWGT(R.string.category_kwgt),
     OEM(R.string.category_oem),
 }
 
@@ -22,6 +23,7 @@ enum class PreviewKind {
     ANALOG_SCALE,
     WORLD,
     QUOTES,
+    KWGT_BATTERY,
     PLACEHOLDER,
 }
 
@@ -197,6 +199,18 @@ object WidgetCatalog {
             previewKind = PreviewKind.QUOTES,
             providerClass = QuotesWidgetProvider::class.java,
             pinKind = PinResultReceiver.PIN_KIND_QUOTES,
+        ),
+        CatalogEntry(
+            id = "kwgt_nothing_battery",
+            name = "Nothing Battery (KWGT)",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Battery · level*3.6 gauge · cm(215,g,b)",
+            descriptionRes = R.string.catalog_kwgt_battery_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_BATTERY,
+            providerClass = BatteryWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_BATTERY,
         ),
         CatalogEntry(
             id = "compass",

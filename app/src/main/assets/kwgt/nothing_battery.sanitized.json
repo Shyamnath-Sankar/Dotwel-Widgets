@@ -1,0 +1,97 @@
+{
+  "_source": {
+    "repository": "https://github.com/AumGupta/KWGT-Widgets",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "file": "widgets/Nothing_Battery.kwgt!preset.json",
+    "title": "NothingBattery",
+    "author": "Om Gupta",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": [
+      "preset_info.email removed",
+      "Bg SINGLE_TAP launch intent removed",
+      "bundled ndot-47.ttf font reference replaced with Dotwel original dot glyphs"
+    ]
+  },
+  "preset_info": {
+    "title": "NothingBattery",
+    "width": 415,
+    "height": 542,
+    "version": 13
+  },
+  "preset_root": {
+    "internal_type": "RootLayerModule",
+    "globals_list": {
+      "side": {
+        "type": "NUMBER",
+        "global_formula": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$"
+      },
+      "battery": {
+        "type": "COLOR",
+        "value": "#FFD71921",
+        "global_formula": "$lv(\"x\", bi(level))$\n$lv(\"g\", if(lv(x)>25, lv(x), 25))$\n$lv(\"b\", if(lv(x)>33, lv(x), 33))$\n$cm(215,lv(g)*2.55,lv(b)*2.55)$"
+      }
+    },
+    "viewgroup_items": [
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Bg",
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "h",
+          "paint_color": "bg"
+        },
+        "internal_formulas": {
+          "shape_corners": "$gv(side)/5$"
+        },
+        "paint_color": "#FF1B1B1D",
+        "shape_corners": 58
+      },
+      {
+        "internal_type": "StackLayerModule",
+        "internal_title": "Battery",
+        "config_stacking": "VERTICAL_CENTER",
+        "config_margin": 16.0,
+        "position_offset_y": 4.0,
+        "internal_formulas": {
+          "config_margin": "$gv(side)/17.29$"
+        },
+        "viewgroup_items": [
+          {
+            "internal_type": "ShapeModule",
+            "shape_type": "CIRCLE",
+            "shape_width": 100.0,
+            "paint_color": "#FF000000",
+            "fx_gradient": "SWEEP",
+            "fx_gradient_color": "#FFD71921",
+            "shape_rotate_mode": "MANUAL",
+            "shape_rotate_offset": 359,
+            "fx_gradient_offset": 0,
+            "internal_globals": {
+              "fx_gradient_color": "battery",
+              "paint_color": "fg"
+            },
+            "internal_formulas": {
+              "shape_width": "$gv(side)/2$ ",
+              "shape_rotate_offset": "$360-bi(level)*3.6$",
+              "fx_gradient_color": "$ce(gv(Fg), alpha, 50)$"
+            }
+          },
+          {
+            "internal_type": "TextModule",
+            "text_expression": "$bi(level)$%",
+            "text_align": "CENTER",
+            "text_size": 32.0,
+            "internal_globals": {
+              "paint_color": "fg",
+              "text_family": "REPLACED: Dotwel original circular-dot glyphs"
+            },
+            "internal_formulas": {
+              "text_size": "$gv(side)/9$"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

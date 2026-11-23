@@ -68,6 +68,14 @@ object WidgetPreviewRenderer {
                 QuotePrefs.quoteForToday(context),
                 includeBackground = false,
             )
+            PreviewKind.KWGT_BATTERY -> KwgtBatteryRenderer.render(
+                context,
+                width,
+                height,
+                style,
+                BatteryState.level(context),
+                includeBackground = false,
+            )
             PreviewKind.PLACEHOLDER -> placeholder(context, entry, width, height, style)
         }
     }
