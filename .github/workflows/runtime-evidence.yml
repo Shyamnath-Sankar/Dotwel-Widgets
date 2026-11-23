@@ -1,4 +1,4 @@
-name: Final visible Add and large font runtime
+name: Actual KWGT DateTime2 pin and minute runtime
 on:
   workflow_dispatch:
 permissions:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 76cf4fa6a5bb50d9fd4446ab91dccc539c11a54e
+          ref: d6b4f516e8923420e07b773de713653d2bc6bbe4
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -89,7 +89,7 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='3b6ffe66a3fcb00c4f40125c7908bc3d0ef9859eed3b00ff656a0030ea45932b':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='381e8302205e36fcc12dee780df2cb75dc2ee00e87df7644de482f76b7e79a96':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            adb('shell','settings','put','system','font_scale','1.3');adb('shell','am','force-stop',PKG);start();wait_target('Open Clock,',False);cap('02-gallery-large-font')
            def category(name):
@@ -104,11 +104,11 @@ jobs:
            if n is None:n=find(r,'Digital Clock')
            if n is None:raise RuntimeError('Clock first selection missing')
            adb('shell','input','swipe',str(w*8//10),str(h*4//10),str(w*2//10),str(h*4//10),'450');time.sleep(1);cap('06-clock-after-swipe')
-           adb('shell','input','keyevent','4');adb('shell','settings','put','system','font_scale','1.0');category('Calendar');cap('07-calendar-first');click(wait_target('Next'));cap('08-calendar-kwgt')
-           click(wait_target('Add KWGT Date Time'));click(wait_target('Add live date & time'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected second Calendar variant and confirmed'
-           r=locate('kwgt_time','home-kwgt-live-before');before=find(r,'kwgt_time').get('text','')
+           adb('shell','input','keyevent','4');adb('shell','settings','put','system','font_scale','1.0');category('Calendar');cap('07-calendar-first');click(wait_target('Next'));click(wait_target('Next'));cap('08-calendar-kwgt')
+           click(wait_target('Add KWGT Date Time 2'));click(wait_target('Add live date & time'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected third Calendar variant and confirmed'
+           r=locate('kwgt2_minute','home-kwgt-live-before');before=find(r,'kwgt2_minute').get('text','')
            adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
-           r=locate('kwgt_time','home-kwgt-live-after');after=find(r,'kwgt_time').get('text','');expected=adb('shell','date','+%I:%M%p').decode().strip();report['kwgt_live_minute']={'before':before,'after':after,'device':expected}
+           r=locate('kwgt2_minute','home-kwgt-live-after');after=find(r,'kwgt2_minute').get('text','');expected=adb('shell','date','+%M').decode().strip();report['kwgt_live_minute']={'before':before,'after':after,'device':expected}
            if before==after or expected.upper()!=after.replace(' ','').upper():raise RuntimeError('KWGT native live minute failed')
            report['tests']['kwgt_live_minute']='passed'
            start();cap('gallery-after-live');click(button('Enable'))
@@ -120,9 +120,9 @@ jobs:
            if n is None:raise RuntimeError('No Android toggle')
            if n.get('checked')!='true':click(n)
            adb('shell','input','keyevent','4');start();cap('gallery-styled')
-           locate('widget_kwgt_datetime_bitmap','home-kwgt-styled-before')
+           locate('widget_kwgt_datetime2_bitmap','home-kwgt-styled-before')
            adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
-           locate('widget_kwgt_datetime_bitmap','home-kwgt-styled-after');report['tests']['styled_after_process_kill']='captured, image time comparison required'
+           locate('widget_kwgt_datetime2_bitmap','home-kwgt-styled-after');report['tests']['styled_after_process_kill']='captured, image time comparison required'
            (OUT/'appwidget-dump.txt').write_bytes(adb('shell','dumpsys','appwidget'))
           
           except Exception as e:report['error']=str(e);cap('99-fatal')
