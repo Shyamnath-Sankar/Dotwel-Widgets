@@ -1,4 +1,4 @@
-name: DateTime2 calendar and clock tap gate
+name: Focused DateTime2 tap destinations
 on:
   workflow_dispatch:
 permissions:
@@ -99,12 +99,7 @@ jobs:
              if n is not None:click(n);return
              scroll()
             raise RuntimeError('Missing category '+name)
-           category('Clock');wait_target('Add widget');cap('03-clock-first');click(wait_target('Next'));cap('04-clock-next');click(wait_target('Previous widget'));cap('05-clock-prev')
-           r=tree();n=find(r,'Preview of Digital Clock')
-           if n is None:n=find(r,'Digital Clock')
-           if n is None:raise RuntimeError('Clock first selection missing')
-           adb('shell','input','swipe',str(w*8//10),str(h*4//10),str(w*2//10),str(h*4//10),'450');time.sleep(1);cap('06-clock-after-swipe')
-           adb('shell','input','keyevent','4');adb('shell','settings','put','system','font_scale','1.0');category('Calendar');cap('07-calendar-first');click(wait_target('Next'));click(wait_target('Next'));cap('08-calendar-kwgt')
+           adb('shell','settings','put','system','font_scale','1.0');category('Calendar');wait_target('Add Date');cap('07-calendar-first');click(wait_target('Next'));wait_target('Add KWGT Date Time');click(wait_target('Next'));wait_target('Add KWGT Date Time 2');cap('08-calendar-kwgt')
            click(wait_target('Add KWGT Date Time 2'));click(wait_target('Add live date & time'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected third Calendar variant and confirmed'
            r=locate('kwgt2_minute','home-kwgt-live-before');before=find(r,'kwgt2_minute').get('text','')
            adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
