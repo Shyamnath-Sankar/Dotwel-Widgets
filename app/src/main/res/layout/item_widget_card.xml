@@ -126,6 +126,90 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/card_preview_datetime"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="4dp"
+            android:visibility="gone">
+
+            <TextClock
+                android:id="@+id/card_datetime_weekday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="monospace"
+                android:format12Hour="EEE"
+                android:format24Hour="EEE"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextClock
+                android:id="@+id/card_datetime_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="monospace"
+                android:format12Hour="hh:mma"
+                android:format24Hour="hh:mma"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/dot_accent"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextClock
+                android:id="@+id/card_datetime_month"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="monospace"
+                android:format12Hour="MMMM"
+                android:format24Hour="MMMM"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextClock
+                    android:id="@+id/card_datetime_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:format12Hour="d"
+                    android:format24Hour="d"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/card_datetime_suffix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
     </FrameLayout>
 
     <Button

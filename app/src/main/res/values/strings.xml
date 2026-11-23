@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Dotwel Widgets</string>
-    <string name="settings_subtitle">Offline clock, date, world and battery widgets. Debug candidate.</string>
+    <string name="settings_subtitle">Offline clock, date, world, battery and KWGT date/time widgets. Debug candidate.</string>
 
     <string name="gallery_label">AVAILABLE NOW</string>
     <string name="gallery_available_count">AVAILABLE NOW · %1$d OF %2$d</string>
@@ -41,6 +41,8 @@
     <string name="mode_quote">Daily quote</string>
     <string name="mode_battery">Live battery</string>
     <string name="mode_battery_mini">Live battery rings</string>
+    <string name="mode_kwgt_datetime_styled">Styled date &amp; time</string>
+    <string name="mode_kwgt_datetime_live">Live date &amp; time</string>
 
     <string name="status_ready">Available</string>
     <string name="status_pending">Pending</string>
@@ -94,9 +96,11 @@
     <string name="world_preview_description">Rendered world clock preview</string>
     <string name="quotes_preview_description">Rendered quotes preview</string>
     <string name="battery_preview_description">Rendered battery gauge preview</string>
+    <string name="kwgt_datetime_preview_description">Rendered KWGT date and time preview</string>
     <string name="battery_fallback_format">Battery %1$d%%</string>
     <string name="battery_content_description">Battery %1$d percent</string>
     <string name="battery_mini_content_description">Battery %1$d percent, mini ring gauge</string>
+    <string name="kwgt_datetime_content_description">KWGT date and time, %1$s</string>
     <string name="clock_content_description">Dotwel clock, %1$s</string>
 
     <string name="style_label">STYLE</string>
@@ -125,6 +129,7 @@
     <string name="pin_quotes_confirmed">Quotes added to your home screen.</string>
     <string name="pin_battery_confirmed">Battery added to your home screen.</string>
     <string name="pin_battery_mini_confirmed">Battery Mini added to your home screen.</string>
+    <string name="pin_kwgt_datetime_confirmed">KWGT Date Time added to your home screen.</string>
     <string name="pin_unavailable_title">Place widget manually</string>
     <string name="pin_unavailable_message">Your launcher did not open a placement prompt. You can add the widget manually:\n\n1. Go to your home screen.\n2. Long-press an empty area.\n3. Tap Widgets.\n4. Choose Dotwel Widgets.\n5. Pick the widget you want.\n\nNo Alarms &amp; reminders access is needed to place a widget.</string>
     <string name="pin_unavailable_close">Got it</string>
@@ -132,7 +137,7 @@
 
     <string name="about_button">About &amp; source credits</string>
     <string name="about_title">About &amp; source credits</string>
-    <string name="about_body">Dotwel Widgets is an independent app. It is not affiliated with, endorsed by, or sponsored by Nothing Technology Limited, OnePlus, Kustom, or the referenced authors. This is a debug candidate, not Play-approved or runtime-verified.\n\nGallery previews use the same renderers as placed widgets. Dotted clocks and styled analog/world previews are bitmaps refreshed about once a minute when optional Alarms &amp; reminders access is on; otherwise the live platform clock is shown. Battery readouts come from the system battery level. The Mini preset has no text layer, so Dotwel adds the real level in its own dot glyphs; no charge state is invented.\n\nAwesomeAWidgets (MIT)\nPinned commit 0fae60722764bda790f89bd94119c6dab854d90e\nCopyright (c) 2026 Sameer Al Sahab.\nAdapted author-written behaviour: NtDraw.SCHEME/color/surface/fit/center/paint/shadow to UpstreamNtDraw.kt; NtDigital.build to NtDigitalRenderer.kt; NtDate.build to NtDateRenderer.kt; NtAnalogBold.build and NtAnalogScale.build to NtAnalogRenderer.kt and BaseWidgetProvider.kt; NtWorld.build to NtWorldRenderer.kt; NtQuotes.build drawing block to NtQuotesRenderer.kt; NtProvider update loop/resize/tap to BaseWidgetProvider.kt; NtStyle to WidgetPrefs.kt; NtTick to MinuteTickScheduler.kt. No smali bytecode, APK resources, fonts or artwork are included.\n\nKWGT-Widgets (MIT)\nPinned commit 96ca27be4cbff35efec5a86c64dd39fd065c958f\nCopyright (c) 2024 Om Gupta.\nAdapted presets: Nothing_Battery.kwgt!preset.json to KwgtBatteryRenderer.kt, BatteryWidgetProvider.kt and sanitized data; Nothing_Battery_Mini.kwgt!preset.json to KwgtBatteryMiniRenderer.kt, BatteryMiniWidgetProvider.kt and sanitized data. Only 2 of 40 presets are implemented; the remaining 38 stay pending or dependency-blocked and are not claimed as imported.\n\nOriginal substitutions: Dotwel\u2019s 5x7 circular-dot glyphs replace upstream fonts. Platform serif and sans-serif-condensed families replace NType, Lettera and Ndot. No upstream screenshots, logos, fonts, presets, APK, or OEM OnePlus code/assets are bundled.\n\nThe exact adapted-file mapping and the 40-preset ledger are retained in docs/ATTRIBUTION.md and docs/KWGT-LEDGER.md.</string>
+    <string name="about_body">Dotwel Widgets is an independent app. It is not affiliated with, endorsed by, or sponsored by Nothing Technology Limited, OnePlus, Kustom, or the referenced authors. This is a debug candidate, not Play-approved or runtime-verified.\n\nGallery previews use the same renderers as placed widgets. Dotted clocks and styled analog/world previews are bitmaps refreshed about once a minute when optional Alarms &amp; reminders access is on; otherwise the live platform clock is shown. Battery readouts come from the system battery level. The Mini preset has no text layer, so Dotwel adds the real level in its own dot glyphs; no charge state is invented.\n\nAwesomeAWidgets (MIT)\nPinned commit 0fae60722764bda790f89bd94119c6dab854d90e\nCopyright (c) 2026 Sameer Al Sahab.\nAdapted author-written behaviour: NtDraw.SCHEME/color/surface/fit/center/paint/shadow to UpstreamNtDraw.kt; NtDigital.build to NtDigitalRenderer.kt; NtDate.build to NtDateRenderer.kt; NtAnalogBold.build and NtAnalogScale.build to NtAnalogRenderer.kt and BaseWidgetProvider.kt; NtWorld.build to NtWorldRenderer.kt; NtQuotes.build drawing block to NtQuotesRenderer.kt; NtProvider update loop/resize/tap to BaseWidgetProvider.kt; NtStyle to WidgetPrefs.kt; NtTick to MinuteTickScheduler.kt. No smali bytecode, APK resources, fonts or artwork are included.\n\nKWGT-Widgets (MIT)\nPinned commit 96ca27be4cbff35efec5a86c64dd39fd065c958f\nCopyright (c) 2024 Om Gupta.\nAdapted presets: Nothing_Battery.kwgt!preset.json to KwgtBatteryRenderer.kt, BatteryWidgetProvider.kt and sanitized data; Nothing_Battery_Mini.kwgt!preset.json to KwgtBatteryMiniRenderer.kt, BatteryMiniWidgetProvider.kt and sanitized data. Only 3 of 40 presets are implemented; the remaining 37 stay pending or dependency-blocked and are not claimed as imported.\n\nOriginal substitutions: Dotwel\u2019s 5x7 circular-dot glyphs replace upstream fonts. Platform serif and sans-serif-condensed families replace NType, Lettera and Ndot. No upstream screenshots, logos, fonts, presets, APK, or OEM OnePlus code/assets are bundled.\n\nThe exact adapted-file mapping and the 40-preset ledger are retained in docs/ATTRIBUTION.md and docs/KWGT-LEDGER.md.</string>
     <string name="about_licenses">View MIT license texts</string>
     <string name="about_license_title">MIT licenses</string>
     <string name="about_close">Close</string>
@@ -153,6 +158,8 @@
     <string name="widget_battery_description">A circular battery gauge translated from the KWGT Nothing_Battery preset. The level comes from the system battery state; tap opens power settings where supported.</string>
     <string name="widget_battery_mini_label">Dotwel Battery Mini</string>
     <string name="widget_battery_mini_description">The KWGT Nothing_Battery_Mini concentric-ring gauge. The level comes from the system battery state; no text layer or added permission.</string>
+    <string name="widget_kwgt_datetime_label">Dotwel KWGT Date Time</string>
+    <string name="widget_kwgt_datetime_description">A four-line Nothing-style weekday, time, month and ordinal day from the KWGT Nothing_Date_Time preset. With Alarms &amp; reminders access it draws the styled dot bitmap; otherwise it shows live platform text clocks.</string>
 
     <string name="catalog_digital_desc">Stacked hour and minute dots: upstream NtDigital fit and centre composition with Dotwel\u2019s original dot glyphs.</string>
     <string name="catalog_date_desc">Day number and abbreviated red weekday using the translated NtDate fitting and baseline geometry.</string>
@@ -162,6 +169,7 @@
     <string name="catalog_quotes_desc">NtQuotes layout with the upstream assets/nt_quotes.csv author data; tap cycles the daily offset.</string>
     <string name="catalog_kwgt_battery_desc">KWGT Nothing_Battery layer geometry and level formula converted to a native provider: side/2 circle, level*3.6 arc and the author cm(215,g,b) colour, with Dotwel dot glyphs in place of ndot-47.ttf.</string>
     <string name="catalog_kwgt_battery_mini_desc">KWGT Nothing_Battery_Mini converted to a native provider: eleven concentric level rings using the author w/1.38\u2026w/1.005 sizes, primary arc and translucent track.</string>
+    <string name="catalog_kwgt_date_time_desc">KWGT Nothing_Date_Time converted to a native provider: left-aligned weekday, red time, full month and ordinal day stack using the author side/8.5 offset, side/7 and side/6 text sizes and rounded square. Dotwel dot glyphs replace ndot-47.ttf.</string>
     <string name="catalog_photo_circle_desc">NtPhotoCircle is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_photo_rect_desc">NtPhotoRect is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_away_desc">NtAway screen-interactive sampling needs a durable background observation path before it can be honest.</string>

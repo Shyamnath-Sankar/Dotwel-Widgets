@@ -95,6 +95,14 @@ object WidgetPreviewRenderer {
                 BatteryState.level(context),
                 includeBackground = false,
             )
+            PreviewKind.KWGT_DATE_TIME -> KwgtDateTimeRenderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                now,
+                includeBackground = false,
+            )
             PreviewKind.PLACEHOLDER -> placeholder(context, entry, size.width, size.height, style)
         }
     }
@@ -104,6 +112,7 @@ object WidgetPreviewRenderer {
         PreviewKind.ANALOG_BOLD,
         PreviewKind.ANALOG_SCALE,
         PreviewKind.WORLD,
+        PreviewKind.KWGT_DATE_TIME,
         -> true
         else -> false
     }

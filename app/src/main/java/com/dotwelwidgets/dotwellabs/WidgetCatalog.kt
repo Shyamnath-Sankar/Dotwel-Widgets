@@ -25,6 +25,7 @@ enum class PreviewKind {
     QUOTES,
     KWGT_BATTERY,
     KWGT_BATTERY_MINI,
+    KWGT_DATE_TIME,
     PLACEHOLDER,
 }
 
@@ -224,6 +225,19 @@ object WidgetCatalog {
             previewKind = PreviewKind.KWGT_BATTERY_MINI,
             providerClass = BatteryMiniWidgetProvider::class.java,
             pinKind = PinResultReceiver.PIN_KIND_BATTERY_MINI,
+        ),
+        CatalogEntry(
+            id = "kwgt_nothing_date_time",
+            name = "KWGT Date Time",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Date_Time · EEE / hh:mma / MMMM / d ordinal stack",
+            descriptionRes = R.string.catalog_kwgt_date_time_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_DATE_TIME,
+            providerClass = KwgtDateTimeWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_DATE_TIME,
+            action = CardAction.CLOCK_ACCESS,
         ),
         CatalogEntry(
             id = "compass",

@@ -1,0 +1,139 @@
+{
+  "_source": {
+    "repository": "https://github.com/AumGupta/KWGT-Widgets",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "file": "widgets/Nothing_Date_Time.kwgt!preset.json",
+    "title": "Nothing_Date_Time",
+    "author": "Om Gupta",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": [
+      "preset_info.email removed",
+      "SINGLE_TAP launch intent strings removed",
+      "bundled ndot-47.ttf font reference replaced with Dotwel original dot glyphs"
+    ]
+  },
+  "preset_info": {
+    "title": "Nothing_Date_Time",
+    "version": 13
+  },
+  "preset_root": {
+    "internal_type": "RootLayerModule",
+    "globals_list": {
+      "side": {
+        "type": "NUMBER",
+        "global_formula": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$"
+      },
+      "bg": {
+        "type": "COLOR",
+        "global_formula": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "fg": {
+        "type": "COLOR",
+        "global_formula": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "primary": {
+        "type": "COLOR",
+        "value": "#FFD71921"
+      }
+    },
+    "viewgroup_items": [
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Bg",
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "h",
+          "paint_color": "bg"
+        },
+        "shape_corners": 58,
+        "internal_formulas": {
+          "shape_corners": "$gv(side)/5$"
+        },
+        "paint_color": "#FF1B1B1D"
+      },
+      {
+        "internal_type": "StackLayerModule",
+        "internal_title": "Info",
+        "config_margin": -4.0,
+        "internal_formulas": {
+          "position_offset_x": "$gv(side)/8.5$ "
+        },
+        "internal_globals": {
+          "position_offset_x": "side"
+        },
+        "viewgroup_items": [
+          {
+            "internal_type": "TextModule",
+            "text_expression": "$df(EEE, a)$",
+            "text_family": "kfile://org.kustom.provider/fonts/ndot-47.ttf",
+            "text_size": 32.0,
+            "internal_globals": {
+              "paint_color": "fg"
+            },
+            "internal_formulas": {
+              "text_size": "$gv(side)/7$"
+            }
+          },
+          {
+            "internal_type": "TextModule",
+            "text_expression": "$df(hh:mma)$",
+            "text_family": "kfile://org.kustom.provider/fonts/ndot-47.ttf",
+            "text_size": 32.0,
+            "internal_globals": {
+              "paint_color": "primary"
+            },
+            "paint_color": "#FFD71921",
+            "internal_formulas": {
+              "text_size": "$gv(side)/6$"
+            }
+          },
+          {
+            "internal_type": "TextModule",
+            "text_expression": "$df(MMMM)$",
+            "text_family": "kfile://org.kustom.provider/fonts/ndot-47.ttf",
+            "text_size": 32.0,
+            "internal_globals": {
+              "paint_color": "fg"
+            },
+            "internal_formulas": {
+              "text_size": "$gv(side)/7$"
+            }
+          },
+          {
+            "internal_type": "TextModule",
+            "text_expression": "$df(d)$$tc(ord, df(d))$",
+            "text_family": "kfile://org.kustom.provider/fonts/ndot-47.ttf",
+            "text_size": 32.0,
+            "internal_globals": {
+              "paint_color": "fg"
+            },
+            "internal_formulas": {
+              "text_size": "$gv(side)/7$"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "dotwel_conversion": {
+    "provider": "KwgtDateTimeWidgetProvider",
+    "renderer": "KwgtDateTimeRenderer",
+    "retained": [
+      "side = min(width, height)",
+      "rounded corners = side / 5 (literal 58)",
+      "stack offset x = side / 8.5",
+      "stack margin = -4 / 415 of side",
+      "weekday EEE, time hh:mma, full month MMMM, day d + ordinal suffix",
+      "time row colour #FFD71921",
+      "weekday/month/day text size = side / 7",
+      "time text size = side / 6"
+    ],
+    "substitutions": [
+      "ndot-47.ttf replaced by app-owned DotGlyphFont 5x7 dot glyphs",
+      "each row width-fitted so localized long month names do not clip",
+      "background uses the app black/translucent/transparent style palette with side/5 corners",
+      "access-off widget uses live platform TextClock rows instead of a frozen bitmap"
+    ]
+  }
+}

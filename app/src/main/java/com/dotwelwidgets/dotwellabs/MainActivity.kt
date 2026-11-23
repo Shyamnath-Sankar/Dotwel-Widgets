@@ -469,6 +469,11 @@ class MainActivity : Activity() {
             PreviewKind.QUOTES -> R.string.mode_quote
             PreviewKind.KWGT_BATTERY -> R.string.mode_battery
             PreviewKind.KWGT_BATTERY_MINI -> R.string.mode_battery_mini
+            PreviewKind.KWGT_DATE_TIME -> if (access) {
+                R.string.mode_kwgt_datetime_styled
+            } else {
+                R.string.mode_kwgt_datetime_live
+            }
             PreviewKind.PLACEHOLDER -> entry.state.labelRes
         }
     }
@@ -820,6 +825,21 @@ class MainActivity : Activity() {
                         .setText(R.string.preview_badge)
                 }
             }
+            PreviewKind.KWGT_DATE_TIME -> {
+                if (!access) {
+                    holder.lastRenderFailed = false
+                    showDateTimeFallback(holder, style, failed = false)
+                } else if (!renderBitmap(holder, style, width, height)) {
+                    holder.lastRenderFailed = true
+                    showDateTimeFallback(holder, style, failed = true)
+                } else {
+                    holder.lastRenderFailed = false
+                    holder.root.findViewById<TextView>(R.id.card_status_detail)
+                        .setText(modeLabelRes(entry))
+                    holder.root.findViewById<TextView>(R.id.card_preview_badge)
+                        .setText(R.string.preview_badge)
+                }
+            }
             else -> {
                 if (renderBitmap(holder, style, width, height)) {
                     holder.lastRenderFailed = false
@@ -882,7 +902,8 @@ class MainActivity : Activity() {
             entry.previewKind == PreviewKind.CLOCK ||
                 entry.previewKind == PreviewKind.ANALOG_BOLD ||
                 entry.previewKind == PreviewKind.ANALOG_SCALE ||
-                entry.previewKind == PreviewKind.WORLD -> now / 60_000L
+                entry.previewKind == PreviewKind.WORLD ||
+                entry.previewKind == PreviewKind.KWGT_DATE_TIME -> now / 60_000L
             entry.previewKind == PreviewKind.DATE ||
                 entry.previewKind == PreviewKind.QUOTES -> now / 86_400_000L
             entry.previewKind == PreviewKind.KWGT_BATTERY ||
@@ -917,6 +938,7 @@ class MainActivity : Activity() {
         holder.root.findViewById<TextClock>(R.id.card_preview_clock).visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_world).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_datetime).visibility = View.GONE
         return true
     }
 
@@ -927,6 +949,7 @@ class MainActivity : Activity() {
         image.visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_world).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_datetime).visibility = View.GONE
         val textClock = holder.root.findViewById<TextClock>(R.id.card_preview_clock)
         textClock.visibility = View.VISIBLE
         textClock.setTextColor(UpstreamNtDraw.ink(this, style))
@@ -948,6 +971,7 @@ class MainActivity : Activity() {
         image.visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_clock).visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_world).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_datetime).visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.VISIBLE
         holder.root.findViewById<TextView>(R.id.card_status_detail).setText(
             if (failed) {
@@ -967,6 +991,7 @@ class MainActivity : Activity() {
         image.visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_clock).visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_datetime).visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_world).visibility = View.VISIBLE
         val zones = WorldPrefs.previewZones(this)
         bindWorldPreviewZone(
@@ -982,6 +1007,41 @@ class MainActivity : Activity() {
             R.id.card_world_label_b,
             R.id.card_world_clock_b,
             style,
+        )
+        holder.root.findViewById<TextView>(R.id.card_status_detail).setText(
+            if (failed) {
+                R.string.preview_render_failed_detail
+            } else {
+                modeLabelRes(holder.entry)
+            },
+        )
+        holder.root.findViewById<TextView>(R.id.card_preview_badge)
+            .setText(R.string.preview_badge)
+    }
+
+    private fun showDateTimeFallback(
+        holder: CardHolder,
+        style: WidgetStyle,
+        failed: Boolean,
+    ) {
+        val image = holder.root.findViewById<ImageView>(R.id.card_preview)
+        previewBitmaps.remove(image)
+        image.setImageDrawable(null)
+        image.visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_clock).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_world).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_datetime).visibility = View.VISIBLE
+        val ink = UpstreamNtDraw.ink(this, style)
+        holder.root.findViewById<TextClock>(R.id.card_datetime_weekday).setTextColor(ink)
+        holder.root.findViewById<TextClock>(R.id.card_datetime_time)
+            .setTextColor(0xFFD71921.toInt())
+        holder.root.findViewById<TextClock>(R.id.card_datetime_month).setTextColor(ink)
+        holder.root.findViewById<TextClock>(R.id.card_datetime_day).setTextColor(ink)
+        val suffix = holder.root.findViewById<TextView>(R.id.card_datetime_suffix)
+        suffix.setTextColor(ink)
+        suffix.text = KwgtDateTimeRenderer.ordinalSuffix(
+            Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
         )
         holder.root.findViewById<TextView>(R.id.card_status_detail).setText(
             if (failed) {

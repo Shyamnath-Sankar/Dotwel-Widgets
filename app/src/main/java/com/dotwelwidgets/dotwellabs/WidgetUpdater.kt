@@ -16,6 +16,7 @@ object WidgetUpdater {
         QuotesWidgetProvider::class.java,
         BatteryWidgetProvider::class.java,
         BatteryMiniWidgetProvider::class.java,
+        KwgtDateTimeWidgetProvider::class.java,
     )
 
     fun updateAll(context: Context) {

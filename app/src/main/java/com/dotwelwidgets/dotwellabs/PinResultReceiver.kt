@@ -33,6 +33,7 @@ class PinResultReceiver : BroadcastReceiver() {
             PIN_KIND_QUOTES -> R.string.pin_quotes_confirmed
             PIN_KIND_BATTERY -> R.string.pin_battery_confirmed
             PIN_KIND_BATTERY_MINI -> R.string.pin_battery_mini_confirmed
+            PIN_KIND_KWGT_DATE_TIME -> R.string.pin_kwgt_datetime_confirmed
             else -> R.string.pin_widget_confirmed
         }
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
@@ -53,5 +54,6 @@ class PinResultReceiver : BroadcastReceiver() {
         const val PIN_KIND_QUOTES = "quotes"
         const val PIN_KIND_BATTERY = "battery"
         const val PIN_KIND_BATTERY_MINI = "battery_mini"
+        const val PIN_KIND_KWGT_DATE_TIME = "kwgt_date_time"
     }
 }
