@@ -87,27 +87,13 @@
 
             </LinearLayout>
 
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:scrollbars="none">
-
-                <RadioGroup
-                    android:id="@+id/filter_group"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" />
-
-            </HorizontalScrollView>
-
             <TextView
                 android:id="@+id/gallery_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="18dp"
                 android:letterSpacing="0.16"
-                android:text="@string/gallery_label"
+                android:text="@string/home_categories_label"
                 android:textColor="@color/widget_muted"
                 android:textSize="11sp" />
 

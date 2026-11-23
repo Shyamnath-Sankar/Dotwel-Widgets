@@ -38,7 +38,7 @@ without a prohibited capability or unresolved third-party rights.
 | 19 | `Nothing_Battery2` | pending | Implementable next; needs progress bar, charging state and remaining-time translation. |
 | 20 | `Nothing_Battery_Mini` | **implemented** | Native `BatteryMiniWidgetProvider`; real system level; runtime unverified. |
 | 21 | `Nothing_CPU` | dependency | Per-process CPU/system usage needs restricted or unreliable data paths. |
-| 22 | `Nothing_Date_Time` | pending | Text/date layer conversion queued; no extra permission needed. |
+| 22 | `Nothing_Date_Time` | **implemented** | Native `KwgtDateTimeWidgetProvider`; live text clocks without optional exact-alarm access; runtime unverified. |
 | 23 | `Nothing_Date_Time2` | pending | Text/date layer conversion queued. |
 | 24 | `Nothing_Date_Time3` | pending | Depends on the pending Open-Meteo weather/temperature/AQI path. |
 | 25 | `Nothing_Digital` | pending | Digital layer conversion queued; can reuse the existing minute schedule. |

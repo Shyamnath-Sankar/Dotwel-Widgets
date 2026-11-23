@@ -4,19 +4,24 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 ## Current checkpoint (0.1.7, versionCode 8)
 
 - `com.dotwelwidgets.dotwellabs`, minSdk 26, compile/target SDK 36.
-- Eight registered providers: dot clock, date, Analog Bold, Analog Scale, world
-  clock, quotes, and native Nothing Battery plus Nothing Battery Mini
-  conversions from the MIT KWGT-Widgets presets. The full 40-preset source-port
-  status is in `docs/KWGT-LEDGER.md`; only those two presets are implemented, the
-  rest remain pending or dependency-blocked.
-- The front screen is a compact visual gallery: title, short subtitle, style
-  chips, an actionable dotted-update control, and the available previews. Add
-  sits directly below each preview. Available cards ask the current launcher to
-  pin the matching provider through the platform request-pin API; the launcher
-  owns the confirmation. Unsupported pinning shows a readable manual HOME >
-  Widgets path. The 17 not-yet-available catalog items are collapsed under an
-  Upcoming section with an honest reason on expansion, so they do not obscure
-  the available collection.
+- Nine registered providers: dot clock, date, Analog Bold, Analog Scale, world
+  clock, quotes, and native Nothing Battery, Nothing Battery Mini, and
+  Nothing Date Time conversions from the MIT KWGT-Widgets presets. The full
+  40-preset source-port status is in `docs/KWGT-LEDGER.md`; only those three
+  presets are implemented, the rest remain pending or dependency-blocked.
+- The front screen is a category grid: a dotted HOME heading, a short subtitle,
+  an actionable dotted-update control, and rounded square category tiles with a
+  real representative preview or a Dotwel motif. Each tile shows the category
+  name and its honest ready count. Tapping a ready category opens a scrollable
+  rounded sheet with a large preview, selected name, real provider minimum size,
+  live mode label, description, red Add button, position dots, and 48dp
+  Prev/Next targets; swiping the preview changes selection. Unavailable
+  categories stay visible with `0 ready` and add nothing. Add asks the current
+  launcher to pin the matching provider through the platform request-pin API;
+  the launcher owns the confirmation. Unsupported pinning shows a readable manual
+  HOME > Widgets path. The 17 not-yet-available catalog items are collapsed
+  under an Upcoming section with an honest reason on expansion, so they do not
+  obscure the available collection.
 - Clock and analog previews follow the real current mode. With Alarms &
   reminders access off, the preview uses the same live native `TextClock` or
   platform `AnalogClock` fallback as the placed widget; no dotted bitmap is

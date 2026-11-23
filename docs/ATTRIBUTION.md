@@ -95,6 +95,13 @@ the app from About & source credits > View MIT license texts.
   and translucent accent track. The source preset has no text layer; Dotwel adds
   a centered real-level dot readout for legibility, so no charge state or number
   is invented.
+- `widgets/Nothing_Date_Time.kwgt!preset.json` -> `KwgtDateTimeRenderer.kt` and
+  `KwgtDateTimeWidgetProvider.kt`. Retained: the left-aligned four-line stack
+  (weekday, red time, full month, ordinal day), the author side/8.5 offset and
+  side/7 and side/6 text sizes, and the rounded-square composition. The source
+  `ndot-47.ttf` font is replaced by Dotwel's original dot glyphs and platform
+  text clocks; no upstream font or preset archive is bundled. Runtime is not
+  claimed here.
 - The author's sweep-gradient disc is rendered as a level-scaled arc plus a faint
   disc and track so the gauge remains readable at small widget sizes. This is a
   documented rendering substitution, not a claim of pixel-identical output.
@@ -102,8 +109,8 @@ the app from About & source credits > View MIT license texts.
   intent string, and the bundled `ndot-47.ttf` font reference. Dotwel's original
   dot glyphs replace the font.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
-  `Nothing_Battery` and `Nothing_Battery_Mini` are implemented in this
-  checkpoint; the rest remain pending or dependency-blocked and are not claimed
+  `Nothing_Battery`, `Nothing_Battery_Mini`, and `Nothing_Date_Time` are
+  implemented in this checkpoint; the rest remain pending or dependency-blocked and are not claimed
   as imported.
 
 ## Not included

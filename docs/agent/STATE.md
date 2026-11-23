@@ -3,7 +3,7 @@
 - Candidate: Dotwel Widgets 0.1.7 (versionCode 8). Package name is unchanged.
 - Branch: `agent/reference-ui-45135605275`, based on `3d3d637`. The separate
   launcher repository and default main remain unchanged.
-- The catalog still contains the same 25 app entries: eight available providers
+- The catalog still contains the same 25 app entries: nine available providers
   and 17 upcoming entries, plus the separate 40-preset KWGT ledger. This pass
   added no provider and did not redefine the collection as eight items only.
 - This is a debug candidate, not a Play-approved or production-ready release.
@@ -15,7 +15,7 @@
   Copyright (c) 2026 Sameer Al Sahab).
 - KWGT-Widgets: `96ca27be4cbff35efec5a86c64dd39fd065c958f` (MIT,
   Copyright (c) 2024 Om Gupta).
-- The eight registered providers and the two KWGT preset conversions are
+- The nine registered providers and the three KWGT preset conversions are
   retained. See `docs/ATTRIBUTION.md` for the adapted classes/functions and
   `docs/KWGT-LEDGER.md` for the 40-preset status.
 
@@ -28,7 +28,7 @@
   button directly underneath. Tapping the preview opens a full-width, larger
   preview dialog with the Add action and a short mode note.
 - Added catalog-backed filters: All, Clocks, Date, Battery and Quotes. Counts
-  are derived from the eight real available providers only. The collapsed
+  are derived from the nine real available providers only. The collapsed
   Upcoming section still lists all 17 unfinished entries, so nothing is silently
   hidden. There is no fake active count.
 - Added a small all-caps `DOTWEL` heading drawn with Dotwel's own
@@ -46,7 +46,7 @@
   `Live battery rings`. Remaining implementation and rendering prose is in the
   About & source credits dialog, and the existing MIT provenance is retained.
 - The minute-update control is a compact optional row. Available counts still
-  say eight of the 25 app entries and do not imply the unfinished catalog is
+  say nine of the 25 app entries and do not imply the unfinished catalog is
   complete.
 
 ### Actual widget renderers
@@ -129,7 +129,7 @@ capture before any delivery claim.
 
 ## Limits and remaining work
 
-- The collection remains incomplete: 17 in-app entries are in Upcoming and 38
+- The collection remains incomplete: 17 in-app entries are in Upcoming and 37
   of the 40 KWGT presets are still pending or dependency-blocked. No finished
   import is claimed in this pass.
 - Weather: partial domain/transport only, no registered provider.
