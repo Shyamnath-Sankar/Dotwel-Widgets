@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 class KwgtDigital3RendererLayoutTest {
     private val sizes = listOf(
@@ -208,7 +209,7 @@ class KwgtDigital3RendererLayoutTest {
     }
 
     @Test
-    fun bridgeVisibilityFollowsAuthorMinuteThresholds() {
+    fun bridgeVisibilityFollowsAuthorJointTables() {
         val layout = KwgtDigital3Renderer.layout(415f, 542f)
         fun has(
             minute: Int,
@@ -229,33 +230,100 @@ class KwgtDigital3RendererLayoutTest {
             }
         }
 
+        // Horizontal Joints, gap column 0: ALWAYS red, ALWAYS accent, mm > 9, NEVER.
         val topLeft = has(0, 0, 0, 1, 0)
             ?: throw AssertionError("missing top-left red bridge")
-        assertEquals(
-            KwgtDigital3Renderer.DotFill.PRIMARY,
-            topLeft.fill,
-        )
+        assertEquals(KwgtDigital3Renderer.DotFill.PRIMARY, topLeft.fill)
         assertTrue(has(0, 0, 1, 1, 1) != null)
         assertTrue(has(0, 0, 2, 1, 2) == null)
         assertTrue(has(9, 0, 2, 1, 2) == null)
         assertTrue(has(10, 0, 2, 1, 2) != null)
+        // Horizontal Joints, gap column 1: NEVER, NEVER, mm > 29, NEVER.
+        assertTrue(has(0, 1, 2, 2, 2) == null)
         assertTrue(has(29, 1, 2, 2, 2) == null)
         assertTrue(has(30, 1, 2, 2, 2) != null)
-        assertTrue(has(39, 2, 1, 3, 1) == null)
-        assertTrue(has(40, 2, 1, 3, 1) != null)
-        assertTrue(has(49, 2, 2, 3, 2) == null)
-        assertTrue(has(50, 2, 2, 3, 2) != null)
+        // Horizontal Joints, gap column 2: ancestor config_visible NEVER.
+        (0..3).forEach { row ->
+            assertTrue("gap column 2 row $row", has(59, 2, row, 3, row) == null)
+        }
 
-        assertTrue(has(0, 2, 0, 2, 1) != null)
-        assertTrue(has(0, 3, 2, 3, 3) != null)
-        assertTrue(has(0, 0, 0, 0, 1) == null)
-        assertTrue(has(0, 1, 0, 1, 1) == null)
+        // Vertical Joints, gap row 0: ancestor config_visible NEVER.
+        (0..3).forEach { column ->
+            assertTrue("gap row 0 column $column", has(59, column, 0, column, 1) == null)
+        }
+        // Vertical Joints, gap row 1: col0 ALWAYS, col1 mm > 19, col2 mm > 49, col3 NEVER.
+        assertTrue(has(0, 0, 1, 0, 2) != null)
+        assertTrue(has(19, 1, 1, 1, 2) == null)
+        assertTrue(has(20, 1, 1, 1, 2) != null)
+        assertTrue(has(49, 2, 1, 2, 2) == null)
+        assertTrue(has(50, 2, 1, 2, 2) != null)
+        assertTrue(has(59, 3, 1, 3, 2) == null)
+        // Vertical Joints, gap row 2: col0 mm > 39, all others NEVER.
+        assertTrue(has(39, 0, 2, 0, 3) == null)
+        assertTrue(has(40, 0, 2, 0, 3) != null)
+        (1..3).forEach { column ->
+            assertTrue("gap row 2 column $column", has(59, column, 2, column, 3) == null)
+        }
 
-        assertEquals(8, KwgtDigital3Renderer.bridges(layout, 0).size)
-        assertEquals(9, KwgtDigital3Renderer.bridges(layout, 10).size)
-        assertEquals(10, KwgtDigital3Renderer.bridges(layout, 30).size)
-        assertEquals(11, KwgtDigital3Renderer.bridges(layout, 40).size)
-        assertEquals(12, KwgtDigital3Renderer.bridges(layout, 50).size)
+        // Visible bridges carry the source accent, never the unlit accent2.
+        val accent = KwgtDigital3Renderer.palette(WidgetStyle.BLACK).accent
+        val accent2 = KwgtDigital3Renderer.palette(WidgetStyle.BLACK).accent2
+        val late = has(50, 2, 1, 2, 2)
+            ?: throw AssertionError("missing late accent bridge")
+        val lateColor = KwgtDigital3Renderer.dotColor(late.fill, 50, WidgetStyle.BLACK)
+        assertEquals(accent, lateColor)
+        assertTrue(lateColor != accent2)
+
+        assertEquals(3, KwgtDigital3Renderer.bridges(layout, 0).size)
+        assertEquals(4, KwgtDigital3Renderer.bridges(layout, 10).size)
+        assertEquals(5, KwgtDigital3Renderer.bridges(layout, 20).size)
+        assertEquals(6, KwgtDigital3Renderer.bridges(layout, 30).size)
+        assertEquals(7, KwgtDigital3Renderer.bridges(layout, 40).size)
+        assertEquals(8, KwgtDigital3Renderer.bridges(layout, 50).size)
+    }
+
+    @Test
+    fun nativeLiveCellsAlignWithFitCenterRasterCircles() {
+        val hostWidthDp = 300f
+        val hostHeightDp = 250f
+        val density = 2f
+        val insetPx = WidgetSizing.CONTENT_INSET_DP * density
+        val hostContentWidth = hostWidthDp * density - insetPx * 2f
+        val hostContentHeight = hostHeightDp * density - insetPx * 2f
+        val rasterWidth = (hostContentWidth * 0.5f).roundToInt()
+        val rasterHeight = (hostContentHeight * 0.5f).roundToInt()
+        val geometry = KwgtDigital3Renderer.liveFallbackGeometry(
+            hostWidthDp,
+            hostHeightDp,
+            density,
+            rasterWidth,
+            rasterHeight,
+        )
+        val cells = listOf(
+            geometry.hour to geometry.host.dot(0, 0)!!,
+            geometry.minute to geometry.host.dot(1, 0)!!,
+            geometry.ampm to geometry.host.dot(1, 1)!!,
+        )
+        cells.forEach { (cell, hostDot) ->
+            val label = "${hostDot.column},${hostDot.row}"
+            val cellCenterX = cell.left + cell.width / 2f
+            val cellCenterY = cell.top + cell.height / 2f
+            assertEquals("cell x $label", hostDot.centerX, cellCenterX, 0.01f)
+            assertEquals("cell y $label", hostDot.centerY, cellCenterY, 0.01f)
+            val rasterDot = geometry.raster.dot(hostDot.column, hostDot.row)!!
+            val (mappedX, mappedY) = KwgtDigital3Renderer.mapRasterToHost(
+                geometry.raster,
+                geometry.host,
+                rasterDot.centerX,
+                rasterDot.centerY,
+            )
+            assertEquals("fitCenter x $label", cellCenterX, mappedX, 0.05f)
+            assertEquals("fitCenter y $label", cellCenterY, mappedY, 0.05f)
+            assertTrue(
+                "two monospace glyphs fit $label",
+                2f * 0.6f * cell.textSizePx <= hostDot.diameter + 0.01f,
+            )
+        }
     }
 
     private fun assertRegionInsideDot(

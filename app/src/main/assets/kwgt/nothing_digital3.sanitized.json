@@ -153,7 +153,7 @@
     "substitutions": [
       "ndot-47.ttf replaced by app-owned DotGlyphFont 5x7 dot glyphs",
       "author text-cell padding approximated by a centred fitted text region",
-      "source helper joint layers retained in this sanitized data but not separately rasterized",
+      "source helper joint layers reproduced from the explicit ancestor/child visibility tables as cut-out bars so translucent joints never double-paint over dots",
       "access-off widget draws the same dot matrix without text and overlays live platform TextClocks for hh, mm and aa"
     ]
   }

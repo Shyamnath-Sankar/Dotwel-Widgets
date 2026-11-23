@@ -141,10 +141,12 @@ the app from About & source credits > View MIT license texts.
   accent ink at 35% alpha and accent2 at 15% alpha, and the source minute
   thresholds `mm > 9`, `mm > 29`, `mm > 39` and `mm > 49`. The author's
   `ndot-47.ttf` is replaced by Dotwel's original dot glyphs, and the source
-  helper joint layers stay in the sanitized data without separate rasterization.
-  Without optional exact-alarm access the provider draws the same time-free dot
-  matrix under three live platform TextClocks for hh, mm and aa, so no frozen
-  bitmap time is presented as live. Runtime is not claimed here.
+  helper joint layers are reproduced from the explicit ancestor/child
+  visibility tables as cut-out bars so translucent joints never double-paint
+  over translucent dots. Without optional exact-alarm access the provider draws
+  the same time-free dot matrix under three live platform TextClocks for hh, mm
+  and aa, positioned in true host content pixels, so no frozen bitmap time is
+  presented as live. Runtime is not claimed here.
 - `widgets/Nothing_Mini_Calender.kwgt!preset.json` -> `KwgtMiniCalendarRenderer.kt`,
   `KwgtMiniCalendarDates.kt`, `KwgtMiniCalendarWidgetProvider.kt`, and the
   sanitized data model

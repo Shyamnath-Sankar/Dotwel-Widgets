@@ -77,6 +77,11 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         fallbackViewId: Int,
         render: (widthPx: Int, heightPx: Int) -> Bitmap?,
         decorate: (views: RemoteViews, usedBitmap: Boolean) -> Unit = { _, _ -> },
+        decorateWithHost: ((
+            views: RemoteViews,
+            usedBitmap: Boolean,
+            target: WidgetSizing.Target,
+        ) -> Unit)? = null,
     ): RemoteViews {
         val manager = AppWidgetManager.getInstance(context)
         val options = manager.getAppWidgetOptions(appWidgetId)
@@ -94,6 +99,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
                     bitmap,
                     decorate,
                 )
+                decorateWithHost?.invoke(views, bitmap != null, target)
                 mapping[target.hostSize] = views
             }
             if (mapping.isNotEmpty()) {
@@ -105,6 +111,9 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         val bitmap = target?.let { safeRender(render, it.widthPx, it.heightPx) }
         val views = baseViews(context, appWidgetId)
         applyBitmap(views, bitmapViewId, fallbackViewId, bitmap, decorate)
+        if (target != null) {
+            decorateWithHost?.invoke(views, bitmap != null, target)
+        }
         return views
     }
 

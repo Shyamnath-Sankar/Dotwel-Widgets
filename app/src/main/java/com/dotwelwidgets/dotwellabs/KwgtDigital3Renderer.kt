@@ -9,6 +9,7 @@ import android.graphics.RectF
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -34,8 +35,9 @@ import kotlin.math.roundToInt
  *   circular-dot glyphs are fitted inside each author text cell.
  * - The source coordinate offsets are clamped only when a host is too narrow
  *   to hold the unmodified grid, so the grid never spills outside the surface.
- * - The source helper "joint" layers stay in the sanitized data but are not
- *   separately rasterized; the visible dot matrix and text cells are drawn.
+ * - The source `joint_helpers` bridges are reproduced from the explicit
+ *   ancestor/child visibility tables and drawn as cut-out bars so translucent
+ *   joints and dots never double-paint into brighter crosses.
  */
 object KwgtDigital3Renderer {
     const val RED = 0xFFD71921.toInt()
@@ -58,8 +60,12 @@ object KwgtDigital3Renderer {
     private const val TEXT_INK_HEIGHT_FRACTION = 0.60f
     private const val TEXT_INK_WIDTH_FRACTION = 0.90f
 
-    /** Fixed live TextClock em relative to the fitted source circle diameter. */
-    internal const val LIVE_CLOCK_EM_FRACTION = 0.85f
+    /**
+     * Fixed live TextClock em relative to the fitted source circle diameter.
+     * Two bold monospace glyphs advance about 1.2em, so 0.58em keeps both hh/mm
+     * and aa inside the author circle instead of spilling over its neighbours.
+     */
+    internal const val LIVE_CLOCK_EM_FRACTION = 0.58f
 
     private const val WHITE = 0xFFFFFFFF.toInt()
     private const val LIGHT_INK = 0xFF1B1B1D.toInt()
@@ -267,22 +273,111 @@ object KwgtDigital3Renderer {
         )
     }
 
+    /** Live fallback geometry: the bitmap raster and the true host-space cells. */
+    internal data class LiveFallbackGeometry(
+        val host: Digital3Layout,
+        val raster: Digital3Layout,
+        val hour: LiveCell,
+        val minute: LiveCell,
+        val ampm: LiveCell,
+    )
+
     /**
-     * Source `joint_helpers` visibility. Horizontal entries are
-     * `[gap][row]` for the three column gaps; vertical entries are the source
-     * four-column visibility list. A bridge inherits the colour of the dot it
-     * leaves (left/upper), matching the authored joint masks.
+     * Resolves the two coordinate spaces used by the access-off fallback. The
+     * bitmap may be downsampled for its pixel budget ([rasterWidthPx] /
+     * [rasterHeightPx]), but the native TextClocks must be positioned in true
+     * host content pixels: host DP minus the root's content inset, times
+     * density. The ImageView stretches the square raster with fitCenter, so the
+     * host layout is the reference for every native offset and text size.
+     */
+    internal fun liveFallbackGeometry(
+        hostWidthDp: Float,
+        hostHeightDp: Float,
+        density: Float,
+        rasterWidthPx: Int,
+        rasterHeightPx: Int,
+    ): LiveFallbackGeometry {
+        val insetPx = WidgetSizing.CONTENT_INSET_DP * density
+        val hostContentWidthPx = if (hostWidthDp > 0f) {
+            (hostWidthDp * density - insetPx * 2f).coerceAtLeast(1f)
+        } else {
+            rasterWidthPx.coerceAtLeast(1).toFloat()
+        }
+        val hostContentHeightPx = if (hostHeightDp > 0f) {
+            (hostHeightDp * density - insetPx * 2f).coerceAtLeast(1f)
+        } else {
+            rasterHeightPx.coerceAtLeast(1).toFloat()
+        }
+        val host = layout(hostContentWidthPx, hostContentHeightPx)
+        val raster = layout(
+            rasterWidthPx.coerceAtLeast(1).toFloat(),
+            rasterHeightPx.coerceAtLeast(1).toFloat(),
+        )
+        return LiveFallbackGeometry(
+            host = host,
+            raster = raster,
+            hour = liveCell(host.hourRegion, host),
+            minute = liveCell(host.minuteRegion, host),
+            ampm = liveCell(host.ampmRegion, host),
+        )
+    }
+
+    /**
+     * Maps a bitmap-space point (the square raster after its content crop) into
+     * host content pixels the same way the host ImageView's fitCenter does.
+     */
+    internal fun mapRasterToHost(
+        raster: Digital3Layout,
+        host: Digital3Layout,
+        x: Float,
+        y: Float,
+    ): Pair<Float, Float> {
+        val rasterSide = min(raster.width, raster.height)
+        val hostSide = min(host.width, host.height)
+        val scale = if (rasterSide > 0f) hostSide / rasterSide else 1f
+        return (host.contentLeft + (x - raster.contentLeft) * scale) to
+            (host.contentTop + (y - raster.contentTop) * scale)
+    }
+
+    private typealias MinuteRule = (Int) -> Boolean
+
+    private val ALWAYS: MinuteRule = { true }
+    private val NEVER: MinuteRule = { false }
+
+    /**
+     * Source `joint_helpers.horizontal_joints.visibility_formulas`, indexed
+     * `[gap column][row]`. Gap column 0 sits between dots columns 0/1, gap 1
+     * between columns 1/2, and gap column 2's ancestor is never visible, so it
+     * contributes zero bridges at every minute.
+     */
+    private val HORIZONTAL_JOINTS: List<List<MinuteRule>> = listOf(
+        listOf(ALWAYS, ALWAYS, { minute -> minute > 9 }, NEVER),
+        listOf(NEVER, NEVER, { minute -> minute > 29 }, NEVER),
+        listOf(NEVER, NEVER, NEVER, NEVER),
+    )
+
+    /**
+     * Source `joint_helpers.vertical_joints`, indexed `[gap row][column]`. The
+     * gap row 0 ancestor is never visible; gap row 1 joins rows 1/2 and gap row
+     * 2 joins rows 2/3.
+     */
+    private val VERTICAL_JOINTS: List<List<MinuteRule>> = listOf(
+        listOf(NEVER, NEVER, NEVER, NEVER),
+        listOf(ALWAYS, { minute -> minute > 19 }, { minute -> minute > 49 }, NEVER),
+        listOf({ minute -> minute > 39 }, NEVER, NEVER, NEVER),
+    )
+
+    /**
+     * Source `joint_helpers` visibility, reproduced as explicit ancestor and
+     * child tables. A bridge inherits the colour of the dot it leaves
+     * (left/upper), which is the source accent for every visible joint except
+     * the always-red top-left one.
      */
     internal fun bridges(boundary: Digital3Layout, minute: Int): List<Bridge> {
         val result = ArrayList<Bridge>()
-        val horizontal = listOf(
-            listOf(true, true, minute > 9, false),
-            listOf(false, false, minute > 29, false),
-            listOf(false, minute > 39, minute > 49, false),
-        )
-        horizontal.forEachIndexed { gap, rows ->
+        HORIZONTAL_JOINTS.forEachIndexed { gap, rows ->
             rows.forEachIndexed { row, visible ->
-                if (!visible) return@forEachIndexed
+                if (!visible(minute)) return@forEachIndexed
                 val from = boundary.dot(gap, row) ?: return@forEachIndexed
                 val to = boundary.dot(gap + 1, row) ?: return@forEachIndexed
                 result.add(
@@ -296,12 +391,11 @@ object KwgtDigital3Renderer {
                 )
             }
         }
-        val verticalColumns = listOf(false, false, true, true)
-        verticalColumns.forEachIndexed { column, visibleColumn ->
-            if (!visibleColumn) return@forEachIndexed
-            for (row in 0 until 3) {
-                val from = boundary.dot(column, row) ?: continue
-                val to = boundary.dot(column, row + 1) ?: continue
+        VERTICAL_JOINTS.forEachIndexed { gap, columns ->
+            columns.forEachIndexed { column, visible ->
+                if (!visible(minute)) return@forEachIndexed
+                val from = boundary.dot(column, gap) ?: return@forEachIndexed
+                val to = boundary.dot(column, gap + 1) ?: return@forEachIndexed
                 result.add(
                     Bridge(
                         startX = from.centerX,
@@ -426,29 +520,71 @@ object KwgtDigital3Renderer {
         date: Calendar,
     ) {
         val minute = date.get(Calendar.MINUTE)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         canvas.save()
         canvas.clipPath(surfacePath(boundary))
-        val bridgePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            this.style = Paint.Style.STROKE
-            strokeCap = Paint.Cap.ROUND
-            strokeWidth = boundary.side * BRIDGE_THICKNESS_RATIO
-        }
+        val thickness = boundary.side * BRIDGE_THICKNESS_RATIO
+        val dotRadius = boundary.dotDiameter / 2f
+        val barsByColor = LinkedHashMap<Int, MutableList<Bridge>>()
         bridges(boundary, minute).forEach { bridge ->
-            bridgePaint.color = dotColor(bridge.fill, minute, style)
-            canvas.drawLine(
-                bridge.startX,
-                bridge.startY,
-                bridge.endX,
-                bridge.endY,
-                bridgePaint,
-            )
+            val color = dotColor(bridge.fill, minute, style)
+            barsByColor.getOrPut(color) { ArrayList() }.add(bridge)
         }
+        val dotsByColor = LinkedHashMap<Int, MutableList<DotLayout>>()
         boundary.dots.forEach { dot ->
-            paint.color = dotColor(dot.fill, minute, style)
-            canvas.drawCircle(dot.centerX, dot.centerY, dot.radius, paint)
+            val color = dotColor(dot.fill, minute, style)
+            dotsByColor.getOrPut(color) { ArrayList() }.add(dot)
+        }
+        val colors = LinkedHashSet<Int>().apply {
+            addAll(barsByColor.keys)
+            addAll(dotsByColor.keys)
+        }
+        colors.forEach { color ->
+            val path = Path()
+            barsByColor[color]?.let { bars ->
+                val barPath = Path()
+                val cutouts = Path()
+                bars.forEach { bridge ->
+                    barPath.addRect(bridgeRect(bridge, thickness), Path.Direction.CW)
+                    cutouts.addCircle(bridge.startX, bridge.startY, dotRadius, Path.Direction.CW)
+                    cutouts.addCircle(bridge.endX, bridge.endY, dotRadius, Path.Direction.CW)
+                }
+                barPath.op(cutouts, Path.Op.DIFFERENCE)
+                path.addPath(barPath)
+            }
+            dotsByColor[color]?.forEach { dot ->
+                path.addCircle(dot.centerX, dot.centerY, dot.radius, Path.Direction.CW)
+            }
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
+            canvas.drawPath(path, paint)
         }
         canvas.restore()
+    }
+
+    /**
+     * Source joint block: a `side * 20 / 277` bar between adjacent centres. The
+     * caller cuts it with the real dot circles so a translucent joint can never
+     * double-paint over a translucent dot; the bar then meets the circle with
+     * the authored concave junction.
+     */
+    private fun bridgeRect(bridge: Bridge, thickness: Float): RectF {
+        val half = thickness / 2f
+        val horizontal = kotlin.math.abs(bridge.startY - bridge.endY) <
+            kotlin.math.abs(bridge.startX - bridge.endX)
+        return if (horizontal) {
+            RectF(
+                min(bridge.startX, bridge.endX),
+                bridge.startY - half,
+                max(bridge.startX, bridge.endX),
+                bridge.startY + half,
+            )
+        } else {
+            RectF(
+                bridge.startX - half,
+                min(bridge.startY, bridge.endY),
+                bridge.startX + half,
+                max(bridge.startY, bridge.endY),
+            )
+        }
     }
 
     private fun drawText(

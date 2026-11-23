@@ -3,7 +3,8 @@
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_widget_black">
+    android:background="@drawable/bg_widget_black"
+    android:padding="8dp">
 
     <ImageView
         android:id="@+id/widget_kwgt_digital3_bitmap"

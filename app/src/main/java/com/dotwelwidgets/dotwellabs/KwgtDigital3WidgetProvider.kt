@@ -86,16 +86,12 @@ class KwgtDigital3WidgetProvider : BaseWidgetProvider() {
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
         val style = WidgetPrefs.style(context)
         val exactAccess = MinuteTickScheduler.hasExactAccess(context)
-        var renderWidth = 0
-        var renderHeight = 0
         return buildBitmapViews(
             context,
             appWidgetId,
             R.id.widget_kwgt_digital3_bitmap,
             R.id.kwgt_digital3_live,
             render = { widthPx, heightPx ->
-                renderWidth = widthPx
-                renderHeight = heightPx
                 if (!exactAccess) {
                     null
                 } else {
@@ -109,63 +105,68 @@ class KwgtDigital3WidgetProvider : BaseWidgetProvider() {
                     )
                 }
             },
-        ) decorate@{ views, usedBitmap ->
-            val fallbackSurface = if (usedBitmap) {
-                false
-            } else {
-                bindLiveFallback(views, context, style, renderWidth, renderHeight)
-            }
-            views.setInt(
-                R.id.widget_root,
-                "setBackgroundResource",
-                if (usedBitmap || fallbackSurface) {
-                    R.drawable.bg_widget_none
+            decorateWithHost = { views, usedBitmap, target ->
+                val fallbackSurface = if (usedBitmap) {
+                    false
                 } else {
-                    style.backgroundRes
-                },
-            )
-            val spoken = SimpleDateFormat("hh:mm a", Locale.getDefault())
-                .format(Calendar.getInstance().time)
-            views.setContentDescription(
-                if (usedBitmap) {
-                    R.id.widget_kwgt_digital3_bitmap
-                } else {
-                    R.id.kwgt_digital3_live
-                },
-                context.getString(
-                    if (usedBitmap) {
-                        R.string.kwgt_digital3_content_description
+                    bindLiveFallback(views, context, style, target)
+                }
+                views.setInt(
+                    R.id.widget_root,
+                    "setBackgroundResource",
+                    if (usedBitmap || fallbackSurface) {
+                        R.drawable.bg_widget_none
                     } else {
-                        R.string.kwgt_digital3_live_content_description
+                        style.backgroundRes
                     },
-                    spoken,
-                ),
-            )
-        }
+                )
+                val spoken = SimpleDateFormat("hh:mm a", Locale.getDefault())
+                    .format(Calendar.getInstance().time)
+                views.setContentDescription(
+                    if (usedBitmap) {
+                        R.id.widget_kwgt_digital3_bitmap
+                    } else {
+                        R.id.kwgt_digital3_live
+                    },
+                    context.getString(
+                        if (usedBitmap) {
+                            R.string.kwgt_digital3_content_description
+                        } else {
+                            R.string.kwgt_digital3_live_content_description
+                        },
+                        spoken,
+                    ),
+                )
+            },
+        )
     }
 
     /**
-     * Draws the time-free dot matrix behind three live TextClocks, positions
-     * each clock inside its author cell, and binds the source ink colours.
+     * Draws the time-free dot matrix behind three live TextClocks and binds the
+     * source ink colours. The bitmap keeps its raster pixel budget, but every
+     * native cell is placed in true host content pixels so fitCenter stretching
+     * of the square raster can never shrink or shift the live overlays.
      * Returns whether the dot bitmap was applied.
      */
     private fun bindLiveFallback(
         views: RemoteViews,
         context: Context,
         style: WidgetStyle,
-        widthPx: Int,
-        heightPx: Int,
+        target: WidgetSizing.Target,
     ): Boolean {
         val density = context.resources.displayMetrics.density
-        val width = widthPx.takeIf { it > 0 }
-            ?: (110f * density).roundToInt().coerceAtLeast(48)
-        val height = heightPx.takeIf { it > 0 }
-            ?: (110f * density).roundToInt().coerceAtLeast(48)
+        val geometry = KwgtDigital3Renderer.liveFallbackGeometry(
+            hostWidthDp = target.hostSize.width,
+            hostHeightDp = target.hostSize.height,
+            density = density,
+            rasterWidthPx = target.widthPx,
+            rasterHeightPx = target.heightPx,
+        )
         val bitmap = try {
             KwgtDigital3Renderer.renderDots(
                 context,
-                width,
-                height,
+                target.widthPx,
+                target.heightPx,
                 style,
                 Calendar.getInstance(),
                 includeBackground = true,
@@ -182,49 +183,47 @@ class KwgtDigital3WidgetProvider : BaseWidgetProvider() {
             views.setViewVisibility(R.id.kwgt_digital3_live_bg, View.GONE)
         }
 
-        val boundary = KwgtDigital3Renderer.layout(
-            width.toFloat(),
-            height.toFloat(),
-        )
         val palette = KwgtDigital3Renderer.palette(style)
         bindClockCell(
             views,
             R.id.kwgt_digital3_hour,
-            boundary,
-            boundary.hourRegion,
+            geometry.hour,
+            geometry.host.width,
+            geometry.host.height,
             palette.foreground,
         )
         bindClockCell(
             views,
             R.id.kwgt_digital3_minute,
-            boundary,
-            boundary.minuteRegion,
+            geometry.minute,
+            geometry.host.width,
+            geometry.host.height,
             palette.foreground,
         )
         bindClockCell(
             views,
             R.id.kwgt_digital3_ampm,
-            boundary,
-            boundary.ampmRegion,
+            geometry.ampm,
+            geometry.host.width,
+            geometry.host.height,
             palette.contrastInk,
         )
         return bitmap != null
     }
 
     /**
-     * Allocates the TextClock to its own fixed source cell and uses a fixed text
-     * size derived from the fitted circle. Padding alone is only the pre-API-31
-     * fallback; S+ gets explicit layout width/height/margins in pixels, so an
-     * autosize pass over the whole host can never overlap the three cells.
+     * Allocates the TextClock to its own fixed source cell in true host content
+     * pixels. S+ gets explicit layout width/height/margins; padding is only the
+     * pre-API-31 fallback, using the same host-space cell.
      */
     private fun bindClockCell(
         views: RemoteViews,
         viewId: Int,
-        boundary: KwgtDigital3Renderer.Digital3Layout,
-        region: KwgtDigital3Renderer.TextRegion,
+        cell: KwgtDigital3Renderer.LiveCell,
+        hostWidth: Float,
+        hostHeight: Float,
         color: Int,
     ) {
-        val cell = KwgtDigital3Renderer.liveCell(region, boundary)
         views.setTextColor(viewId, color)
         views.setTextViewTextSize(
             viewId,
@@ -270,12 +269,12 @@ class KwgtDigital3WidgetProvider : BaseWidgetProvider() {
         } else {
             views.setViewPadding(
                 viewId,
-                region.left.roundToInt().coerceIn(0, boundary.width.toInt()),
-                region.top.roundToInt().coerceIn(0, boundary.height.toInt()),
-                (boundary.width - region.right).roundToInt()
-                    .coerceIn(0, boundary.width.toInt()),
-                (boundary.height - region.bottom).roundToInt()
-                    .coerceIn(0, boundary.height.toInt()),
+                cell.left.roundToInt().coerceIn(0, hostWidth.toInt()),
+                cell.top.roundToInt().coerceIn(0, hostHeight.toInt()),
+                (hostWidth - (cell.left + cell.width)).roundToInt()
+                    .coerceIn(0, hostWidth.toInt()),
+                (hostHeight - (cell.top + cell.height)).roundToInt()
+                    .coerceIn(0, hostHeight.toInt()),
             )
         }
     }
