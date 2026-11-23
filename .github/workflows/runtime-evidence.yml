@@ -1,4 +1,4 @@
-name: Repaired split clock native and minute gate
+name: Gradient clock native and minute gate
 on:
   workflow_dispatch:
 permissions:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: bc869a10e1e5f291a57b75d7ecb0e61ad45da0e2
+          ref: eca04cded28b7a8d01e506f119954fba2fe38ebb
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -89,7 +89,7 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='3a01a32429298f217f6ed9371cec4719a2fcd40cbfac40aedd82491589b4b3f4':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='13dc65ddf64b443320bf2eb775767f2ec6ae053b96664e2d66e6533ad7658834':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            def category(name):
             for retry in range(3):
@@ -105,13 +105,13 @@ jobs:
               scroll()
             raise RuntimeError('Category did not open '+name)
            category('Clock');wait_target('Add Digital Clock');cap('03-clock-first')
-           for label in ('Add Analog Bold','Add Analog Scale','Add World Clock','Add KWGT Split Clock'):
+           for label in ('Add Analog Bold','Add Analog Scale','Add World Clock','Add KWGT Split Clock','Add KWGT Gradient Clock'):
             click(wait_target('Next'));wait_target(label)
-           cap('08-clock-split')
-           click(wait_target('Add KWGT Split Clock'));click(wait_target('Add live split clock'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected fifth Clock variant and confirmed'
-           r=locate('kwgt_digital4_minute','home-kwgt-live-before');before=find(r,'kwgt_digital4_minute').get('text','')
+           cap('09-clock-gradient')
+           click(wait_target('Add KWGT Gradient Clock'));click(wait_target('Add live gradient clock'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected sixth Clock variant and confirmed'
+           r=locate('kwgt_gradient_minute','home-kwgt-live-before');before=find(r,'kwgt_gradient_minute').get('text','')
            adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
-           r=locate('kwgt_digital4_minute','home-kwgt-live-after');after=find(r,'kwgt_digital4_minute').get('text','');expected=adb('shell','date','+%M').decode().strip();report['kwgt_live_minute']={'before':before,'after':after,'device':expected}
+           r=locate('kwgt_gradient_minute','home-kwgt-live-after');after=find(r,'kwgt_gradient_minute').get('text','');expected=adb('shell','date','+%M').decode().strip();report['kwgt_live_minute']={'before':before,'after':after,'device':expected}
            if before==after or expected.upper()!=after.replace(' ','').upper():raise RuntimeError('KWGT native live minute failed')
            report['tests']['kwgt_live_minute']='passed'
            start();cap('gallery-after-live');click(button('Enable'))
@@ -123,10 +123,10 @@ jobs:
            if n is None:raise RuntimeError('No Android toggle')
            if n.get('checked')!='true':click(n)
            adb('shell','input','keyevent','4');start();cap('gallery-styled')
-           locate('widget_kwgt_digital4_bitmap','home-kwgt-styled-before')
+           locate('widget_kwgt_gradient_bitmap','home-kwgt-styled-before')
            adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
-           locate('widget_kwgt_digital4_bitmap','home-kwgt-styled-after');report['tests']['styled_after_process_kill']='captured, image time comparison required'
-           r=locate('widget_kwgt_digital4_bitmap','home-split-ready-tap');click(find(r,'widget_kwgt_digital4_bitmap'));time.sleep(2);cap('tap-result-clock');focus=adb('shell','dumpsys','activity','activities').decode(errors='replace');(OUT/'tap-clock-activity.txt').write_text(focus)
+           locate('widget_kwgt_gradient_bitmap','home-kwgt-styled-after');report['tests']['styled_after_process_kill']='captured, image time comparison required'
+           r=locate('widget_kwgt_gradient_bitmap','home-gradient-ready-tap');click(find(r,'widget_kwgt_gradient_bitmap'));time.sleep(2);cap('tap-result-clock');focus=adb('shell','dumpsys','activity','activities').decode(errors='replace');(OUT/'tap-clock-activity.txt').write_text(focus)
            if 'com.google.android.deskclock' not in focus:raise RuntimeError('Clock app did not open')
            report['tests']['tap_clock']='destination activity recorded; pixels require review'
            (OUT/'appwidget-dump.txt').write_bytes(adb('shell','dumpsys','appwidget'))
