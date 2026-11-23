@@ -1,4 +1,4 @@
-name: Final host sizing and copy polish
+name: Discoverable add widget flow repair
 on:
   workflow_dispatch:
 permissions:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 5ebaae967efb6110c1d11a5e43130ee3457dd7ac
+          ref: 18837f7c53bf5fe1ff9493a5bd3a43bd6d4116f0
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -37,27 +37,27 @@ jobs:
           if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -c "agent/final-host-sizing-${GITHUB_RUN_ID}"
-      - name: Correct actual host sizing and final copy
+          git switch -c "agent/add-widget-flow-${GITHUB_RUN_ID}"
+      - name: Add foreground native widget pin actions and fallback
         timeout-minutes: 11
         env:
           OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
         run: |
           cat > /tmp/widget-task.txt <<'TASK'
-          Continue only the bounded final sizing/copy/documentation polish of saved Dotwel Widgets0.1.4 commit5ebaae967efb6110c1d11a5e43130ee3457dd7ac. Do not restart, revisit fonts, change update architecture or add features/permissions/dependencies/services. The actual HOME circular bitmap clock is now independently proven to change07:06 to07:07 after background process2973 was killed (pid then empty). Native Date/red weekday and the real Android optional access grant screen also work. Those results are preserved at checkpoint/dot-core-45058243427. Preserve this functioning code.
+          Bounded usability repair on Dotwel Widgets candidate18837f7c53bf5fe1ff9493a5bd3a43bd6d4116f0. Preserve exact working renderer, scheduler, widget providers, sizing/styles, optional alarm UX and all existing permissions. No launcher/pipeline changes or main promotion. User installed0.1.5, opened the app, and could not drag/place the passive previews. Original screenshot confirms this is the app preview screen. Full source confirms there is no Add control or pin request anywhere. The existing native launcher Widgets-picker route worked on Pixel, but that is not an adequate discoverable in-app path. Repair this one issue, not a redesign.
           
-          Actual pixel defect: at the default two-cell HOME card size, the dotted clock occupies only about110x175 pixels in a roughly300x390-pixel visible card, while the serif Date is proportionate. The dots have too much empty space compared with the supplied AwesomeAWidgets reference. The in-app preview is larger, so do not substitute it for the host result. ClockWidgetRenderer.targetPixels currently combines OPTION_APPWIDGET_MIN_WIDTH with OPTION_APPWIDGET_MIN_HEIGHT. These are range minima, not necessarily a valid same-orientation size. The precise contribution of that mismatch still needs validation, so do not fix this by arbitrary huge glyph scaling or remove margins until something clips.
+          Add clearly visible, accessible Add Clock and Add Date actions near the top of the first screen before large previews and long technical copy. They must work from a foreground Activity via AppWidgetManager.isRequestPinAppWidgetSupported and requestPinAppWidget with the exact corresponding ComponentName. No new permission, service or dependency. Label the previews as previews, not draggable cards. Do not imply they drag across apps. A clear short placement explanation is needed. Keep useful style/refresh/access controls scrollable and available at large font sizes.
           
-          Correct the actual host bitmap sizing using the supported host geometry. Android12+ exact/responsive RemoteViews layouts and OPTION_APPWIDGET_SIZES are the documented route; legacy range-based estimates need coherent portrait/landscape pairing. Keep memory bounded across any size variants, preserve transparent backgrounds, keep the existing tap action, and do not add libraries. Draw within the actual ImageView content bounds including its padding, not a twice-inset synthetic canvas. Preserve native live fallback and the proven next-minute scheduling path. If useful, a debug-only, non-private size diagnostic can record the selected host sizes for subsequent emulator verification, but do not add unrelated logging.
+          The pin API return true only means request supported/sent, NOT that the widget was placed. Never show success until actual placement is confirmed, and do not need a callback merely for its own sake. Cancellation gives no callback, must leave the app usable for retry with no spurious success message. Check support at click time, handle false and ordinary foreground/security errors safely. When pinning is unsupported, show an immediate readable fallback dialog with launcher HOME long-press empty area > Widgets > Dotwel Widgets > choose Clock or Date instructions; don't silently no-op or send user to unrelated Settings. Include Cancel/Back behavior. User's actual OEM launcher remains unknown, do not claim it is broken. No alarm access needed for placing Date or native Clock fallback.
           
-          Official source checked:
-          https://developer.android.com/develop/ui/views/appwidgets/layouts
+          Current platform sources verified:
+          https://developer.android.com/develop/ui/views/appwidgets/discoverability
           https://developer.android.com/reference/android/appwidget/AppWidgetManager
-          The first explains why legacy min/max range estimates are not always accurate and documents exact layouts keyed by SizeF. Read only what this small correction needs; do not clone/reinvestigate all three reference repos again. Existing author attribution and no OEM font/artwork copying remain requirements.
+          Pinning is supported from API26 when the current launcher supports it. Launcher owns confirmation. No shell-bind shortcut proves this route works. No custom full cross-app drag system needed.
           
-          Also fix this exact inspected UI copy defect: values/strings.xml exact_alarm_explainer contains literal backslash-x2019s, which compiles and appears as appx2019s on screen. Rewrite in plain words without apostrophe escapes. Add a concise honest deep-idle delay note to the relevant user-facing explanation. Avoid unconditional exact-minute promises while deep idle can defer updates, but do not burden the normal UI with a technical essay. Access remains optional for the dotted update feature, requested through Android by the installer. Do not block the whole app or Date on denial, and do not promise instantaneous fallback when Android externally revokes access and stops the process.
+          For deterministic unsupported-flow UI verification on an emulator, if needed provide a strictly DEBUG-only test override delivered as an explicit activity intent extra, impossible to affect release behavior and never forcing unsupported behavior by default. Keep it narrowly named and documented in developer verification notes, not an in-app user setting. An existing suitable platform test route is preferable if available. Do not add a new debug/exported component or public permission just for testing.
           
-          README/STATE currently record or imply stale pre-final-rebuild hashes. Remove fixed APK hash claims from prose and point to final checkpoints/POLISH-SHA256SUMS, since the deterministic workflow rebuild is authoritative. Preserve the current0.1.4 checkpoint on its existing branch. Update only relevant renderer/provider/layout, string copy, version and docs. Increment to0.1.5/versionCode6. AssembleDebug and lintDebug without suppressions. Preserve source/APK promptly even at timeout. Document what was actually checked, with actual-home final visual verification still pending rather than calling compile/green polished or Play-approved. Do not change workflow, package, SDK, signing, visibility, scheduler permissions or alarm behavior. Do not save this task prompt into repository documents.
+          Increment0.1.6/versionCode7. Build/lint without suppressions. Preserve source/APK promptly. Update candidate docs honestly: actual pin/cancel/unsupported HOME path still needs independent runtime pixel verification; don't mark complete based on build. Retain earlier exact0.1.5 verified checkpoint links and no Play approval caveats. Do not leave a misleading extra version-named APK with different bytes: use final checkpoints/POLISH-SHA256SUMS and POLISH APK as authoritative, generated after deterministic build. Do not copy this task brief into repository docs. No emulator needed inside this coding step; separate focused runtime will exercise actual buttons, native confirm, accept/cancel and fallback. Save bounded fix rather than spend time rereading references or rewriting tested widget logic.
           TASK
           timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
       - uses: actions/setup-java@v6
@@ -89,7 +89,7 @@ jobs:
           set -eu
           git add app docs README.md
           if [ -d checkpoints ]; then git add -f checkpoints; fi
-          if ! git diff --cached --quiet; then git commit -m 'fix: host bitmap sizing and final user-facing copy'; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: discoverable native add widget actions and fallback'; fi
           git push -u origin HEAD
           git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
           git branch --show-current >> "$GITHUB_STEP_SUMMARY"
