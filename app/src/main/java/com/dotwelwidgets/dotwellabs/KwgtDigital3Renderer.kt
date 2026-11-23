@@ -13,6 +13,8 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
+private typealias MinuteRule = (Int) -> Boolean
+
 /**
  * Native renderer for `Nothing_Digital3` from AumGupta/KWGT-Widgets
  * (commit 96ca27be4cbff35efec5a86c64dd39fd065c958f, MIT, Copyright (c) 2024
@@ -338,8 +340,6 @@ object KwgtDigital3Renderer {
         return (host.contentLeft + (x - raster.contentLeft) * scale) to
             (host.contentTop + (y - raster.contentTop) * scale)
     }
-
-    private typealias MinuteRule = (Int) -> Boolean
 
     private val ALWAYS: MinuteRule = { true }
     private val NEVER: MinuteRule = { false }

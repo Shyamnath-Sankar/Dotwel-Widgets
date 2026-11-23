@@ -2,7 +2,23 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/digital3-repair-45197881747`, based on `437bb74`.
+- Branch: `agent/digital3-helper-45217649073`, based on `ce464a0`.
+
+## Compiler fix run (ce464a0)
+
+- Restored the original `BaseWidgetProvider.buildBitmapViews` signature
+  (`render` then a trailing/default `decorate: (RemoteViews, Boolean) -> Unit`).
+  The target-aware `decorateWithHost` optional Function3 parameter that broke
+  trailing-lambda binding in the existing providers was removed.
+- Added a distinct `buildTargetBitmapViews(..., decorateTarget)` helper used
+  only by `KwgtDigital3WidgetProvider`; it is not an overload of
+  `buildBitmapViews`, so no ambiguity. The other 13 provider files were not
+  edited.
+- Moved `KwgtDigital3Renderer`'s `MinuteRule` type alias from a nested class
+  member to file top level; no experimental compiler flag added.
+- `KwgtDigital3RendererLayoutTest` (including the source `joint` NEVER hierarchy
+  and minute-threshold assertions) and the diagnosed real-host vs scanned-raster
+  test remain unchanged and pass.
 - Scope of this run: repair the incomplete KWGT `Nothing_Digital3` import
   without restarting the implementation or rewriting existing providers,
   renderers, layouts or tests.
@@ -62,12 +78,12 @@ python3 ElementTree parse of app/src/main/**/*.xml   -> 50 files, 0 errors
 ./gradlew :app:assembleDebug :app:lintDebug :app:testDebugUnitTest
 ```
 
-Result: `BUILD SUCCESSFUL`; 28 unit/layout tests passed; lint `0 errors,
-109 warnings`. The manifest now registers 14 widget providers, of which 8 are
-KWGT source ports. The fresh debug APK is
-`app/build/outputs/apk/debug/app-debug.apk`; CI uploads it on success. No
-inherited Digital3 checkpoint APK existed to remove, and older checkpoint APKs
-were left untouched.
+Result: `BUILD SUCCESSFUL`; 33 unit/layout tests passed (0 failures); lint
+`0 errors, 112 warnings`. The manifest registers 14 widget providers, of which
+8 are KWGT source ports. The fresh debug APK is
+`app/build/outputs/apk/debug/app-debug.apk`; CI uploads it on success. The stale
+build output APK was deleted before this build; older checkpoint APKs were left
+untouched. The APK is build-verified only, not runtime-verified.
 
 ## Not verified
 

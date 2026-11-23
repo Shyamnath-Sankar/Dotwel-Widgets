@@ -86,7 +86,7 @@ class KwgtDigital3WidgetProvider : BaseWidgetProvider() {
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
         val style = WidgetPrefs.style(context)
         val exactAccess = MinuteTickScheduler.hasExactAccess(context)
-        return buildBitmapViews(
+        return buildTargetBitmapViews(
             context,
             appWidgetId,
             R.id.widget_kwgt_digital3_bitmap,
@@ -105,7 +105,7 @@ class KwgtDigital3WidgetProvider : BaseWidgetProvider() {
                     )
                 }
             },
-            decorateWithHost = { views, usedBitmap, target ->
+            decorateTarget = { views, usedBitmap, target ->
                 val fallbackSurface = if (usedBitmap) {
                     false
                 } else {

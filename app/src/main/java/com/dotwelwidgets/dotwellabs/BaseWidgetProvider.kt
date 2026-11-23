@@ -77,11 +77,6 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         fallbackViewId: Int,
         render: (widthPx: Int, heightPx: Int) -> Bitmap?,
         decorate: (views: RemoteViews, usedBitmap: Boolean) -> Unit = { _, _ -> },
-        decorateWithHost: ((
-            views: RemoteViews,
-            usedBitmap: Boolean,
-            target: WidgetSizing.Target,
-        ) -> Unit)? = null,
     ): RemoteViews {
         val manager = AppWidgetManager.getInstance(context)
         val options = manager.getAppWidgetOptions(appWidgetId)
@@ -99,7 +94,6 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
                     bitmap,
                     decorate,
                 )
-                decorateWithHost?.invoke(views, bitmap != null, target)
                 mapping[target.hostSize] = views
             }
             if (mapping.isNotEmpty()) {
@@ -111,8 +105,57 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         val bitmap = target?.let { safeRender(render, it.widthPx, it.heightPx) }
         val views = baseViews(context, appWidgetId)
         applyBitmap(views, bitmapViewId, fallbackViewId, bitmap, decorate)
+        return views
+    }
+
+    protected fun buildTargetBitmapViews(
+        context: Context,
+        appWidgetId: Int,
+        bitmapViewId: Int,
+        fallbackViewId: Int,
+        render: (widthPx: Int, heightPx: Int) -> Bitmap?,
+        decorateTarget: (
+            views: RemoteViews,
+            usedBitmap: Boolean,
+            target: WidgetSizing.Target,
+        ) -> Unit,
+    ): RemoteViews {
+        val manager = AppWidgetManager.getInstance(context)
+        val options = manager.getAppWidgetOptions(appWidgetId)
+        val exactSizes = WidgetSizing.exactSizesFromOptions(options)
+        val targets = WidgetSizing.targets(context, options, exactSizes)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && exactSizes.isNotEmpty()) {
+            val mapping = LinkedHashMap<SizeF, RemoteViews>()
+            targets.forEach { target ->
+                val bitmap = safeRender(render, target.widthPx, target.heightPx)
+                val views = baseViews(context, appWidgetId)
+                applyBitmap(
+                    views,
+                    bitmapViewId,
+                    fallbackViewId,
+                    bitmap,
+                    { v, used -> decorateTarget(v, used, target) },
+                )
+                mapping[target.hostSize] = views
+            }
+            if (mapping.isNotEmpty()) {
+                @Suppress("NewApi")
+                return RemoteViews(mapping)
+            }
+        }
+        val target = targets.firstOrNull()
+        val bitmap = target?.let { safeRender(render, it.widthPx, it.heightPx) }
+        val views = baseViews(context, appWidgetId)
         if (target != null) {
-            decorateWithHost?.invoke(views, bitmap != null, target)
+            applyBitmap(
+                views,
+                bitmapViewId,
+                fallbackViewId,
+                bitmap,
+                { v, used -> decorateTarget(v, used, target) },
+            )
+        } else {
+            applyBitmap(views, bitmapViewId, fallbackViewId, bitmap)
         }
         return views
     }
