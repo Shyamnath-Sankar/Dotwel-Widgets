@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarLayoutTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-23T12:10:38.039Z" hostname="runnervm0hi8g" time="0.087">
+  <properties/>
+  <testcase name="squareHostLetterboxesTheWideStrip" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarLayoutTest" time="0.009"/>
+  <testcase name="weekdayAndDateGlyphsStayInsideTheirColumn" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarLayoutTest" time="0.036"/>
+  <testcase name="wideFourByOneHostKeepsFullHeight" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarLayoutTest" time="0.001"/>
+  <testcase name="adjacentWeekdaysAndDatesDoNotOverlap" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarLayoutTest" time="0.011"/>
+  <testcase name="contentAndHighlightStayInsideTheStripBand" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarLayoutTest" time="0.006"/>
+  <testcase name="weekdayGlyphsClearTheTodayHighlight" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarLayoutTest" time="0.017"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

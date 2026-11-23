@@ -1,0 +1,13 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "mini_native_pin": "fourth Calendar variant confirmed without Alarms dialog",
+    "mini_date_event": "date broadcast requested and pixels captured; inspect current five-day values",
+    "mini_calendar_tap": "destination activity recorded; inspect pixels"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "897fdcb019a74e1814396da4bf4a746d375270b0f222cd7e6ab5ec54858e7fc3",
+  "device_date": "2026-11-23_Mon"
+}

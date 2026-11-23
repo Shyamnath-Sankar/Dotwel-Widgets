@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarDatesTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-23T12:10:37.979Z" hostname="runnervm0hi8g" time="0.053">
+  <properties/>
+  <testcase name="offsetsCrossLeapFebruary" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarDatesTest" time="0.022"/>
+  <testcase name="calendarAddPreservesWallClockAcrossDst" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarDatesTest" time="0.011"/>
+  <testcase name="offsetsCrossDecemberYearBoundary" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarDatesTest" time="0.002"/>
+  <testcase name="fiveDayLabelsKeepSourceOffsetsAndToday" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarDatesTest" time="0.005"/>
+  <testcase name="leapDayRollsIntoMarch" classname="com.dotwelwidgets.dotwellabs.KwgtMiniCalendarDatesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
