@@ -1,4 +1,4 @@
-name: Actual KWGT DateTime2 pin and minute runtime
+name: DateTime2 calendar and clock tap gate
 on:
   workflow_dispatch:
 permissions:
@@ -123,6 +123,16 @@ jobs:
            locate('widget_kwgt_datetime2_bitmap','home-kwgt-styled-before')
            adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
            locate('widget_kwgt_datetime2_bitmap','home-kwgt-styled-after');report['tests']['styled_after_process_kill']='captured, image time comparison required'
+           def tap_region(resource, label, xf, yf):
+            r=locate('kwgt2_date_tap','tap-ready-'+label);n=find(r,resource)
+            if n is None:raise RuntimeError('Missing tap region '+label)
+            b=list(map(int,re.findall(r'\d+',n.get('bounds',''))));adb('shell','input','tap',str(int(b[0]+(b[2]-b[0])*xf)),str(int(b[1]+(b[3]-b[1])*yf)));time.sleep(2);cap('tap-result-'+label)
+            focus=adb('shell','dumpsys','activity','activities').decode(errors='replace');(OUT/('tap-'+label+'-activity.txt')).write_text(focus)
+            if label=='clock' and 'com.google.android.deskclock' not in focus:raise RuntimeError('Clock app did not open')
+            if label=='calendar' and not ('com.google.android.calendar' in focus or 'ResolverActivity' in focus):raise RuntimeError('Calendar did not open or resolve')
+            report['tests']['tap_'+label]='destination activity recorded; pixels require review'
+           tap_region('kwgt2_date_tap','calendar',.2,.15)
+           tap_region('kwgt2_time_tap','clock',.85,.85)
            (OUT/'appwidget-dump.txt').write_bytes(adb('shell','dumpsys','appwidget'))
           
           except Exception as e:report['error']=str(e);cap('99-fatal')
