@@ -4,40 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_widget_black"
-    android:padding="10dp">
+    android:padding="8dp">
 
-    <TextClock
-        android:id="@+id/date_day"
+    <ImageView
+        android:id="@+id/widget_date_bitmap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
-        android:autoSizeMaxTextSize="104sp"
-        android:autoSizeMinTextSize="32sp"
+        android:contentDescription="@string/date_preview_description"
+        android:scaleType="fitCenter"
+        android:visibility="gone" />
+
+    <TextClock
+        android:id="@+id/date_fallback"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:autoSizeMaxTextSize="48sp"
+        android:autoSizeMinTextSize="18sp"
         android:autoSizeStepGranularity="2sp"
         android:autoSizeTextType="uniform"
         android:fontFamily="serif"
-        android:format12Hour="d"
-        android:format24Hour="d"
+        android:format12Hour="@string/date_fallback_format"
+        android:format24Hour="@string/date_fallback_format"
         android:gravity="center"
         android:includeFontPadding="false"
-        android:maxLines="1"
-        android:padding="0dp"
+        android:maxLines="2"
         android:textColor="@color/widget_ink"
-        android:textSize="84sp" />
-
-    <TextClock
-        android:id="@+id/date_weekday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:fontFamily="serif"
-        android:format12Hour="EEE"
-        android:format24Hour="EEE"
-        android:gravity="end"
-        android:includeFontPadding="false"
-        android:maxLines="1"
-        android:padding="0dp"
-        android:textColor="@color/dot_accent"
-        android:textSize="18sp" />
+        android:textSize="40sp" />
 
 </FrameLayout>

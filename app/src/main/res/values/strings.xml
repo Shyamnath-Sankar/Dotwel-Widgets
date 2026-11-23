@@ -1,26 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Dotwel Widgets</string>
-    <string name="settings_subtitle">Circular-dot clock and serif date for your home screen.</string>
-    <string name="placement_label">PLACE ON HOME SCREEN</string>
+    <string name="settings_subtitle">Nothing-inspired home-screen gallery, adapted from the MIT AwesomeAWidgets author renderer.</string>
+
+    <string name="gallery_label">GALLERY · 23 WIDGETS</string>
+    <string name="gallery_note">Add buttons pin that widget directly below its preview. Ready items are functional now; pending, blocked and unavailable items are labeled with the exact remaining work.</string>
+    <string name="gallery_preview_description">Widget gallery preview</string>
+    <string name="gallery_add_format">Add %1$s</string>
+    <string name="gallery_configure_world">Choose time zones</string>
+    <string name="gallery_not_ready">Not ready</string>
+    <string name="gallery_unavailable">Unavailable</string>
+
+    <string name="status_ready">Ready</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_blocked">Blocked</string>
+    <string name="status_unavailable">Unavailable</string>
+
+    <string name="clock_setup_title">Dotted clock</string>
+    <string name="clock_setup_enabled">Alarms &amp; reminders access is on. The dotted bitmap and styled analog clocks refresh about once a minute. Deep idle can delay an update.</string>
+    <string name="clock_setup_disabled">Alarms &amp; reminders access is off. Add Clock still works and shows the plain live system time; the dotted bitmap is not drawn.</string>
+    <string name="clock_setup_always">This Android version does not need Alarms &amp; reminders access for minute updates.</string>
+
+    <string name="clock_access_dialog_title">Dotted clock needs minute updates</string>
+    <string name="clock_access_dialog_message">The dotted clock is a bitmap refreshed about once a minute by an exact alarm. Android requires you to grant Alarms &amp; reminders access for that refresh; Dotwel never grants it for you.\n\nWithout access, Add Clock still places a working plain live system TextClock. Dotted time is not shown and is not pretended to be live.</string>
+    <string name="clock_access_dialog_enable">Enable dotted clock</string>
+    <string name="clock_access_dialog_plain">Add plain live clock</string>
+    <string name="clock_access_dialog_cancel">Cancel</string>
+
+    <string name="minute_access_dialog_title">Styled minute hands need updates</string>
+    <string name="minute_access_dialog_message">The styled analog bitmap redraws about once a minute with the same optional Alarms &amp; reminders access. Without it, the placed widget shows the platform live analog clock instead. No access is granted by the app.</string>
+    <string name="minute_access_dialog_enable">Enable minute updates</string>
+    <string name="minute_access_dialog_plain">Add live analog fallback</string>
+
+    <string name="world_add_title">Choose two time zones</string>
+    <string name="world_zone_first">First clock</string>
+    <string name="world_zone_second">Second clock</string>
+    <string name="world_save_and_add">Save and add</string>
+    <string name="world_cancel">Cancel</string>
+
     <string name="add_clock">Add Clock</string>
     <string name="add_date">Add Date</string>
-    <string name="placement_note">Tap Add Clock or Add Date. Your launcher asks you to confirm placement on the home screen. Previews below are not draggable; no alarm access is needed.</string>
-    <string name="preview_label">PREVIEWS</string>
-    <string name="preview_only_note">These cards are previews only. Use the Add buttons above; they cannot be dragged onto the home screen.</string>
+    <string name="plain_live_label">Plain live</string>
+    <string name="dotted_label">Dotted</string>
+    <string name="clock_dotted_detail">Dotted · the bitmap refreshes about once a minute. Deep idle can delay it.</string>
+    <string name="clock_plain_detail">Plain live · dotted minute updates are off. Add Clock places the system TextClock.</string>
+    <string name="analog_dotted_detail">Styled minute bitmap is enabled and refreshes about once a minute.</string>
+    <string name="analog_fallback_detail">Platform live analog fallback · enable minute updates for the styled bold hands.</string>
+
     <string name="clock_format_12">hh\nmm</string>
     <string name="clock_format_24">HH\nmm</string>
-    <string name="preview_note">Previews are rendered live in the app. When Alarms &amp; reminders access is enabled, placed clocks use the dotted bitmap updated about once a minute; deep idle can delay an update. Otherwise they use the live system text clock.</string>
+    <string name="date_fallback_format">EEE d</string>
+    <string name="clock_fallback_note">Live text · dotted render failed</string>
+    <string name="widget_render_fallback">Unable to render this widget right now.</string>
     <string name="clock_preview_description">Rendered circular-dot clock preview</string>
     <string name="date_preview_description">Rendered serif date preview</string>
+    <string name="analog_preview_description">Rendered analog clock preview</string>
+    <string name="world_preview_description">Rendered world clock preview</string>
+    <string name="quotes_preview_description">Rendered quotes preview</string>
     <string name="clock_content_description">Dotwel clock, %1$s</string>
+
     <string name="style_label">WIDGET STYLE</string>
     <string name="style_black">Black</string>
     <string name="style_translucent">Translucent</string>
     <string name="style_transparent">Transparent</string>
+
     <string name="exact_alarm_label">MINUTE UPDATES</string>
     <string name="exact_alarm_status_enabled">Alarms &amp; reminders access is enabled. Placed clocks draw the circular-dot bitmap and refresh about once a minute. Deep idle can delay an update.</string>
     <string name="exact_alarm_status_disabled">Alarms &amp; reminders access is off. Placed clocks use the live system text clock. This optional access only enables the dotted minute-update bitmap.</string>
+    <string name="exact_alarm_status_disabled_short">Alarms &amp; reminders access is off. Placed clocks show the plain live system time.</string>
     <string name="exact_alarm_status_always">This Android version does not need Alarms &amp; reminders access for dotted minute updates.</string>
     <string name="exact_alarm_enable">Enable minute updates</string>
     <string name="exact_alarm_explainer">Tap to open the Alarms and reminders settings for this app in Android; the app never grants access itself. You can revoke it at any time. Android cancels updates for this app when access is revoked, so a placed clock falls back to the live system text clock on its next update or resize. Updates are best-effort: deep idle or Doze can delay them.</string>
@@ -31,13 +78,56 @@
     <string name="pin_clock_confirmed">Clock added to your home screen.</string>
     <string name="pin_date_confirmed">Date added to your home screen.</string>
     <string name="pin_widget_confirmed">Widget added to your home screen.</string>
+    <string name="pin_analog_bold_confirmed">Analog Bold added to your home screen.</string>
+    <string name="pin_analog_scale_confirmed">Analog Scale added to your home screen.</string>
+    <string name="pin_world_confirmed">World clock added to your home screen.</string>
+    <string name="pin_quotes_confirmed">Quotes added to your home screen.</string>
     <string name="pin_unavailable_title">Place widget manually</string>
-    <string name="pin_unavailable_message">Your launcher did not open a placement prompt. You can add the widget manually:\n\n1. Go to your home screen.\n2. Long-press an empty area.\n3. Tap Widgets.\n4. Choose Dotwel Widgets.\n5. Pick Dotwel Clock or Dotwel Date.\n\nNo Alarms &amp; reminders access is needed to place either widget.</string>
+    <string name="pin_unavailable_message">Your launcher did not open a placement prompt. You can add the widget manually:\n\n1. Go to your home screen.\n2. Long-press an empty area.\n3. Tap Widgets.\n4. Choose Dotwel Widgets.\n5. Pick the widget you want.\n\nNo Alarms &amp; reminders access is needed to place a widget.</string>
     <string name="pin_unavailable_close">Got it</string>
-    <string name="settings_hint">Use Add Clock or Add Date above. If your launcher does not show a placement prompt, long-press an empty area of the home screen, open Widgets, choose Dotwel Widgets, then pick Clock or Date. Resize either widget from its handles. Style changes apply to every placed widget.</string>
-    <string name="attribution_short">Original dot-matrix geometry and platform serif. Design inspired by Nothing OS; this app is not affiliated with Nothing Technology Limited.</string>
+    <string name="settings_hint">Use each gallery card\'s Add button. If your launcher does not show a placement prompt, long-press an empty area of the home screen, open Widgets, choose Dotwel Widgets, then pick a widget. Resize placed widgets from their handles. Style changes apply to every placed widget.</string>
+    <string name="attribution_short">Renderer adapted from the MIT AwesomeAWidgets author code; original circular-dot glyphs and Android platform serif/condensed fonts substitute the upstream Ndot/NType/Lettera fonts. Not affiliated with Nothing Technology Limited.</string>
+
     <string name="widget_clock_label">Dotwel Clock</string>
     <string name="widget_clock_description">A live stacked-hours-and-minutes clock. The dotted bitmap updates about once a minute when Alarms &amp; reminders access is enabled; deep idle can delay an update. Otherwise the system text clock is shown.</string>
     <string name="widget_date_label">Dotwel Date</string>
     <string name="widget_date_description">A live serif date with a red abbreviated weekday and black, translucent or transparent styling.</string>
+    <string name="widget_analog_bold_label">Dotwel Analog Bold</string>
+    <string name="widget_analog_bold_description">A bold circular analog clock using the upstream-derived palette, with a live platform analog clock fallback when minute updates are not available.</string>
+    <string name="widget_analog_scale_label">Dotwel Analog Scale</string>
+    <string name="widget_analog_scale_description">A slim analog clock with a full minute tick scale, with a live platform analog clock fallback when minute updates are not available.</string>
+    <string name="widget_world_label">Dotwel World Clock</string>
+    <string name="widget_world_description">Two configurable time zones with the translated NtWorld row composition.</string>
+    <string name="widget_quotes_label">Dotwel Quotes</string>
+    <string name="widget_quotes_description">A daily quote from the AwesomeAWidgets author data file; tap to advance.</string>
+
+    <string name="catalog_digital_desc">Stacked hour and minute dots: upstream NtDigital fit and centre composition with Dotwel\'s original dot glyphs.</string>
+    <string name="catalog_date_desc">Day number and abbreviated red weekday using the translated NtDate fitting and baseline geometry.</string>
+    <string name="catalog_analog_bold_desc">NtAnalogBold provider wiring, redrawn as an original programmatic dial and bold hands because the upstream hand artwork is not bundled.</string>
+    <string name="catalog_analog_scale_desc">NtAnalogScale provider wiring with a sixty-tick scale, redrawn without the upstream dial/hand drawables.</string>
+    <string name="catalog_world_desc">NtWorld two-row world clock with per-widget zone choice before the native pin request.</string>
+    <string name="catalog_quotes_desc">NtQuotes layout with the upstream assets/nt_quotes.csv author data; tap cycles the daily offset.</string>
+    <string name="catalog_photo_circle_desc">NtPhotoCircle is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
+    <string name="catalog_photo_rect_desc">NtPhotoRect is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
+    <string name="catalog_away_desc">NtAway screen-interactive sampling needs a durable background observation path before it can be honest.</string>
+    <string name="catalog_compass_desc">NtCompass depends on sensor-driven live updates; the permitted service policy is still under review.</string>
+    <string name="catalog_snake_desc">NtSnake depends on a live game service; the permitted service policy is still under review.</string>
+    <string name="catalog_weather_desc">NtWx weather UI is pending. The reusable Open-Meteo domain/transport source contract is included for the launcher, but no weather widget is enabled.</string>
+    <string name="catalog_oem_clock_desc">OEM OnePlus ClockProvider code and assets have no independent redistribution grant, so this entry is listed but not bundled.</string>
+    <string name="catalog_oem_weather_desc">OEM OnePlus WeatherProvider code and assets have no independent redistribution grant, so this entry is listed but not bundled.</string>
+    <string name="catalog_oem_weather_clock_desc">OEM OnePlus WeatherClockProvider code and assets have no independent redistribution grant, so this entry is listed but not bundled.</string>
+
+    <string name="ledger_ready">Provider imported and buildable; runtime not yet verified in this run.</string>
+    <string name="ledger_pending_photo">Provider not added: picker/config lifecycle not yet implemented.</string>
+    <string name="ledger_pending_away">Provider not added: background sampling policy and configuration incomplete.</string>
+    <string name="ledger_pending_weather">Provider not added: widget UI import pending. Data layer only.</string>
+    <string name="ledger_blocked_compass">Blocked: sensor live-update/service policy not grounded in this run.</string>
+    <string name="ledger_blocked_snake">Blocked: game service/update policy not grounded in this run.</string>
+    <string name="ledger_unavailable_oem">Unavailable: OEM code/assets lack redistribution grant.</string>
+
+    <string name="category_clocks">Clocks</string>
+    <string name="category_time">Date &amp; world time</string>
+    <string name="category_weather">Weather</string>
+    <string name="category_media">Photos, quotes &amp; live</string>
+    <string name="category_oem">OnePlus OEM (unavailable)</string>
 </resources>

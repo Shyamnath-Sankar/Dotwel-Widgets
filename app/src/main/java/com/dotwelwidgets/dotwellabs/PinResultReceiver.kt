@@ -14,9 +14,20 @@ class PinResultReceiver : BroadcastReceiver() {
             AppWidgetManager.INVALID_APPWIDGET_ID,
         )
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) return
-        val message = when (intent.getStringExtra(EXTRA_PIN_KIND)) {
+        val kind = intent.getStringExtra(EXTRA_PIN_KIND)
+        if (kind == PIN_KIND_WORLD) {
+            WorldPrefs.takePending(context)?.let { zones ->
+                WorldPrefs.setZones(context, appWidgetId, zones)
+            }
+        }
+        WidgetUpdater.updateAll(context)
+        val message = when (kind) {
             PIN_KIND_CLOCK -> R.string.pin_clock_confirmed
             PIN_KIND_DATE -> R.string.pin_date_confirmed
+            PIN_KIND_ANALOG_BOLD -> R.string.pin_analog_bold_confirmed
+            PIN_KIND_ANALOG_SCALE -> R.string.pin_analog_scale_confirmed
+            PIN_KIND_WORLD -> R.string.pin_world_confirmed
+            PIN_KIND_QUOTES -> R.string.pin_quotes_confirmed
             else -> R.string.pin_widget_confirmed
         }
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
@@ -29,5 +40,9 @@ class PinResultReceiver : BroadcastReceiver() {
             "com.dotwelwidgets.dotwellabs.extra.PIN_KIND"
         const val PIN_KIND_CLOCK = "clock"
         const val PIN_KIND_DATE = "date"
+        const val PIN_KIND_ANALOG_BOLD = "analog_bold"
+        const val PIN_KIND_ANALOG_SCALE = "analog_scale"
+        const val PIN_KIND_WORLD = "world"
+        const val PIN_KIND_QUOTES = "quotes"
     }
 }

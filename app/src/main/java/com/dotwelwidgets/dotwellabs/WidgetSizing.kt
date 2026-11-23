@@ -3,24 +3,24 @@ package com.dotwelwidgets.dotwellabs
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.util.SizeF
-import java.util.Calendar
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-object ClockWidgetRenderer {
-    // RemoteViews parcels every bitmap through Binder. Keep the combined budget
-    // for all responsive size variants clearly under the 1 MB transaction limit.
+/**
+ * Dotwel's corrected host-size mapping, retained deliberately instead of the
+ * upstream NtDraw.size() which combines minimum range dimensions. Widget padding
+ * is 8dp on the root frame, so the bitmap is made for the ImageView content area
+ * and is not padded twice by the host.
+ */
+object WidgetSizing {
     private const val MAX_TOTAL_BITMAP_PIXELS = 480 * 480
     private const val MIN_BITMAP_SIDE = 48
     private const val FALLBACK_SIDE_DP = 110f
     private const val MAX_SIZE_VARIANTS = 4
 
-    // widget_clock.xml applies this padding to the root frame, so the ImageView
-    // content area is this much smaller on each side than the host widget size.
     const val CONTENT_INSET_DP = 8f
 
     data class Target(
@@ -28,25 +28,6 @@ object ClockWidgetRenderer {
         val widthPx: Int,
         val heightPx: Int,
     )
-
-    fun render(
-        context: Context,
-        widthPx: Int,
-        heightPx: Int,
-        style: WidgetStyle,
-        now: Calendar = Calendar.getInstance(),
-    ): Bitmap? = try {
-        DotMatrixRenderer.render(
-            context,
-            widthPx,
-            heightPx,
-            style,
-            now,
-            includeBackground = false,
-        )
-    } catch (_: OutOfMemoryError) {
-        null
-    }
 
     fun exactSizesFromOptions(options: Bundle): List<SizeF> {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return emptyList()
@@ -108,7 +89,6 @@ object ClockWidgetRenderer {
         val maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
         val portrait =
             context.resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE
-        // Portrait is the narrow/tall pair; landscape is the wide/short pair.
         val width = if (portrait) {
             firstPositive(minWidth, maxWidth)
         } else {

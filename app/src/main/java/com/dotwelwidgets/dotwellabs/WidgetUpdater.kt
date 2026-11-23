@@ -1,16 +1,27 @@
 package com.dotwelwidgets.dotwellabs
 
 import android.appwidget.AppWidgetManager
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 
 object WidgetUpdater {
+    val providers: List<Class<out BaseWidgetProvider>> = listOf(
+        ClockWidgetProvider::class.java,
+        DateWidgetProvider::class.java,
+        AnalogBoldWidgetProvider::class.java,
+        AnalogScaleWidgetProvider::class.java,
+        WorldWidgetProvider::class.java,
+        QuotesWidgetProvider::class.java,
+    )
+
     fun updateAll(context: Context) {
         val manager = AppWidgetManager.getInstance(context)
-        updateProvider(context, manager, ClockWidgetProvider::class.java)
-        updateProvider(context, manager, DateWidgetProvider::class.java)
-        ClockTickScheduler.schedule(context)
+        providers.forEach { provider ->
+            updateProvider(context, manager, provider)
+        }
+        MinuteTickScheduler.schedule(context)
     }
 
     private fun updateProvider(
@@ -25,5 +36,12 @@ object WidgetUpdater {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
         }
         context.sendBroadcast(intent)
+    }
+}
+
+class MinuteTickReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != MinuteTickScheduler.ACTION_TICK) return
+        WidgetUpdater.updateAll(context)
     }
 }

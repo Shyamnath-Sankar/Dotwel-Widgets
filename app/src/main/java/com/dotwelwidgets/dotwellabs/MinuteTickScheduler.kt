@@ -8,9 +8,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 
-object ClockTickScheduler {
+object MinuteTickScheduler {
     const val ACTION_TICK = "com.dotwelwidgets.dotwellabs.action.CLOCK_TICK"
     private const val REQUEST_CODE = 0x0C10
+
+    private val MINUTE_PROVIDERS = listOf(
+        ClockWidgetProvider::class.java,
+        AnalogBoldWidgetProvider::class.java,
+        AnalogScaleWidgetProvider::class.java,
+        WorldWidgetProvider::class.java,
+    )
 
     fun hasExactAccess(context: Context): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
@@ -19,7 +26,7 @@ object ClockTickScheduler {
     }
 
     fun schedule(context: Context) {
-        if (!hasPlacedClocks(context) || !hasExactAccess(context)) {
+        if (!hasPlacedMinuteWidgets(context) || !hasExactAccess(context)) {
             cancel(context)
             return
         }
@@ -42,16 +49,15 @@ object ClockTickScheduler {
         alarmManager.cancel(tickPendingIntent(context))
     }
 
-    private fun hasPlacedClocks(context: Context): Boolean {
+    private fun hasPlacedMinuteWidgets(context: Context): Boolean {
         val manager = AppWidgetManager.getInstance(context)
-        val ids = manager.getAppWidgetIds(
-            ComponentName(context, ClockWidgetProvider::class.java),
-        )
-        return ids.isNotEmpty()
+        return MINUTE_PROVIDERS.any { provider ->
+            manager.getAppWidgetIds(ComponentName(context, provider)).isNotEmpty()
+        }
     }
 
     private fun tickPendingIntent(context: Context): PendingIntent {
-        val intent = Intent(context, ClockWidgetProvider::class.java).apply {
+        val intent = Intent(context, MinuteTickReceiver::class.java).apply {
             action = ACTION_TICK
         }
         return PendingIntent.getBroadcast(

@@ -48,7 +48,10 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    protected open fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
+    protected open fun buildViews(context: Context, appWidgetId: Int): RemoteViews =
+        baseViews(context, appWidgetId)
+
+    protected fun baseViews(context: Context, appWidgetId: Int): RemoteViews {
         val views = RemoteViews(context.packageName, layoutRes)
         views.setInt(
             R.id.widget_root,
@@ -65,6 +68,74 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
         }
         return views
+    }
+
+    protected fun buildBitmapViews(
+        context: Context,
+        appWidgetId: Int,
+        bitmapViewId: Int,
+        fallbackViewId: Int,
+        render: (widthPx: Int, heightPx: Int) -> Bitmap?,
+        decorate: (views: RemoteViews, usedBitmap: Boolean) -> Unit = { _, _ -> },
+    ): RemoteViews {
+        val manager = AppWidgetManager.getInstance(context)
+        val options = manager.getAppWidgetOptions(appWidgetId)
+        val exactSizes = WidgetSizing.exactSizesFromOptions(options)
+        val targets = WidgetSizing.targets(context, options, exactSizes)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && exactSizes.isNotEmpty()) {
+            val mapping = LinkedHashMap<SizeF, RemoteViews>()
+            targets.forEach { target ->
+                val bitmap = safeRender(render, target.widthPx, target.heightPx)
+                val views = baseViews(context, appWidgetId)
+                applyBitmap(
+                    views,
+                    bitmapViewId,
+                    fallbackViewId,
+                    bitmap,
+                    decorate,
+                )
+                mapping[target.hostSize] = views
+            }
+            if (mapping.isNotEmpty()) {
+                @Suppress("NewApi")
+                return RemoteViews(mapping)
+            }
+        }
+        val target = targets.firstOrNull()
+        val bitmap = target?.let { safeRender(render, it.widthPx, it.heightPx) }
+        val views = baseViews(context, appWidgetId)
+        applyBitmap(views, bitmapViewId, fallbackViewId, bitmap, decorate)
+        return views
+    }
+
+    protected fun applyBitmap(
+        views: RemoteViews,
+        bitmapViewId: Int,
+        fallbackViewId: Int,
+        bitmap: Bitmap?,
+        decorate: (views: RemoteViews, usedBitmap: Boolean) -> Unit = { _, _ -> },
+    ) {
+        if (bitmap != null) {
+            views.setViewVisibility(bitmapViewId, View.VISIBLE)
+            views.setImageViewBitmap(bitmapViewId, bitmap)
+            views.setViewVisibility(fallbackViewId, View.GONE)
+        } else {
+            views.setViewVisibility(bitmapViewId, View.GONE)
+            views.setViewVisibility(fallbackViewId, View.VISIBLE)
+        }
+        decorate(views, bitmap != null)
+    }
+
+    protected fun safeRender(
+        render: (Int, Int) -> Bitmap?,
+        widthPx: Int,
+        heightPx: Int,
+    ): Bitmap? = try {
+        render(widthPx, heightPx)
+    } catch (_: OutOfMemoryError) {
+        null
+    } catch (_: RuntimeException) {
+        null
     }
 
     private fun tapIntent(context: Context): Intent? {
@@ -89,7 +160,7 @@ class ClockWidgetProvider : BaseWidgetProvider() {
         appWidgetIds: IntArray,
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        ClockTickScheduler.schedule(context)
+        MinuteTickScheduler.schedule(context)
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -99,33 +170,33 @@ class ClockWidgetProvider : BaseWidgetProvider() {
         newOptions: android.os.Bundle,
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        ClockTickScheduler.schedule(context)
+        MinuteTickScheduler.schedule(context)
     }
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        ClockTickScheduler.schedule(context)
+        MinuteTickScheduler.schedule(context)
     }
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        ClockTickScheduler.cancel(context)
+        MinuteTickScheduler.cancel(context)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
-        ClockTickScheduler.schedule(context)
+        MinuteTickScheduler.schedule(context)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
-            ClockTickScheduler.ACTION_TICK,
+            MinuteTickScheduler.ACTION_TICK,
             Intent.ACTION_TIME_CHANGED,
             Intent.ACTION_TIMEZONE_CHANGED,
             Intent.ACTION_DATE_CHANGED,
             -> {
                 refreshWidgets(context)
-                ClockTickScheduler.schedule(context)
+                MinuteTickScheduler.schedule(context)
                 return
             }
         }
@@ -133,63 +204,48 @@ class ClockWidgetProvider : BaseWidgetProvider() {
     }
 
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
-        if (ClockTickScheduler.hasExactAccess(context)) {
-            val manager = AppWidgetManager.getInstance(context)
-            val options = manager.getAppWidgetOptions(appWidgetId)
-            val now = Calendar.getInstance()
-            val style = WidgetPrefs.style(context)
-            val exactSizes = ClockWidgetRenderer.exactSizesFromOptions(options)
-            val targets = ClockWidgetRenderer.targets(context, options, exactSizes)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && exactSizes.isNotEmpty()) {
-                val mapping = LinkedHashMap<SizeF, RemoteViews>()
-                targets.forEach { target ->
-                    val bitmap = ClockWidgetRenderer.render(
-                        context,
-                        target.widthPx,
-                        target.heightPx,
-                        style,
-                        now,
-                    ) ?: return@forEach
-                    mapping[target.hostSize] = bitmapViews(context, appWidgetId, bitmap, now)
-                }
-                if (mapping.isNotEmpty()) {
-                    return RemoteViews(mapping)
-                }
-            } else {
-                val target = targets.firstOrNull()
-                val bitmap = target?.let {
-                    ClockWidgetRenderer.render(context, it.widthPx, it.heightPx, style, now)
-                }
-                if (bitmap != null) {
-                    return bitmapViews(context, appWidgetId, bitmap, now)
-                }
+        val style = WidgetPrefs.style(context)
+        if (!MinuteTickScheduler.hasExactAccess(context)) {
+            return plainClockViews(context, appWidgetId, style)
+        }
+        val now = Calendar.getInstance()
+        val spokenTime = DateFormat.getTimeFormat(context).format(now.time)
+        return buildBitmapViews(
+            context,
+            appWidgetId,
+            R.id.widget_clock_bitmap,
+            R.id.clock_time,
+        ) { widthPx, heightPx ->
+            NtDigitalRenderer.render(context, widthPx, heightPx, style, now, false)
+        } decorate@{ views, usedBitmap ->
+            views.setTextColor(R.id.clock_time, UpstreamNtDraw.ink(context, style))
+            views.setViewVisibility(
+                R.id.clock_fallback_note,
+                if (usedBitmap) View.GONE else View.VISIBLE,
+            )
+            views.setTextColor(
+                R.id.clock_fallback_note,
+                UpstreamNtDraw.muted(context, style),
+            )
+            if (usedBitmap) {
+                views.setContentDescription(
+                    R.id.widget_clock_bitmap,
+                    context.getString(R.string.clock_content_description, spokenTime),
+                )
             }
         }
-        return fallbackViews(context, appWidgetId)
     }
 
-    private fun bitmapViews(
+    private fun plainClockViews(
         context: Context,
         appWidgetId: Int,
-        bitmap: Bitmap,
-        now: Calendar,
+        style: WidgetStyle,
     ): RemoteViews {
-        val views = super.buildViews(context, appWidgetId)
-        views.setViewVisibility(R.id.widget_clock_bitmap, View.VISIBLE)
-        views.setImageViewBitmap(R.id.widget_clock_bitmap, bitmap)
-        views.setViewVisibility(R.id.clock_time, View.GONE)
-        val spokenTime = DateFormat.getTimeFormat(context).format(now.time)
-        views.setContentDescription(
-            R.id.widget_clock_bitmap,
-            context.getString(R.string.clock_content_description, spokenTime),
-        )
-        return views
-    }
-
-    private fun fallbackViews(context: Context, appWidgetId: Int): RemoteViews {
-        val views = super.buildViews(context, appWidgetId)
+        val views = baseViews(context, appWidgetId)
         views.setViewVisibility(R.id.widget_clock_bitmap, View.GONE)
         views.setViewVisibility(R.id.clock_time, View.VISIBLE)
+        views.setViewVisibility(R.id.clock_fallback_note, View.GONE)
+        views.setTextColor(R.id.clock_time, UpstreamNtDraw.ink(context, style))
         return views
     }
 }
@@ -197,4 +253,192 @@ class ClockWidgetProvider : BaseWidgetProvider() {
 class DateWidgetProvider : BaseWidgetProvider() {
     override val layoutRes: Int = R.layout.widget_date
     override val tapCategory: String = Intent.CATEGORY_APP_CALENDAR
+
+    override fun onReceive(context: Context, intent: Intent) {
+        when (intent.action) {
+            Intent.ACTION_DATE_CHANGED,
+            Intent.ACTION_TIME_CHANGED,
+            Intent.ACTION_TIMEZONE_CHANGED,
+            -> {
+                refreshWidgets(context)
+                return
+            }
+        }
+        super.onReceive(context, intent)
+    }
+
+    override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
+        val style = WidgetPrefs.style(context)
+        val now = Calendar.getInstance()
+        return buildBitmapViews(
+            context,
+            appWidgetId,
+            R.id.widget_date_bitmap,
+            R.id.date_fallback,
+        ) { widthPx, heightPx ->
+            NtDateRenderer.render(context, widthPx, heightPx, style, now, false)
+        } decorate@{ views, _ ->
+            views.setTextColor(R.id.date_fallback, UpstreamNtDraw.ink(context, style))
+        }
+    }
+}
+
+class AnalogBoldWidgetProvider : BaseWidgetProvider() {
+    override val layoutRes: Int = R.layout.widget_analog
+    override val tapAction: String = AlarmClock.ACTION_SHOW_ALARMS
+
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray,
+    ) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: android.os.Bundle,
+    ) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        MinuteTickScheduler.cancel(context)
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        super.onDeleted(context, appWidgetIds)
+        MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == MinuteTickScheduler.ACTION_TICK) {
+            refreshWidgets(context)
+            MinuteTickScheduler.schedule(context)
+            return
+        }
+        super.onReceive(context, intent)
+    }
+
+    override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
+        val style = WidgetPrefs.style(context)
+        val now = Calendar.getInstance()
+        val drawDots = MinuteTickScheduler.hasExactAccess(context)
+        return buildBitmapViews(
+            context,
+            appWidgetId,
+            R.id.widget_analog_bitmap,
+            R.id.analog_fallback,
+        ) { widthPx, heightPx ->
+            if (drawDots) {
+                NtAnalogRenderer.render(
+                    context,
+                    widthPx,
+                    heightPx,
+                    style,
+                    now,
+                    bold = true,
+                    includeBackground = false,
+                )
+            } else {
+                null
+            }
+        } decorate@{ views, usedBitmap ->
+            views.setInt(
+                R.id.widget_root,
+                "setBackgroundResource",
+                if (usedBitmap) R.drawable.bg_widget_none else style.backgroundRes,
+            )
+        }
+    }
+}
+
+class AnalogScaleWidgetProvider : BaseWidgetProvider() {
+    override val layoutRes: Int = R.layout.widget_analog
+    override val tapAction: String = AlarmClock.ACTION_SHOW_ALARMS
+
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray,
+    ) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: android.os.Bundle,
+    ) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        MinuteTickScheduler.cancel(context)
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        super.onDeleted(context, appWidgetIds)
+        MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == MinuteTickScheduler.ACTION_TICK) {
+            refreshWidgets(context)
+            MinuteTickScheduler.schedule(context)
+            return
+        }
+        super.onReceive(context, intent)
+    }
+
+    override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
+        val style = WidgetPrefs.style(context)
+        val now = Calendar.getInstance()
+        val drawDots = MinuteTickScheduler.hasExactAccess(context)
+        return buildBitmapViews(
+            context,
+            appWidgetId,
+            R.id.widget_analog_bitmap,
+            R.id.analog_fallback,
+        ) { widthPx, heightPx ->
+            if (drawDots) {
+                NtAnalogRenderer.render(
+                    context,
+                    widthPx,
+                    heightPx,
+                    style,
+                    now,
+                    bold = false,
+                    includeBackground = false,
+                )
+            } else {
+                null
+            }
+        } decorate@{ views, usedBitmap ->
+            views.setInt(
+                R.id.widget_root,
+                "setBackgroundResource",
+                if (usedBitmap) R.drawable.bg_widget_none else style.backgroundRes,
+            )
+        }
+    }
 }

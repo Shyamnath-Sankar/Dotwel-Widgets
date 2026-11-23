@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -41,11 +42,66 @@
             android:label="@string/widget_date_label">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/date_widget_info" />
         </receiver>
+
+        <receiver
+            android:name=".AnalogBoldWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_analog_bold_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/analog_bold_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".AnalogScaleWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_analog_scale_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/analog_scale_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".WorldWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_world_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/world_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".QuotesWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_quotes_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quotes_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".MinuteTickReceiver"
+            android:exported="false" />
 
         <receiver
             android:name=".PinResultReceiver"
