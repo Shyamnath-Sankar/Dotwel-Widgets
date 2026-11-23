@@ -1,0 +1,17 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "native_category_kwgt": "selected second Calendar variant and confirmed",
+    "kwgt_live_minute": "passed",
+    "styled_after_process_kill": "captured, image time comparison required"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "3b6ffe66a3fcb00c4f40125c7908bc3d0ef9859eed3b00ff656a0030ea45932b",
+  "kwgt_live_minute": {
+    "before": "10:07AM",
+    "after": "10:08AM",
+    "device": "10:08AM"
+  }
+}
