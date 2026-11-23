@@ -3,6 +3,7 @@ package com.dotwelwidgets.dotwellabs
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
 import android.provider.Settings
@@ -29,7 +30,7 @@ object Battery2State {
         }
         return Snapshot(
             level = BatteryState.level(context).coerceIn(0, 100),
-            charging = manager?.isCharging == true,
+            charging = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))?.getIntExtra(BatteryManager.EXTRA_STATUS, -1).let { it == BatteryManager.BATTERY_STATUS_CHARGING || it == BatteryManager.BATTERY_STATUS_FULL },
             remainingMillis = remaining,
         )
     }
