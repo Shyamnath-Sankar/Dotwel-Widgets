@@ -105,7 +105,7 @@ jobs:
                except RuntimeError:break
               scroll()
             raise RuntimeError('Category did not open '+name)
-           category('Clocks');cap('02-clock-first')
+           category('Clock');cap('02-clock-first')
            for variant in range(12):
             if find(tree(),'Add KWGT Analog3',True) is not None:break
             click(wait_target('Next'))
