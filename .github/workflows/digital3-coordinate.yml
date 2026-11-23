@@ -1,0 +1,86 @@
+name: Correct Digital3 raster versus host geometry and joints
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 4083ce1d1faa3837889406ad7dec6d83de5878a6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/digital3-coordinate-${GITHUB_RUN_ID}"
+      - name: Apply reference-led widget browser and renderer polish
+        timeout-minutes: 11
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          cat > /tmp/widget-task.txt <<'TASK'
+          Correct TWO diagnosed Digital3 bugs ONLY from4083ce1. Other13providers untouched, no font global rewrites. Existing assemble/unit/lint/nativepin/plainminute/styledminute/Clocktap pass. Styled bitmap inspected fullresolution and its text IS centered/readable; do NOT alter styledglyphs based on thumbnail impressions. Main failure is fallback live overlays and wrong bridges.
+          DIAGNOSED LIVE ROOT CAUSE: WidgetSizing.targets() caps total bitmap pixels to480*480 and downsamples target.widthPx/heightPx. These are RASTER dimensions, NOT physical native host pixels. KwgtDigital3WidgetProvider feeds these downsampled dimensions into native RemoteViews width,height,left,top,textsize COMPLEX_UNIT_PX. ImageView stretches bitmap to actual host so nativeTextClock overlays are too small and above/left of corresponding circles. Compute separate TRUE HOST content pixels from target.hostSize DP minus actual content insets times density, matched per responsive RemoteViews target. Apply layout/nativepositions in TRUEHOSTpixels, retaining raster budgets forbitmap. Inspect WidgetSizing CONTENT_INSET_DP8 versus actual Digital3root XML currently no padding, correct onlyDigital3 consistently to avoiddoubleinset. BaseWidgetProvider buildBitmapViews rendercallback receivesrasteronly; do NOT globallychangebehaviorother13. Implement specialized Digital3 buildViews pertarget or safelyadd nonbreaking helper carryingactualhostSize todecorator. PreAPI31fallback stilluses realhostSize. Avoid sharedmutablelasttargetcrossvariant. Add regressiontest with rasterscale0.5 verifyingnativecellcenters map to actual fitCenter circlecenters. Live fixedfontfit twocharacters WITHINcircles (0.85em currentlytoo large for two monospacechars, use measuredwidth/referenceor~0.58diameterem). AMPM mustfitowncell. Styledglyphs alreadyfine.
+          DIAGNOSED JOINT SOURCE: current verticalColumns(false,false,true,true) invented unrelatedfullcolumns and ignores ancestorvisibility. Exact original preset paths CircleGrid parent siblings Vertical Joints and Horizontal Joints. VerticalJoints is VERTICAL stack of3gaprows, each child HORIZONTAL stack4columnitems. Gaprow0 ancestorconfig_visible NEVER, so ZERObridges regardlesschildren. Gaprow1 (between rows1and2): col0 ALWAYS accent, col1 visibleifmm>19 accent, col2 ifmm>49 accent, col3 NEVER. Gaprow2 (between rows2and3): col0 ifmm>39 accent, allothersNEVER. HorizontalJoints has3gapcolumns each4rows: gapcol0 row0 ALWAYSprimaryred,row1 ALWAYSaccent,row2 ifmm>9accent,row3 NEVER; gapcol1 row0NEVER,row1NEVER,row2 ifmm>29accent,row3NEVER; gapcol2 ANCESTOR NEVER soZERO. Use explicittable and tests at00,10,20,30,40,50. Bridge colour accent not fromunlitdot. Draw concavejoint from actual20/277square plus bgcirclecutouts recipe, not translucent roundstrokeoverlappingcircles causingbrightercrosses. Sourcebridgeendsshouldmeetwithoutalphadoublepaint; combinepath/maskpercolour beforedrawing. Correct docstaleomittedjoints claim.
+          No newpermissions/dependencies/fonts/services. Preserve optionalalarmfallbacktruth and liveTextClock. Codefirst, onlytargetededit, compiletestlint, nofullcollection/runtimepassclaim. Private/free/launcheruntouched. Finishby9min.
+          TASK
+          timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          rm -f checkpoints/dotwel-widgets-polish-debug.apk checkpoints/POLISH-SHA256SUMS
+          bash ./gradlew assembleDebug testDebugUnitTest --no-daemon
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug --no-daemon
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
