@@ -2,7 +2,9 @@ package com.dotwelwidgets.dotwellabs
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.provider.AlarmClock
+import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import java.text.SimpleDateFormat
@@ -188,45 +190,93 @@ class KwgtDigital3WidgetProvider : BaseWidgetProvider() {
         bindClockCell(
             views,
             R.id.kwgt_digital3_hour,
+            boundary,
             boundary.hourRegion,
-            width,
-            height,
             palette.foreground,
         )
         bindClockCell(
             views,
             R.id.kwgt_digital3_minute,
+            boundary,
             boundary.minuteRegion,
-            width,
-            height,
             palette.foreground,
         )
         bindClockCell(
             views,
             R.id.kwgt_digital3_ampm,
+            boundary,
             boundary.ampmRegion,
-            width,
-            height,
             palette.contrastInk,
         )
         return bitmap != null
     }
 
+    /**
+     * Allocates the TextClock to its own fixed source cell and uses a fixed text
+     * size derived from the fitted circle. Padding alone is only the pre-API-31
+     * fallback; S+ gets explicit layout width/height/margins in pixels, so an
+     * autosize pass over the whole host can never overlap the three cells.
+     */
     private fun bindClockCell(
         views: RemoteViews,
         viewId: Int,
+        boundary: KwgtDigital3Renderer.Digital3Layout,
         region: KwgtDigital3Renderer.TextRegion,
-        width: Int,
-        height: Int,
         color: Int,
     ) {
-        views.setViewPadding(
-            viewId,
-            region.left.roundToInt().coerceIn(0, width),
-            region.top.roundToInt().coerceIn(0, height),
-            (width - region.right).roundToInt().coerceIn(0, width),
-            (height - region.bottom).roundToInt().coerceIn(0, height),
-        )
+        val cell = KwgtDigital3Renderer.liveCell(region, boundary)
         views.setTextColor(viewId, color)
+        views.setTextViewTextSize(
+            viewId,
+            TypedValue.COMPLEX_UNIT_PX,
+            cell.textSizePx,
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            views.setViewLayoutWidth(
+                viewId,
+                cell.width,
+                TypedValue.COMPLEX_UNIT_PX,
+            )
+            views.setViewLayoutHeight(
+                viewId,
+                cell.height,
+                TypedValue.COMPLEX_UNIT_PX,
+            )
+            views.setViewLayoutMargin(
+                viewId,
+                RemoteViews.MARGIN_LEFT,
+                cell.left,
+                TypedValue.COMPLEX_UNIT_PX,
+            )
+            views.setViewLayoutMargin(
+                viewId,
+                RemoteViews.MARGIN_TOP,
+                cell.top,
+                TypedValue.COMPLEX_UNIT_PX,
+            )
+            views.setViewLayoutMargin(
+                viewId,
+                RemoteViews.MARGIN_RIGHT,
+                0f,
+                TypedValue.COMPLEX_UNIT_PX,
+            )
+            views.setViewLayoutMargin(
+                viewId,
+                RemoteViews.MARGIN_BOTTOM,
+                0f,
+                TypedValue.COMPLEX_UNIT_PX,
+            )
+            views.setViewPadding(viewId, 0, 0, 0, 0)
+        } else {
+            views.setViewPadding(
+                viewId,
+                region.left.roundToInt().coerceIn(0, boundary.width.toInt()),
+                region.top.roundToInt().coerceIn(0, boundary.height.toInt()),
+                (boundary.width - region.right).roundToInt()
+                    .coerceIn(0, boundary.width.toInt()),
+                (boundary.height - region.bottom).roundToInt()
+                    .coerceIn(0, boundary.height.toInt()),
+            )
+        }
     }
 }

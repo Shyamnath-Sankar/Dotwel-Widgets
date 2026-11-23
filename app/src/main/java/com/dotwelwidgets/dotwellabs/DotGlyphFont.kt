@@ -14,6 +14,7 @@ object DotGlyphFont {
     const val COLUMNS = 5
     const val ROWS = 7
     private const val DIGIT_GAP = 1
+    private const val GLYPH_RADIUS_RATIO = 0.40f
 
     private val glyphs: Map<Char, Array<String>> = mapOf(
         '0' to arrayOf("01110", "10001", "10001", "10001", "10001", "10001", "01110"),
@@ -57,6 +58,57 @@ object DotGlyphFont {
         'Z' to arrayOf("11111", "00001", "00010", "00100", "01000", "10000", "11111"),
     )
 
+    /**
+     * Actual drawn bounds of [text] in pitch units. Useful when a caller has to
+     * fit the visible ink, not the full 5x7 advance grid, into a fixed box.
+     */
+    data class Metrics(
+        val columns: Int,
+        val rows: Int,
+        val minColumn: Int,
+        val maxColumn: Int,
+        val minRow: Int,
+        val maxRow: Int,
+    ) {
+        val centerColumn: Float get() = (minColumn + maxColumn) / 2f
+        val centerRow: Float get() = (minRow + maxRow) / 2f
+        val inkWidthUnits: Float get() = (maxColumn - minColumn) + 2f * GLYPH_RADIUS_RATIO
+        val inkHeightUnits: Float get() = (maxRow - minRow) + 2f * GLYPH_RADIUS_RATIO
+    }
+
+    fun metrics(text: String): Metrics {
+        val columns = columnsFor(text)
+        if (columns <= 0) {
+            return Metrics(0, ROWS, 0, 0, 0, ROWS - 1)
+        }
+        var minColumn = Int.MAX_VALUE
+        var maxColumn = Int.MIN_VALUE
+        var minRow = Int.MAX_VALUE
+        var maxRow = Int.MIN_VALUE
+        var cursor = 0
+        text.forEach { character ->
+            val glyph = glyphs[character]
+            if (glyph != null) {
+                glyph.forEachIndexed { row, line ->
+                    line.forEachIndexed { column, dot ->
+                        if (dot == '1') {
+                            val absoluteColumn = cursor + column
+                            if (absoluteColumn < minColumn) minColumn = absoluteColumn
+                            if (absoluteColumn > maxColumn) maxColumn = absoluteColumn
+                            if (row < minRow) minRow = row
+                            if (row > maxRow) maxRow = row
+                        }
+                    }
+                }
+            }
+            cursor += COLUMNS + DIGIT_GAP
+        }
+        if (minColumn == Int.MAX_VALUE) {
+            return Metrics(columns, ROWS, 0, columns - 1, 0, ROWS - 1)
+        }
+        return Metrics(columns, ROWS, minColumn, maxColumn, minRow, maxRow)
+    }
+
     fun columnsFor(text: String): Int =
         if (text.isEmpty()) 0
         else COLUMNS * text.length + DIGIT_GAP * (text.length - 1)
@@ -97,6 +149,27 @@ object DotGlyphFont {
         draw(canvas, text, centerX - (columns - 1) * pitch / 2f, centerY, pitch, paint)
     }
 
+    /**
+     * Like [drawCentered] but centres the actual lit-dot bounds instead of the
+     * full advance box. Digital3 needs this because leading/trailing columns in
+     * a 5x7 glyph are often empty.
+     */
+    fun drawCenteredInk(
+        canvas: Canvas,
+        text: String,
+        centerX: Float,
+        centerY: Float,
+        pitch: Float,
+        paint: Paint,
+    ) {
+        if (pitch <= 0f) return
+        val bounds = metrics(text)
+        if (bounds.columns <= 0) return
+        val startX = centerX - bounds.centerColumn * pitch
+        val startY = centerY - bounds.centerRow * pitch
+        drawAt(canvas, text, startX, startY, pitch, paint)
+    }
+
     private fun draw(
         canvas: Canvas,
         text: String,
@@ -105,8 +178,19 @@ object DotGlyphFont {
         pitch: Float,
         paint: Paint,
     ) {
-        val radius = pitch * 0.40f
         val startY = centerY - (ROWS - 1) * pitch / 2f
+        drawAt(canvas, text, startX, startY, pitch, paint)
+    }
+
+    private fun drawAt(
+        canvas: Canvas,
+        text: String,
+        startX: Float,
+        startY: Float,
+        pitch: Float,
+        paint: Paint,
+    ) {
+        val radius = pitch * GLYPH_RADIUS_RATIO
         var cursor = 0
         text.forEach { character ->
             val glyph = glyphs[character] ?: return@forEach
