@@ -1,0 +1,28 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "native_category_clean": "confirmed",
+    "battery": "passed real system level",
+    "live_time_after_kill": "passed",
+    "tap_clock": "destination activity recorded; pixels require review"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "d14cacecc6ff8182a0016a9191a15ada8583d5618602eace62d1de44388d33be",
+  "battery": {
+    "widget": "100%",
+    "device": "Current Battery Service state:\n  AC powered: true\n  USB powered: false\n  Wireless powered: false\n  Dock powered: false\n  Max charging current: 5000000\n  Max charging voltage: 5000000\n  Charge counter: 10000\n  status: 2\n  health: 2\n  present: true\n  level: 100\n  scale: 100\n  voltage: 5000\n  temperature: 250\n  technology: Li-ion\n  Charging state: 0\n  Charging policy: 0\n"
+  },
+  "live_time": {
+    "before": "6:29",
+    "after": "6:30",
+    "device": "6:30"
+  },
+  "date": {
+    "weekday": "Monday",
+    "date": "NOVEMBER 23",
+    "device": "Mon Nov 23 18:30:22 UTC 2026\n"
+  },
+  "alarm_access": "No operations.\nDefault mode: default\n"
+}
