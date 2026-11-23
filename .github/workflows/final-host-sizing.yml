@@ -1,4 +1,4 @@
-name: Truthful compact widget gallery refinement
+name: Offline KWGT collection continuation
 on:
   workflow_dispatch:
 permissions:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 6d6b40daec38f073ef4273e814c6912c12bee057
+          ref: c29668f6e59e5b7d0659fe7ae14872d02b8f7b23
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -37,24 +37,26 @@ jobs:
           if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -c "agent/gallery-refine-${GITHUB_RUN_ID}"
-      - name: Refine truthful gallery and preview lifecycle
-        timeout-minutes: 11
+          git switch -c "agent/offline-collection-${GITHUB_RUN_ID}"
+      - name: Adapt offline KWGT presets into native providers
+        timeout-minutes: 16
         env:
           OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
         run: |
           cat > /tmp/widget-task.txt <<'TASK'
-          Narrow premium-gallery/readiness correction on preserved buildable candidate6d6b40daec38f073ef4273e814c6912c12bee057. No new widgets this run. Keep eight providers and actual AwesomeAWidgets+two KWGT code/preset adaptations intact, same package0.1.7/versionCode8 for this unreleased candidate. Repo PRIVATE, no visibility/history changes, launcher untouched. Full collection remains incomplete and assigned, do not redefine as eight only.
+          Continue actual requested collection from preserved buildable gallery candidatec29668f6e59e5b7d0659fe7ae14872d02b8f7b23. Repo stays PRIVATE, launcher untouched. NothingWidgetPort explicitly excluded. Existing AwesomeAWidgets and KWGT ports/credits retained. No paid model/service/dependencies. All40KWGT variants remain assigned, do not claim this run completes them. Existing eight providers only staged.
           
-          Actual app screenshot review found front screen is developer-facing and too wordy. MainActivity bindCard shows upstream class/method names and verbose implementation explanations under every preview. Move provenance into a readable About/Source credits dialog or screen, preserving licenses and exact docs attribution; don't remove it from the app entirely. Front screen should be visual browsing: compact title, short subtitle, style chips, compact actionable dotted setup, preview and Add directly beneath each preview, concise status/setup text. Keep touch targets48dp, readable contrast, normal and130percent fonts, natural scrolling. No copied screenshots/art/fonts, use actual existing renderers. App first screen should expose at least the first preview and its Add without a wall of text. No fake Ready/tested promises, use Available if only implementation exists. Disabled pending collection items can be grouped in a collapsed Upcoming section, with honest reason on expansion, not endless giant dashed cards obscuring available collection. Catalog may still include all20+3 items and40ledger, no false finished import claim.
+          Implement the next manageable offline KWGT variants as real separate Android providers, not aliases or static cards. Inspect original MIT preset.json geometry/formulas at pinned AumGupta/KWGT-Widgets commit96ca27be4cbff35efec5a86c64dd39fd065c958f. Target Nothing_Date_Time, Nothing_Date_Time2, Nothing_Digital, Nothing_Digital2, Nothing_Analog_, Nothing_Analog_2, Nothing_Analog_3 in that order, finish/build a smaller subset well if needed. Fetch public original source through git when not already bundled. Preserve sanitized original geometry/layer/color/time formula data and map each new provider to actual originating preset/file/hash in40preset ledger. Use app-owned dot glyph/system serif/sans where source font rights unclear, explicitly record font substitution. No donor bitmaps/fonts/icons copied. Don't flatten genuinely different compositions into one generic renderer. Label minute-resolution adaptation honestly when original animates seconds; no service/second polling/exact-alarm escalation/new access.
           
-          Critical actual bug: WidgetPreviewRenderer CLOCK always renders dotted bitmap even while Alarms access is OFF and card says plain live. Previews must match real current mode and be labeled preview. Use an actual plain TextClock or explicitly live native fallback representation while denied, same composition/contrast as actual fallback. With access enabled use actual dotted renderer; update immediately on return from Android settings. Analog preview likewise represents fallback if styled minute rendering unavailable. No stale bitmap pretending live, no permission selfgrant. Render failure must not report dotted ready. Show enable control before/add flow as currently implemented. Keep native pin/cancel/retry and corrected host sizing, world per-instance config and battery live data untouched.
+          Use real device date/time in preview and HOME. Reuse existing optional SCHEDULE_EXACT_ALARM flow: access off must place genuinely live TextClock/AnalogClock composition, access on styled bitmap minute update using shared scheduler; do not claim bitmap live without access. Add each implemented provider to manifest, picker metadata, updater, scheduler when minute driven, catalog and per-widget preview/Add. Keep dynamic available count honest and40ledger updated. Full upstream20+3 and40variants scope remains, no silently dropping.
           
-          Investigate any sources of host/UI load visible in source: currently all gallery cards render large bitmaps on main thread even offscreen and every minute, plus renderCard can repost indefinitely after Activity destruction. Bound preview dimensions/pixel memory, render only visible/near-visible available cards or cache stable previews, avoid allocation churn and remove pending callbacks on destruction. Do not recycle a bitmap still displayed during draw. Do not claim the Pixel Launcher ANR was caused by app without evidence; independent runtime captures preinstall host state. Fix only grounded lifecycle/memory hazards, not blind broad rewrite.
+          Preserve compact gallery and successful digital cancel/plain/access/ordinary-am-kill minute behavior. Independent runtime against current APK has passed those digital gates, not all providers. Existing world/quotes/battery runtime still in flight; don't claim those tested. Existing initial layouts world/quotes use render-error text as default while bitmap hidden, creating poor native picker preview; improve initial/picker display to neutral actual preview or clearly static named placeholder, never an error before renderer runs. Keep true fallback errors truthful. Avoid unrelated architecture refactor, no new permissions/account setup/weather/media access. Battery preview cache currently timebucket5minutes and onResume doesn't invalidate cache on battery state, inspect/correct if quick grounded fix; actual provider update must use current system battery.
           
-          Build assembleDebug lintDebug without suppressions, preserve canonical final APK/checksum AFTER final source; STATE must not hardcode intermediate hash because deterministic final workflow can rebuild different bytes. Refer to final POLISH-SHA256SUMS instead. Update actual changes/unfinished tests honestly, no runtime claim, no Play/universal compatibility claim. Keep changes focused and auditable. No paid resources, services/new permissions/dependencies/signing changes. Retain user style on upgrade, no new external data.
+          Per-card explanatory text is still implementation-heavy. While touching new entries keep it short, user-facing status, put technical/source detail in About/credits. Don't turn this into another UI-only run. Preserve48dp targets and130percent-font layout, existing style on upgrade.
+          
+          Build assembleDebug lintDebug with no suppression. Final APK and checksum saved only after final sources. STATE refers final checksum file, no intermediate hardcoded hash/runtime claim. Update exact implemented/unfinished list and source evidence. No blanket bugfree or completion claim. Commit small working increments so timeouts preserve buildable progress. Existing package/version0.1.7 versionCode8 unreleased candidate unchanged.
           TASK
-          timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+          timeout --kill-after=15s 900s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
       - uses: actions/setup-java@v6
         if: always()
         with:
