@@ -100,8 +100,11 @@ the app from About & source credits > View MIT license texts.
   (weekday, red time, full month, ordinal day), the author side/8.5 offset and
   side/7 and side/6 text sizes, and the rounded-square composition. The source
   `ndot-47.ttf` font is replaced by Dotwel's original dot glyphs and platform
-  text clocks; no upstream font or preset archive is bundled. Runtime is not
-  claimed here.
+  text clocks; no upstream font or preset archive is bundled. The source
+  `-4/415` stack margin is deliberately not reproduced: because Dotwel's dot
+  glyphs visibly fill their line box, the renderer uses a positive clear gap
+  and fits the stack inside the host height. That is a documented legibility
+  adaptation, not pixel-exact upstream geometry. Runtime is not claimed here.
 - The author's sweep-gradient disc is rendered as a level-scaled arc plus a faint
   disc and track so the gauge remains readable at small widget sizes. This is a
   documented rendering substitution, not a claim of pixel-identical output.

@@ -1,13 +1,13 @@
 # Build and verification state
 
-- Candidate: Dotwel Widgets 0.1.7 (versionCode 8). Package name is unchanged.
-- Branch: `agent/reference-ui-45135605275`, based on `3d3d637`. The separate
-  launcher repository and default main remain unchanged.
-- The catalog still contains the same 25 app entries: nine available providers
-  and 17 upcoming entries, plus the separate 40-preset KWGT ledger. This pass
-  added no provider and did not redefine the collection as eight items only.
-- This is a debug candidate, not a Play-approved or production-ready release.
-  No runtime, screenshot or HOME placement verification is claimed here.
+- Candidate: Dotwel Widgets 0.1.7 (versionCode 8), debug only. Package name
+  `com.dotwelwidgets.dotwellabs` is unchanged.
+- Branch: `agent/kwgt-spacing-45147146140`, based on `7e14ff2`. The separate
+  launcher repository, default main, repository visibility and signing setup
+  are unchanged.
+- Scope of this run: the KWGT Date/Time stack-collision repair only. The
+  existing category grid/sheet/swipe wiring, the nine registered providers
+  (including KWGT Date/Time) and the earlier DateTime copy fix are preserved.
 
 ## Upstream source pins
 
@@ -15,127 +15,100 @@
   Copyright (c) 2026 Sameer Al Sahab).
 - KWGT-Widgets: `96ca27be4cbff35efec5a86c64dd39fd065c958f` (MIT,
   Copyright (c) 2024 Om Gupta).
-- The nine registered providers and the three KWGT preset conversions are
-  retained. See `docs/ATTRIBUTION.md` for the adapted classes/functions and
-  `docs/KWGT-LEDGER.md` for the 40-preset status.
+- Adapted classes/functions and the 40-preset ledger remain documented in
+  `docs/ATTRIBUTION.md` and `docs/KWGT-LEDGER.md`.
 
-## What changed in this refinement
+## What changed in this repair
 
-### Gallery front screen
+`KwgtDateTimeRenderer.kt` was the only production file changed.
 
-- Replaced the developer card stack with a compact two-column visual browser.
-  Each card shows the widget name, the actual same-renderer preview, and an Add
-  button directly underneath. Tapping the preview opens a full-width, larger
-  preview dialog with the Add action and a short mode note.
-- Added catalog-backed filters: All, Clocks, Date, Battery and Quotes. Counts
-  are derived from the nine real available providers only. The collapsed
-  Upcoming section still lists all 17 unfinished entries, so nothing is silently
-  hidden. There is no fake active count.
-- Added a small all-caps `DOTWEL` heading drawn with Dotwel's own
-  `DotGlyphFont`, with a spoken content label, plus a code-drawn quietly dotted
-  background. No proprietary image, font, icon or screenshot was copied.
-- Added a floating rounded bottom navigation with Widgets, Style and About.
-  Style opens the existing Black / Translucent / Transparent choice as a dialog.
-  Scroll content has bottom inset padding so Add buttons and text are not hidden
-  behind the floating navigation or system bar.
-- The grid uses two columns only at normal font scale and sufficient width; at
-  130% font scale or narrow width it falls back to one column. Filter chips,
-  Add, secondary actions and navigation keep 48dp minimum touch targets.
-- Replaced long card prose with short truthful mode labels such as
-  `Live system clock`, `Dotted clock`, `Live analog clock`, `Live battery` and
-  `Live battery rings`. Remaining implementation and rendering prose is in the
-  About & source credits dialog, and the existing MIT provenance is retained.
-- The minute-update control is a compact optional row. Available counts still
-  say nine of the 25 app entries and do not imply the unfinished catalog is
-  complete.
+- Root cause: the source preset stack margin `-4/415 * side` was copied into a
+  renderer whose Dotwel 5x7 glyphs visibly fill the line box. The real drawn
+  dot extent is `6.8 * pitch` (six row-centre pitches plus a `0.4 * pitch` dot
+  radius at each end), not `7 * pitch`. The negative margin therefore made
+  styled four-row output physically overlap.
+- Fix: rows are now laid out from the actual `6.8 * pitch` drawn bound with a
+  positive clear gap. The gap is `max(side * 0.045, 1.5 * min(pitch_i,
+  pitch_i+1))`, so it scales with the smaller row instead of collapsing.
+- The complete stack is fitted inside the host height with top/bottom padding
+  (`side * 0.04`). If the natural stack is too tall, all pitches are scaled
+  uniformly; width fitting is retained, so long `NOVEMBER`/`SEPTEMBER` rows
+  still fit.
+- Left alignment for weekday, red time, month and ordinal day is unchanged.
+- No glyph metrics or other renderers changed. No source font was copied.
+- The provenance comment now states explicitly that the positive gap is a
+  deliberate legibility adaptation for Dotwel's dot glyphs, not pixel-exact
+  upstream KWGT geometry.
 
-### Actual widget renderers
+No permission, provider registration, UI flow or runtime dependency changed.
+The only new build dependency is test-only JUnit 4.13.2 for the layout math
+assertions.
 
-- Battery Gauge: the authored composition is now fitted proportionally to 92%
-  of the short side, so the ring occupies about 66% of the short side instead of
-  the literal `side / 2` and a 2x2 HOME surface is no longer mostly blank. The
-  4/415 offset, `level * 3.6` arc, `cm(215,g,b)` colour and overture are retained.
-  A faint track and disc keep the ring legible, and the real level continues to
-  be drawn with Dotwel dot glyphs. No charge state or level is invented.
-- Battery Mini: the author's eleven concentric rings and arc colour remain, and
-  the renderer now adds a centered real-level dot readout for legibility. The
-  source preset has no text layer; this is an explicit Dotwel addition, not
-  fake state. Both previews and placed widgets call these same renderers.
-- Digital, analog, date, world and quotes renderers were not rewritten in this
-  pass. Their existing circular-dot composition, bold/scale distinction and date
-  hierarchy remain. Gallery previews still use the placed-widget renderer or the
-  truthful live platform fallback.
+## Unit tests
 
-### Preserved behaviour
+Added `app/src/test/java/com/dotwelwidgets/dotwellabs/KwgtDateTimeRendererLayoutTest.kt`.
+It calls the renderer's pure `fitRows` math and asserts:
 
-- Quotes per-child callback repair and the World denied-access native TextClock
-  fallback are untouched.
-- The digital native pin / cancel / access flow, optional Alarms & reminders
-  handling, style persistence, per-instance World configuration and existing
-  providers are untouched.
-- No new permission, dependency, service, purchase, wallpaper feature, unlock
-  banner, subscription, crown, fake system readout or background-access request
-  was added.
+- at 200x200, 300x400 and 400x200 every row has positive pitch, positive
+  inter-row gap, stays within the widget height, and does not overlap the next
+  row;
+- long month names `NOVEMBER` and `SEPTEMBER` fit inside the widget width at
+  those same sizes.
+
+`./gradlew testDebugUnitTest --no-daemon` passed.
 
 ## Build and lint in this run
 
-Commands run after the final source, layout and resource edits:
+Commands run after the final edits:
 
 ```
+./gradlew testDebugUnitTest --no-daemon
 ./gradlew assembleDebug lintDebug --no-daemon
 ```
 
-Result: `BUILD SUCCESSFUL`. `lintDebug` completed with 0 errors and 59 warnings.
-No lint suppression was added. The warnings are existing SDK/AGP notices,
-API-gated widget-info attributes, unused legacy strings/colors, plural
-suggestions, small text-size suggestions, and the unregistered partial weather
-cache's static-context warnings.
+Both were `BUILD SUCCESSFUL`. `lintDebug` completed with `0 errors, 93 warnings`
+and no lint suppression was added or changed. The warnings are existing
+SDK/AGP, API-gate, legacy-resource, plural, small-text and static-context
+notices.
 
 The APK identifies itself as `versionCode=8`, `versionName=0.1.7`,
 `minSdk=26`, `targetSdk=36`, `compileSdk=36`.
 
 ## Artifact
 
-The canonical debug APK was rebuilt after the final code/resource edits and
-saved as `checkpoints/dotwel-widgets-polish-debug.apk`. Its SHA-256 is recorded
-in `checkpoints/POLISH-SHA256SUMS`:
+Final debug APK: `checkpoints/dotwel-widgets-datetime-layout-debug.apk`.
+SHA-256 recorded in `checkpoints/DATETIME-LAYOUT-SHA256SUMS`:
 
 ```
-1f9100ac996f436cf1d4dc6f60f52df9ae2a197be9a6f99607ead724c9e8de5f
+9b7333eb2463fe5396362455c39bd1285d175333ce8d68dcfdbf91990b1be5e8  checkpoints/dotwel-widgets-datetime-layout-debug.apk
 ```
 
-## What is verified versus not verified
+The older `checkpoints/dotwel-widgets-polish-debug.apk` was left untouched.
 
-Verified here: the debug APK builds, lint has no errors, and the source changes
-above are present.
+## Verified versus not verified
+
+Verified here: the source compiles, the debug APK assembles, lint has no errors,
+and the pure layout assertions pass for non-overlap, height containment and
+long-month width fit at the stated sizes.
 
 Not verified here:
 
-- any emulator or physical-device launch, screenshot, or widget-host placement;
-- the two-column/one-column switch at 100% and 130% font scale in actual pixels;
-- bottom-navigation clearance, scrolling and contrast on a real device;
-- battery gauge or Mini readout pixels on an actual HOME surface, including
-  resize behaviour;
-- clock/analog/world preview switching after granting or revoking Alarms &
-  reminders access;
-- launcher pin confirmation, cancellation, retry, and the unsupported-pin
-  fallback dialog;
-- multiple simultaneous World requests and token pruning;
-- style persistence across an upgrade.
+- actual pixels on an Android host after this change, including the styled
+  four-row date/time widget at the real 2x2 tall host size;
+- screenshot or HOME-placement evidence for this repair.
 
-The independent runtime-repair run is separate; this pass makes no runtime claim.
-Actual normal/130% font pixels and HOME battery placement still need independent
-capture before any delivery claim.
+An independent prior run proved the live/styled minute advance after process
+kill, but it also observed the collision this edit targets. This pass makes no
+runtime or screenshot claim. The repaired spacing still needs independent
+actual-device or emulator pixel verification before it is called complete.
 
 ## Limits and remaining work
 
-- The collection remains incomplete: 17 in-app entries are in Upcoming and 37
-  of the 40 KWGT presets are still pending or dependency-blocked. No finished
-  import is claimed in this pass.
-- Weather: partial domain/transport only, no registered provider.
-- Photo and Away remain pending configuration/background-policy work.
-- Compass and Snake remain blocked by the no-service/sensor policy.
-- Media/notification, CPU and iOS Komponent presets remain dependency-blocked.
-- The OEM OnePlus entries remain unavailable for redistribution reasons.
+- The collection remains incomplete: 17 in-app entries are Upcoming and 37 of
+  the 40 KWGT presets are still pending or dependency-blocked.
+- Weather, Photo, Away, Compass, Snake, media/notification, CPU and iOS
+  Komponent presets remain in their prior blocked or pending states.
+- The OEM OnePlus entries remain excluded for redistribution reasons; the
+  NothingWidgetPort remains excluded.
 - Play policy review, signing-key setup, repository visibility changes, launcher
   integration and default-main promotion remain outside this checkpoint.
