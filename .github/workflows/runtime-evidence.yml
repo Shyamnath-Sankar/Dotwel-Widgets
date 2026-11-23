@@ -33,6 +33,12 @@ jobs:
            (OUT/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'));r=tree();(OUT/(name+'.xml')).write_bytes(ET.tostring(r));return r
           def find(r,s,exact=False):
            return next((n for n in r.iter('node') if any((s.lower()==n.get(k,'').lower() if exact else s.lower() in n.get(k,'').lower()) for k in ('text','content-desc','resource-id'))),None)
+          def wait_target(s,exact=True):
+           for attempt in range(6):
+            n=find(tree(),s,exact)
+            if n is not None:return n
+            time.sleep(.6)
+           raise RuntimeError('UI target not ready: '+s)
           def click(n):
            if n is None:raise RuntimeError('Missing UI target')
            b=list(map(int,re.findall(r'\d+',n.get('bounds',''))));adb('shell','input','tap',str((b[0]+b[2])//2),str((b[1]+b[3])//2));time.sleep(.7)
@@ -63,7 +69,7 @@ jobs:
            raise RuntimeError('HOME view missing '+needle)
           def pin(label,name,plain=None):
            click(button(label));r=tree()
-           if plain:click(find(r,plain,True));r=tree()
+           if plain:click(wait_target(plain));r=tree()
            if label=='Add World Clock':click(find(r,'Save and add',True));r=tree()
            cap('native-'+name);n=native(r)
            if n is None:raise RuntimeError('Native prompt missing '+label)
