@@ -103,6 +103,7 @@ object WidgetPreviewRenderer {
         PreviewKind.CLOCK,
         PreviewKind.ANALOG_BOLD,
         PreviewKind.ANALOG_SCALE,
+        PreviewKind.WORLD,
         -> true
         else -> false
     }

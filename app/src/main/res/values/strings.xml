@@ -47,6 +47,10 @@
     <string name="world_zone_second">Second clock</string>
     <string name="world_save_and_add">Save and add</string>
     <string name="world_cancel">Cancel</string>
+    <string name="world_time_format_12">h:mm a</string>
+    <string name="world_time_format_24">HH:mm</string>
+    <string name="world_dotted_detail">Preview · styled NtWorld two-zone bitmap, refreshed about once a minute.</string>
+    <string name="world_live_detail">Preview · live two-zone system clocks. Enable minute updates for the styled bitmap; the placed widget stays live either way.</string>
 
     <string name="add_clock">Add Clock</string>
     <string name="add_date">Add Date</string>
@@ -121,7 +125,7 @@
     <string name="widget_analog_scale_label">Dotwel Analog Scale</string>
     <string name="widget_analog_scale_description">A slim analog clock with a full minute tick scale, with a live platform analog clock fallback when minute updates are not available.</string>
     <string name="widget_world_label">Dotwel World Clock</string>
-    <string name="widget_world_description">Two configurable time zones with the translated NtWorld row composition.</string>
+    <string name="widget_world_description">Two configurable time zones. Uses the styled NtWorld bitmap when minute updates are enabled; otherwise shows live system TextClock rows for the chosen zones.</string>
     <string name="widget_quotes_label">Dotwel Quotes</string>
     <string name="widget_quotes_description">A daily quote from the AwesomeAWidgets author data file; tap to advance.</string>
     <string name="widget_battery_label">Dotwel Battery</string>

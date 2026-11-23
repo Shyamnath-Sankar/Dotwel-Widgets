@@ -4,7 +4,9 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.provider.AlarmClock
+import android.view.View
 import android.widget.RemoteViews
+import java.util.Locale
 import java.util.TimeZone
 
 object WorldPrefs {
@@ -155,7 +157,7 @@ class WorldWidgetProvider : BaseWidgetProvider() {
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        MinuteTickScheduler.cancel(context)
+        MinuteTickScheduler.schedule(context)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -176,7 +178,10 @@ class WorldWidgetProvider : BaseWidgetProvider() {
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
         val style = WidgetPrefs.style(context)
         val zones = WorldPrefs.zones(context, appWidgetId)
-        return buildBitmapViews(
+        if (!MinuteTickScheduler.hasExactAccess(context)) {
+            return liveWorldViews(context, appWidgetId, style, zones)
+        }
+        val views = buildBitmapViews(
             context,
             appWidgetId,
             R.id.widget_world_bitmap,
@@ -184,8 +189,47 @@ class WorldWidgetProvider : BaseWidgetProvider() {
             render = { widthPx, heightPx ->
                 NtWorldRenderer.render(context, widthPx, heightPx, style, zones, false)
             },
-        ) decorate@{ views, _ ->
-            views.setTextColor(R.id.world_fallback, UpstreamNtDraw.ink(context, style))
+        ) decorate@{ remote, _ ->
+            remote.setTextColor(R.id.world_fallback, UpstreamNtDraw.ink(context, style))
         }
+        return views
+    }
+
+    private fun liveWorldViews(
+        context: Context,
+        appWidgetId: Int,
+        style: WidgetStyle,
+        zones: List<NtWorldRenderer.Zone>,
+    ): RemoteViews {
+        val views = baseViews(context, appWidgetId)
+        views.setViewVisibility(R.id.widget_world_bitmap, View.GONE)
+        views.setViewVisibility(R.id.world_fallback, View.GONE)
+        views.setViewVisibility(R.id.world_live, View.VISIBLE)
+        val ink = UpstreamNtDraw.ink(context, style)
+        val muted = UpstreamNtDraw.muted(context, style)
+        bindLiveZone(views, zones.getOrNull(0), R.id.world_label_a, R.id.world_clock_a, ink, muted)
+        bindLiveZone(views, zones.getOrNull(1), R.id.world_label_b, R.id.world_clock_b, ink, muted)
+        return views
+    }
+
+    private fun bindLiveZone(
+        views: RemoteViews,
+        zone: NtWorldRenderer.Zone?,
+        labelId: Int,
+        clockId: Int,
+        ink: Int,
+        muted: Int,
+    ) {
+        if (zone == null) {
+            views.setViewVisibility(labelId, View.GONE)
+            views.setViewVisibility(clockId, View.GONE)
+            return
+        }
+        views.setViewVisibility(labelId, View.VISIBLE)
+        views.setViewVisibility(clockId, View.VISIBLE)
+        views.setTextViewText(labelId, zone.label.uppercase(Locale.getDefault()))
+        views.setTextColor(labelId, muted)
+        views.setTextColor(clockId, ink)
+        views.setString(clockId, "setTimeZone", zone.zoneId)
     }
 }

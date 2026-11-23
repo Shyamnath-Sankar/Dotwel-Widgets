@@ -180,7 +180,7 @@ class ClockWidgetProvider : BaseWidgetProvider() {
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        MinuteTickScheduler.cancel(context)
+        MinuteTickScheduler.schedule(context)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -315,7 +315,7 @@ class AnalogBoldWidgetProvider : BaseWidgetProvider() {
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        MinuteTickScheduler.cancel(context)
+        MinuteTickScheduler.schedule(context)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -396,7 +396,7 @@ class AnalogScaleWidgetProvider : BaseWidgetProvider() {
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        MinuteTickScheduler.cancel(context)
+        MinuteTickScheduler.schedule(context)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {

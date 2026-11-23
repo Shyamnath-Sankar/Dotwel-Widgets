@@ -35,6 +35,7 @@ import android.widget.TextClock
 import android.widget.TextView
 import android.widget.Toast
 import java.util.Calendar
+import java.util.Locale
 import java.util.UUID
 
 class MainActivity : Activity() {
@@ -520,8 +521,21 @@ class MainActivity : Activity() {
             CardAction.WORLD_ZONES -> {
                 secondary.visibility = View.VISIBLE
                 if (!holder.lastRenderFailed) {
-                    detail.setText(entry.detailRes)
-                    badge.setText(R.string.preview_badge)
+                    val access = MinuteTickScheduler.hasExactAccess(this)
+                    detail.setText(
+                        if (access) {
+                            R.string.world_dotted_detail
+                        } else {
+                            R.string.world_live_detail
+                        },
+                    )
+                    badge.setText(
+                        if (access) {
+                            R.string.preview_badge_styled
+                        } else {
+                            R.string.preview_badge_live
+                        },
+                    )
                 }
             }
             CardAction.NONE -> {
@@ -609,6 +623,21 @@ class MainActivity : Activity() {
                     holder.lastRenderFailed = false
                     holder.root.findViewById<TextView>(R.id.card_status_detail)
                         .setText(R.string.analog_dotted_detail)
+                    holder.root.findViewById<TextView>(R.id.card_preview_badge)
+                        .setText(R.string.preview_badge_styled)
+                }
+            }
+            PreviewKind.WORLD -> {
+                if (!access) {
+                    holder.lastRenderFailed = false
+                    showWorldFallback(holder, style, failed = false)
+                } else if (!renderBitmap(holder, style, width, height)) {
+                    holder.lastRenderFailed = true
+                    showWorldFallback(holder, style, failed = true)
+                } else {
+                    holder.lastRenderFailed = false
+                    holder.root.findViewById<TextView>(R.id.card_status_detail)
+                        .setText(R.string.world_dotted_detail)
                     holder.root.findViewById<TextView>(R.id.card_preview_badge)
                         .setText(R.string.preview_badge_styled)
                 }
@@ -709,6 +738,7 @@ class MainActivity : Activity() {
         image.visibility = View.VISIBLE
         holder.root.findViewById<TextClock>(R.id.card_preview_clock).visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_world).visibility = View.GONE
         return true
     }
 
@@ -718,6 +748,7 @@ class MainActivity : Activity() {
         image.setImageDrawable(null)
         image.visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_world).visibility = View.GONE
         val textClock = holder.root.findViewById<TextClock>(R.id.card_preview_clock)
         textClock.visibility = View.VISIBLE
         textClock.setTextColor(UpstreamNtDraw.ink(this, style))
@@ -738,6 +769,7 @@ class MainActivity : Activity() {
         image.setImageDrawable(null)
         image.visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_clock).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_world).visibility = View.GONE
         holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.VISIBLE
         holder.root.findViewById<TextView>(R.id.card_status_detail).setText(
             if (failed) {
@@ -748,6 +780,62 @@ class MainActivity : Activity() {
         )
         holder.root.findViewById<TextView>(R.id.card_preview_badge)
             .setText(R.string.preview_badge_live)
+    }
+
+    private fun showWorldFallback(holder: CardHolder, style: WidgetStyle, failed: Boolean) {
+        val image = holder.root.findViewById<ImageView>(R.id.card_preview)
+        previewBitmaps.remove(image)
+        image.setImageDrawable(null)
+        image.visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_clock).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_world).visibility = View.VISIBLE
+        val zones = WorldPrefs.previewZones(this)
+        bindWorldPreviewZone(
+            holder,
+            zones.getOrNull(0),
+            R.id.card_world_label_a,
+            R.id.card_world_clock_a,
+            style,
+        )
+        bindWorldPreviewZone(
+            holder,
+            zones.getOrNull(1),
+            R.id.card_world_label_b,
+            R.id.card_world_clock_b,
+            style,
+        )
+        holder.root.findViewById<TextView>(R.id.card_status_detail).setText(
+            if (failed) {
+                R.string.preview_render_failed_detail
+            } else {
+                R.string.world_live_detail
+            },
+        )
+        holder.root.findViewById<TextView>(R.id.card_preview_badge)
+            .setText(R.string.preview_badge_live)
+    }
+
+    private fun bindWorldPreviewZone(
+        holder: CardHolder,
+        zone: NtWorldRenderer.Zone?,
+        labelId: Int,
+        clockId: Int,
+        style: WidgetStyle,
+    ) {
+        val label = holder.root.findViewById<TextView>(labelId)
+        val clock = holder.root.findViewById<TextClock>(clockId)
+        if (zone == null) {
+            label.visibility = View.GONE
+            clock.visibility = View.GONE
+            return
+        }
+        label.visibility = View.VISIBLE
+        clock.visibility = View.VISIBLE
+        label.text = zone.label.uppercase(Locale.getDefault())
+        label.setTextColor(UpstreamNtDraw.muted(this, style))
+        clock.setTextColor(UpstreamNtDraw.ink(this, style))
+        clock.setTimeZone(zone.zoneId)
     }
 
     private fun stateColor(state: ImportState): Int = when (state) {
