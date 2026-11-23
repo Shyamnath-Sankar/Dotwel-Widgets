@@ -1,0 +1,23 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "pin_quotes": "Native confirmation accepted",
+    "quotes": "passed",
+    "pin_world": "Native confirmation accepted",
+    "world": "passed",
+    "world_live_minute": "passed"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "f6e3cdeafdbaff12b64d72a71ad724d56ee5f4667a1c682516b2aef593585d94",
+  "quote_prefs": {
+    "before": "",
+    "after": "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n    <int name=\"offset\" value=\"1\" />\n</map>\n"
+  },
+  "world_live_minute": {
+    "before": "08:07",
+    "after": "08:08",
+    "device": "08:08"
+  }
+}
