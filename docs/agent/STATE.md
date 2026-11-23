@@ -2,12 +2,15 @@
 
 - Candidate: Dotwel Widgets 0.1.7 (versionCode 8), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/kwgt-spacing-45147146140`, based on `7e14ff2`. The separate
+- Branch: `agent/category-label-45151068025`, based on `8c898a3`. The separate
   launcher repository, default main, repository visibility and signing setup
   are unchanged.
-- Scope of this run: the KWGT Date/Time stack-collision repair only. The
-  existing category grid/sheet/swipe wiring, the nine registered providers
-  (including KWGT Date/Time) and the earlier DateTime copy fix are preserved.
+- Scope of this run: the blank visible Add label in the MainActivity category
+  sheet only. The previously verified category preview Next/Previous/swipe,
+  selected Calendar second-variant pinning, live-minute advance (09:46 to
+  09:47) and dotted-style advance (09:48 to 09:49) after process kill are
+  preserved; no provider, renderer, asset, dependency or permission code was
+  touched.
 
 ## Upstream source pins
 
@@ -20,54 +23,35 @@
 
 ## What changed in this repair
 
-`KwgtDateTimeRenderer.kt` was the only production file changed.
+`MainActivity.kt` is the only production file changed.
 
-- Root cause: the source preset stack margin `-4/415 * side` was copied into a
-  renderer whose Dotwel 5x7 glyphs visibly fill the line box. The real drawn
-  dot extent is `6.8 * pitch` (six row-centre pitches plus a `0.4 * pitch` dot
-  radius at each end), not `7 * pitch`. The negative margin therefore made
-  styled four-row output physically overlap.
-- Fix: rows are now laid out from the actual `6.8 * pitch` drawn bound with a
-  positive clear gap. The gap is `max(side * 0.045, 1.5 * min(pitch_i,
-  pitch_i+1))`, so it scales with the smaller row instead of collapsing.
-- The complete stack is fitted inside the host height with top/bottom padding
-  (`side * 0.04`). If the natural stack is too tall, all pitches are scaled
-  uniformly; width fitting is retained, so long `NOVEMBER`/`SEPTEMBER` rows
-  still fit.
-- Left alignment for weekday, red time, month and ordinal day is unchanged.
-- No glyph metrics or other renderers changed. No source font was copied.
-- The provenance comment now states explicitly that the positive gap is a
-  deliberate legibility adaptation for Dotwel's dot glyphs, not pixel-exact
-  upstream KWGT geometry.
-
-No permission, provider registration, UI flow or runtime dependency changed.
-The only new build dependency is test-only JUnit 4.13.2 for the layout math
-assertions.
-
-## Unit tests
-
-Added `app/src/test/java/com/dotwelwidgets/dotwellabs/KwgtDateTimeRendererLayoutTest.kt`.
-It calls the renderer's pure `fitRows` math and asserts:
-
-- at 200x200, 300x400 and 400x200 every row has positive pitch, positive
-  inter-row gap, stays within the widget height, and does not overlap the next
-  row;
-- long month names `NOVEMBER` and `SEPTEMBER` fit inside the widget width at
-  those same sizes.
-
-`./gradlew testDebugUnitTest --no-daemon` passed.
+- Root cause: the category-sheet `rebind()` assigned
+  `add.contentDescription = getString(R.string.sheet_add_widget_format,
+  entry.name)` but never assigned `add.text`, so the red Add pill rendered
+  blank despite its existing size, colour and click wiring.
+- Fix: `rebind()` now sets `add.text = getString(R.string.sheet_add_widget)`
+  ("Add widget", already localized in `strings.xml`).
+- The existing dynamic content description (`Add <selected widget>`) and
+  `onAdd(entries[selected])` click behaviour are unchanged.
+- The button keeps its fixed 52 dp height and full-width layout. Text size is
+  still 15 sp, colour is still white, `maxLines` is 1 and default Button
+  padding is cleared to `0`, so the label is not clipped by framework insets
+  at large font scale.
+- Row spacing and all other sheet views are untouched.
+- A prior blank 130% font-scale capture was attributed to a harness recreation
+  screenshot race. This edit targets the statically missing text and makes no
+  claim that screenshot race is resolved.
 
 ## Build and lint in this run
 
 Commands run after the final edits:
 
 ```
-./gradlew testDebugUnitTest --no-daemon
 ./gradlew assembleDebug lintDebug --no-daemon
 ```
 
-Both were `BUILD SUCCESSFUL`. `lintDebug` completed with `0 errors, 93 warnings`
-and no lint suppression was added or changed. The warnings are existing
+Result: `BUILD SUCCESSFUL`. `lintDebug` completed with `0 errors, 92 warnings`
+and no lint suppression was added or changed. The warnings are pre-existing
 SDK/AGP, API-gate, legacy-resource, plural, small-text and static-context
 notices.
 
@@ -76,31 +60,33 @@ The APK identifies itself as `versionCode=8`, `versionName=0.1.7`,
 
 ## Artifact
 
-Final debug APK: `checkpoints/dotwel-widgets-datetime-layout-debug.apk`.
-SHA-256 recorded in `checkpoints/DATETIME-LAYOUT-SHA256SUMS`:
+Final debug APK: `checkpoints/dotwel-widgets-category-label-debug.apk`.
+SHA-256 recorded in `checkpoints/CATEGORY-LABEL-SHA256SUMS`:
 
 ```
-9b7333eb2463fe5396362455c39bd1285d175333ce8d68dcfdbf91990b1be5e8  checkpoints/dotwel-widgets-datetime-layout-debug.apk
+76112273f1d0399d1240c568ead83bc2a473a4e5091dba9b40571b0d53692c43  checkpoints/dotwel-widgets-category-label-debug.apk
 ```
 
-The older `checkpoints/dotwel-widgets-polish-debug.apk` was left untouched.
+The older `checkpoints/dotwel-widgets-polish-debug.apk` and
+`checkpoints/dotwel-widgets-datetime-layout-debug.apk` were left untouched.
 
 ## Verified versus not verified
 
-Verified here: the source compiles, the debug APK assembles, lint has no errors,
-and the pure layout assertions pass for non-overlap, height containment and
-long-month width fit at the stated sizes.
+Verified here: the source compiles, the debug APK assembles and lint has no
+errors. Source inspection confirms the Add pill now receives a non-empty
+localized text value on every rebind while retaining its content description
+and add action.
 
 Not verified here:
 
-- actual pixels on an Android host after this change, including the styled
-  four-row date/time widget at the real 2x2 tall host size;
-- screenshot or HOME-placement evidence for this repair.
+- actual pixels of the Add pill after this revision on an Android host,
+  including at 130% font scale;
+- runtime placement, swipe, style, resize or post-kill update evidence for this
+  revision.
 
-An independent prior run proved the live/styled minute advance after process
-kill, but it also observed the collision this edit targets. This pass makes no
-runtime or screenshot claim. The repaired spacing still needs independent
-actual-device or emulator pixel verification before it is called complete.
+No runtime or screenshot pass is claimed for this revision. An independent
+actual-device or emulator capture is still required before the label repair is
+called complete.
 
 ## Limits and remaining work
 

@@ -466,6 +466,8 @@ class MainActivity : Activity() {
             isAllCaps = false
             gravity = Gravity.CENTER
             minHeight = dp(52)
+            maxLines = 1
+            setPadding(0, 0, 0, 0)
             setTextColor(Color.WHITE)
             textSize = 15f
         }
@@ -526,6 +528,7 @@ class MainActivity : Activity() {
             modeView.text = WidgetModeLabels.label(this, entry)
             descView.text = getString(entry.descriptionRes) + "\n\n" +
                 getString(R.string.sheet_hint)
+            add.text = getString(R.string.sheet_add_widget)
             add.contentDescription = getString(
                 R.string.sheet_add_widget_format,
                 entry.name,
