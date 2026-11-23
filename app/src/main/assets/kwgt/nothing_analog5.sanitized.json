@@ -1,0 +1,131 @@
+{
+  "provenance": {
+    "source": "https://github.com/AumGupta/KWGT-Widgets",
+    "file": "widgets/Nothing_Analog_5.kwgt!preset.json",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": "Author email, tap intents and font payloads were removed. Layer geometry, shape formulas and colour formulas only. The source has no seconds layer and no h global."
+  },
+  "preset_info": {
+    "author": "Om Gupta",
+    "title": "NothingAnalog5",
+    "version": 13,
+    "width": 415,
+    "height": 542
+  },
+  "globals": {
+    "side": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$",
+    "bg": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$",
+    "fg": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$",
+    "primary": "#FFD71921"
+  },
+  "missing_global_adaptation": "The source references h for the background, clip and overlay heights but does not define h. The native dial uses the 277 square side for the background and clip heights. The two background overlays are kept as the square rounded rectangles their own source widths describe, so the 60/12 tick ring remains visible as in the source preview. No new height meaning beyond the source square is introduced.",
+  "layers": [
+    {
+      "internal_type": "ShapeModule",
+      "internal_title": "Bg",
+      "shape_width": "side",
+      "shape_height": "h (missing; adapted to side)",
+      "shape_corners": "$gv(side)/5$",
+      "paint_color": "bg",
+      "native_port": "277 square rounded vector, corner 55.4"
+    },
+    {
+      "internal_type": "ShapeModule",
+      "internal_title": "Clip",
+      "shape_width": "$gv(side)/1.08$",
+      "shape_height": "h (missing; adapted to side)",
+      "shape_corners": "$gv(side)/6$",
+      "paint_color": "bg",
+      "fx_mask": "CLIP_ALL",
+      "native_port": "277-tall rounded clip path, width 277/1.08, corner 277/6"
+    },
+    {
+      "internal_type": "ProgressModule",
+      "internal_title": "MinTicks",
+      "progress_progress": "CUSTOM",
+      "progress_max": 20.0,
+      "progress_level": 20.0,
+      "progress_mode": "SHAPES",
+      "progress_count": 60.0,
+      "style_style": "CIRCLE",
+      "style_shape": "RECT",
+      "style_size": "side",
+      "style_width": 4.0,
+      "style_height": "$gv(side)/5$",
+      "color_fgcolor": "fg",
+      "color_bgcolor": "fg",
+      "native_port": "60 radial 4 x 55.4 rect ticks centred on the 277 circle and clipped by the rounded clip path"
+    },
+    {
+      "internal_type": "ShapeModule",
+      "internal_title": "Overlay",
+      "shape_width": "$gv(side)/1.15$",
+      "shape_height": "h (missing; square width fallback)",
+      "shape_corners": "$gv(side)/6.8$",
+      "paint_color": "bg",
+      "native_port": "square rounded overlay side 277/1.15, corner 277/6.8"
+    },
+    {
+      "internal_type": "ProgressModule",
+      "internal_title": "HourTicks",
+      "progress_progress": "CUSTOM",
+      "progress_max": 20.0,
+      "progress_level": 20.0,
+      "progress_mode": "SHAPES",
+      "progress_count": 12.0,
+      "style_style": "CIRCLE",
+      "style_shape": "RECT",
+      "style_size": "side",
+      "style_width": 6.0,
+      "style_height": "$gv(side)/4$",
+      "color_fgcolor": "fg",
+      "color_bgcolor": "fg",
+      "native_port": "12 radial 6 x 69.25 rect ticks centred on the 277 circle and clipped by the rounded clip path"
+    },
+    {
+      "internal_type": "ShapeModule",
+      "internal_title": "Overlay",
+      "shape_width": "$gv(side)/1.3$",
+      "shape_height": "h (missing; square width fallback)",
+      "shape_corners": "$gv(side)/7$",
+      "paint_color": "bg",
+      "native_port": "square rounded overlay side 277/1.3, corner 277/7"
+    },
+    {
+      "internal_type": "OverlapLayerModule",
+      "internal_title": "Hour hand",
+      "config_rotate_mode": "CLOCK_HOUR_SMOOTH",
+      "shape_width": "$gv(side)/13.19$",
+      "shape_height": "$gv(side)/4.134$",
+      "position_padding_bottom": "$gv(side)/6.155$",
+      "shape_corners": 360,
+      "paint_color": "primary",
+      "native_port": "filled red 21 x 67.005 pill, centre Y 138.5 - (277/6.155)/2"
+    },
+    {
+      "internal_type": "OverlapLayerModule",
+      "internal_title": "Min hand",
+      "config_rotate_mode": "CLOCK_MINUTE",
+      "shape_width": "$gv(side)/25.18$ (source raw 10 overridden by this formula)",
+      "shape_height": "$gv(side)/2.77$",
+      "position_padding_bottom": "$gv(side)/3.112$",
+      "shape_corners": 360,
+      "paint_color": "fg",
+      "native_port": "filled foreground 11.0008 x 100 pill, centre Y 138.5 - (277/3.112)/2"
+    }
+  ],
+  "native_port": {
+    "provider": "KwgtAnalog5WidgetProvider",
+    "clock": "android.widget.AnalogClock",
+    "viewport": 277,
+    "dial_center": 138.5,
+    "hour_width": "$gv(side)/13.19$ = 21 at side 277",
+    "hour_height": "$gv(side)/4.134$ = 67.005 at side 277",
+    "hour_center_y": "138.5 - ($gv(side)/6.155) / 2",
+    "minute_width": "$gv(side)/25.18$ = 11.0008 at side 277",
+    "minute_height": "$gv(side)/2.77$ = 100 at side 277",
+    "minute_center_y": "138.5 - ($gv(side)/3.112) / 2",
+    "tap": "removed; the native provider uses ACTION_SHOW_ALARMS"
+  }
+}

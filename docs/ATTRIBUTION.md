@@ -183,6 +183,30 @@ the app from About & source credits > View MIT license texts.
   service, permission or new dependency is used. The gallery preview inflates
   the same native layout. Runtime inflation on a launcher and actual hand
   movement are not claimed here.
+- `widgets/Nothing_Analog_5.kwgt!preset.json` -> `KwgtAnalog5WidgetProvider.kt`,
+  the three `widget_kwgt_analog5_{black,translucent,transparent}.xml` layouts,
+  the `dw_analog5_dial_*`, `dw_analog5_hour` and `dw_analog5_minute_*` vector
+  resources and the sanitized data model
+  `app/src/main/assets/kwgt/nothing_analog5.sanitized.json`. Retained: the 277
+  square design viewport, `side = min(width,height)`, outer corner `side / 5`,
+  the clipped 60-tick minute ring (4 x `side / 5`) and 12-tick hour ring
+  (6 x `side / 4`) on the `style_size = side` circle, the `side / 1.15` and
+  `side / 1.3` rounded overlays, the filled hour pill `side / 13.19` by
+  `side / 4.134` in `#D71921` with centre Y `138.5 - (side / 6.155) / 2`, and
+  the filled minute pill `side / 25.18` by `side / 2.77` in `fg` with centre Y
+  `138.5 - (side / 3.112) / 2` (the source raw width 10 is overridden by the
+  formula). The source has no seconds layer. The missing `h` global is adapted
+  by using the 277 square side for the background and clip heights and keeping
+  the overlays square on their own source widths, so the source tick ring stays
+  visible; that adaptation is documented and does not invent a new height
+  meaning. Black uses `#1B1B1D` with white ticks and minute hand, translucent
+  uses `#A6FFFFFF` with dark ticks and minute hand, transparent keeps ticks and
+  hands with no filled dial. The RemoteViews layouts embed a native
+  `android.widget.AnalogClock` with vector `android:dial`, `android:hand_hour`
+  and `android:hand_minute`, so the platform rotates the hands automatically.
+  No runtime AnalogClock setter, bitmap time, minute alarm, service, permission,
+  font, raster asset or new dependency is used. The gallery preview inflates the
+  same native layout. Runtime inflation and actual hand movement are not claimed.
 - `widgets/Nothing_Mini_Calender.kwgt!preset.json` -> `KwgtMiniCalendarRenderer.kt`,
   `KwgtMiniCalendarDates.kt`, `KwgtMiniCalendarWidgetProvider.kt`, and the
   sanitized data model
@@ -228,12 +252,12 @@ the app from About & source credits > View MIT license texts.
   Dotwel's original dot glyphs or the documented platform font substitution
   replace the fonts.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
-  `Clean_Time_Date_Info`, `Nothing_Analog_3`, `Nothing_Battery`,
-  `Nothing_Battery2`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
+  `Clean_Time_Date_Info`, `Nothing_Analog_3`, `Nothing_Analog_5`,
+  `Nothing_Battery`, `Nothing_Battery2`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
   `Nothing_Date_Time2`, `Nothing_Digital4`, `Nothing_Digital3`,
   `Nothing_Digital`, and `Nothing_Mini_Calender` are implemented in this
-  checkpoint (11 of 40); the rest remain pending or dependency-blocked and are
-  not claimed as imported. All 17 registered providers are build-verified only
+  checkpoint (12 of 40); the rest remain pending or dependency-blocked and are
+  not claimed as imported. All 18 registered providers are build-verified only
   and remain runtime-unverified.
 
 ## Not included

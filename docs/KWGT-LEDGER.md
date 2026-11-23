@@ -32,7 +32,7 @@ without a prohibited capability or unresolved third-party rights.
 | 13 | `Nothing_Analog_` | pending | Analog layer conversion queued behind the battery/time ports. |
 | 14 | `Nothing_Analog_2` | pending | Analog layer conversion queued. |
 | 15 | `Nothing_Analog_3` | **implemented** | Native `KwgtAnalog3WidgetProvider`; 277 vector dial with two hollow rounded capsule hands in a platform `android.widget.AnalogClock`, which rotates the hands automatically. Black `#1B1B1D` / white hands, translucent `#A6FFFFFF` / dark hands, transparent no dial / white hands. No seconds, bitmap time, minute alarm, permission or service; runtime unverified. |
-| 16 | `Nothing_Analog_5` | pending | Analog layer conversion queued. |
+| 16 | `Nothing_Analog_5` | **implemented** | Native `KwgtAnalog5WidgetProvider`; 277 rounded-square vector dial with a clipped 60-tick minute ring and 12-tick hour ring, two square rounded overlays, a red `#D71921` filled hour pill and foreground minute pill in a platform `android.widget.AnalogClock`. Black `#1B1B1D` / white ticks, translucent `#A6FFFFFF` / dark ticks, transparent no filled dial with ticks and hands. Uses the source `CLOCK_HOUR_SMOOTH` / `CLOCK_MINUTE` semantics through the platform clock; no seconds, bitmap time, minute alarm, permission or service; runtime unverified. |
 | 17 | `Nothing_Analog_5_Transparent` | pending | Analog layer conversion queued. |
 | 18 | `Nothing_Battery` | **implemented** | Native `BatteryWidgetProvider`; real system level with bounded best-effort `BatteryRefreshScheduler` (inexact ELAPSED_REALTIME ~15 min + 10 min flex, does not wake the device); runtime unverified. |
 | 19 | `Nothing_Battery2` | **implemented** | Native `KwgtBattery2WidgetProvider`; rounded surface, outlined 16-segment body with clip and nub, real level, system charging state and only real `computeChargeTimeRemaining` values; unknown estimates show `--` / `ESTIMATE UNAVAILABLE`. Lifecycle: dynamic `BATTERY_CHANGED` only while the process lives, plus an inexact non-wakeup `BatteryRefreshScheduler` window (~15 min + 10 min flex, Doze-deferrable) and manual app refresh; not a live/instant claim; runtime unverified. |
@@ -60,15 +60,15 @@ without a prohibited capability or unresolved third-party rights.
 
 ## Implemented in this checkpoint
 
-Eleven of the 40 presets now have native providers: `Clean_Time_Date_Info`,
-`Nothing_Analog_3`, `Nothing_Battery`, `Nothing_Battery2`,
+Twelve of the 40 presets now have native providers: `Clean_Time_Date_Info`,
+`Nothing_Analog_3`, `Nothing_Analog_5`, `Nothing_Battery`, `Nothing_Battery2`,
 `Nothing_Battery_Mini`, `Nothing_Date_Time`, `Nothing_Date_Time2`,
 `Nothing_Digital`, `Nothing_Digital3`, `Nothing_Digital4` and
-`Nothing_Mini_Calender`. All 17 registered providers are build-verified only and
+`Nothing_Mini_Calender`. All 18 registered providers are build-verified only and
 remain runtime-unverified in this checkpoint. The sanitized transcriptions are
 under `app/src/main/assets/kwgt/`, including
 `clean_time_date_info.sanitized.json`, `nothing_analog3.sanitized.json`,
-`nothing_battery.sanitized.json`, `nothing_battery2.sanitized.json`,
+`nothing_analog5.sanitized.json`, `nothing_battery.sanitized.json`, `nothing_battery2.sanitized.json`,
 `nothing_battery_mini.sanitized.json`,
 `nothing_date_time.sanitized.json`, `nothing_date_time2.sanitized.json`,
 `nothing_digital.sanitized.json`, `nothing_digital3.sanitized.json`,
@@ -99,6 +99,37 @@ static card/battery background is a bitmap. The percentage reads the real
 time readout is fixed 12-hour `h:mm`, so the TextClock uses `h:mm` for both
 `format12Hour` and `format24Hour` and 24-hour devices still match the source;
 the fallback background slot is a supported `ImageView` rather than a raw `View`.
+
+Nothing_Analog_5 keeps these author relationships:
+
+- source canvas 415 x 542; `side = min(width, height)`; 277 square design viewport
+- outer rounded square corner `side / 5` (55.4 at 277); dark `#FF1B1B1D` / light
+  white surface with the opposite `fg` ink; `primary` red `#FFD71921`
+- clip rounded rectangle width `side / 1.08`, height `side`, corners `side / 6`
+- 60 minute rect ticks width 4, height `side / 5`, on the `style_size = side`
+  circle; 12 hour rect ticks width 6, height `side / 4`; both rings rotated
+  radially and clipped by the rounded clip path
+- square rounded background overlays `side / 1.15` (corners `side / 6.8`) and
+  `side / 1.3` (corners `side / 7`)
+- filled rounded hour pill width `side / 13.19`, height `side / 4.134`, centre Y
+  `138.5 - (side / 6.155) / 2`, `primary` red
+- filled rounded minute pill width `side / 25.18` (the source raw width 10 is
+  overridden by the formula), height `side / 2.77`, centre Y
+  `138.5 - (side / 3.112) / 2`, `fg`
+- rotation `CLOCK_HOUR_SMOOTH` and `CLOCK_MINUTE` are provided by the platform
+  `AnalogClock`; the source has no seconds layer
+
+The source references an `h` global for the background, clip and overlay
+heights but does not define it. The native port uses the 277 square side for the
+background and clip heights, and keeps the two background overlays square on
+their own source widths so the 60/12 tick ring stays visible as in the source
+preview. This is the documented missing-height adaptation, not a new height
+meaning. The source has no tap intent, font or raster asset; the native provider
+taps `AlarmClock.ACTION_SHOW_ALARMS`. Black uses the dark dial with white ticks
+and minute hand, translucent uses `#A6FFFFFF` with dark ticks and minute hand,
+transparent keeps the ticks and hands with no filled dial. The hour pill stays
+`#D71921` in every style. Runtime inflation on a launcher and actual hand
+movement are not verified in this checkpoint.
 
 Nothing_Battery keeps these author relationships:
 

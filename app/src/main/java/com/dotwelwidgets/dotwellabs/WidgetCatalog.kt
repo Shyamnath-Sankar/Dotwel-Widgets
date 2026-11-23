@@ -37,6 +37,7 @@ enum class PreviewKind {
     KWGT_DIGITAL_4,
     KWGT_GRADIENT_CLOCK,
     KWGT_ANALOG_3,
+    KWGT_ANALOG_5,
     KWGT_MINI_CALENDAR,
     KWGT_CLEAN_INFO,
     PLACEHOLDER,
@@ -330,6 +331,19 @@ object WidgetCatalog {
             action = CardAction.NONE,
         ),
         CatalogEntry(
+            id = "kwgt_nothing_analog5",
+            name = "KWGT Analog5",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Analog_5 · 277 square dial / 60+12 tick ring / pill hands",
+            descriptionRes = R.string.catalog_kwgt_analog5_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_ANALOG_5,
+            providerClass = KwgtAnalog5WidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_ANALOG_5,
+            action = CardAction.NONE,
+        ),
+        CatalogEntry(
             id = "kwgt_mini_calendar",
             name = "KWGT Mini Calendar",
             group = WidgetGroup.KWGT,
@@ -457,6 +471,7 @@ enum class WidgetCategory(
             "kwgt_nothing_digital3",
             "kwgt_gradient_clock",
             "kwgt_nothing_analog3",
+            "kwgt_nothing_analog5",
         ),
     ),
     CALENDAR(
@@ -566,6 +581,7 @@ object WidgetModeLabels {
                 R.string.mode_kwgt_gradient_live
             }
             PreviewKind.KWGT_ANALOG_3 -> R.string.mode_kwgt_analog3
+            PreviewKind.KWGT_ANALOG_5 -> R.string.mode_kwgt_analog5
             PreviewKind.KWGT_MINI_CALENDAR -> R.string.mode_kwgt_mini_calendar
             PreviewKind.KWGT_CLEAN_INFO -> R.string.mode_kwgt_clean_info
             PreviewKind.PLACEHOLDER -> entry.state.labelRes
