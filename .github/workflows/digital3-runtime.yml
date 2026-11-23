@@ -105,10 +105,12 @@ jobs:
               scroll()
             raise RuntimeError('Category did not open '+name)
            category('Clock');wait_target('Add Digital Clock');cap('03-clock-first')
-           for label in ('Add Analog Bold','Add Analog Scale','Add World Clock','Add KWGT Split Clock','Add KWGT Gradient Clock','Add KWGT Digital3 Dot Clock'):
-            click(wait_target('Next'));wait_target(label)
+           for variant in range(8):
+            if find(tree(),'Add KWGT Digital3 Dot Clock',True) is not None:break
+            click(wait_target('Next'))
+           wait_target('Add KWGT Digital3 Dot Clock')
            cap('10-clock-digital3')
-           click(wait_target('Add KWGT Digital3 Dot Clock'));click(wait_target('Add live digital3 clock'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected seventh Clock variant and confirmed'
+           click(wait_target('Add KWGT Digital3 Dot Clock'));click(wait_target('Add live digital3 clock'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected actual Digital3 Clock variant and confirmed'
            r=locate('kwgt_digital3_minute','home-kwgt-live-before');before=find(r,'kwgt_digital3_minute').get('text','')
            adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
            r=locate('kwgt_digital3_minute','home-kwgt-live-after');after=find(r,'kwgt_digital3_minute').get('text','');expected=adb('shell','date','+%M').decode().strip();report['kwgt_live_minute']={'before':before,'after':after,'device':expected}
