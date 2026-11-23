@@ -61,3 +61,34 @@ class BatteryWidgetProvider : BaseWidgetProvider() {
         }
     }
 }
+
+class BatteryMiniWidgetProvider : BaseWidgetProvider() {
+    override val layoutRes: Int = R.layout.widget_battery
+    override val tapAction: String = Intent.ACTION_POWER_USAGE_SUMMARY
+
+    override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
+        val style = WidgetPrefs.style(context)
+        val level = BatteryState.level(context)
+        return buildBitmapViews(
+            context,
+            appWidgetId,
+            R.id.widget_battery_bitmap,
+            R.id.battery_fallback,
+            render = { widthPx, heightPx ->
+                KwgtBatteryMiniRenderer.render(context, widthPx, heightPx, style, level)
+            },
+        ) decorate@{ views, usedBitmap ->
+            views.setTextColor(R.id.battery_fallback, UpstreamNtDraw.ink(context, style))
+            views.setTextViewText(
+                R.id.battery_fallback,
+                context.getString(R.string.battery_fallback_format, level),
+            )
+            if (usedBitmap) {
+                views.setContentDescription(
+                    R.id.widget_battery_bitmap,
+                    context.getString(R.string.battery_mini_content_description, level),
+                )
+            }
+        }
+    }
+}

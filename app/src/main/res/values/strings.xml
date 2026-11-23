@@ -3,7 +3,7 @@
     <string name="app_name">Dotwel Widgets</string>
     <string name="settings_subtitle">Nothing-inspired home-screen gallery, adapted from the MIT AwesomeAWidgets author renderer and the MIT KWGT-Widgets author presets.</string>
 
-    <string name="gallery_label">GALLERY · 24 WIDGETS</string>
+    <string name="gallery_label">GALLERY · 25 WIDGETS</string>
     <string name="gallery_note">Add buttons pin that widget directly below its preview. Ready items are functional now; pending, blocked and unavailable items are labeled with the exact remaining work.</string>
     <string name="gallery_preview_description">Widget gallery preview</string>
     <string name="gallery_add_format">Add %1$s</string>
@@ -60,6 +60,7 @@
     <string name="battery_preview_description">Rendered battery gauge preview</string>
     <string name="battery_fallback_format">Battery %1$d%%</string>
     <string name="battery_content_description">Battery %1$d percent</string>
+    <string name="battery_mini_content_description">Battery %1$d percent, mini ring gauge</string>
     <string name="clock_content_description">Dotwel clock, %1$s</string>
 
     <string name="style_label">WIDGET STYLE</string>
@@ -86,6 +87,7 @@
     <string name="pin_world_confirmed">World clock added to your home screen.</string>
     <string name="pin_quotes_confirmed">Quotes added to your home screen.</string>
     <string name="pin_battery_confirmed">Battery added to your home screen.</string>
+    <string name="pin_battery_mini_confirmed">Battery Mini added to your home screen.</string>
     <string name="pin_unavailable_title">Place widget manually</string>
     <string name="pin_unavailable_message">Your launcher did not open a placement prompt. You can add the widget manually:\n\n1. Go to your home screen.\n2. Long-press an empty area.\n3. Tap Widgets.\n4. Choose Dotwel Widgets.\n5. Pick the widget you want.\n\nNo Alarms &amp; reminders access is needed to place a widget.</string>
     <string name="pin_unavailable_close">Got it</string>
@@ -106,6 +108,8 @@
     <string name="widget_quotes_description">A daily quote from the AwesomeAWidgets author data file; tap to advance.</string>
     <string name="widget_battery_label">Dotwel Battery</string>
     <string name="widget_battery_description">A circular battery gauge translated from the KWGT Nothing_Battery preset. The level comes from the system battery state; tap opens power settings where supported.</string>
+    <string name="widget_battery_mini_label">Dotwel Battery Mini</string>
+    <string name="widget_battery_mini_description">The KWGT Nothing_Battery_Mini concentric-ring gauge. The level comes from the system battery state; no text layer or added permission.</string>
 
     <string name="catalog_digital_desc">Stacked hour and minute dots: upstream NtDigital fit and centre composition with Dotwel\'s original dot glyphs.</string>
     <string name="catalog_date_desc">Day number and abbreviated red weekday using the translated NtDate fitting and baseline geometry.</string>
@@ -114,6 +118,7 @@
     <string name="catalog_world_desc">NtWorld two-row world clock with per-widget zone choice before the native pin request.</string>
     <string name="catalog_quotes_desc">NtQuotes layout with the upstream assets/nt_quotes.csv author data; tap cycles the daily offset.</string>
     <string name="catalog_kwgt_battery_desc">KWGT Nothing_Battery layer geometry and level formula converted to a native provider: side/2 circle, level*3.6 arc and the author cm(215,g,b) colour, with Dotwel dot glyphs in place of ndot-47.ttf.</string>
+    <string name="catalog_kwgt_battery_mini_desc">KWGT Nothing_Battery_Mini converted to a native provider: eleven concentric level rings using the author w/1.38…w/1.005 sizes, primary arc and translucent track.</string>
     <string name="catalog_photo_circle_desc">NtPhotoCircle is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_photo_rect_desc">NtPhotoRect is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_away_desc">NtAway screen-interactive sampling needs a durable background observation path before it can be honest.</string>

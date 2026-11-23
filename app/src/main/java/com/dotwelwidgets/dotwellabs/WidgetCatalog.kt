@@ -24,6 +24,7 @@ enum class PreviewKind {
     WORLD,
     QUOTES,
     KWGT_BATTERY,
+    KWGT_BATTERY_MINI,
     PLACEHOLDER,
 }
 
@@ -211,6 +212,18 @@ object WidgetCatalog {
             previewKind = PreviewKind.KWGT_BATTERY,
             providerClass = BatteryWidgetProvider::class.java,
             pinKind = PinResultReceiver.PIN_KIND_BATTERY,
+        ),
+        CatalogEntry(
+            id = "kwgt_nothing_battery_mini",
+            name = "Nothing Battery Mini (KWGT)",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Battery_Mini · 11 concentric level rings",
+            descriptionRes = R.string.catalog_kwgt_battery_mini_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_BATTERY_MINI,
+            providerClass = BatteryMiniWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_BATTERY_MINI,
         ),
         CatalogEntry(
             id = "compass",

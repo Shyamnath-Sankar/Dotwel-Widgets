@@ -23,10 +23,10 @@ Commands run in this coding step:
 ./gradlew assembleDebug lintDebug --no-daemon
 ```
 
-Result: `BUILD SUCCESSFUL`. `lintDebug` completed with 0 errors and 41 warnings.
+Result: `BUILD SUCCESSFUL`. `lintDebug` completed with 0 errors and 45 warnings.
 No lint suppression was added. The warnings are the existing SDK/AGP update
 notices, unused attributes/resources, two SmallSp item-card/clock text sizes,
-one plurals suggestion, and two StaticFieldLeak warnings in the unregistered
+two plurals suggestions, and two StaticFieldLeak warnings in the unregistered
 partial weather cache. The weather code is not wired to any provider.
 
 The APK identifies itself as `versionCode=8`, `versionName=0.1.7`,
@@ -37,9 +37,9 @@ The APK identifies itself as `versionCode=8`, `versionName=0.1.7`,
 Canonical checkpoint on this branch:
 `checkpoints/dotwel-widgets-polish-debug.apk`
 
-- Size: 1063607 bytes.
+- Size: 1065688 bytes.
 - SHA-256:
-  `661d00912860526c5d970132f4d47e2beb26f24d1e5ad911fb09158f390de077`
+  `b61ef23b76cf1e0eea333ca60104e7557310d96695f5bebca08d823373b8ed78`
 - Recorded in `checkpoints/POLISH-SHA256SUMS`.
 
 The inherited 0.1.6 APK and its checksum file were deleted from this candidate
@@ -73,10 +73,13 @@ Kotlin. `render` is now named inside the parentheses at every call site in
   author layer geometry and formulas. The sanitized source transcription is
   `app/src/main/assets/kwgt/nothing_battery.sanitized.json`; the conversion is
   `KwgtBatteryRenderer.kt` plus `BatteryWidgetProvider.kt`.
+- Added `Nothing_Battery_Mini` as a second native provider from the author's
+  eleven concentric `ProgressModule` sizes, with sanitized source data in
+  `app/src/main/assets/kwgt/nothing_battery_mini.sanitized.json`.
 - Battery level is read from the real system battery state, with no fake charge
   value, no added permission and no service.
 - The gallery preview and the placed widget call the same renderer.
-- Only 1 of 40 presets is implemented. The other 39 remain pending or
+- Only 2 of 40 presets are implemented. The other 38 remain pending or
   dependency-blocked in `docs/KWGT-LEDGER.md`; none is claimed as imported.
 
 ### Permissions
@@ -89,28 +92,29 @@ Kotlin. `render` is now named inside the parentheses at every call site in
 ## What is READY versus what is tested
 
 `READY` in the gallery means the provider is registered and buildable in this
-candidate. It does not mean runtime-tested. Seven providers are registered:
-dot clock, date, Analog Bold, Analog Scale, world clock, quotes, battery.
+candidate. It does not mean runtime-tested. Eight providers are registered:
+dot clock, date, Analog Bold, Analog Scale, world clock, quotes, battery, and
+battery mini.
 
 No emulator or physical-device run happened for 0.1.7. No screenshot is claimed
 as runtime evidence. In particular these remain unverified:
 
-- native launcher pin confirmation and cancel behavior for the new battery card;
+- native launcher pin confirmation and cancel behavior for the new battery cards;
 - battery refresh timing across launchers/doze. The level is read from the real
   system state; refresh uses the standard `updatePeriodMillis` (30-minute
   minimum, best-effort) plus resize/manual app refresh/app resume, not a
   manifest `ACTION_BATTERY_CHANGED` receiver;
 - the truly-unsupported-pin fallback dialog;
 - multiple simultaneous World pin requests and the 10-minute token pruning;
-- pixel output of the battery gauge and world default on a real host;
+- pixel output of the battery gauges and world default on a real host;
 - style persistence across an upgrade from an older install.
 
 ## Limits and remaining work
 
 - Weather: partial domain/transport only, no nine layouts and no registered
   provider. Keep pending.
-- KWGT: `Nothing_Battery2`, `Nothing_Battery_Mini`, `Nothing_Digital2`,
-  `Nothing_Date_Time`, `Nothing_Mini_Calender` are the next implementable ports.
+- KWGT: `Nothing_Battery2`, `Nothing_Digital2`, `Nothing_Date_Time` and
+  `Nothing_Mini_Calender` are the next implementable ports.
   Media/notification, CPU and iOS Komponent presets remain dependency-blocked.
 - Compass and Snake remain blocked by the no-service/sensor policy.
 - PHOTO and AWAY remain pending configuration/background-policy work.

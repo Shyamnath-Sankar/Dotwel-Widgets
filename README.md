@@ -4,11 +4,11 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 ## Current checkpoint (0.1.7, versionCode 8)
 
 - `com.dotwelwidgets.dotwellabs`, minSdk 26, compile/target SDK 36.
-- Seven registered providers: dot clock, date, Analog Bold, Analog Scale, world
-  clock, quotes, and a native Nothing Battery conversion from the MIT
-  KWGT-Widgets preset. The full 40-preset source-port status is in
-  `docs/KWGT-LEDGER.md`; only Nothing Battery is implemented, the rest remain
-  pending or dependency-blocked.
+- Eight registered providers: dot clock, date, Analog Bold, Analog Scale, world
+  clock, quotes, and native Nothing Battery plus Nothing Battery Mini
+  conversions from the MIT KWGT-Widgets presets. The full 40-preset source-port
+  status is in `docs/KWGT-LEDGER.md`; only those two presets are implemented, the
+  rest remain pending or dependency-blocked.
 - Gallery cards put Add directly below each preview. Ready cards ask the current
   launcher to pin the matching provider through the platform request-pin API;
   the launcher owns the confirmation. Unsupported pinning shows a readable
@@ -26,8 +26,9 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   drawn to the ImageView content area, so widget padding is not applied twice.
   Updates use a one-minute `PendingIntent` alarm. Without that access the clock
   shows the live system `TextClock`; analog shows the platform `AnalogClock`.
-- Dotwel Battery reads the real system battery level (`BATTERY_PROPERTY_CAPACITY`
-  with a sticky `ACTION_BATTERY_CHANGED` fallback). It uses no fake charge value,
+- Dotwel Battery and Battery Mini read the real system battery level
+  (`BATTERY_PROPERTY_CAPACITY` with a sticky `ACTION_BATTERY_CHANGED` fallback).
+  They use no fake charge value,
   no new permission and no background service. The level is read when the widget
   is refreshed: on the system widget update period (best-effort, 30-minute
   minimum), resize, manual refresh and app resume. `ACTION_BATTERY_CHANGED` is

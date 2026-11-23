@@ -36,7 +36,7 @@ without a prohibited capability or unresolved third-party rights.
 | 17 | `Nothing_Analog_5_Transparent` | pending | Analog layer conversion queued. |
 | 18 | `Nothing_Battery` | **implemented** | Native `BatteryWidgetProvider`; real system level; runtime unverified. |
 | 19 | `Nothing_Battery2` | pending | Implementable next; needs progress bar, charging state and remaining-time translation. |
-| 20 | `Nothing_Battery_Mini` | pending | Implementable next; stacked progress rings pending conversion. |
+| 20 | `Nothing_Battery_Mini` | **implemented** | Native `BatteryMiniWidgetProvider`; real system level; runtime unverified. |
 | 21 | `Nothing_CPU` | dependency | Per-process CPU/system usage needs restricted or unreliable data paths. |
 | 22 | `Nothing_Date_Time` | pending | Text/date layer conversion queued; no extra permission needed. |
 | 23 | `Nothing_Date_Time2` | pending | Text/date layer conversion queued. |
@@ -60,9 +60,12 @@ without a prohibited capability or unresolved third-party rights.
 
 ## Implemented in this checkpoint
 
-Only `Nothing_Battery` has a real native provider in 0.1.7. Its sanitized
-`preset.json` transcription is `app/src/main/assets/kwgt/nothing_battery.sanitized.json`.
-The conversion keeps these author values:
+`Nothing_Battery` and `Nothing_Battery_Mini` have real native providers in
+0.1.7. Their sanitized `preset.json` transcriptions are
+`app/src/main/assets/kwgt/nothing_battery.sanitized.json` and
+`app/src/main/assets/kwgt/nothing_battery_mini.sanitized.json`.
+
+Nothing_Battery keeps these author values:
 
 - `side = if(rwidth > rheight, rheight, rwidth)`
 - circle diameter `side / 2`
@@ -71,10 +74,16 @@ The conversion keeps these author values:
 - colour `cm(215, max(level,25)*2.55, max(level,33)*2.55)`
 - percent text size `side / 9`
 
-Sanitized out of the asset and implementation: the author email, the background
+Nothing_Battery_Mini keeps the author's eleven `ProgressModule` sizes
+`w / {1.38, 1.23, 1.1, 1.1, 1.005, 1.005, 1.005, 1.1, 1.1, 1.23, 1.38}`,
+`progress_level = bi(level)`, primary `#FFD71921` arc and translucent accent
+track. It has no text layer in the source preset.
+
+Sanitized out of the assets and implementations: the author email, the background
 `SINGLE_TAP` intent string, and the bundled `ndot-47.ttf`. Dotwel's original
-circular-dot glyphs replace the font. No preset archive, APK, preview JPEG, font
-or icon is bundled. The gallery preview calls the same renderer as the provider.
+circular-dot glyphs replace the font where needed. No preset archive, APK,
+preview JPEG, font or icon is bundled. The gallery preview calls the same
+renderer as the provider.
 
 ## Not counted as presets
 

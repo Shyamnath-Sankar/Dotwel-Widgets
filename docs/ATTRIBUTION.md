@@ -72,7 +72,7 @@ Pinned source commit: `96ca27be4cbff35efec5a86c64dd39fd065c958f`
 
 Copyright (c) 2024 Om Gupta. Licensed under the MIT License.
 
-### Adapted preset
+### Adapted presets
 
 - `widgets/Nothing_Battery.kwgt!preset.json` -> `KwgtBatteryRenderer.kt`,
   `BatteryWidgetProvider.kt`, and the sanitized data model
@@ -81,6 +81,12 @@ Copyright (c) 2024 Om Gupta. Licensed under the MIT License.
   `level * 3.6` rotation, `cm(215, max(level,25)*2.55, max(level,33)*2.55)`
   colour formula, and `side / 9` text size. Battery level is read from the real
   system battery state, not a placeholder value.
+- `widgets/Nothing_Battery_Mini.kwgt!preset.json` -> `KwgtBatteryMiniRenderer.kt`,
+  `BatteryMiniWidgetProvider.kt`, and the sanitized data model
+  `app/src/main/assets/kwgt/nothing_battery_mini.sanitized.json`. Retained: the
+  eleven `w / {1.38, 1.23, 1.1, 1.1, 1.005, 1.005, 1.005, 1.1, 1.1, 1.23, 1.38}`
+  concentric rings, `progress_level = bi(level)`, primary `#FFD71921` foreground
+  and translucent accent track. The source preset has no text layer.
 - The author's sweep-gradient disc is rendered as a level-scaled arc plus a faint
   disc so the gauge remains readable at small widget sizes. This is a documented
   rendering substitution, not a claim of pixel-identical output.
@@ -88,8 +94,9 @@ Copyright (c) 2024 Om Gupta. Licensed under the MIT License.
   intent string, and the bundled `ndot-47.ttf` font reference. Dotwel's original
   dot glyphs replace the font.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
-  `Nothing_Battery` is implemented in this checkpoint; the rest remain pending or
-  dependency-blocked and are not claimed as imported.
+  `Nothing_Battery` and `Nothing_Battery_Mini` are implemented in this
+  checkpoint; the rest remain pending or dependency-blocked and are not claimed
+  as imported.
 
 ## Not included
 
