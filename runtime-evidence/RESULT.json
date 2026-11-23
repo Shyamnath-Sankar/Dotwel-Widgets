@@ -1,0 +1,18 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "native_category_kwgt": "selected fifth Clock variant and confirmed",
+    "kwgt_live_minute": "passed",
+    "styled_after_process_kill": "captured, image time comparison required",
+    "tap_clock": "destination activity recorded; pixels require review"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "3a01a32429298f217f6ed9371cec4719a2fcd40cbfac40aedd82491589b4b3f4",
+  "kwgt_live_minute": {
+    "before": "12",
+    "after": "13",
+    "device": "13"
+  }
+}
