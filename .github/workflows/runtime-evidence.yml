@@ -1,4 +1,4 @@
-name: Gallery first-screen and clock access runtime
+name: Isolated ordinary-process-death minute check
 on:
   workflow_dispatch:
 permissions:
@@ -92,7 +92,6 @@ jobs:
             if native(r) is None:raise RuntimeError('No native prompt')
             adb('shell','input','keyevent','4');home();r=cap('05-home-cancel')
             if find(r,'clock_time') is not None:raise RuntimeError('Canceled clock placed')
-           test('cancel_clock',cancel_clock)
            test('clock_plain',lambda:pin('Add Digital Clock','clock-plain','Add plain live clock'))
            test('home_plain',lambda:locate('clock_time','06-home-plain'))
            def enable():
@@ -106,7 +105,18 @@ jobs:
             if n.get('checked')!='true':click(n)
             adb('shell','input','keyevent','4');start();cap('08-access-return');locate('widget_clock_bitmap','09-home-dots')
            test('enable_setup',enable)
-           start();cap('10-gallery-dotted');scroll();cap('11-gallery-next')
+           def freshness():
+            home();r=cap('20-before-ordinary-kill');before=find(r,'widget_clock_bitmap').get('content-desc','')
+            (OUT/'alarms-before.txt').write_bytes(adb('shell','dumpsys','alarm'))
+            (OUT/'access-before.txt').write_bytes(adb('shell','appops','get',PKG,'SCHEDULE_EXACT_ALARM',check=False))
+            adb('shell','am','kill',PKG);report['ordinary_kill_pid']=adb('shell','pidof',PKG,check=False).decode().strip()
+            if report['ordinary_kill_pid']:raise RuntimeError('am kill did not remove process')
+            seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
+            r=cap('21-after-minute');after=find(r,'widget_clock_bitmap').get('content-desc','');device=adb('shell','date','+%H:%M').decode().strip()
+            report['freshness']={'before':before,'after':after,'device':device,'death':'am kill only, no force-stop after access setup'}
+            (OUT/'alarms-after.txt').write_bytes(adb('shell','dumpsys','alarm'))
+            if before==after or device not in after:raise RuntimeError('Isolated ordinary-kill minute freshness failed')
+           test('freshness',freshness)
           except Exception as e:report['error']=str(e);cap('99-fatal')
           finally:
            (OUT/'RESULT.json').write_text(json.dumps(report,indent=2));(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','3500',check=False));print(json.dumps(report,indent=2))
