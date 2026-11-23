@@ -1,0 +1,166 @@
+name: Battery2 native transition gate
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-runtime
+  cancel-in-progress: false
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 5b733ead8491cf91a82e6412769c49d6dda86f1c
+      - name: Enable emulator acceleration
+        run: sudo chmod 666 /dev/kvm
+      - name: Prepare bounded evidence script
+        run: |
+          cat > /tmp/widget-runtime-smoke.py <<'PYCODE'
+          import subprocess as sp,pathlib,time,re,xml.etree.ElementTree as ET,json,hashlib
+          OUT=pathlib.Path('runtime-evidence');OUT.mkdir(exist_ok=True);PKG='com.dotwelwidgets.dotwellabs';report={'version':'0.1.7','tests':{},'limits':['Pixel emulator only; pixels need review; not full collection complete.']}
+          def adb(*a,check=True):
+           r=sp.run(['adb',*a],capture_output=True,timeout=35)
+           if check and r.returncode:raise RuntimeError(r.stderr.decode(errors='replace'))
+           return r.stdout
+          def tree():
+           adb('shell','uiautomator','dump','/sdcard/window.xml',check=False)
+           try:return ET.fromstring(adb('exec-out','cat','/sdcard/window.xml',check=False))
+           except:return ET.Element('empty')
+          def cap(name):
+           r=tree();time.sleep(.5);(OUT/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'));(OUT/(name+'.xml')).write_bytes(ET.tostring(r));return r
+          def find(r,s,exact=False):
+           return next((n for n in r.iter('node') if any((s.lower()==n.get(k,'').lower() if exact else s.lower() in n.get(k,'').lower()) for k in ('text','content-desc','resource-id'))),None)
+          def wait_target(s,exact=True):
+           for attempt in range(6):
+            n=find(tree(),s,exact)
+            if n is not None:return n
+            time.sleep(.6)
+           raise RuntimeError('UI target not ready: '+s)
+          def click(n):
+           if n is None:raise RuntimeError('Missing UI target')
+           b=list(map(int,re.findall(r'\d+',n.get('bounds',''))));adb('shell','input','tap',str((b[0]+b[2])//2),str((b[1]+b[3])//2));time.sleep(.7)
+          def home():adb('shell','input','keyevent','3');time.sleep(1)
+          def start():adb('shell','am','start','-W','-n',PKG+'/.MainActivity');time.sleep(1)
+          def scroll():adb('shell','input','swipe',str(w//2),str(h*8//10),str(w//2),str(h*3//10),'350')
+          def button(label):
+           start()
+           # Reset scroll through activity recreation, without force-stop or alarm cancellation.
+           adb('shell','am','force-stop',PKG);start()
+           for i in range(12):
+            r=tree();n=find(r,label,True)
+            if n is not None:return n
+            if not any(n.get('package','')==PKG for n in r.iter('node')):raise RuntimeError('App left foreground while locating '+label)
+            scroll()
+           raise RuntimeError('Gallery control missing '+label)
+          def native(r):
+           for label in ('Add to home screen','Add automatically','Add widget','Add'):
+            n=find(r,label,True)
+            if n is not None and n.get('clickable')=='true':return n
+           return None
+          def locate(needle,name):
+           home()
+           for i,d in enumerate((0,1,1,1,1,-1,-1,-1,-1)):
+            if d:adb('shell','input','swipe',str(w*(8 if d==1 else 2)//10),str(h//2),str(w*(2 if d==1 else 8)//10),str(h//2),'350');time.sleep(.6)
+            r=tree()
+            if find(r,needle) is not None:return cap(name)
+           raise RuntimeError('HOME view missing '+needle)
+          def pin(label,name,plain=None):
+           click(button(label));r=tree()
+           if plain:click(wait_target(plain));r=tree()
+           if label=='Add World Clock':click(find(r,'Save and add',True));r=tree()
+           cap('native-'+name);n=native(r)
+           if n is None:raise RuntimeError('Native prompt missing '+label)
+           click(n);time.sleep(1);report['tests']['pin_'+name]='Native confirmation accepted'
+          def test(name,fn):
+           try:
+            print('START '+name,flush=True);fn();report['tests'].setdefault(name,'passed');(OUT/'RESULT.json').write_text(json.dumps(report,indent=2));print('DONE '+name,flush=True)
+           except Exception as e:
+            report['tests'][name]={'error':str(e)};cap('failure-'+name);raise
+          try:
+           w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','input','keyevent','82');home();cap('00-preinstall-host');(OUT/'preinstall-logcat.txt').write_bytes(adb('logcat','-d','-t','2000',check=False));(OUT/'preinstall-processes.txt').write_bytes(adb('shell','ps','-A',check=False))
+           for i in range(4):
+            r=tree();n=find(r,'android:id/aerr_close')
+            if n is not None:click(n);home()
+            elif any(n.get('package','')=='com.google.android.apps.nexuslauncher' for n in r.iter('node')):break
+            time.sleep(3)
+           else:raise RuntimeError('Launcher readiness failed before app install')
+           (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
+           apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
+           if report['sha256']!='04107ac86b308a864a3dd986512020ee98b5a5f34fd7ef1843a3f2b2eb299373':raise RuntimeError('Final APK hash mismatch')
+           adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
+           def category(name):
+            for retry in range(3):
+             adb('shell','am','force-stop',PKG);start();wait_target('Open '+name+',',False)
+             for attempt in range(12):
+              r=tree();n=find(r,'Open '+name+',')
+              if n is not None:
+               prior=n.get('bounds');time.sleep(.5);n=find(tree(),'Open '+name+',')
+               if n is None or n.get('bounds')!=prior:continue
+               click(n)
+               try:wait_target('Close category');return
+               except RuntimeError:break
+              scroll()
+            raise RuntimeError('Category did not open '+name)
+           category('Battery');cap('02-battery-first')
+           for variant in range(10):
+            if find(tree(),'Add KWGT Battery2',True) is not None:break
+            click(wait_target('Next'))
+           wait_target('Add KWGT Battery2');cap('03-battery2-preview')
+           click(wait_target('Add KWGT Battery2'));cap('04-native-battery2');click(native(tree()));time.sleep(1);report['tests']['native_category_clean']='confirmed'
+           report['tests']['native_category_battery2']='confirmed'
+           def snapshot(needle,name):
+            r=locate('widget_kwgt_battery2_bitmap',name)
+            n=find(r,'widget_kwgt_battery2_bitmap');desc=n.get('content-desc','')
+            report.setdefault('battery_snapshots',{})[name]={'description':desc,'device':adb('shell','dumpsys','battery').decode()}
+            if needle not in desc:raise RuntimeError('Battery2 mismatch '+name+' '+desc)
+            return r
+           snapshot('100','home-battery2-full-initial')
+           adb('shell','am','kill',PKG)
+           for level,ac,status,label in [(73,0,3,'discharge73'),(42,1,2,'charging42'),(100,1,5,'full100')]:
+            adb('shell','dumpsys','battery','unplug');adb('shell','dumpsys','battery','set','ac',str(ac));adb('shell','dumpsys','battery','set','status',str(status));adb('shell','dumpsys','battery','set','level',str(level))
+            matched=False
+            for attempt in range(10):
+             time.sleep(3);r=tree();n=find(r,'widget_kwgt_battery2_bitmap')
+             if n is not None and str(level)+'%' in n.get('content-desc',''):matched=True;break
+            r=cap('home-battery2-'+label)
+            desc=find(r,'widget_kwgt_battery2_bitmap').get('content-desc','')
+            report.setdefault('battery_transitions',{})[label]={'description':desc,'device':adb('shell','dumpsys','battery').decode(),'automatic':matched}
+            if not matched:raise RuntimeError('Battery2 did not update automatically to '+str(level)+' after process kill')
+           report['tests']['battery_transitions_after_kill']='passed73discharge42charging100full'
+           click(find(r,'widget_kwgt_battery2_bitmap'));time.sleep(2);cap('tap-result-battery');focus=adb('shell','dumpsys','activity','activities').decode(errors='replace');(OUT/'tap-battery-activity.txt').write_text(focus)
+           if 'com.android.settings' not in focus:raise RuntimeError('Battery Settings did not open')
+           report['tests']['tap_battery']='destination activity recorded; pixels require review'
+           (OUT/'appwidget-dump.txt').write_bytes(adb('shell','dumpsys','appwidget'))
+          
+          except Exception as e:report['error']=str(e);cap('99-fatal')
+          finally:
+           adb('shell','dumpsys','battery','reset',check=False);(OUT/'RESULT.json').write_text(json.dumps(report,indent=2));(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','3500',check=False));print(json.dumps(report,indent=2))
+          if 'error' in report or any(isinstance(v,dict) and 'error' in v for v in report['tests'].values()):raise SystemExit(1)
+          PYCODE
+      - name: Install and inspect widgets on Android 15
+        timeout-minutes: 12
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          emulator-boot-timeout: 300
+          disable-animations: true
+          script: timeout 480s python3 -u /tmp/widget-runtime-smoke.py
+      - name: Preserve actual runtime captures even after a failed check
+        if: always()
+        run: |
+          set -eu
+          test -d runtime-evidence || { echo 'Emulator never produced runtime evidence'; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          branch="checkpoint/runtime-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git add -f runtime-evidence
+          git commit -m 'test: preserve actual emulator screenshots and behavior evidence'
+          git push origin "$branch"
+          printf 'Evidence branch: %s\nScreenshots require human inspection before any pass claim.\n' "$branch" >> "$GITHUB_STEP_SUMMARY"
