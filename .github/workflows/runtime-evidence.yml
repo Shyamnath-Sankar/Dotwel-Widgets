@@ -42,7 +42,7 @@ jobs:
           def button(label):
            start()
            # Reset scroll through activity recreation, without force-stop or alarm cancellation.
-           adb('shell','am','start','-W','-n',PKG+'/.MainActivity','--activity-clear-task','--activity-new-task');time.sleep(.7)
+           adb('shell','am','force-stop',PKG);start()
            for i in range(38):
             r=tree();n=find(r,label,True)
             if n is not None:return n
@@ -71,11 +71,18 @@ jobs:
            try:fn();report['tests'].setdefault(name,'passed')
            except Exception as e:report['tests'][name]={'error':str(e)};cap('failure-'+name)
           try:
-           adb('shell','input','keyevent','82');home();time.sleep(4)
+           adb('shell','input','keyevent','82');home();cap('00-preinstall-host');(OUT/'preinstall-logcat.txt').write_bytes(adb('logcat','-d','-t','2000',check=False));(OUT/'preinstall-processes.txt').write_bytes(adb('shell','ps','-A',check=False))
+           for i in range(12):
+            r=tree();n=find(r,'android:id/aerr_close')
+            if n is not None:click(n);home()
+            elif any(n.get('package','')=='com.google.android.apps.nexuslauncher' for n in r.iter('node')):break
+            time.sleep(3)
+           else:raise RuntimeError('Launcher readiness failed before app install')
+           (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
            if report['sha256']!='beda7d8b62497677e5c6816640927a289be3644bf9bcebfead8515166780b853':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
-           adb('shell','settings','put','system','font_scale','1.3');start();cap('02-gallery-large-font');adb('shell','settings','put','system','font_scale','1.0')
+           adb('shell','settings','put','system','font_scale','1.3');adb('shell','am','force-stop',PKG);start();cap('02-gallery-large-font');adb('shell','settings','put','system','font_scale','1.0')
            def cancel_clock():
             click(button('Add Digital Clock'));r=cap('03-denied-explanation')
             if find(r,'Add plain live clock',True) is None:raise RuntimeError('Missing explicit fallback choice')
