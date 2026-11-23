@@ -1,4 +1,4 @@
-name: Actual KWGT Date Time placement and live minute
+name: Actual category swipe and repaired KWGT HOME check
 on:
   workflow_dispatch:
 permissions:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 28172731351f177eb52af7c99b52f8a0b54b925f
+          ref: 8c898a30058960b56298b875a6de315d0b31a990
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -89,10 +89,23 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='1f4320bbf0905371fd603f095745f01c51ba23a0a4d40849bb79eaf71eafad33':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='d57cc9ef363fb851d0116ed9c9ab1b9bc9e677b06299bebe825f1e147664c323':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            adb('shell','settings','put','system','font_scale','1.3');adb('shell','am','force-stop',PKG);start();cap('02-gallery-large-font');adb('shell','settings','put','system','font_scale','1.0')
-           test('kwgt_datetime',lambda:pin('Add KWGT Date Time','kwgt-datetime','Add live analog fallback'))
+           def category(name):
+            adb('shell','am','force-stop',PKG);start()
+            for attempt in range(12):
+             r=tree();n=find(r,'Open '+name+',')
+             if n is not None:click(n);return
+             scroll()
+            raise RuntimeError('Missing category '+name)
+           category('Clock');cap('03-clock-first');click(wait_target('Next'));cap('04-clock-next');click(wait_target('Previous widget'));cap('05-clock-prev')
+           r=tree();n=find(r,'Preview of Digital Clock')
+           if n is None:n=find(r,'Digital Clock')
+           if n is None:raise RuntimeError('Clock first selection missing')
+           adb('shell','input','swipe',str(w*8//10),str(h*4//10),str(w*2//10),str(h*4//10),'450');time.sleep(1);cap('06-clock-after-swipe')
+           adb('shell','input','keyevent','4');category('Calendar');cap('07-calendar-first');click(wait_target('Next'));cap('08-calendar-kwgt')
+           click(wait_target('Add KWGT Date Time'));click(wait_target('Add live date & time'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected second Calendar variant and confirmed'
            r=locate('kwgt_time','home-kwgt-live-before');before=find(r,'kwgt_time').get('text','')
            adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
            r=locate('kwgt_time','home-kwgt-live-after');after=find(r,'kwgt_time').get('text','');expected=adb('shell','date','+%I:%M%p').decode().strip();report['kwgt_live_minute']={'before':before,'after':after,'device':expected}
