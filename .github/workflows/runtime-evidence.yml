@@ -1,34 +1,146 @@
-name: Read-only publication inventory
+name: Actual eight-provider collection runtime
 on:
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: widget-runtime
+  cancel-in-progress: false
 jobs:
-  audit:
+  runtime:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0
-      - name: Inventory historical publication surface
+          ref: 6d6b40d
+      - name: Enable emulator acceleration
+        run: sudo chmod 666 /dev/kvm
+      - name: Prepare bounded evidence script
         run: |
-          git fetch origin '+refs/heads/*:refs/remotes/origin/*' --prune
-          python3 - <<'PY'
-          import subprocess as sp,json,re
-          def git(*a):return sp.check_output(['git',*a])
-          objects=git('rev-list','--objects','--all').decode().splitlines()
-          files=[];reviews=[];seen=set()
-          for row in objects:
-            p=row.split(' ',1)
-            if len(p)!=2:continue
-            oid,path=p
-            if oid in seen or git('cat-file','-t',oid).strip()!=b'blob':continue
-            seen.add(oid);size=int(git('cat-file','-s',oid));files.append({'oid':oid,'path':path,'size':size})
-            if size>3000000:continue
-            data=git('cat-file','blob',oid)
-            if b'\0' in data[:4096]:continue
-            for kind,pat in {'personal_contact':rb'(?:\+919361899061|9361899061|shyamnathsankar[^\s<>"\x27]*@)','build_internal':rb'(?i)(?:/memory/|agent-01[A-Z0-9]{20,}|chat-sessions/|system prompt|tools CLI|parent agent|task agent)','rights_license':rb'(?i)(?:SIL OPEN FONT|Copyright.*Font|DotGothic|NothingWidgetPort)','encoded_bitmap':rb'bitmap_url=data:image/'}.items():
-              if re.search(pat,data):reviews.append({'kind':kind,'path':path,'oid':oid})
-          print(json.dumps({'files':files,'reviews':reviews},indent=2))
-          PY
+          cat > /tmp/widget-runtime-smoke.py <<'PYCODE'
+          import subprocess as sp,pathlib,time,re,xml.etree.ElementTree as ET,json,hashlib
+          OUT=pathlib.Path('runtime-evidence');OUT.mkdir(exist_ok=True);PKG='com.dotwelwidgets.dotwellabs';report={'version':'0.1.7','tests':{},'limits':['Pixel emulator only; pixels need review; not full collection complete.']}
+          def adb(*a,check=True):
+           r=sp.run(['adb',*a],capture_output=True,timeout=35)
+           if check and r.returncode:raise RuntimeError(r.stderr.decode(errors='replace'))
+           return r.stdout
+          def tree():
+           adb('shell','uiautomator','dump','/sdcard/window.xml',check=False)
+           try:return ET.fromstring(adb('exec-out','cat','/sdcard/window.xml',check=False))
+           except:return ET.Element('empty')
+          def cap(name):
+           (OUT/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'));r=tree();(OUT/(name+'.xml')).write_bytes(ET.tostring(r));return r
+          def find(r,s,exact=False):
+           return next((n for n in r.iter('node') if any((s.lower()==n.get(k,'').lower() if exact else s.lower() in n.get(k,'').lower()) for k in ('text','content-desc','resource-id'))),None)
+          def click(n):
+           if n is None:raise RuntimeError('Missing UI target')
+           b=list(map(int,re.findall(r'\d+',n.get('bounds',''))));adb('shell','input','tap',str((b[0]+b[2])//2),str((b[1]+b[3])//2));time.sleep(.7)
+          def home():adb('shell','input','keyevent','3');time.sleep(1)
+          def start():adb('shell','am','start','-W','-n',PKG+'/.MainActivity');time.sleep(1)
+          def scroll():adb('shell','input','swipe',str(w//2),str(h*8//10),str(w//2),str(h*3//10),'350')
+          def button(label):
+           start()
+           # Reset scroll through activity recreation, without force-stop or alarm cancellation.
+           adb('shell','am','start','-W','-n',PKG+'/.MainActivity','--activity-clear-task','--activity-new-task');time.sleep(.7)
+           for i in range(38):
+            r=tree();n=find(r,label,True)
+            if n is not None:return n
+            scroll()
+           raise RuntimeError('Gallery control missing '+label)
+          def native(r):
+           for label in ('Add to home screen','Add automatically','Add widget','Add'):
+            n=find(r,label,True)
+            if n is not None and n.get('clickable')=='true':return n
+           return None
+          def locate(needle,name):
+           home()
+           for i,d in enumerate((0,1,1,1,1,-1,-1,-1,-1)):
+            if d:adb('shell','input','swipe',str(w*(8 if d==1 else 2)//10),str(h//2),str(w*(2 if d==1 else 8)//10),str(h//2),'350');time.sleep(.6)
+            r=tree()
+            if find(r,needle) is not None:return cap(name)
+           raise RuntimeError('HOME view missing '+needle)
+          def pin(label,name,plain=None):
+           click(button(label));r=tree()
+           if plain:click(find(r,plain,True));r=tree()
+           if label=='Add World Clock':click(find(r,'Save and add',True));r=tree()
+           cap('native-'+name);n=native(r)
+           if n is None:raise RuntimeError('Native prompt missing '+label)
+           click(n);time.sleep(1);report['tests']['pin_'+name]='Native confirmation accepted'
+          def test(name,fn):
+           try:fn();report['tests'].setdefault(name,'passed')
+           except Exception as e:report['tests'][name]={'error':str(e)};cap('failure-'+name)
+          try:
+           adb('shell','input','keyevent','82');home();time.sleep(4)
+           apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
+           if report['sha256']!='beda7d8b62497677e5c6816640927a289be3644bf9bcebfead8515166780b853':raise RuntimeError('Final APK hash mismatch')
+           adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
+           adb('shell','settings','put','system','font_scale','1.3');start();cap('02-gallery-large-font');adb('shell','settings','put','system','font_scale','1.0')
+           def cancel_clock():
+            click(button('Add Digital Clock'));r=cap('03-denied-explanation')
+            if find(r,'Add plain live clock',True) is None:raise RuntimeError('Missing explicit fallback choice')
+            click(find(r,'Add plain live clock',True));r=cap('04-native-cancel');
+            if native(r) is None:raise RuntimeError('No native prompt')
+            adb('shell','input','keyevent','4');home();r=cap('05-home-cancel')
+            if find(r,'clock_time') is not None:raise RuntimeError('Canceled clock placed')
+           test('cancel_clock',cancel_clock)
+           test('clock_plain',lambda:pin('Add Digital Clock','clock-plain','Add plain live clock'))
+           test('home_plain',lambda:locate('clock_time','06-home-plain'))
+           def enable():
+            start();click(button('Enable minute updates'))
+            for i in range(8):
+             r=tree();n=next((n for n in r.iter('node') if n.get('checkable')=='true'),None)
+             if n is not None:break
+             time.sleep(1)
+            cap('07-native-access')
+            if n is None:raise RuntimeError('No Android toggle')
+            if n.get('checked')!='true':click(n)
+            adb('shell','input','keyevent','4');start();cap('08-access-return');locate('widget_clock_bitmap','09-home-dots')
+           test('enable_setup',enable)
+           for label,name,needle in [('Add Analog Bold','analog-bold','widget_analog_bitmap'),('Add Analog Scale','analog-scale','widget_analog_bitmap'),('Add Date','date','widget_date_bitmap'),('Add World Clock','world','widget_world_bitmap'),('Add Quotes','quotes','widget_quotes_bitmap'),('Add Nothing Battery (KWGT)','battery','widget_battery_bitmap'),('Add Nothing Battery Mini (KWGT)','battery-mini','widget_battery_bitmap')]:
+            def run(label=label,name=name,needle=needle):pin(label,name);locate(needle,'home-'+name)
+            test(name,run)
+           def minute():
+            r=locate('widget_clock_bitmap','20-clock-before-kill');before=find(r,'widget_clock_bitmap').get('content-desc','');adb('shell','am','kill',PKG);pid=adb('shell','pidof',PKG,check=False).decode().strip();report['pid_after_kill']=pid
+            if pid:raise RuntimeError('Process remains alive')
+            seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(65-seconds);r=locate('widget_clock_bitmap','21-clock-after-minute');after=find(r,'widget_clock_bitmap').get('content-desc','');expected=adb('shell','date','+%H:%M').decode().strip();report['minute']={'before':before,'after':after,'device':expected}
+            if before==after or expected not in after:raise RuntimeError('Clock minute update failed')
+           test('minute',minute)
+           for style in ('Translucent','Transparent','Black'):
+            def setstyle(style=style):click(button(style));locate('widget_clock_bitmap','style-clock-'+style);locate('widget_battery_bitmap','style-battery-'+style)
+            test('style_'+style,setstyle)
+           def battery():
+            adb('shell','dumpsys','battery','set','level','37');start();r=locate('widget_battery_bitmap','battery-37');texts=[n.get('content-desc','') for n in r.iter('node') if 'widget_battery_bitmap' in n.get('resource-id','')];report['battery37']=texts
+            if not any('37' in s for s in texts):raise RuntimeError('Battery level not updated on resume')
+            adb('shell','dumpsys','battery','reset')
+           test('battery_live_data',battery)
+           (OUT/'world-prefs.xml').write_bytes(adb('shell','run-as',PKG,'cat','shared_prefs/dotwel_world.xml',check=False));(OUT/'appwidget-final.txt').write_bytes(adb('shell','dumpsys','appwidget'));cap('final-home')
+          except Exception as e:report['error']=str(e);cap('99-fatal')
+          finally:
+           (OUT/'RESULT.json').write_text(json.dumps(report,indent=2));(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','3500',check=False));print(json.dumps(report,indent=2))
+          if 'error' in report or any(isinstance(v,dict) and 'error' in v for v in report['tests'].values()):raise SystemExit(1)
+          PYCODE
+      - name: Install and inspect widgets on Android 15
+        timeout-minutes: 22
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          emulator-boot-timeout: 300
+          disable-animations: true
+          script: python3 /tmp/widget-runtime-smoke.py
+      - name: Preserve actual runtime captures even after a failed check
+        if: always()
+        run: |
+          set -eu
+          test -d runtime-evidence || { echo 'Emulator never produced runtime evidence'; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          branch="checkpoint/runtime-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git add -f runtime-evidence
+          git commit -m 'test: preserve actual emulator screenshots and behavior evidence'
+          git push origin "$branch"
+          printf 'Evidence branch: %s\nScreenshots require human inspection before any pass claim.\n' "$branch" >> "$GITHUB_STEP_SUMMARY"
