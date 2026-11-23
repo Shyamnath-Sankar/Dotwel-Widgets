@@ -143,6 +143,15 @@ object WidgetPreviewRenderer {
                 now,
                 includeBackground = false,
             )
+            PreviewKind.KWGT_CLEAN_INFO -> KwgtCleanInfoRenderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                now,
+                BatteryState.level(context),
+                includeBackground = true,
+            )
             PreviewKind.PLACEHOLDER -> placeholder(context, entry, size.width, size.height, style)
         }
     }

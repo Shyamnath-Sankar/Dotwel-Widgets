@@ -142,6 +142,12 @@ object WidgetPreviewBinder {
                     matchParams(),
                 )
             }
+            PreviewKind.KWGT_CLEAN_INFO -> {
+                container.addView(
+                    cleanInfoFallback(context, style, width, height),
+                    matchParams(),
+                )
+            }
             else -> {
                 container.addView(
                     TextView(context).apply {
@@ -527,6 +533,106 @@ object WidgetPreviewBinder {
             1,
             TypedValue.COMPLEX_UNIT_SP,
         )
+    }
+
+    private fun cleanInfoFallback(
+        context: Context,
+        style: WidgetStyle,
+        widthPx: Int,
+        heightPx: Int,
+    ): FrameLayout {
+        val layout = KwgtCleanInfoRenderer.layout(
+            widthPx.toFloat(),
+            heightPx.toFloat(),
+        )
+        val palette = KwgtCleanInfoRenderer.palette(context, style)
+        val root = FrameLayout(context)
+        val background = try {
+            KwgtCleanInfoRenderer.renderBackground(context, widthPx, heightPx, style)
+        } catch (_: OutOfMemoryError) {
+            null
+        } catch (_: RuntimeException) {
+            null
+        }
+        if (background != null) {
+            root.addView(
+                ImageView(context).apply {
+                    setImageBitmap(background)
+                    scaleType = ImageView.ScaleType.FIT_XY
+                    contentDescription = null
+                    importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                },
+                matchParams(),
+            )
+        }
+        root.addView(
+            TextClock(context).apply {
+                setFormat12Hour("h:mm")
+                setFormat24Hour("H:mm")
+                setTextColor(palette.timeInk)
+                gravity = Gravity.CENTER_VERTICAL or Gravity.END
+                includeFontPadding = false
+                maxLines = 1
+                typeface = Typeface.create("sans-serif", Typeface.NORMAL)
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, layout.timeTextSize)
+                setPadding(0, 0, layout.rightPad.roundToInt().coerceIn(0, widthPx), 0)
+            },
+            matchParams(),
+        )
+        val stack = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.BOTTOM or Gravity.START
+            setPadding(
+                layout.leftPad.roundToInt().coerceIn(0, widthPx),
+                0,
+                0,
+                layout.bottomPad.roundToInt().coerceIn(0, heightPx),
+            )
+        }
+        stack.addView(
+            TextClock(context).apply {
+                setFormat12Hour("EEEE")
+                setFormat24Hour("EEEE")
+                setTextColor(palette.foreground)
+                includeFontPadding = false
+                maxLines = 1
+                typeface = Typeface.create("sans-serif", Typeface.BOLD)
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, layout.weekdayTextSize)
+            },
+        )
+        stack.addView(
+            TextClock(context).apply {
+                setFormat12Hour("MMMM d")
+                setFormat24Hour("MMMM d")
+                setTextColor(palette.foreground)
+                includeFontPadding = false
+                maxLines = 1
+                setAllCaps(true)
+                typeface = Typeface.create("sans-serif", Typeface.BOLD)
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, layout.dateTextSize)
+            },
+        )
+        root.addView(stack, matchParams())
+        val body = layout.batteryBody
+        root.addView(
+            TextView(context).apply {
+                text = KwgtCleanInfoRenderer.batteryText(BatteryState.level(context))
+                setTextColor(palette.batteryInk)
+                gravity = Gravity.CENTER
+                includeFontPadding = false
+                maxLines = 1
+                typeface = Typeface.create("sans-serif", Typeface.BOLD)
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, layout.batteryTextSize)
+                setPadding(
+                    body.left.roundToInt().coerceIn(0, widthPx),
+                    body.top.roundToInt().coerceIn(0, heightPx),
+                    (widthPx - body.right).roundToInt().coerceIn(0, widthPx),
+                    (heightPx - body.bottom).roundToInt().coerceIn(0, heightPx),
+                )
+            },
+            matchParams(),
+        )
+        return root
     }
 
     private fun splitClockFallback(

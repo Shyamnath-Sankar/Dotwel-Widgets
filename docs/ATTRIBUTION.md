@@ -165,6 +165,25 @@ the app from About & source credits > View MIT license texts.
   Android's inexact periodic refresh is supplemented by date/time/timezone/boot,
   app-refresh and resize callbacks; exact midnight delivery is not promised.
   Runtime is not claimed here.
+- `widgets/Clean_Time_Date_Info.kwgt!preset.json` -> `KwgtCleanInfoRenderer.kt`,
+  `KwgtCleanInfoWidgetProvider.kt`, and the sanitized data model
+  `app/src/main/assets/kwgt/clean_time_date_info.sanitized.json`. Retained: the
+  553 x 248 wide card, corners 38, dark `#FF16161D` / light `#FFE4E4FF` surface,
+  the bottom-left weekday/uppercase-month-day stack at left 28 / bottom 28 with
+  sizes 69 and 24 and the -15 stack margin, the CENTERRIGHT `h:mm` at 196 in
+  foreground ink at 19% alpha as the intentional ghost back layer, and the
+  top-left 59 x 28 battery body plus 10.5 x 16 nub with the true bilevel
+  percentage at 16 bold in card ink. The source `fgcolor` formula is malformed
+  (`$if(si(darkmode)#FFFFFF,#000000)$`, missing the comma after `si(darkmode)`);
+  it is repaired to the intended `$if(si(darkmode),#FFFFFF,#000000)$`, so dark
+  surfaces use white ink and light surfaces use black ink. ProductSans-Bold and
+  ProductSans-Medium are replaced by the platform `sans-serif` family, and no
+  font payload is bundled. Geometry is derived from the JSON and each text size
+  is fitted to the host instead of reproducing the cropped source preview. Time,
+  weekday and date are live platform TextClocks and the percentage reads the
+  real system battery level on the existing battery broadcast path, so no frozen
+  time bitmap is presented and no exact-alarm access is required. Runtime is not
+  claimed here.
 - The author's sweep-gradient disc is rendered as a level-scaled arc plus a faint
   disc and track so the gauge remains readable at small widget sizes. This is a
   documented rendering substitution, not a claim of pixel-identical output.
@@ -173,11 +192,12 @@ the app from About & source credits > View MIT license texts.
   Dotwel's original dot glyphs or the documented platform font substitution
   replace the fonts.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
-  `Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
-  `Nothing_Date_Time2`, `Nothing_Digital4`, `Nothing_Digital3`,
-  `Nothing_Digital`, and `Nothing_Mini_Calender` are implemented in this
-  checkpoint; the rest remain pending or dependency-blocked and are not claimed
-  as imported.
+  `Clean_Time_Date_Info`, `Nothing_Battery`, `Nothing_Battery_Mini`,
+  `Nothing_Date_Time`, `Nothing_Date_Time2`, `Nothing_Digital4`,
+  `Nothing_Digital3`, `Nothing_Digital`, and `Nothing_Mini_Calender` are
+  implemented in this checkpoint (9 of 40); the rest remain pending or
+  dependency-blocked and are not claimed as imported. All 15 registered
+  providers are build-verified only and remain runtime-unverified.
 
 ## Not included
 

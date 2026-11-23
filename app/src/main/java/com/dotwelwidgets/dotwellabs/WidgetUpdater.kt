@@ -22,6 +22,7 @@ object WidgetUpdater {
         KwgtDigital3WidgetProvider::class.java,
         KwgtGradientClockWidgetProvider::class.java,
         KwgtMiniCalendarWidgetProvider::class.java,
+        KwgtCleanInfoWidgetProvider::class.java,
     )
 
     fun updateAll(context: Context) {

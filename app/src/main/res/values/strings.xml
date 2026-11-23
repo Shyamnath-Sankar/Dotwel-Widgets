@@ -50,6 +50,7 @@
     <string name="mode_kwgt_gradient_styled">Styled gradient clock</string>
     <string name="mode_kwgt_gradient_live">Live gradient clock</string>
     <string name="mode_kwgt_mini_calendar">Date snapshot · on date changes</string>
+    <string name="mode_kwgt_clean_info">Live time, date &amp; battery</string>
 
     <string name="status_ready">Available</string>
     <string name="status_pending">Pending</string>
@@ -110,6 +111,7 @@
     <string name="kwgt_gradient_preview_description">Rendered KWGT gradient clock preview</string>
     <string name="kwgt_mini_calendar_preview_description">Rendered KWGT five-day mini calendar preview</string>
     <string name="kwgt_mini_calendar_fallback">KWGT Mini Calendar · five-day date snapshot</string>
+    <string name="kwgt_clean_info_preview_description">Rendered KWGT Clean Info card preview</string>
     <string name="battery_fallback_format">Battery %1$d%%</string>
     <string name="battery_content_description">Battery %1$d percent</string>
     <string name="battery_mini_content_description">Battery %1$d percent, mini ring gauge</string>
@@ -123,6 +125,8 @@
     <string name="kwgt_gradient_content_description">KWGT gradient clock, %1$s</string>
     <string name="kwgt_gradient_live_content_description">Live gradient clock, %1$s. Styled dot rendering needs optional Alarms &amp; reminders access.</string>
     <string name="kwgt_mini_calendar_content_description">KWGT mini calendar, %1$s. Date-only snapshot refreshed on date, time-zone, boot and periodic system updates.</string>
+    <string name="kwgt_clean_info_content_description">KWGT Clean Info, %1$s. Live time, weekday, date and real battery percentage.</string>
+    <string name="kwgt_clean_info_battery_description">Battery %1$d percent</string>
     <string name="clock_content_description">Dotwel clock, %1$s</string>
 
     <string name="style_label">STYLE</string>
@@ -157,6 +161,7 @@
     <string name="pin_kwgt_digital3_confirmed">KWGT Digital3 Dot Clock added to your home screen.</string>
     <string name="pin_kwgt_gradient_confirmed">KWGT Gradient Clock added to your home screen.</string>
     <string name="pin_kwgt_mini_calendar_confirmed">KWGT Mini Calendar added to your home screen.</string>
+    <string name="pin_kwgt_clean_info_confirmed">KWGT Clean Info added to your home screen.</string>
     <string name="pin_unavailable_title">Place widget manually</string>
     <string name="pin_unavailable_message">Your launcher did not open a placement prompt. You can add the widget manually:\n\n1. Go to your home screen.\n2. Long-press an empty area.\n3. Tap Widgets.\n4. Choose Dotwel Widgets.\n5. Pick the widget you want.\n\nNo Alarms &amp; reminders access is needed to place a widget.</string>
     <string name="pin_unavailable_close">Got it</string>
@@ -191,12 +196,14 @@
     <string name="widget_kwgt_digital3_label">Dotwel KWGT Digital3 Dot Clock</string>
     <string name="widget_kwgt_gradient_label">Dotwel KWGT Gradient Clock</string>
     <string name="widget_kwgt_mini_calendar_label">KWGT Mini Calendar</string>
+    <string name="widget_kwgt_clean_info_label">Dotwel KWGT Clean Info</string>
     <string name="widget_kwgt_datetime_description">A four-line Nothing-style weekday, time, month and ordinal day from the KWGT Nothing_Date_Time preset. With Alarms &amp; reminders access it draws the styled dot bitmap; otherwise it shows live platform text clocks.</string>
     <string name="widget_kwgt_datetime2_description">A Nothing-style weekday and huge red day with lower-right hour and minute discs from the KWGT Nothing_Date_Time2 preset. With Alarms &amp; reminders access it draws the styled minute bitmap; otherwise it shows live platform text clocks and no frozen analog discs.</string>
     <string name="widget_kwgt_digital4_description">A rounded Nothing-style split clock from the KWGT Nothing_Digital4 preset: red 12-hour hh on the left, a thin full-height red centre divider, and ink mm on the right. With Alarms &amp; reminders access it draws the styled dot bitmap; otherwise it shows live 12-hour platform text clocks with the same static red divider.</string>
     <string name="widget_kwgt_digital3_description">A rounded Nothing-style 4 by 4 dot-matrix clock from the KWGT Nothing_Digital3 preset: red hh and mm cells, an uppercase aa cell, and minute-lit accent groups. With Alarms &amp; reminders access it draws the styled dot bitmap; otherwise it shows the same dot matrix with live 12-hour platform text clocks.</string>
     <string name="widget_kwgt_gradient_description">A rounded Nothing-style gradient clock from the KWGT Nothing_Digital preset: three red fading circles on the right edge, centred 12-hour hh in foreground ink, and an ink mm on a red minute chip. With Alarms &amp; reminders access it draws the styled dot bitmap; otherwise it shows live 12-hour platform text clocks over the same static gradient surface.</string>
     <string name="widget_kwgt_mini_calendar_description">A five-day Nothing-style date strip from the KWGT Nothing_Mini_Calender preset: weekday above two-digit day, with today highlighted and marked by a red dot. Date only; refreshes on date, time-zone, boot, resize and periodic system updates without Alarms &amp; reminders access.</string>
+    <string name="widget_kwgt_clean_info_description">A wide Nothing-style card from the KWGT Clean_Time_Date_Info preset: live weekday and uppercase month/day at the bottom-left, an oversized semi-transparent h:mm ghost time, and a top-left battery body with the real system percentage. Time, weekday and date are live system TextClocks; the battery refreshes on the system battery broadcast. No Alarms &amp; reminders access is needed.</string>
 
     <string name="catalog_digital_desc">Stacked hour and minute dots: upstream NtDigital fit and centre composition with Dotwel\u2019s original dot glyphs.</string>
     <string name="catalog_date_desc">Day number and abbreviated red weekday using the translated NtDate fitting and baseline geometry.</string>
@@ -212,6 +219,7 @@
     <string name="catalog_kwgt_gradient_desc">KWGT Nothing_Digital converted to a separate native gradient-clock provider: rounded side/5 square, three right-edge primary gradient circles at side/1.1, side/1.4 and side/2 with source offsets and widths, centred 12-hour hh at side/3 and ink mm on a side/6 red minute chip. Dotwel dot glyphs replace ndot-47.ttf; the rotated source gradients are mapped to horizontal fades.</string>
     <string name="catalog_kwgt_date_time2_desc">KWGT Nothing_Date_Time2 converted to a native provider: upper-left weekday over a huge red day number and lower-right hour and minute discs with contrasting radial notches beside live hh and mm. Uses the author side/5 discs, smooth hour and minute rotations and serif platform fonts in place of NType82.</string>
     <string name="catalog_kwgt_mini_calendar_desc">KWGT Nothing_Mini_Calender converted to a separate date-only provider: a horizontal five-day strip of uppercase weekdays over two-digit days at offsets -2 through +2, with scaled source margins, a widgetWidth/5 rounded today highlight and the author red dot. Dotwel dot glyphs replace ndot-47.ttf; no calendar permission or minute access is used.</string>
+    <string name="catalog_kwgt_clean_info_desc" formatted="false">KWGT Clean_Time_Date_Info converted to a separate native wide-card provider: rounded 38 corners, dark #16161D / light #E4E4FF surfaces, bottom-left weekday and uppercase month/day stack at left/bottom 28, an oversized 196 h:mm ghost at 19% ink, and a top-left 59x28 battery body with 10.5x16 nub and real system percentage. The malformed source fg conditional is repaired to dark white / light black, ProductSans is replaced by platform sans-serif, and geometry is fitted to the host instead of the cropped source preview. No Alarms &amp; reminders access is needed.</string>
     <string name="catalog_photo_circle_desc">NtPhotoCircle is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_photo_rect_desc">NtPhotoRect is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_away_desc">NtAway screen-interactive sampling needs a durable background observation path before it can be honest.</string>

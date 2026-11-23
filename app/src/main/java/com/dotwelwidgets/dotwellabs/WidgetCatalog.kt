@@ -36,6 +36,7 @@ enum class PreviewKind {
     KWGT_DIGITAL_4,
     KWGT_GRADIENT_CLOCK,
     KWGT_MINI_CALENDAR,
+    KWGT_CLEAN_INFO,
     PLACEHOLDER,
 }
 
@@ -314,6 +315,19 @@ object WidgetCatalog {
             pinKind = PinResultReceiver.PIN_KIND_KWGT_MINI_CALENDAR,
         ),
         CatalogEntry(
+            id = "kwgt_clean_info",
+            name = "KWGT Clean Info",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Clean_Time_Date_Info · ghost h:mm / weekday-date stack / real battery pill",
+            descriptionRes = R.string.catalog_kwgt_clean_info_desc,
+            detailRes = R.string.ledger_ready_kwgt_date,
+            previewKind = PreviewKind.KWGT_CLEAN_INFO,
+            providerClass = KwgtCleanInfoWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_CLEAN_INFO,
+            action = CardAction.NONE,
+        ),
+        CatalogEntry(
             id = "compass",
             name = "Compass",
             group = WidgetGroup.MEDIA,
@@ -425,6 +439,7 @@ enum class WidgetCategory(
             "kwgt_nothing_date_time",
             "kwgt_nothing_date_time2",
             "kwgt_mini_calendar",
+            "kwgt_clean_info",
         ),
     ),
     BATTERY(
@@ -518,6 +533,7 @@ object WidgetModeLabels {
                 R.string.mode_kwgt_gradient_live
             }
             PreviewKind.KWGT_MINI_CALENDAR -> R.string.mode_kwgt_mini_calendar
+            PreviewKind.KWGT_CLEAN_INFO -> R.string.mode_kwgt_clean_info
             PreviewKind.PLACEHOLDER -> entry.state.labelRes
         }
     }

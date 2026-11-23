@@ -1,0 +1,210 @@
+{
+  "_source": {
+    "repository": "https://github.com/AumGupta/KWGT-Widgets",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "file": "widgets/Clean_Time_Date_Info.kwgt!preset.json",
+    "title": "Clean_Time_Date_Info",
+    "author": "Om Gupta",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": [
+      "preset_info.email removed",
+      "SINGLE_TAP launch intent strings removed",
+      "ProductSans-Bold/Medium are not bundled; platform sans-serif is substituted",
+      "source fgcolor formula is malformed (missing comma); repaired to $if(si(darkmode),#FFFFFF,#000000)$"
+    ]
+  },
+  "preset_info": {
+    "title": "Time Date Info",
+    "version": 13,
+    "description": "Clean time, date and battery information widget",
+    "width": 918,
+    "height": 542
+  },
+  "preset_root": {
+    "internal_type": "RootLayerModule",
+    "globals_list": {
+      "width": {
+        "index": 1,
+        "type": "NUMBER",
+        "title": "width",
+        "global_formula": "$si(rwidth)$",
+        "min": 0,
+        "max": 720,
+        "value": 553.0
+      },
+      "height": {
+        "index": 2,
+        "type": "NUMBER",
+        "title": "height",
+        "global_formula": "$si(rheight)$",
+        "min": 0,
+        "max": 720,
+        "value": 248.0
+      },
+      "bgcolor": {
+        "index": 3,
+        "type": "COLOR",
+        "title": "bgcolor",
+        "global_formula": "$if(si(darkmode),#FF16161D,#FFE4E4FF)$",
+        "value": "#FFE4E4FF",
+        "toggles": 10
+      },
+      "fgcolor": {
+        "index": 4,
+        "type": "COLOR",
+        "title": "fgcolor",
+        "value": "#FFFFFFFF",
+        "toggles": 10,
+        "global_formula": "$if(si(darkmode)#FFFFFF,#000000)$"
+      }
+    },
+    "config_scale_value": 110.735825,
+    "viewgroup_items": [
+      {
+        "internal_type": "OverlapLayerModule",
+        "internal_events": [
+          {
+            "type": "SINGLE_TAP",
+            "action": "LAUNCH_APP",
+            "intent": "intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;component=com.google.android.deskclock/com.android.deskclock.DeskClock;S.org.kustom.intent.label=Clock;end"
+          }
+        ],
+        "viewgroup_items": [
+          {
+            "internal_type": "ShapeModule",
+            "internal_toggles": {
+              "shape_width": 100,
+              "shape_height": 100,
+              "paint_color": 100
+            },
+            "internal_globals": {
+              "shape_width": "width",
+              "shape_height": "height",
+              "paint_color": "bgcolor"
+            },
+            "shape_type": "RECT",
+            "shape_corners": 38.0,
+            "paint_color": "#FF000000",
+            "internal_title": "BG"
+          },
+          {
+            "internal_type": "StackLayerModule",
+            "config_margin": -15.0,
+            "position_anchor": "BOTTOMLEFT",
+            "position_offset_x": 24.0,
+            "internal_title": "Day and Month",
+            "position_padding_left": 28.0,
+            "position_padding_bottom": 28.0,
+            "viewgroup_items": [
+              {
+                "internal_type": "TextModule",
+                "internal_title": "Day",
+                "internal_toggles": {
+                  "paint_color": 100
+                },
+                "internal_globals": {
+                  "paint_color": "fgcolor"
+                },
+                "text_expression": "$df(EEEE)$",
+                "text_family": "kfile://org.kustom.provider/fonts/ProductSans-Bold.ttf",
+                "text_size": 69.0
+              },
+              {
+                "internal_type": "TextModule",
+                "internal_title": "Month",
+                "internal_toggles": {
+                  "paint_color": 100
+                },
+                "internal_globals": {
+                  "paint_color": "fgcolor"
+                },
+                "text_expression": "$tc(up, df(MMMM d))$",
+                "text_family": "kfile://org.kustom.provider/fonts/ProductSans-Bold.ttf",
+                "text_size": 24.0,
+                "position_padding_left": 3.0
+              }
+            ]
+          },
+          {
+            "internal_type": "TextModule",
+            "internal_title": "Time",
+            "internal_toggles": {
+              "paint_color": 10,
+              "text_expression": 0
+            },
+            "internal_formulas": {
+              "paint_color": "$ce(gv(fgcolor), alpha, 19)$"
+            },
+            "internal_globals": {
+              "paint_color": "fgcolor"
+            },
+            "text_expression": "$df(h:mm)$",
+            "text_family": "kfile://org.kustom.provider/fonts/ProductSans-Medium.ttf",
+            "text_size": 196.0,
+            "paint_color": "#33FFFFFF",
+            "position_anchor": "CENTERRIGHT",
+            "position_offset_x": 24.0,
+            "position_padding_right": 28.0
+          },
+          {
+            "internal_type": "OverlapLayerModule",
+            "position_anchor": "TOPLEFT",
+            "position_offset_x": 24.0,
+            "internal_title": "Battery",
+            "position_padding_left": 28.0,
+            "position_padding_top": 28.0,
+            "viewgroup_items": [
+              {
+                "internal_type": "StackLayerModule",
+                "config_stacking": "HORIZONTAL_CENTER",
+                "config_margin": -5.0,
+                "viewgroup_items": [
+                  {
+                    "internal_type": "ShapeModule",
+                    "shape_type": "RECT",
+                    "shape_width": 59.0,
+                    "shape_height": 28.0,
+                    "shape_corners": 6.0,
+                    "internal_toggles": {
+                      "paint_color": 100
+                    },
+                    "internal_globals": {
+                      "paint_color": "fgcolor"
+                    }
+                  },
+                  {
+                    "internal_type": "ShapeModule",
+                    "shape_type": "RECT",
+                    "shape_width": 10.5,
+                    "shape_height": 16.0,
+                    "shape_corners": 4.0,
+                    "internal_toggles": {
+                      "paint_color": 100
+                    },
+                    "internal_globals": {
+                      "paint_color": "fgcolor"
+                    }
+                  }
+                ]
+              },
+              {
+                "internal_type": "TextModule",
+                "internal_toggles": {
+                  "paint_color": 100
+                },
+                "internal_globals": {
+                  "paint_color": "bgcolor"
+                },
+                "text_expression": "[b]$bi(level)$[/b]%",
+                "text_family": "kfile://org.kustom.provider/fonts/ProductSans-Medium.ttf",
+                "text_size": 16.0,
+                "position_padding_right": 3.0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -17,7 +17,7 @@ without a prohibited capability or unresolved third-party rights.
 
 | # | Exact preset name | Status | Dependency / remaining work |
 |---:|---|---|---|
-| 1 | `Clean_Time_Date_Info` | pending | Time/date layer conversion not started. |
+| 1 | `Clean_Time_Date_Info` | **implemented** | Native `KwgtCleanInfoWidgetProvider`; wide card with live TextClock h:mm / EEEE / uppercase MMMM d, oversized 19% ghost time, and real BatteryManager percentage refreshed on the system battery broadcast; no exact-alarm access required; runtime unverified. |
 | 2 | `Interstellar_Analog` | pending | Custom dial artwork has no separate redistribution grant; would require original redraw. |
 | 3 | `Interstellar_Analog_Khaki_Field_Murph_Auto` | pending | Branded watch-face artwork and font rights unresolved; original redraw required. |
 | 4 | `Interstellar_Endurance` | pending | Spacecraft artwork rights unresolved; original redraw required. |
@@ -60,14 +60,40 @@ without a prohibited capability or unresolved third-party rights.
 
 ## Implemented in this checkpoint
 
+Nine of the 40 presets now have native providers: `Clean_Time_Date_Info`,
 `Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
-`Nothing_Date_Time2`, and `Nothing_Mini_Calender` have real native providers in
-this source tree. Their sanitized `preset.json` transcriptions are
-`app/src/main/assets/kwgt/nothing_battery.sanitized.json`,
-`app/src/main/assets/kwgt/nothing_battery_mini.sanitized.json`,
-`app/src/main/assets/kwgt/nothing_date_time.sanitized.json`,
-`app/src/main/assets/kwgt/nothing_date_time2.sanitized.json`, and
-`app/src/main/assets/kwgt/nothing_mini_calender.sanitized.json`.
+`Nothing_Date_Time2`, `Nothing_Digital`, `Nothing_Digital3`, `Nothing_Digital4`
+and `Nothing_Mini_Calender`. All 15 registered providers are build-verified only
+and remain runtime-unverified in this checkpoint. The sanitized transcriptions
+are under `app/src/main/assets/kwgt/`, including
+`clean_time_date_info.sanitized.json`,
+`nothing_battery.sanitized.json`, `nothing_battery_mini.sanitized.json`,
+`nothing_date_time.sanitized.json`, `nothing_date_time2.sanitized.json`,
+`nothing_digital.sanitized.json`, `nothing_digital3.sanitized.json`,
+`nothing_digital4.sanitized.json`, and
+`nothing_mini_calender.sanitized.json`.
+
+Clean_Time_Date_Info keeps these author relationships:
+
+- 553 x 248 wide card, rounded corners 38, dark `#FF16161D` / light `#FFE4E4FF`
+- bottom-left stack at left 28 / bottom 28, weekday size 69, uppercase month/day
+  size 24 and the source -15 stack margin
+- CENTERRIGHT `h:mm` at size 196 in foreground ink at 19% alpha, retained as the
+  intentional oversized ghost back layer behind the readable text
+- top-left battery body 59 x 28 rounded 6, nub 10.5 x 16 rounded 4 overlapped by
+  the source -5 margin, and the true bilevel percentage at 16 bold in card ink
+
+The source `fgcolor` formula is malformed (`$if(si(darkmode)#FFFFFF,#000000)$`,
+missing the comma after `si(darkmode)`). It is repaired to the intended
+`$if(si(darkmode),#FFFFFF,#000000)$`: dark surfaces use white ink and light
+surfaces use black ink. ProductSans-Bold/Medium are not redistributed; the
+platform `sans-serif` family is substituted. Geometry is derived from the JSON
+and each text size is fitted to the host bounds instead of reproducing the
+cropped source preview. Time, weekday and date are live platform TextClocks, so
+no frozen bitmap time is shown and no exact-alarm access is required. Only the
+static card/battery background is a bitmap. The percentage reads the real
+`BatteryManager` level through the existing `BatteryState` path and refreshes on
+`ACTION_BATTERY_CHANGED`, date/time/time-zone/boot and resize updates.
 
 Nothing_Battery keeps these author relationships:
 
