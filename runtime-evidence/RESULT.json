@@ -1,0 +1,13 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "mini_native_pin": "fourth Calendar variant confirmed without Alarms dialog",
+    "mini_date_event": "date broadcast requested and pixels captured; inspect current five-day values"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "2e68598609919c0e68d66184bfc58b1c1f2f00b72fb7cf326711435b456d342d",
+  "device_date": "2026-11-23_Mon",
+  "error": "Missing UI target"
+}
