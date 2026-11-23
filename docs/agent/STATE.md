@@ -1,117 +1,99 @@
 # Build and verification state
 
-- Candidate: Dotwel Widgets 0.1.7 (versionCode 8), debug only. Package name
+- Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/kwgt-date2-45154407260`, based on `76cf4fa`. The separate
-  launcher repository, default main, repository visibility and signing setup
-  are unchanged.
-- Scope of this run: add one real native provider for the upstream
-  `Nothing_Date_Time2.kwgt` preset. The nine previously registered providers,
-  category grid, sheets, selected-Add flow and positive four-row spacing were
-  not redesigned or rewritten.
+- Branch: `agent/split-host-repair-45178491151`, based on `525b5de`. The
+  separate launcher repository, default main, repository visibility and signing
+  setup are unchanged.
+- Scope of this run: repair the Android 15 native pin/placement inflation
+  failure for the 12th provider, `KwgtDigital4WidgetProvider` (KWGT Split
+  Clock). This was a real app defect, not a research task.
 
-## What changed
+## Root cause
 
-New files:
+`app/src/main/res/layout/widget_kwgt_digital4.xml` used a raw
+`<View android:id="@+id/kwgt_digital4_divider" ...>` for the centre divider.
+RemoteViews only inflates classes annotated `@RemoteViews.RemoteView` (the
+documented allowlist: `FrameLayout`, `LinearLayout`, `RelativeLayout`,
+`TextClock`, `TextView`, `ImageView`, etc.). `android.view.View` is not on that
+list, so both `initialLayout` and `previewLayout` inflation failed. On the
+Android 15 host this surfaced as the native pin preview "Couldn't add widget"
+and HOME never appearing.
 
-- `KwgtDateTime2Renderer.kt` converts the source layer composition: rounded
-  side/5 surface, upper-left EEE weekday over the side/4 red day, lower-right
-  hour and minute rows, side/5 discs, contrasting radial notches, adjacent
-  `hh`/`mm` text, smooth hour rotation and minute rotation.
-- `KwgtDateTime2WidgetProvider.kt` registers the native provider, uses the
-  shared `MinuteTickScheduler` only on the bitmap path, handles time/date/
-  timezone/resize refresh, and routes date-area taps to the calendar, time-area
-  taps to the clock, with the whole widget opening the app as fallback.
-- `widget_kwgt_datetime2.xml` and `kwgt_datetime2_widget_info.xml` provide the
-  bitmap view, live access-off composition, click regions and 2x2 resizable
-  provider metadata.
-- `assets/kwgt/nothing_date_time2.sanitized.json` retains sanitized geometry and
-  formulas only. Source font payloads and tap intents are removed; MIT
-  provenance is retained.
+## Fix
 
-Wiring updates:
+- Replaced the raw `<View>` divider with a static `<ImageView>` at
+  `app/src/main/res/layout/widget_kwgt_digital4.xml`. The id, `1dp` width,
+  `match_parent` height and `@color/dot_accent` (`#D71921`) background are
+  preserved, so the source split composition and geometry are unchanged.
+- Marked the divider decorative with `contentDescription="@null"` and
+  `importantForAccessibility="no"`; the two live `TextClock` children are
+  untouched.
+- No provider Kotlin change was needed: `kwgt_digital4_divider` is not
+  referenced at runtime and the fallback `LinearLayout` content description is
+  unchanged.
+- Audited the other new provider layouts (`widget_kwgt_datetime.xml`,
+  `widget_kwgt_datetime2.xml`, `widget_kwgt_mini_calendar.xml`). None contains a
+  raw `<View>`, `<Space>`, `<include>`, `<merge>` or custom view. The
+  `ScrollView` and `DotHeadingView` are in `activity_main.xml` (an Activity
+  layout, not a RemoteViews layout) and were not changed.
+- Preserved all 12 registered providers, source composition, Mini Calendar fit,
+  provenance, labels and the shared `MinuteTickScheduler`. No feature,
+  permission, dependency, font or asset was added. NothingWidgetPort remains
+  excluded; the launcher is untouched.
 
-- `WidgetCatalog.kt` adds `KWGT Date Time 2` to the Calendar category as a
-  separate ready variant and adds `PreviewKind.KWGT_DATE_TIME_2`.
-- `WidgetPreviewRenderer.kt` and `WidgetPreviewBinder.kt` render the actual
-  bitmap when optional exact-alarm access is on, and a live `TextClock`
-  composition without analog discs when access is off.
-- `MinuteTickScheduler.kt`, `WidgetUpdater.kt`, `PinResultReceiver.kt`,
-  `AndroidManifest.xml`, `MainActivity.kt` and `strings.xml` register the
-  provider, pin result, preview/add path and access-off dialog.
+## Regression test
 
-Provider counts are now 10 ready in-app entries and 4 implemented of the 40
-KWGT presets. The remaining 36 stay pending or dependency-blocked. README,
-`docs/ATTRIBUTION.md` and `docs/KWGT-LEDGER.md` were updated to match.
-
-## Preserved source geometry
-
-Retained from the preset: `side = min(width, height)`, corners `side / 5`,
-left offset `side / 8.5`, weekday/hour/minute text `side / 10`, red day
-`side / 4`, clock group left padding `side / 2.5`, disc diameter `side / 5`,
-hour rotation `(hour + minute / 60) * 30`, minute rotation `minute * 6`, notch
-width `side / 69.25`, hour notch length `side / 28` with `side / 6.1` offset,
-minute notch length `side / 12` with `side / 8.5` offset, and primary red
-`#FFD71921`.
-
-Font substitution: the source NType82 regular/headline files are not copied.
-The renderer uses Android platform serif regular and bold with a width fit
-guard, documented in the renderer and attribution.
-
-## Access behavior
-
-- Exact-alarm access on: the provider draws the styled minute bitmap and the
-  shared scheduler refreshes it once a minute, including after boot/app update,
-  timezone/date changes and resize callbacks.
-- Exact-alarm access off: the placed widget shows live platform `TextClock`
-  values for weekday, day, hour and minute in the matching regions. It does not
-  draw analog discs at all, so no frozen hand/minute can be mistaken for live
-  time. The app's existing access dialog is shown when adding the widget.
-- No new permission, service, dependency, launcher component or paid path was
-  added. No `NothingWidgetPort` code was used.
+Added `app/src/test/java/com/dotwelwidgets/dotwellabs/RemoteViewsLayoutSafetyTest.kt`.
+It reads the four shipped provider layout XML files and asserts every tag is on
+the RemoteViews-supported list, and that the split-clock divider is a static
+`1dp` `ImageView` with the accent background. Both tests failed against the
+pre-fix layout and pass after the fix.
 
 ## Build and lint in this run
 
 ```
-./gradlew assembleDebug lintDebug --no-daemon
-./gradlew testDebugUnitTest lintDebug --no-daemon
+./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon
 ```
 
-Both builds completed `BUILD SUCCESSFUL`. Final lint result: `0 errors,
-95 warnings`, with no lint suppression added or changed. Warnings are the
-pre-existing SDK/AGP, API-gate, legacy-resource, plural, small-text and
-static-context notices plus the same API-gate warnings for the new widget info
-XML.
+Result: `BUILD SUCCESSFUL`. All unit tests pass. Lint: `0 errors, 103 warnings`
+(no suppressions added or changed). Warnings are the pre-existing SDK/AGP,
+API-gate, legacy-resource, plural, small-text, RTL-symmetry and static-context
+notices.
 
-The merged manifest contains
-`com.dotwelwidgets.dotwellabs.KwgtDateTime2WidgetProvider`, and the APK contains
-the new layout, provider metadata and sanitized asset.
+The packaged layout was checked with `aapt2 dump xmltree`: the divider is an
+`ImageView` with `contentDescription=@null` and
+`importantForAccessibility=2` (`no`), not a raw `View`.
 
 ## Artifact
 
-Final debug APK: `checkpoints/dotwel-widgets-datetime2-debug.apk`.
-SHA-256 in `checkpoints/DATETIME2-SHA256SUMS`:
+Debug APK: `checkpoints/dotwel-widgets-digital4-rvfix-debug.apk`.
+SHA-256 in `checkpoints/DIGITAL4-RVFIX-SHA256SUMS`:
 
 ```
-28bb07666f05eb7f229f589c7ffdac81a72365020f72b63afe810dfe8a1fe54e  checkpoints/dotwel-widgets-datetime2-debug.apk
+5acfc938fae85921ea41bc8e0bcd9fe5385da44a958ba5161cab7cbf3519cb41  checkpoints/dotwel-widgets-digital4-rvfix-debug.apk
 ```
 
 Older checkpoint APKs and checksum files were left untouched.
 
 ## Verified versus not verified
 
-Verified here: source compiles, debug APK assembles, unit tests pass, lint has
-no errors, the new receiver and resources are packaged, and source inspection
-confirms access-on bitmap updates, access-off live TextClock fallback, click
-regions and scheduler/updater registration.
+Verified here: root cause, layout fix, regression tests, source compiles, debug
+APK assembles, lint has no errors, the packaged layout no longer contains a raw
+`View`, and all 12 providers/resources are still packaged.
 
-Not verified here: actual Android-host placement, screenshots, resize, style
-switching, calendar/clock tap targets, or minute advance for this new provider.
-No runtime or screenshot pass is claimed for `KWGT Date Time 2`.
+Not verified here: actual Android-host native pin preview, HOME placement,
+screenshots, resize, style switching, or minute advance. Runtime remains
+pending. The independent native / plain-minute / styled-minute / tap-gate run
+still has to be executed. No runtime or screenshot pass is claimed for the
+split clock.
 
 ## Limits and remaining work
 
-- The collection remains incomplete: 36 of the 40 KWGT presets are still
+- README and `docs/KWGT-LEDGER.md` still describe the previous 11-provider
+  checkpoint and still mark `Nothing_Digital4` pending. They were not rewritten
+  in this narrow repair.
+- The collection remains incomplete: the remaining KWGT presets are still
   pending or dependency-blocked.
 - Weather, Photo, Away, Compass, Snake, media/notification, CPU and iOS
   Komponent presets remain in their prior blocked or pending states.

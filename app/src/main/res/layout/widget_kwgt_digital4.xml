@@ -38,11 +38,15 @@
             android:textColor="@color/dot_accent"
             android:textStyle="bold" />
 
-        <View
+        <!-- RemoteViews only inflates allowlisted widget classes. Keep this
+             static divider an ImageView/TextView, never a raw View. -->
+        <ImageView
             android:id="@+id/kwgt_digital4_divider"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/dot_accent" />
+            android:background="@color/dot_accent"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no" />
 
         <TextClock
             android:id="@+id/kwgt_digital4_minute"
