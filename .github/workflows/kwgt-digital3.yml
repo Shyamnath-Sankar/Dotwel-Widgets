@@ -1,0 +1,84 @@
+name: Add actual KWGT Digital3 dot-grid clock
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: eca04cded28b7a8d01e506f119954fba2fe38ebb
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/kwgt-digital3-${GITHUB_RUN_ID}"
+      - name: Apply reference-led widget browser and renderer polish
+        timeout-minutes: 11
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/AumGupta/KWGT-Widgets/96ca27be4cbff35efec5a86c64dd39fd065c958f/widgets/Nothing_Digital3.kwgt -o /tmp/d3.kwgt
+          mkdir -p /tmp/d3 && unzip -o -q /tmp/d3.kwgt -d /tmp/d3 && python3 -c "import json;d=json.load(open('/tmp/d3/preset.json'));d['preset_info'].pop('email',None);json.dump(d,open('/tmp/d3-preset.json','w'),separators=(',',':'))"
+          cat > /tmp/widget-task.txt <<'TASK'
+          Implement ONE actual next native KWGT provider now: Nothing_Digital3 (MIT, AumGupta/KWGT-Widgets pinned 96ca27be4cbff35efec5a86c64dd39fd065c958f). Exact preset JSON is at /tmp/d3-preset.json (read it first, it is the source of truth; ~40KB). Preserve the 13 tested source eca04cde including the rule that RemoteViews may only use ImageView/TextClock/TextView/Frame/Linear/Relative, never raw View. Preset: rounded square bg (corner side/5, side=min(rwidth,rheight)), a dot-grid built from circle shapes whose lit/unlit colour depends only on minutes: dot groups lit (accent) when mm>9, >19, >29, >39, >49 else accent2 (see formulas in the JSON), plus three text modules, and a tap on the background launching the Clock app. Colours: darkmode bg #1B1B1D/white, fg inverse, primary red D71921, accent=fg at 35% alpha, accent2=fg at 15% alpha. Port the actual layer geometry and formulas faithfully into a new provider KwgtDigital3WidgetProvider, catalog title KWGT Digital3 Dot Clock, as a Clock-category variant (7th Clock variant). Use app-owned DotGlyphFont only; do not copy Nothing/ndot fonts. Draw dots programmatically as a bitmap that refreshes via the existing minute scheduler; with optional Alarms access off, use a truthful live fallback (TextClock plus the same bitmap refreshed on widget update) and never a frozen-time bitmap. Wire preview, catalog, pin, layout, manifest, WidgetUpdater, scheduler, boot/timezone/resize like the Gradient provider (read KwgtGradientClockWidgetProvider and its wiring once, then write). Tap uses ACTION_SHOW_ALARMS. No new permissions, services, dependencies, assets or fonts. Add a layout-bounds unit test if practical, and a sanitized preset copy under app/src/main/assets/kwgt (no email, no font payload) plus MIT provenance in docs. Keep all 13 existing providers untouched. Write code first, no research or plan-only run. Update docs ledger: Nothing_Digital3 implemented, 14 providers, 8 of 40 KWGT, not full collection.
+          TASK
+          timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          bash ./gradlew assembleDebug --no-daemon
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug --no-daemon
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
