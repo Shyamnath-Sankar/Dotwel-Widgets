@@ -51,7 +51,7 @@ without a prohibited capability or unresolved third-party rights.
 | 32 | `Nothing_Media_Player` | dependency | Media/notification access is prohibited for this app. |
 | 33 | `Nothing_Media_Player2` | dependency | Media/notification access is prohibited for this app. |
 | 34 | `Nothing_Media_Player3` | dependency | Media/notification access is prohibited for this app. |
-| 35 | `Nothing_Mini_Calender` | pending | Date-only layer conversion queued; no calendar permission needed. |
+| 35 | `Nothing_Mini_Calender` | **implemented** | Native `KwgtMiniCalendarWidgetProvider`; five-day date-only strip, no calendar or exact-alarm permission; runtime unverified. |
 | 36 | `Nothing_Sun_Info` | pending | Depends on the pending Open-Meteo location/weather path. |
 | 37 | `Nothing_Temp` | pending | Depends on the pending Open-Meteo location/weather path. |
 | 38 | `Universal_Media_Player` | dependency | Media/notification access is prohibited for this app. |
@@ -60,13 +60,14 @@ without a prohibited capability or unresolved third-party rights.
 
 ## Implemented in this checkpoint
 
-`Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`, and
-`Nothing_Date_Time2` have real native providers in this source tree. Their
-sanitized `preset.json` transcriptions are
+`Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
+`Nothing_Date_Time2`, and `Nothing_Mini_Calender` have real native providers in
+this source tree. Their sanitized `preset.json` transcriptions are
 `app/src/main/assets/kwgt/nothing_battery.sanitized.json`,
 `app/src/main/assets/kwgt/nothing_battery_mini.sanitized.json`,
-`app/src/main/assets/kwgt/nothing_date_time.sanitized.json`, and
-`app/src/main/assets/kwgt/nothing_date_time2.sanitized.json`.
+`app/src/main/assets/kwgt/nothing_date_time.sanitized.json`,
+`app/src/main/assets/kwgt/nothing_date_time2.sanitized.json`, and
+`app/src/main/assets/kwgt/nothing_mini_calender.sanitized.json`.
 
 Nothing_Battery keeps these author relationships:
 
@@ -105,6 +106,29 @@ serif regular and bold families. The source tap intents and font payloads are
 removed from the sanitized asset. Without optional exact-alarm access the
 provider uses live platform TextClocks in the matching regions and does not
 draw any analog disc, so no frozen minute is presented.
+
+Nothing_Mini_Calender keeps these author relationships:
+
+- horizontal five-column strip at relative days -2, -1, today, +1, +2, resolved
+  with calendar date arithmetic rather than 86,400,000 ms additions
+- uppercase `EEE` weekday over two-digit `dd` in every column
+- weekday size `side / 6.291`, date size `side / 3.282`
+- outer columns use `accent` = ink at 50% alpha; inner columns and today use full
+  ink; today uses a rounded `widgetWidth / 5` highlight and the primary
+  `#FFD71921` dot below the date
+- source horizontal margin 58/916 of width, scaled with the host and fitted with
+  a small positive gap so all five columns remain on-screen
+
+The source `ndot-47.ttf` is replaced by Dotwel's own dot glyphs. The source
+highlight colour is wallpaper-conditional; Dotwel uses a low-alpha ink wash so it
+stays visible over the app's black, translucent and transparent surfaces. The
+916x226 landscape preview was adapted to a legible 4x1 strip: the source itself
+is five days, but the narrow centre day in the original preview came from that
+host's aspect ratio. This is a documented resize adaptation, not pixel-exact
+upstream output. The provider is date-only and does not request calendar or
+exact-alarm permission. Android's inexact `updatePeriodMillis` is backed up by
+DATE/TIME/TIMEZONE/BOOT broadcasts, app refresh and resize updates; it is not
+promised as an exact midnight alarm.
 
 Sanitized out of the assets and implementations: the author email, the background
 `SINGLE_TAP` intent string, and the bundled `ndot-47.ttf`. Dotwel's original

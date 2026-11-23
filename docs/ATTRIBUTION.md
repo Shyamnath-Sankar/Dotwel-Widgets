@@ -117,6 +117,24 @@ the app from About & source credits > View MIT license texts.
   platform serif regular and bold families; no upstream font file is bundled.
   The source tap intents and font payloads are omitted from the sanitized asset.
   Runtime is not claimed here.
+- `widgets/Nothing_Mini_Calender.kwgt!preset.json` -> `KwgtMiniCalendarRenderer.kt`,
+  `KwgtMiniCalendarDates.kt`, `KwgtMiniCalendarWidgetProvider.kt`, and the
+  sanitized data model
+  `app/src/main/assets/kwgt/nothing_mini_calender.sanitized.json`. Retained: the
+  horizontal five-day strip at offsets -2, -1, today, +1, +2; uppercase EEE over
+  two-digit dd; weekday `side / 6.291` and date `side / 3.282`; outer-column
+  accent at 50% ink; full ink for inner columns and today; the
+  `widgetWidth / 5` rounded today highlight; the primary `#FFD71921` dot; and the
+  scaled source horizontal margin. Relative dates use `Calendar.add`, never a
+  86,400,000 ms constant. The bundled ndot-47.ttf is replaced by Dotwel's own dot
+  glyphs, and the wallpaper-conditional highlight is replaced by a low-alpha ink
+  wash so it stays visible on all three app surfaces. The 916x226 landscape
+  preview is deliberately adapted to a legible 4x1 five-column strip with resize
+  fit; that is a documented host-aspect adaptation, not pixel-exact output. The
+  provider is date-only and requests no calendar, exact-alarm or boot permission.
+  Android's inexact periodic refresh is supplemented by date/time/timezone/boot,
+  app-refresh and resize callbacks; exact midnight delivery is not promised.
+  Runtime is not claimed here.
 - The author's sweep-gradient disc is rendered as a level-scaled arc plus a faint
   disc and track so the gauge remains readable at small widget sizes. This is a
   documented rendering substitution, not a claim of pixel-identical output.
@@ -125,9 +143,10 @@ the app from About & source credits > View MIT license texts.
   Dotwel's original dot glyphs or the documented platform font substitution
   replace the fonts.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
-  `Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`, and
-  `Nothing_Date_Time2` are implemented in this checkpoint; the rest remain
-  pending or dependency-blocked and are not claimed as imported.
+  `Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
+  `Nothing_Date_Time2`, and `Nothing_Mini_Calender` are implemented in this
+  checkpoint; the rest remain pending or dependency-blocked and are not claimed
+  as imported.
 
 ## Not included
 

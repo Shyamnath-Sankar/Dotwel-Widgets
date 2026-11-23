@@ -32,6 +32,7 @@ enum class PreviewKind {
     KWGT_BATTERY_MINI,
     KWGT_DATE_TIME,
     KWGT_DATE_TIME_2,
+    KWGT_MINI_CALENDAR,
     PLACEHOLDER,
 }
 
@@ -259,6 +260,18 @@ object WidgetCatalog {
             action = CardAction.CLOCK_ACCESS,
         ),
         CatalogEntry(
+            id = "kwgt_mini_calendar",
+            name = "KWGT Mini Calendar",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Mini_Calender · five-day EEE / dd strip",
+            descriptionRes = R.string.catalog_kwgt_mini_calendar_desc,
+            detailRes = R.string.ledger_ready_kwgt_date,
+            previewKind = PreviewKind.KWGT_MINI_CALENDAR,
+            providerClass = KwgtMiniCalendarWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_MINI_CALENDAR,
+        ),
+        CatalogEntry(
             id = "compass",
             name = "Compass",
             group = WidgetGroup.MEDIA,
@@ -357,7 +370,12 @@ enum class WidgetCategory(
     CALENDAR(
         "calendar",
         R.string.category_calendar,
-        listOf("date", "kwgt_nothing_date_time", "kwgt_nothing_date_time2"),
+        listOf(
+            "date",
+            "kwgt_nothing_date_time",
+            "kwgt_nothing_date_time2",
+            "kwgt_mini_calendar",
+        ),
     ),
     BATTERY(
         "battery",
@@ -434,6 +452,7 @@ object WidgetModeLabels {
             } else {
                 R.string.mode_kwgt_datetime_live
             }
+            PreviewKind.KWGT_MINI_CALENDAR -> R.string.mode_kwgt_mini_calendar
             PreviewKind.PLACEHOLDER -> entry.state.labelRes
         }
     }

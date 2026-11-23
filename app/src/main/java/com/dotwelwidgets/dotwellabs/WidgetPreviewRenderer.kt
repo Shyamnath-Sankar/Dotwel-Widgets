@@ -111,6 +111,14 @@ object WidgetPreviewRenderer {
                 now,
                 includeBackground = false,
             )
+            PreviewKind.KWGT_MINI_CALENDAR -> KwgtMiniCalendarRenderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                now,
+                includeBackground = false,
+            )
             PreviewKind.PLACEHOLDER -> placeholder(context, entry, size.width, size.height, style)
         }
     }

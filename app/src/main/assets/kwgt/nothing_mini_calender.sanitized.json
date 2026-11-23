@@ -1,0 +1,88 @@
+{
+  "provenance": {
+    "source": "https://github.com/AumGupta/KWGT-Widgets",
+    "file": "widgets/Nothing_Mini_Calender.kwgt!preset.json",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": "Author font payloads, package-specific tap intents and any email fields were removed. Layer geometry, date-offset formulas and colours only."
+  },
+  "preset_info": {
+    "author": "Om Gupta",
+    "title": "NothingMiniCalender",
+    "version": 13,
+    "width": 916,
+    "height": 226,
+    "locked": false
+  },
+  "globals": {
+    "bg": "$if(si(darkwp)=0, #FFFFFFFF, #FF1B1B1D)$",
+    "fg": "$if(si(darkwp)=1, #FFFFFFFF, #FF1B1B1D)$",
+    "primary": "#FFD71921",
+    "accent": "$ce(gv(fg), alpha, 50)$",
+    "w": "$si(rwidth)$",
+    "h": "$si(rheight)$",
+    "s": "$mu(min, gv(h), gv(w))$"
+  },
+  "strip": {
+    "type": "StackLayerModule",
+    "config_stacking": "HORIZONTAL_CENTER",
+    "config_margin": 58.0,
+    "offsets": [-2, -1, 0, 1, 2],
+    "date_formula": {
+      "-2": "r2d",
+      "-1": "r1d",
+      "0": "current day",
+      "1": "a1d",
+      "2": "a2d"
+    },
+    "columns": [
+      {
+        "offset": -2,
+        "stacking": "VERTICAL_CENTER",
+        "weekday": {"expression": "$tc(up,df(EEE,r2d))$", "text_size_formula": "$gv(s)/6.291$", "paint_color": "accent"},
+        "day": {"expression": "$df(dd,r2d)$", "text_size_formula": "$gv(s)/3.282$", "paint_color": "accent"}
+      },
+      {
+        "offset": -1,
+        "stacking": "VERTICAL_CENTER",
+        "weekday": {"expression": "$tc(up,df(EEE,r1d))$", "text_size_formula": "$gv(s)/6.291$", "paint_color": "fg"},
+        "day": {"expression": "$df(dd,r1d)$", "text_size_formula": "$gv(s)/3.282$", "paint_color": "fg"}
+      },
+      {
+        "offset": 0,
+        "stacking": "VERTICAL_CENTER",
+        "highlight": {
+          "type": "ShapeModule",
+          "shape_type": "RECT",
+          "shape_width_formula": "$gv(w)/5$",
+          "shape_height": 148.0,
+          "shape_corners": 18.0,
+          "paint_color": "bg"
+        },
+        "weekday": {"expression": "$tc(up,df(EEE))$", "text_size_formula": "$gv(s)/6.291$", "paint_color": "fg"},
+        "day": {"expression": "$df(dd)$", "text_size_formula": "$gv(s)/3.282$", "paint_color": "fg"},
+        "dot": {
+          "type": "ShapeModule",
+          "shape_type": "CIRCLE",
+          "shape_width": 12.0,
+          "position_padding_top": 8.0,
+          "paint_color": "primary"
+        }
+      },
+      {
+        "offset": 1,
+        "stacking": "VERTICAL_CENTER",
+        "weekday": {"expression": "$tc(up,df(EEE,a1d))$", "text_size_formula": "$gv(s)/6.291$", "paint_color": "fg"},
+        "day": {"expression": "$df(dd,a1d)$", "text_size_formula": "$gv(s)/3.282$", "paint_color": "fg"}
+      },
+      {
+        "offset": 2,
+        "stacking": "VERTICAL_CENTER",
+        "weekday": {"expression": "$tc(up,df(EEE,a2d))$", "text_size_formula": "$gv(s)/6.291$", "paint_color": "accent"},
+        "day": {"expression": "$df(dd,a2d)$", "text_size_formula": "$gv(s)/3.282$", "paint_color": "accent"}
+      }
+    ]
+  },
+  "click": "Calendar application via implicit ACTION_MAIN + CATEGORY_APP_CALENDAR; source package-specific intent removed."
+}

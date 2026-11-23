@@ -1,14 +1,14 @@
 # Dotwel-Widgets
 Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 
-## Current checkpoint (0.1.7, versionCode 8)
+## Current checkpoint (0.1.8, versionCode 9)
 
 - `com.dotwelwidgets.dotwellabs`, minSdk 26, compile/target SDK 36.
-- Ten registered providers: dot clock, date, Analog Bold, Analog Scale, world
+- Eleven registered providers: dot clock, date, Analog Bold, Analog Scale, world
   clock, quotes, and native Nothing Battery, Nothing Battery Mini,
-  Nothing Date Time, and Nothing Date Time 2 conversions from the MIT
-  KWGT-Widgets presets. The full 40-preset source-port status is in
-  `docs/KWGT-LEDGER.md`; only those four presets are implemented, the rest
+  Nothing Date Time, Nothing Date Time 2, and Nothing Mini Calendar conversions
+  from the MIT KWGT-Widgets presets. The full 40-preset source-port status is in
+  `docs/KWGT-LEDGER.md`; only those five presets are implemented, the rest
   remain pending or dependency-blocked.
 - The front screen is a category grid: a dotted HOME heading, a short subtitle,
   an actionable dotted-update control, and rounded square category tiles with a
@@ -42,6 +42,13 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   drawn to the ImageView content area, so widget padding is not applied twice.
   Updates use a one-minute `PendingIntent` alarm. Without that access the clock
   shows the live system `TextClock`; analog shows the platform `AnalogClock`.
+- KWGT Mini Calendar is a separate date-only 4x1 provider. It renders the
+  source five-day strip (-2 through +2) with real calendar arithmetic, scales
+  the author margin to keep all five columns on-screen, highlights today with a
+  widgetWidth/5 rounded block and red dot, and does not request calendar or
+  Alarms & reminders access. Refreshes use Android's inexact 30-minute
+  `updatePeriodMillis` plus date/time/timezone/boot, app-refresh and resize
+  callbacks; exact midnight delivery is not promised.
 - Dotwel Battery and Battery Mini read the real system battery level
   (`BATTERY_PROPERTY_CAPACITY` with a sticky `ACTION_BATTERY_CHANGED` fallback).
   They use no fake charge value,
@@ -61,7 +68,7 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 
 ## Limits
 
-- 0.1.7 has a passing debug build and lint, but no runtime or screenshot
+- 0.1.8 has a passing debug build and lint, but no runtime or screenshot
   verification in this checkpoint. Do not treat a successful build as proof of
   launcher pinning, battery-refresh timing, or pixel output.
 - Minute updates are best-effort. Deep idle and doze may defer the update, and
