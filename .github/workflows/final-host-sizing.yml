@@ -1,4 +1,4 @@
-name: Wire saved category grid and sheet into activity
+name: Repair KWGT date-time row spacing
 on:
   workflow_dispatch:
 permissions:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: a40acfeecf0eb0e8232dc9f0dd53486c0bfe05e7
+          ref: 7e14ff2e7caaf01744330bd52d0fc8d352e466d3
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -37,16 +37,15 @@ jobs:
           if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -c "agent/category-wire-${GITHUB_RUN_ID}"
+          git switch -c "agent/kwgt-spacing-${GITHUB_RUN_ID}"
       - name: Apply reference-led widget browser and renderer polish
         timeout-minutes: 11
         env:
           OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
         run: |
           cat > /tmp/widget-task.txt <<'TASK'
-          Finish existing partial category implementation NOW. Helpers already saved/built in a40acfee: WidgetCategory readyEntries/providerInfo/WidgetModeLabels in WidgetCatalog, WidgetPreviewBinder.bind(context,FrameLayout,entry,style) with real native fallbacks, SwipeFrameLayout.onSwipe direction, SquareFrameLayout, CategoryMotifView and bg_category_tile/bg_sheet_surface/bg_add_pill/ic_close/dotdrawables and40newstrings. MainActivity is STILL unchanged old filtered cardlist! This run must WIRE helpers into actual visible navigation, not make more unused helpers or research source. Write MainActivity within first2minutes.
-          Replace buildAvailableCards/front gallery with functional categorygrid: two rounded square gray tiles perrow with representative realpreview or CategoryMotifView, categorylabel/count underneath. Dark dotted HOMEheading/floatingbottomnav retained; remove filterchips for categoryfirst. WidgetCategory.values/categories give sources: Calendar date + KWGTDateTime;Clock4;Battery2;Quotes1;unavailable honest0withnoAdd. Preserveupcoming17andall9providers. No newfeature/import/permission/assets. Tapcategory opens custom scrollable rounded gray dialogsheet: categoryheading,48dpclose, hugecentered WidgetPreviewBinder preview within SwipeFrameLayout, selectedname,actualprovider size via providerInfo metadata, honestmode/description,redrounded Addwidgetbutton below,indicator dots,Previous/Next48dptargets. Swipe updates index then rebind ALL name/preview/size/dots/Add callback. Add invokes existingonAdd(entries[selectedIndex]), not firstcapturedentry. Explicitcontrols supportaccessibility. Native Worlddialog and optionalalarm livefallback preserved.130font/narrow allow1column/scrollable sheet/bottominsets. No fakeBluetoothdevicevalues/newbadges/crowns/wallpaperpromos.
-          Knownfixes: KWGTDateTime optionalaccessdialog incorrectlyanalog. Specialcase its title/message/plain choice to true live dateandtime. STATEtop still8providers/2KWGT, correct9/3unfinishedhonestly. AboutaddDateTimemapping. Do NOT claim anyruntimepassed; independentfixedheadruntimeongoing. RenderedUIactualpixelgateafter save. Buildassemble/lintnosuppression and finalAPKchecksum. Commitworkingactivitybeforeadditionalpolish. No longanalysis, no thumbnailtools/gitclone. RepoPRIVATE/launcheruntouched/freeonly/NothingWidgetPortexcluded.
+          NARROW diagnosed renderer repair only, now. Current source7e14ff2hasactualwiredcategorygrid/sheet/swipeand9providers includingKWGTDateTime. Preserveall. IndependentactualAndroidruntimeprovedliveandstyledminuteadvanceafterkill, but styled4dottedtextrowscollide. Diagnosis: KwgtDateTimeRenderer line102lineHeights=pitch*7; line103gap=-side*4/415 copiedfontstacknegativegap. Dotwel5x7fontfillslinebox, negativegapmakesrowsphysicallyoverlap. Fix to POSITIVE clear gap basedonpitch or side(roughlyside*.045) then fit totalstack with tops/bottoms padding, keepleftalignedweekday/redtime/month/ordinalday. Useactualdrawdotboundheight6.8*pitch, leaveatleast1.5pitchbetweenrows, ensurelongNOVEMBER/SEPTEMBERfitswidthwithoutoverlap. Currentwidget2x2tallcanvas shouldremainlegibleatactualhostsize. No sourcefontcopy. Retainsourceformula/provenanceanddocumentdeliberatelegibilityadaptationinsteadfalseexactgeometryclaim. Nootherglyphmetricschangeacrossapp.
+          Needrealcodeeditimmediately, no lengthyresearch/fullinventory. Inspectrenderer/fontdrawonce, modifyKwgtDateTimeRendereronlyplusprovenancecomment/test/stateifneeded. Unitpuremathlayoutassertionsifpractical: rowboundsnonoverlappingandwithinheightat200x200/300x400/400x200, widthfitlongmonth. Nonewdependencies/permissions/providerimport/UIrefactor. Preservecategorywirelogic/9countandDateTimecopyfix. UpdatefinalSTATEhonestlyincludingknownpixelsnotyetverifiedandchecksumfile. Buildassemble/lintwithout suppression,finalAPKchecksumsaved. No runtimepassclaims. RepoPRIVATE/freeonly/launcheruntouched/NothingWidgetPortexcluded. Finalactualpixelswillbeindependentlytestedafterthisrun.
           TASK
           timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
       - uses: actions/setup-java@v6
