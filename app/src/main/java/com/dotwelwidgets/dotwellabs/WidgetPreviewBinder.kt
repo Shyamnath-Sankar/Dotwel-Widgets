@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.widget.AnalogClock
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -117,6 +118,12 @@ object WidgetPreviewBinder {
             PreviewKind.KWGT_DATE_TIME_2 -> {
                 container.addView(
                     dateTime2Fallback(context, style, height, ink, accent),
+                    matchParams(),
+                )
+            }
+            PreviewKind.KWGT_DIGITAL_4 -> {
+                container.addView(
+                    splitClockFallback(context, ink),
                     matchParams(),
                 )
             }
@@ -322,6 +329,56 @@ object WidgetPreviewBinder {
         }
         root.addView(timeStack, timeParams)
         return root
+    }
+
+    private fun splitClockFallback(
+        context: Context,
+        ink: Int,
+    ): LinearLayout {
+        val layout = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        layout.addView(
+            splitClock(context, "hh", KwgtDigital4Renderer.RED, Gravity.END),
+            LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f),
+        )
+        layout.addView(
+            View(context).apply {
+                setBackgroundColor(KwgtDigital4Renderer.RED)
+            },
+            LinearLayout.LayoutParams(
+                dp(context, 1).coerceAtLeast(1),
+                LinearLayout.LayoutParams.MATCH_PARENT,
+            ),
+        )
+        layout.addView(
+            splitClock(context, "mm", ink, Gravity.START),
+            LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f),
+        )
+        return layout
+    }
+
+    private fun splitClock(
+        context: Context,
+        format: String,
+        color: Int,
+        gravityValue: Int,
+    ): TextClock = TextClock(context).apply {
+        setFormat12Hour(format)
+        setFormat24Hour(format)
+        setTextColor(color)
+        gravity = gravityValue or Gravity.CENTER_VERTICAL
+        includeFontPadding = false
+        maxLines = 1
+        typeface = Typeface.MONOSPACE
+        setTypeface(typeface, Typeface.BOLD)
+        setAutoSizeTextTypeUniformWithConfiguration(
+            8,
+            96,
+            2,
+            TypedValue.COMPLEX_UNIT_SP,
+        )
     }
 
     private fun sourceClock(

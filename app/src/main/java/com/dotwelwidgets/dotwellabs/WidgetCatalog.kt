@@ -32,6 +32,7 @@ enum class PreviewKind {
     KWGT_BATTERY_MINI,
     KWGT_DATE_TIME,
     KWGT_DATE_TIME_2,
+    KWGT_DIGITAL_4,
     KWGT_MINI_CALENDAR,
     PLACEHOLDER,
 }
@@ -260,6 +261,19 @@ object WidgetCatalog {
             action = CardAction.CLOCK_ACCESS,
         ),
         CatalogEntry(
+            id = "kwgt_nothing_digital4",
+            name = "KWGT Split Clock",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Digital4 · red hh / centre divider / ink mm",
+            descriptionRes = R.string.catalog_kwgt_digital4_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_DIGITAL_4,
+            providerClass = KwgtDigital4WidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_DIGITAL_4,
+            action = CardAction.CLOCK_ACCESS,
+        ),
+        CatalogEntry(
             id = "kwgt_mini_calendar",
             name = "KWGT Mini Calendar",
             group = WidgetGroup.KWGT,
@@ -365,7 +379,13 @@ enum class WidgetCategory(
     CLOCK(
         "clock",
         R.string.category_clock,
-        listOf("digital", "analog_bold", "analog_scale", "world"),
+        listOf(
+            "digital",
+            "analog_bold",
+            "analog_scale",
+            "world",
+            "kwgt_nothing_digital4",
+        ),
     ),
     CALENDAR(
         "calendar",
@@ -451,6 +471,11 @@ object WidgetModeLabels {
                 R.string.mode_kwgt_datetime_styled
             } else {
                 R.string.mode_kwgt_datetime_live
+            }
+            PreviewKind.KWGT_DIGITAL_4 -> if (access) {
+                R.string.mode_kwgt_split_styled
+            } else {
+                R.string.mode_kwgt_split_live
             }
             PreviewKind.KWGT_MINI_CALENDAR -> R.string.mode_kwgt_mini_calendar
             PreviewKind.PLACEHOLDER -> entry.state.labelRes

@@ -111,6 +111,14 @@ object WidgetPreviewRenderer {
                 now,
                 includeBackground = false,
             )
+            PreviewKind.KWGT_DIGITAL_4 -> KwgtDigital4Renderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                now,
+                includeBackground = false,
+            )
             PreviewKind.KWGT_MINI_CALENDAR -> KwgtMiniCalendarRenderer.render(
                 context,
                 size.width,
@@ -130,6 +138,7 @@ object WidgetPreviewRenderer {
         PreviewKind.WORLD,
         PreviewKind.KWGT_DATE_TIME,
         PreviewKind.KWGT_DATE_TIME_2,
+        PreviewKind.KWGT_DIGITAL_4,
         -> true
         else -> false
     }
