@@ -1,0 +1,86 @@
+name: Repair Digital3 actual native sizing and preset bridges
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: b8536367ba32a6658cf4fb482ea6d722ec22b1ad
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/digital3-visual-${GITHUB_RUN_ID}"
+      - name: Apply reference-led widget browser and renderer polish
+        timeout-minutes: 11
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          cat > /tmp/widget-task.txt <<'TASK'
+          Repair ONLY Digital3 visual correctness from b853636. Build/unit/lint passed. Actual native runtime passed but pixels REJECTED: no-access fallback hh/mm/AMPM TextClocks overlap massively at top-left; styled text extremely tiny; actual source's connecting bridges between source-lit cells missing. Preserve other13providers. Read KwgtDigital3Renderer/WidgetProvider/layout and exact assets/kwgt/nothing_digital3.sanitized.json. Do not restart or inventory.
+          ROOT CAUSE fallback: RemoteViews padding alone does not constrain a match_parent TextClock's autoSize to the intended small circle region consistently. Use supported native RemoteViews geometry: explicit allocated cell-size views positioned via supported relative/frame structure or supported layout-width/margin RemoteViews APIs verified against compileSDK, with a FIXED text size derived from actual fitted circle size. No reliance on autosize over full canvas; remove autosize config if necessary. Hour/minute/AMPM each fit their separate source cell, never overlap. Size calculation must use actual host width AND height and bitmap fitCenter/letterbox transform, not pretend square when host is portrait. Same transform for static grid and live overlays. Can use a clean supported RelativeLayout row/columns with calibrated weights if truly matches normalized grid, but no raw View. Maintain actual live native TextClock in no-access fallback, not frozen time. Test at portrait default and square resize.
+          STYLED: increase ink occupancy within circle, current TEXT_INK_FRACTION .62 applied to already .72radius-inset causes tiny numerals; use measured DotGlyphFont actual width/height bounds and source-like ~60percent circle diameter ink. Make digits readable at host default. Center source square content in portrait host instead of drawing stretched rounded background or tiny top-left grid; fit full4x4 matrix into square short side with honest letterbox. Use app-owned dot glyphs only.
+          GEOMETRY: render sanitized source joint/bridge layers, currently deliberately omitted. Source preview has red bridge joining top-left hour/minute circles, accent bridges forming time-dependent linked dots (minute thresholds including >19). Derive exact positions/visibility/colours from source JSON, do not invent random connectors or illuminate all. Keep source proportions and dynamic state; joint curves must meet circles smoothly. Add tests for transforms, distinct live bounds, glyph fit and representative minute-state bridge logic. No newpermissions/services/dependencies/fonts. Optional alarm accessoff dotcolour refresh limitation remains stated truthfully. Preserve updater/timezone/boot/tap. Build/test/lint after change. Do not claim runtimeverified or fullcollection. Focuseditfirst3min, finishby9min. Freeonly/private/no launcher changes.
+          TASK
+          timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          rm -f checkpoints/dotwel-widgets-polish-debug.apk checkpoints/POLISH-SHA256SUMS
+          bash ./gradlew assembleDebug testDebugUnitTest --no-daemon
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug --no-daemon
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
