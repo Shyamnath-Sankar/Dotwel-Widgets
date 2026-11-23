@@ -1,4 +1,4 @@
-name: Repaired Quotes tap and World live minute check
+name: Actual KWGT Date Time placement and live minute
 on:
   workflow_dispatch:
 permissions:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 3d3d637e91488e7f2a2b24a2964806ff46db421f
+          ref: 28172731351f177eb52af7c99b52f8a0b54b925f
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -83,19 +83,29 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='f6e3cdeafdbaff12b64d72a71ad724d56ee5f4667a1c682516b2aef593585d94':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='1f4320bbf0905371fd603f095745f01c51ba23a0a4d40849bb79eaf71eafad33':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            adb('shell','settings','put','system','font_scale','1.3');adb('shell','am','force-stop',PKG);start();cap('02-gallery-large-font');adb('shell','settings','put','system','font_scale','1.0')
-           test('quotes',lambda:pin('Add Quotes','quotes'))
-           r=locate('widget_quotes_bitmap','home-quotes-before');n=find(r,'widget_quotes_bitmap');before=adb('shell','run-as',PKG,'cat','shared_prefs/dotwel_quotes.xml',check=False).decode()
-           click(n);time.sleep(1);cap('home-quotes-after');after=adb('shell','run-as',PKG,'cat','shared_prefs/dotwel_quotes.xml',check=False).decode();report['quote_prefs']={'before':before,'after':after}
-           if before==after:raise RuntimeError('Quote tap did not advance')
-           test('world',lambda:pin('Add World Clock','world'))
-           r=locate('world_clock_a','world-live-before');before=find(r,'world_clock_a').get('text','')
+           test('kwgt_datetime',lambda:pin('Add KWGT Date Time','kwgt-datetime','Add live analog fallback'))
+           r=locate('kwgt_time','home-kwgt-live-before');before=find(r,'kwgt_time').get('text','')
            adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
-           r=locate('world_clock_a','world-live-after');after=find(r,'world_clock_a').get('text','');expected=adb('shell','date','+%H:%M').decode().strip();report['world_live_minute']={'before':before,'after':after,'device':expected}
-           if before==after or expected not in after:raise RuntimeError('World native denied-access minute failed')
-           report['tests']['world_live_minute']='passed'
+           r=locate('kwgt_time','home-kwgt-live-after');after=find(r,'kwgt_time').get('text','');expected=adb('shell','date','+%I:%M%p').decode().strip();report['kwgt_live_minute']={'before':before,'after':after,'device':expected}
+           if before==after or expected.upper()!=after.replace(' ','').upper():raise RuntimeError('KWGT native live minute failed')
+           report['tests']['kwgt_live_minute']='passed'
+           start();cap('gallery-after-live');click(button('Enable'))
+           for i in range(8):
+            r=tree();n=next((n for n in r.iter('node') if n.get('checkable')=='true'),None)
+            if n is not None:break
+            time.sleep(1)
+           cap('native-alarm-access')
+           if n is None:raise RuntimeError('No Android toggle')
+           if n.get('checked')!='true':click(n)
+           adb('shell','input','keyevent','4');start();cap('gallery-styled')
+           locate('widget_kwgt_datetime_bitmap','home-kwgt-styled-before')
+           adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
+           locate('widget_kwgt_datetime_bitmap','home-kwgt-styled-after');report['tests']['styled_after_process_kill']='captured, image time comparison required'
+           (OUT/'appwidget-dump.txt').write_bytes(adb('shell','dumpsys','appwidget'))
+          
           except Exception as e:report['error']=str(e);cap('99-fatal')
           finally:
            (OUT/'RESULT.json').write_text(json.dumps(report,indent=2));(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','3500',check=False));print(json.dumps(report,indent=2))
