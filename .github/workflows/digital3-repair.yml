@@ -1,0 +1,83 @@
+name: Repair Digital3 manifest and finish integration
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 437bb74cd2d3bd09eeee88091050200cdde1d38f
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/digital3-repair-${GITHUB_RUN_ID}"
+      - name: Apply reference-led widget browser and renderer polish
+        timeout-minutes: 11
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          cat > /tmp/widget-task.txt <<'TASK'
+          Repair the incomplete Digital3 import saved at 437bb74 now, do not restart the implementation. assembleDebug and lintDebug failed because AndroidManifest.xml cannot be parsed. Inspect/fix malformed XML FIRST, validate ALL app/src/main XML files with Python ElementTree. Then build immediately and fix remaining compile/resource/lint errors. Existing Kotlin compile completed with warnings only. Confirm Digital3 is fully wired as a real 14th provider (8th KWGT) in catalog Clock seventh variant, preview, Add/native pin metadata, WidgetUpdater, minute scheduler, boot/timezone/resize and Clock tap ACTION_SHOW_ALARMS. Preserve all 13 older providers exactly. Do not cosmetic-rewrite the renderer. Read actual source/sanitized Nothing_Digital3 JSON for intended minute-driven grid and time text, do not infer design from this brief. Optional alarm access off must give LIVE TextClock time, not frozen bitmap; represent any static minute-grid fallback honestly. Access on uses existing minute scheduler and updates after process kill. RemoteViews supported controls only, never raw View. No new permissions/services/dependencies/font payloads. App-owned dots only. Remove inherited stale checkpoint APK before build; workflow copies fresh APK on success. Actual source attribution/sanitized JSON (no email/font payload) retained. Add/execute layout tests where practical; report honestly if not run. End coding by minute9. No research/install/rewrite loop. Keep existing PRIVATE repo and launcher untouched, free model only. Do not claim runtime-tested or full collection complete.
+          TASK
+          timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          rm -f checkpoints/dotwel-widgets-polish-debug.apk checkpoints/POLISH-SHA256SUMS
+          bash ./gradlew assembleDebug testDebugUnitTest --no-daemon
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug --no-daemon
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
