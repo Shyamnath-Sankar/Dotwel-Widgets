@@ -1,0 +1,21 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "pin_clock-plain": "Native confirmation accepted",
+    "clock_plain": "passed",
+    "home_plain": "passed",
+    "enable_setup": "passed",
+    "freshness": "passed"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "6ff87b965ba7ece5eca5da792a61581f5db996e8f129178ca004296bb5c1d556",
+  "ordinary_kill_pid": "",
+  "freshness": {
+    "before": "Dotwel clock, 07:19",
+    "after": "Dotwel clock, 07:20",
+    "device": "07:20",
+    "death": "am kill only, no force-stop after access setup"
+  }
+}
