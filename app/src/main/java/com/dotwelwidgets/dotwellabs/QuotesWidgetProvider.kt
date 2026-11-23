@@ -76,6 +76,14 @@ class QuotesWidgetProvider : BaseWidgetProvider() {
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
         val style = WidgetPrefs.style(context)
         val quote = QuotePrefs.quoteForToday(context)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            appWidgetId,
+            Intent(context, QuotesWidgetProvider::class.java).apply {
+                action = ACTION_NEXT
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
         val views = buildBitmapViews(
             context,
             appWidgetId,
@@ -86,16 +94,8 @@ class QuotesWidgetProvider : BaseWidgetProvider() {
             },
         ) decorate@{ remote, _ ->
             remote.setTextColor(R.id.quotes_fallback, UpstreamNtDraw.ink(context, style))
+            remote.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
         }
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            appWidgetId,
-            Intent(context, QuotesWidgetProvider::class.java).apply {
-                action = ACTION_NEXT
-            },
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-        views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
         return views
     }
 
