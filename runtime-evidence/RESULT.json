@@ -1,0 +1,14 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "cancel_clock": "passed",
+    "pin_clock-plain": "Native confirmation accepted",
+    "clock_plain": "passed",
+    "home_plain": "passed",
+    "enable_setup": "passed"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "6ff87b965ba7ece5eca5da792a61581f5db996e8f129178ca004296bb5c1d556"
+}
