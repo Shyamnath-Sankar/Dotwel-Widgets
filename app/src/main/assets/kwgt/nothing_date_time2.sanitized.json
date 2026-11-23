@@ -1,0 +1,95 @@
+{
+  "provenance": {
+    "source": "https://github.com/AumGupta/KWGT-Widgets",
+    "file": "widgets/Nothing_Date_Time2.kwgt!preset.json",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": "Author font payloads, tap intents and any email fields were removed. Layer geometry and formulas only."
+  },
+  "preset_info": {
+    "author": "Om Gupta",
+    "title": "NothingDateTime2",
+    "version": 13,
+    "width": 415,
+    "height": 542,
+    "features": "ANALOG_CLOCK"
+  },
+  "globals": {
+    "side": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$",
+    "bg": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$",
+    "fg": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$",
+    "primary": "#FFD71921"
+  },
+  "background": {
+    "type": "ShapeModule",
+    "shape_width": "side",
+    "shape_height": "h",
+    "shape_corners_formula": "$gv(side)/5$"
+  },
+  "date_stack": {
+    "type": "StackLayerModule",
+    "position_offset_x_formula": "$gv(side)/8.5$",
+    "position_offset_y": 10.0,
+    "config_margin": -18.0,
+    "weekday": {
+      "expression": "$df(EEE)$",
+      "text_size_formula": "$gv(side)/10$",
+      "paint_color": "fg"
+    },
+    "day": {
+      "expression": "$df(d)$",
+      "text_size_formula": "$gv(side)/4$",
+      "paint_color": "primary"
+    }
+  },
+  "clock_group": {
+    "type": "StackLayerModule",
+    "config_stacking": "VERTICAL_RIGHT",
+    "config_margin": -12.0,
+    "position_padding_left_formula": "$gv(side)/2.5$",
+    "config_margin_formula": "-$gv(side)/23.079$",
+    "hour_row": {
+      "stacking": "HORIZONTAL_CENTER",
+      "rotation": "CLOCK_HOUR_SMOOTH",
+      "disc": {
+        "shape_type": "CIRCLE",
+        "shape_width_formula": "$gv(side)/5$",
+        "paint_color": "fg"
+      },
+      "notch": {
+        "shape_type": "RECT",
+        "shape_width_formula": "$gv(side)/69.25$",
+        "shape_height_formula": "$gv(side)/28$",
+        "position_padding_bottom_formula": "$gv(side)/6.1$",
+        "paint_color": "bg"
+      },
+      "text": {
+        "expression": "$df(hh)$",
+        "text_size_formula": "$gv(side)/10$",
+        "paint_color": "fg"
+      }
+    },
+    "minute_row": {
+      "stacking": "HORIZONTAL_CENTER",
+      "rotation": "CLOCK_MINUTE",
+      "disc": {
+        "shape_type": "CIRCLE",
+        "shape_width_formula": "$gv(side)/5$",
+        "paint_color": "primary"
+      },
+      "notch": {
+        "shape_type": "RECT",
+        "shape_width_formula": "$gv(side)/69.25$",
+        "shape_height_formula": "$gv(side)/12$",
+        "position_padding_bottom_formula": "$gv(side)/8.5$",
+        "paint_color": "bg"
+      },
+      "text": {
+        "expression": "$df(mm)$",
+        "text_size_formula": "$gv(side)/10$",
+        "paint_color": "fg"
+      }
+    }
+  }
+}

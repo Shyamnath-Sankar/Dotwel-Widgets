@@ -103,6 +103,14 @@ object WidgetPreviewRenderer {
                 now,
                 includeBackground = false,
             )
+            PreviewKind.KWGT_DATE_TIME_2 -> KwgtDateTime2Renderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                now,
+                includeBackground = false,
+            )
             PreviewKind.PLACEHOLDER -> placeholder(context, entry, size.width, size.height, style)
         }
     }
@@ -113,6 +121,7 @@ object WidgetPreviewRenderer {
         PreviewKind.ANALOG_SCALE,
         PreviewKind.WORLD,
         PreviewKind.KWGT_DATE_TIME,
+        PreviewKind.KWGT_DATE_TIME_2,
         -> true
         else -> false
     }

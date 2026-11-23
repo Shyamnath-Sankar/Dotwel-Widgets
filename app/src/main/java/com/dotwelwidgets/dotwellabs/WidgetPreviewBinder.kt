@@ -9,6 +9,7 @@ import android.widget.AnalogClock
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextClock
 import android.widget.TextView
 import java.util.Calendar
@@ -110,6 +111,12 @@ object WidgetPreviewBinder {
             PreviewKind.KWGT_DATE_TIME -> {
                 container.addView(
                     dateTimeFallback(context, style, height, ink, accent),
+                    matchParams(),
+                )
+            }
+            PreviewKind.KWGT_DATE_TIME_2 -> {
+                container.addView(
+                    dateTime2Fallback(context, style, height, ink, accent),
                     matchParams(),
                 )
             }
@@ -267,6 +274,75 @@ object WidgetPreviewBinder {
         maxLines = 1
         typeface = Typeface.MONOSPACE
         setTypeface(typeface, Typeface.BOLD)
+    }
+
+
+    private fun dateTime2Fallback(
+        context: Context,
+        style: WidgetStyle,
+        heightPx: Int,
+        ink: Int,
+        accent: Int,
+    ): RelativeLayout {
+        val density = context.resources.displayMetrics.density
+        val base = ((heightPx / density) / 5f * 0.55f).coerceIn(8f, 28f)
+        val root = RelativeLayout(context)
+        val dateStack = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(context, 12), dp(context, 6), 0, 0)
+        }
+        dateStack.addView(sourceClock(context, "EEE", ink, base * 0.9f))
+        dateStack.addView(sourceClock(context, "d", accent, base * 2.4f, bold = true))
+        val dateParams = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+        ).apply {
+            addRule(RelativeLayout.ALIGN_PARENT_START)
+            addRule(RelativeLayout.ALIGN_PARENT_TOP)
+        }
+        root.addView(dateStack, dateParams)
+
+        val timeStack = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.END
+            setPadding(0, 0, dp(context, 12), dp(context, 6))
+        }
+        timeStack.addView(sourceClock(context, "hh", ink, base * 1.1f))
+        timeStack.addView(
+            sourceClock(context, "mm", ink, base * 1.1f).apply {
+                gravity = Gravity.END
+            },
+        )
+        val timeParams = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+        ).apply {
+            addRule(RelativeLayout.ALIGN_PARENT_END)
+            addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        }
+        root.addView(timeStack, timeParams)
+        return root
+    }
+
+    private fun sourceClock(
+        context: Context,
+        format: String,
+        color: Int,
+        sizeSp: Float,
+        bold: Boolean = false,
+    ): TextClock = TextClock(context).apply {
+        setFormat12Hour(format)
+        setFormat24Hour(
+            when (format) {
+                "hh" -> "HH"
+                else -> format
+            },
+        )
+        setTextColor(color)
+        textSize = sizeSp
+        includeFontPadding = false
+        maxLines = 1
+        typeface = Typeface.create(Typeface.SERIF, if (bold) Typeface.BOLD else Typeface.NORMAL)
     }
 
     private fun matchParams(): FrameLayout.LayoutParams =

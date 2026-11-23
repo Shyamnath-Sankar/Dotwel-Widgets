@@ -31,6 +31,7 @@ enum class PreviewKind {
     KWGT_BATTERY,
     KWGT_BATTERY_MINI,
     KWGT_DATE_TIME,
+    KWGT_DATE_TIME_2,
     PLACEHOLDER,
 }
 
@@ -245,6 +246,19 @@ object WidgetCatalog {
             action = CardAction.CLOCK_ACCESS,
         ),
         CatalogEntry(
+            id = "kwgt_nothing_date_time2",
+            name = "KWGT Date Time 2",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Date_Time2 · EEE / huge d / hour and minute disc rows",
+            descriptionRes = R.string.catalog_kwgt_date_time2_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_DATE_TIME_2,
+            providerClass = KwgtDateTime2WidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_DATE_TIME_2,
+            action = CardAction.CLOCK_ACCESS,
+        ),
+        CatalogEntry(
             id = "compass",
             name = "Compass",
             group = WidgetGroup.MEDIA,
@@ -343,7 +357,7 @@ enum class WidgetCategory(
     CALENDAR(
         "calendar",
         R.string.category_calendar,
-        listOf("date", "kwgt_nothing_date_time"),
+        listOf("date", "kwgt_nothing_date_time", "kwgt_nothing_date_time2"),
     ),
     BATTERY(
         "battery",
@@ -413,7 +427,9 @@ object WidgetModeLabels {
             PreviewKind.QUOTES -> R.string.mode_quote
             PreviewKind.KWGT_BATTERY -> R.string.mode_battery
             PreviewKind.KWGT_BATTERY_MINI -> R.string.mode_battery_mini
-            PreviewKind.KWGT_DATE_TIME -> if (access) {
+            PreviewKind.KWGT_DATE_TIME,
+            PreviewKind.KWGT_DATE_TIME_2,
+            -> if (access) {
                 R.string.mode_kwgt_datetime_styled
             } else {
                 R.string.mode_kwgt_datetime_live

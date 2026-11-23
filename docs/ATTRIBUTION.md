@@ -105,16 +105,29 @@ the app from About & source credits > View MIT license texts.
   glyphs visibly fill their line box, the renderer uses a positive clear gap
   and fits the stack inside the host height. That is a documented legibility
   adaptation, not pixel-exact upstream geometry. Runtime is not claimed here.
+- `widgets/Nothing_Date_Time2.kwgt!preset.json` -> `KwgtDateTime2Renderer.kt`,
+  `KwgtDateTime2WidgetProvider.kt`, and the sanitized data model
+  `app/src/main/assets/kwgt/nothing_date_time2.sanitized.json`. Retained: the
+  upper-left weekday over the huge red day, the lower-right hour and minute
+  rows, the author side/8.5 offset, side/10 weekday and clock text, side/4 day
+  text, side/5 discs, side/2.5 clock-group padding, smooth hour rotation
+  `(hour + minute / 60) * 30`, minute rotation `minute * 6`, and the side/69.25
+  notch width with side/28 hour and side/12 minute lengths and their source
+  offsets. The NType82 regular/headline fonts are replaced by the Android
+  platform serif regular and bold families; no upstream font file is bundled.
+  The source tap intents and font payloads are omitted from the sanitized asset.
+  Runtime is not claimed here.
 - The author's sweep-gradient disc is rendered as a level-scaled arc plus a faint
   disc and track so the gauge remains readable at small widget sizes. This is a
   documented rendering substitution, not a claim of pixel-identical output.
-- Sanitized out: the author email in `preset_info`, the background `SINGLE_TAP`
-  intent string, and the bundled `ndot-47.ttf` font reference. Dotwel's original
-  dot glyphs replace the font.
+- Sanitized out: author email fields, source `SINGLE_TAP` intent strings, font
+  family payloads, and bundled font references including `ndot-47.ttf`.
+  Dotwel's original dot glyphs or the documented platform font substitution
+  replace the fonts.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
-  `Nothing_Battery`, `Nothing_Battery_Mini`, and `Nothing_Date_Time` are
-  implemented in this checkpoint; the rest remain pending or dependency-blocked and are not claimed
-  as imported.
+  `Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`, and
+  `Nothing_Date_Time2` are implemented in this checkpoint; the rest remain
+  pending or dependency-blocked and are not claimed as imported.
 
 ## Not included
 

@@ -18,6 +18,7 @@ object MinuteTickScheduler {
         AnalogScaleWidgetProvider::class.java,
         WorldWidgetProvider::class.java,
         KwgtDateTimeWidgetProvider::class.java,
+        KwgtDateTime2WidgetProvider::class.java,
     )
 
     fun hasExactAccess(context: Context): Boolean {

@@ -4,11 +4,12 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 ## Current checkpoint (0.1.7, versionCode 8)
 
 - `com.dotwelwidgets.dotwellabs`, minSdk 26, compile/target SDK 36.
-- Nine registered providers: dot clock, date, Analog Bold, Analog Scale, world
-  clock, quotes, and native Nothing Battery, Nothing Battery Mini, and
-  Nothing Date Time conversions from the MIT KWGT-Widgets presets. The full
-  40-preset source-port status is in `docs/KWGT-LEDGER.md`; only those three
-  presets are implemented, the rest remain pending or dependency-blocked.
+- Ten registered providers: dot clock, date, Analog Bold, Analog Scale, world
+  clock, quotes, and native Nothing Battery, Nothing Battery Mini,
+  Nothing Date Time, and Nothing Date Time 2 conversions from the MIT
+  KWGT-Widgets presets. The full 40-preset source-port status is in
+  `docs/KWGT-LEDGER.md`; only those four presets are implemented, the rest
+  remain pending or dependency-blocked.
 - The front screen is a category grid: a dotted HOME heading, a short subtitle,
   an actionable dotted-update control, and rounded square category tiles with a
   real representative preview or a Dotwel motif. Each tile shows the category
@@ -19,7 +20,7 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   categories stay visible with `0 ready` and add nothing. Add asks the current
   launcher to pin the matching provider through the platform request-pin API;
   the launcher owns the confirmation. Unsupported pinning shows a readable manual
-  HOME > Widgets path. The 17 not-yet-available catalog items are collapsed
+  HOME > Widgets path. The 16 not-yet-available catalog items are collapsed
   under an Upcoming section with an honest reason on expansion, so they do not
   obscure the available collection.
 - Clock and analog previews follow the real current mode. With Alarms &

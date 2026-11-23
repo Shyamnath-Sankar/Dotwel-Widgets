@@ -39,7 +39,7 @@ without a prohibited capability or unresolved third-party rights.
 | 20 | `Nothing_Battery_Mini` | **implemented** | Native `BatteryMiniWidgetProvider`; real system level; runtime unverified. |
 | 21 | `Nothing_CPU` | dependency | Per-process CPU/system usage needs restricted or unreliable data paths. |
 | 22 | `Nothing_Date_Time` | **implemented** | Native `KwgtDateTimeWidgetProvider`; live text clocks without optional exact-alarm access; runtime unverified. |
-| 23 | `Nothing_Date_Time2` | pending | Text/date layer conversion queued. |
+| 23 | `Nothing_Date_Time2` | **implemented** | Native `KwgtDateTime2WidgetProvider`; upper-left date stack plus lower-right hour/minute discs; live text fallback without exact-alarm access; runtime unverified. |
 | 24 | `Nothing_Date_Time3` | pending | Depends on the pending Open-Meteo weather/temperature/AQI path. |
 | 25 | `Nothing_Digital` | pending | Digital layer conversion queued; can reuse the existing minute schedule. |
 | 26 | `Nothing_Digital2` | pending | Digital layer conversion queued; can reuse the existing minute schedule. |
@@ -60,10 +60,13 @@ without a prohibited capability or unresolved third-party rights.
 
 ## Implemented in this checkpoint
 
-`Nothing_Battery` and `Nothing_Battery_Mini` have real native providers in
-0.1.7. Their sanitized `preset.json` transcriptions are
-`app/src/main/assets/kwgt/nothing_battery.sanitized.json` and
-`app/src/main/assets/kwgt/nothing_battery_mini.sanitized.json`.
+`Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`, and
+`Nothing_Date_Time2` have real native providers in this source tree. Their
+sanitized `preset.json` transcriptions are
+`app/src/main/assets/kwgt/nothing_battery.sanitized.json`,
+`app/src/main/assets/kwgt/nothing_battery_mini.sanitized.json`,
+`app/src/main/assets/kwgt/nothing_date_time.sanitized.json`, and
+`app/src/main/assets/kwgt/nothing_date_time2.sanitized.json`.
 
 Nothing_Battery keeps these author relationships:
 
@@ -83,6 +86,25 @@ Nothing_Battery_Mini keeps the author's eleven `ProgressModule` sizes
 `progress_level = bi(level)`, primary `#FFD71921` arc and translucent accent
 track. It has no text layer in the source preset; Dotwel adds a centered
 real-level dot readout for legibility without inventing charge state.
+
+
+Nothing_Date_Time2 keeps these author relationships:
+
+- `side = if(rwidth > rheight, rheight, rwidth)`
+- weekday `EEE` at `side / 10`, huge `d` at `side / 4`
+- left information offset `side / 8.5` and rounded corners `side / 5`
+- lower-right clock group padding left `side / 2.5`
+- hour and minute discs `side / 5` diameter
+- hour smooth rotation `(hour + minute / 60) * 30`, minute rotation `minute * 6`
+- notch width `side / 69.25`; hour notch length `side / 28` with `side / 6.1`
+  offset; minute notch length `side / 12` with `side / 8.5` offset
+- primary red `#FFD71921`
+
+The source NType82 regular/headline fonts are replaced by the Android platform
+serif regular and bold families. The source tap intents and font payloads are
+removed from the sanitized asset. Without optional exact-alarm access the
+provider uses live platform TextClocks in the matching regions and does not
+draw any analog disc, so no frozen minute is presented.
 
 Sanitized out of the assets and implementations: the author email, the background
 `SINGLE_TAP` intent string, and the bundled `ndot-47.ttf`. Dotwel's original

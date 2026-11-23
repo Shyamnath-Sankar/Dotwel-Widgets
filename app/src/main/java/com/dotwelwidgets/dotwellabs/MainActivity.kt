@@ -715,7 +715,8 @@ class MainActivity : Activity() {
 
     private fun showMinuteAccessDialog(entry: CatalogEntry) {
         val clock = entry.id == "digital"
-        val dateTime = entry.previewKind == PreviewKind.KWGT_DATE_TIME
+        val dateTime = entry.previewKind == PreviewKind.KWGT_DATE_TIME ||
+            entry.previewKind == PreviewKind.KWGT_DATE_TIME_2
         val title = when {
             clock -> R.string.clock_access_dialog_title
             dateTime -> R.string.kwgt_datetime_access_dialog_title
