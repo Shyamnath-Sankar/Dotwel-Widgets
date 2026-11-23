@@ -1,0 +1,11 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "native_category_kwgt": "selected fifth Clock variant and confirmed"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "f1b66d3db677afc881925d8d1d75dbb0948eee10e11068ff3ec2e8836f8f4a5a",
+  "error": "HOME view missing kwgt_digital4_minute"
+}
