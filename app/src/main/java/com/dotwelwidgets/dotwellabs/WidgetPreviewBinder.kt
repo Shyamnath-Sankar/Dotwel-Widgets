@@ -148,6 +148,44 @@ object WidgetPreviewBinder {
                     matchParams(),
                 )
             }
+            PreviewKind.KWGT_BATTERY_2 -> {
+                val snapshot = Battery2State.snapshot(context)
+                val estimate = KwgtBattery2Renderer.estimate(
+                    snapshot.level,
+                    snapshot.charging,
+                    snapshot.remainingMillis,
+                )
+                val fallbackText = when (estimate.kind) {
+                    KwgtBattery2Renderer.EstimateKind.FULL -> context.getString(
+                        R.string.kwgt_battery2_fallback_full,
+                        snapshot.level,
+                    )
+                    KwgtBattery2Renderer.EstimateKind.TO_FULL -> context.getString(
+                        R.string.kwgt_battery2_fallback_to_full,
+                        snapshot.level,
+                        estimate.valueText,
+                    )
+                    KwgtBattery2Renderer.EstimateKind.UNAVAILABLE -> context.getString(
+                        R.string.kwgt_battery2_fallback_unknown,
+                        snapshot.level,
+                    )
+                }
+                container.addView(
+                    TextView(context).apply {
+                        text = fallbackText
+                        setTextColor(ink)
+                        gravity = Gravity.CENTER
+                        textSize = 12f
+                        setPadding(
+                            dp(context, 10),
+                            dp(context, 10),
+                            dp(context, 10),
+                            dp(context, 10),
+                        )
+                    },
+                    matchParams(),
+                )
+            }
             else -> {
                 container.addView(
                     TextView(context).apply {

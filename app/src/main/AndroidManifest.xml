@@ -123,6 +123,22 @@
         </receiver>
 
         <receiver
+            android:name=".KwgtBattery2WidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_battery2_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+                <action android:name="android.intent.action.POWER_CONNECTED" />
+                <action android:name="android.intent.action.POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_battery2_widget_info" />
+        </receiver>
+
+        <receiver
             android:name=".KwgtDateTimeWidgetProvider"
             android:exported="true"
             android:label="@string/widget_kwgt_datetime_label">

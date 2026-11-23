@@ -2,7 +2,46 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/clean-host-45232311604`, based on `c98e068`.
+- Branch: `agent/kwgt-battery2-45241892862`, based on `391f2b6`.
+
+## KWGT Nothing_Battery2 native port
+
+- Added the 16th provider and 10th KWGT source port,
+  `KwgtBattery2WidgetProvider`, as a distinct catalog entry `KWGT Battery2`
+  (`kwgt_nothing_battery2`) under the existing battery category. No alias of
+  `BatteryWidgetProvider` or `BatteryMiniWidgetProvider`; their files and
+  behaviour are unchanged.
+- Source: pinned `Nothing_Battery2.kwgt!preset.json` at
+  `96ca27be4cbff35efec5a86c64dd39fd065c958f`. Actual canvas 415x542, dark
+  `#FF1B1B1D` / light white, opposite foreground, accent at 50% alpha, rounded
+  corners `side / 5`, information offset `side / 8.5`, BATTERY label `side / 18`
+  with 16 bottom padding, outlined body 195x78 corners 14 stroke 3.5, clip
+  179x64 corners 7, 16 rectangular progress segments across 184x64, pill nub
+  5x28 with a 5 margin, level `side / 4.5`, percent `side / 10`, bottom row
+  `side / 15` with an 8 margin.
+- Literal body/clip/progress/nub values are scaled from the author 277 design
+  reference by `side / 277`; formula sizes use `side`. The source has no `h`
+  global, so the background follows the host height and the whole stack is
+  centred instead of reproducing the missing height.
+- The source `ndot-47.ttf` is not used. Dotwel's existing original dot glyphs
+  draw BATTERY and the large level; the long honest status uses platform
+  sans-serif.
+- Real level comes from the existing `BatteryState` path. Charging comes from
+  `BatteryManager.isCharging`; a positive `computeChargeTimeRemaining()` is the
+  only time value shown, labelled `TO FULL`. Unknown or discharging states show
+  `--` and `ESTIMATE UNAVAILABLE`; 100% shows `FULL` only. No discharge estimate
+  is fabricated.
+- Updates: `APPWIDGET_UPDATE`, `BATTERY_CHANGED`, `POWER_CONNECTED`,
+  `POWER_DISCONNECTED`, `BOOT_COMPLETED`, resize/options, app refresh and the
+  existing 30-minute inexact widget period. No new permission, network, service,
+  dependency, font or artwork.
+- Tap tries `ACTION_POWER_USAGE_SUMMARY` and falls back to a known Settings
+  screen when no activity resolves.
+- Preview uses the same `KwgtBattery2Renderer`; Add/pin/provider-info, catalog
+  count 16 and pin confirmation are wired. The sanitized asset is
+  `app/src/main/assets/kwgt/nothing_battery2.sanitized.json` with email, events
+  and font paths removed. Ledger now records 10 of 40 implemented and 16
+  providers, all runtime-unverified.
 
 ## CleanInfo compatibility fixes
 
@@ -85,6 +124,20 @@
   `SCHEDULE_EXACT_ALARM` permission is unchanged. The sanitized Digital3 JSON
   and MIT attribution remain, with the ledger/attribution rows updated.
 
+## Verified here (Battery2)
+
+```
+python3 ElementTree parse of app/src/main/**/*.xml   -> 54 files, 0 errors
+./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+```
+
+Result: `BUILD SUCCESSFUL`; 45 unit/layout tests passed (0 failures, 0 errors),
+including 5 new `KwgtBattery2RendererLayoutTest` geometry, 16-segment, level
+clamp and unknown-estimate assertions; lint `0 errors, 125 warnings`. The debug
+APK is `app/build/outputs/apk/debug/app-debug.apk` and is build-verified only,
+not runtime-verified. No placement, resize, battery broadcast, tap destination,
+segment pixels or charging-estimate runtime is claimed here.
+
 ## Verified here
 
 ```
@@ -105,8 +158,8 @@ build-verified only, not runtime-verified.
   minute advance, process-kill recovery, boot/timezone refresh, tap behaviour and
   visual output for CleanInfo (and the other providers) are not runtime-verified.
   No screenshot or runtime pass is claimed.
-- The KWGT collection is still incomplete: 8 of 40 presets are implemented; the
-  remaining 32 stay pending or dependency-blocked and are not claimed as
+- The KWGT collection is still incomplete: 10 of 40 presets are implemented; the
+  remaining 30 stay pending or dependency-blocked and are not claimed as
   imported.
 - Weather, Photo, Away, Compass, Snake, media/notification, CPU and iOS
   Komponent presets remain pending or blocked.

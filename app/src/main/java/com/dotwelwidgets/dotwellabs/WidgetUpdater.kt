@@ -16,6 +16,7 @@ object WidgetUpdater {
         QuotesWidgetProvider::class.java,
         BatteryWidgetProvider::class.java,
         BatteryMiniWidgetProvider::class.java,
+        KwgtBattery2WidgetProvider::class.java,
         KwgtDateTimeWidgetProvider::class.java,
         KwgtDateTime2WidgetProvider::class.java,
         KwgtDigital4WidgetProvider::class.java,

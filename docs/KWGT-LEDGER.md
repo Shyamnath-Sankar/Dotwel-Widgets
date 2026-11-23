@@ -35,7 +35,7 @@ without a prohibited capability or unresolved third-party rights.
 | 16 | `Nothing_Analog_5` | pending | Analog layer conversion queued. |
 | 17 | `Nothing_Analog_5_Transparent` | pending | Analog layer conversion queued. |
 | 18 | `Nothing_Battery` | **implemented** | Native `BatteryWidgetProvider`; real system level; runtime unverified. |
-| 19 | `Nothing_Battery2` | pending | Implementable next; needs progress bar, charging state and remaining-time translation. |
+| 19 | `Nothing_Battery2` | **implemented** | Native `KwgtBattery2WidgetProvider`; rounded surface, outlined 16-segment body with clip and nub, real level, system charging state and only real `computeChargeTimeRemaining` values; unknown estimates show `--` / `ESTIMATE UNAVAILABLE`; runtime unverified. |
 | 20 | `Nothing_Battery_Mini` | **implemented** | Native `BatteryMiniWidgetProvider`; real system level; runtime unverified. |
 | 21 | `Nothing_CPU` | dependency | Per-process CPU/system usage needs restricted or unreliable data paths. |
 | 22 | `Nothing_Date_Time` | **implemented** | Native `KwgtDateTimeWidgetProvider`; live text clocks without optional exact-alarm access; runtime unverified. |
@@ -60,14 +60,15 @@ without a prohibited capability or unresolved third-party rights.
 
 ## Implemented in this checkpoint
 
-Nine of the 40 presets now have native providers: `Clean_Time_Date_Info`,
-`Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
-`Nothing_Date_Time2`, `Nothing_Digital`, `Nothing_Digital3`, `Nothing_Digital4`
-and `Nothing_Mini_Calender`. All 15 registered providers are build-verified only
-and remain runtime-unverified in this checkpoint. The sanitized transcriptions
-are under `app/src/main/assets/kwgt/`, including
+Ten of the 40 presets now have native providers: `Clean_Time_Date_Info`,
+`Nothing_Battery`, `Nothing_Battery2`, `Nothing_Battery_Mini`,
+`Nothing_Date_Time`, `Nothing_Date_Time2`, `Nothing_Digital`, `Nothing_Digital3`,
+`Nothing_Digital4` and `Nothing_Mini_Calender`. All 16 registered providers are
+build-verified only and remain runtime-unverified in this checkpoint. The
+sanitized transcriptions are under `app/src/main/assets/kwgt/`, including
 `clean_time_date_info.sanitized.json`,
-`nothing_battery.sanitized.json`, `nothing_battery_mini.sanitized.json`,
+`nothing_battery.sanitized.json`, `nothing_battery2.sanitized.json`,
+`nothing_battery_mini.sanitized.json`,
 `nothing_date_time.sanitized.json`, `nothing_date_time2.sanitized.json`,
 `nothing_digital.sanitized.json`, `nothing_digital3.sanitized.json`,
 `nothing_digital4.sanitized.json`, and
@@ -117,6 +118,34 @@ Nothing_Battery_Mini keeps the author's eleven `ProgressModule` sizes
 track. It has no text layer in the source preset; Dotwel adds a centered
 real-level dot readout for legibility without inventing charge state.
 
+
+Nothing_Battery2 keeps these author relationships:
+
+- source canvas 415 x 542; `side = min(width, height)` and rounded background
+  corners `side / 5`
+- dark `#FF1B1B1D` / light white surface with the opposite foreground; accent is
+  foreground at 50% alpha
+- information stack offset `side / 8.5`; BATTERY label `side / 18` with 16 bottom
+  padding
+- outlined body 195 x 78, corners 14, stroke 3.5; clip 179 x 64, corners 7; 16
+  rectangular progress segments across 184 x 64; pill nub 5 x 28 with a 5 margin
+- large level `side / 4.5`, smaller percent `side / 10`, bottom row `side / 15`
+  with an 8 margin
+- the `primary` global has no value, so the explicit REMAINING paint
+  `#FFD71921` is retained for the red status
+
+The source has no `h` global, so the background follows the host height and the
+whole stack is centred rather than reproducing the missing height. Body, clip,
+progress and nub literals are scaled from the author 277 design reference by
+`side / 277`; formula sizes use `side` directly. The source `ndot-47.ttf` is
+replaced by Dotwel's original dot glyphs for BATTERY and the large level, with
+the Android platform sans-serif family for the long honest status copy. Android
+does not expose a reliable discharge-time estimate. When charging, a positive
+`BatteryManager.computeChargeTimeRemaining()` result is shown as `H` / `M` with
+`TO FULL`; otherwise the row shows `--` and `ESTIMATE UNAVAILABLE`. At 100% only
+`FULL` is shown, with no invented time. The tap tries
+`ACTION_POWER_USAGE_SUMMARY` and falls back to a known Settings screen when no
+activity resolves. Runtime is not claimed here.
 
 Nothing_Date_Time2 keeps these author relationships:
 

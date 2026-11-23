@@ -30,6 +30,7 @@ enum class PreviewKind {
     QUOTES,
     KWGT_BATTERY,
     KWGT_BATTERY_MINI,
+    KWGT_BATTERY_2,
     KWGT_DATE_TIME,
     KWGT_DATE_TIME_2,
     KWGT_DIGITAL_3,
@@ -236,6 +237,18 @@ object WidgetCatalog {
             previewKind = PreviewKind.KWGT_BATTERY_MINI,
             providerClass = BatteryMiniWidgetProvider::class.java,
             pinKind = PinResultReceiver.PIN_KIND_BATTERY_MINI,
+        ),
+        CatalogEntry(
+            id = "kwgt_nothing_battery2",
+            name = "KWGT Battery2",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Battery2 · 16-segment body · real level/charging",
+            descriptionRes = R.string.catalog_kwgt_battery2_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_BATTERY_2,
+            providerClass = KwgtBattery2WidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_BATTERY_2,
         ),
         CatalogEntry(
             id = "kwgt_nothing_date_time",
@@ -445,7 +458,11 @@ enum class WidgetCategory(
     BATTERY(
         "battery",
         R.string.category_battery,
-        listOf("kwgt_nothing_battery", "kwgt_nothing_battery_mini"),
+        listOf(
+            "kwgt_nothing_battery",
+            "kwgt_nothing_battery_mini",
+            "kwgt_nothing_battery2",
+        ),
     ),
     QUOTES(
         "quotes",
@@ -510,6 +527,7 @@ object WidgetModeLabels {
             PreviewKind.QUOTES -> R.string.mode_quote
             PreviewKind.KWGT_BATTERY -> R.string.mode_battery
             PreviewKind.KWGT_BATTERY_MINI -> R.string.mode_battery_mini
+            PreviewKind.KWGT_BATTERY_2 -> R.string.mode_battery2
             PreviewKind.KWGT_DATE_TIME,
             PreviewKind.KWGT_DATE_TIME_2,
             -> if (access) {

@@ -95,6 +95,22 @@ object WidgetPreviewRenderer {
                 BatteryState.level(context),
                 includeBackground = false,
             )
+            PreviewKind.KWGT_BATTERY_2 -> {
+                val snapshot = Battery2State.snapshot(context)
+                KwgtBattery2Renderer.render(
+                    context,
+                    size.width,
+                    size.height,
+                    style,
+                    snapshot.level,
+                    KwgtBattery2Renderer.estimate(
+                        snapshot.level,
+                        snapshot.charging,
+                        snapshot.remainingMillis,
+                    ),
+                    includeBackground = true,
+                )
+            }
             PreviewKind.KWGT_DATE_TIME -> KwgtDateTimeRenderer.render(
                 context,
                 size.width,

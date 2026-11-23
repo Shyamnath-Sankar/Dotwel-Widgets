@@ -95,6 +95,25 @@ the app from About & source credits > View MIT license texts.
   and translucent accent track. The source preset has no text layer; Dotwel adds
   a centered real-level dot readout for legibility, so no charge state or number
   is invented.
+- `widgets/Nothing_Battery2.kwgt!preset.json` -> `KwgtBattery2Renderer.kt`,
+  `KwgtBattery2WidgetProvider.kt`, `Battery2State`, and the sanitized data model
+  `app/src/main/assets/kwgt/nothing_battery2.sanitized.json`. Retained: the
+  `side = min(width,height)` composition, rounded `side / 5` surface, dark
+  `#FF1B1B1D` / white surface with opposite foreground, accent at 50% alpha, the
+  `side / 8.5` information offset, `side / 18` BATTERY label with 16 bottom
+  padding, the outlined 195 x 78 body (corners 14, stroke 3.5), the 179 x 64
+  rounded clip, 16 rectangular progress segments across 184 x 64, the pill nub
+  5 x 28 with a 5 margin, `side / 4.5` level, `side / 10` percent, `side / 15`
+  bottom row and the explicit red `#FFD71921` REMAINING paint. The missing `h`
+  global is fitted to the host height with the whole stack centred. Body, clip,
+  progress and nub literals are scaled from the author 277 reference by
+  `side / 277`. The banned `ndot-47.ttf` is replaced by Dotwel's original dot
+  glyphs, with platform sans-serif for the long honest status. Android has no
+  reliable discharge-time source: only a real
+  `BatteryManager.computeChargeTimeRemaining()` value while charging is shown,
+  labelled `TO FULL`; otherwise the widget shows `--` and `ESTIMATE UNAVAILABLE`.
+  At 100% only `FULL` is shown, with no invented time. Runtime is not claimed
+  here.
 - `widgets/Nothing_Date_Time.kwgt!preset.json` -> `KwgtDateTimeRenderer.kt` and
   `KwgtDateTimeWidgetProvider.kt`. Retained: the left-aligned four-line stack
   (weekday, red time, full month, ordinal day), the author side/8.5 offset and
@@ -192,12 +211,12 @@ the app from About & source credits > View MIT license texts.
   Dotwel's original dot glyphs or the documented platform font substitution
   replace the fonts.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
-  `Clean_Time_Date_Info`, `Nothing_Battery`, `Nothing_Battery_Mini`,
-  `Nothing_Date_Time`, `Nothing_Date_Time2`, `Nothing_Digital4`,
-  `Nothing_Digital3`, `Nothing_Digital`, and `Nothing_Mini_Calender` are
-  implemented in this checkpoint (9 of 40); the rest remain pending or
-  dependency-blocked and are not claimed as imported. All 15 registered
-  providers are build-verified only and remain runtime-unverified.
+  `Clean_Time_Date_Info`, `Nothing_Battery`, `Nothing_Battery2`,
+  `Nothing_Battery_Mini`, `Nothing_Date_Time`, `Nothing_Date_Time2`,
+  `Nothing_Digital4`, `Nothing_Digital3`, `Nothing_Digital`, and
+  `Nothing_Mini_Calender` are implemented in this checkpoint (10 of 40); the
+  rest remain pending or dependency-blocked and are not claimed as imported. All
+  16 registered providers are build-verified only and remain runtime-unverified.
 
 ## Not included
 
