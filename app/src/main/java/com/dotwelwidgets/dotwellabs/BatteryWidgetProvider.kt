@@ -34,6 +34,7 @@ object BatteryState {
 class BatteryWidgetProvider : BaseWidgetProvider() {
     override val layoutRes: Int = R.layout.widget_battery
     override val tapAction: String = Intent.ACTION_POWER_USAGE_SUMMARY
+    override val refreshesBatteryAlarm: Boolean = true
 
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
         val style = WidgetPrefs.style(context)
@@ -65,6 +66,7 @@ class BatteryWidgetProvider : BaseWidgetProvider() {
 class BatteryMiniWidgetProvider : BaseWidgetProvider() {
     override val layoutRes: Int = R.layout.widget_battery
     override val tapAction: String = Intent.ACTION_POWER_USAGE_SUMMARY
+    override val refreshesBatteryAlarm: Boolean = true
 
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
         val style = WidgetPrefs.style(context)

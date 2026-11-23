@@ -2,7 +2,64 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/kwgt-battery2-45241892862`, based on `391f2b6`.
+- Branch: `agent/battery2-refresh-45251301569`, based on `5b733ea`.
+- No launcher repository, visibility, workflow, signing key, permission,
+  dependency or provider rendering was changed in this run.
+
+## Battery refresh lifecycle reliability (from 5b733ea)
+
+- Added `BatteryRefreshScheduler`: a non-wakeup `ELAPSED_REALTIME`
+  `setWindow` (fallback `set`) at `now + 15 minutes` with a 10-minute delivery
+  window. This is deliberately inexact, needs no exact-alarm permission and may
+  be deferred by Doze; the documented bounded best effort is therefore up to
+  roughly 25 minutes, not a hard 15-minute SLA.
+- `BatteryRefreshReceiver` is an explicit internal receiver with
+  `android:exported="false"`, `FLAG_UPDATE_CURRENT | FLAG_IMMUTABLE` and only
+  matches `com.dotwelwidgets.dotwellabs.action.BATTERY_REFRESH`. It refreshes
+  only the battery-capable providers and re-arms the next window.
+- Scheduling scope is `BatteryWidgetProvider`, `BatteryMiniWidgetProvider`,
+  `KwgtBattery2WidgetProvider` and `KwgtCleanInfoWidgetProvider`. The alarm is
+  cancelled when the last of those is removed; the other 12 providers are not
+  touched and no minute polling was added.
+- `DotwelApp` (registered via `android:name`) re-arms the alarm on process
+  start and keeps a process-lifetime dynamic `ACTION_BATTERY_CHANGED`
+  registration that refreshes only the four battery providers on level/status
+  changes. It compares the percent and charge status and skips property-only
+  deliveries, and never re-registers from the callback, so neither the sticky
+  broadcast nor frequent temperature/voltage deliveries can loop or short-poll.
+- Re-arm also runs after the refresh tick, provider update/options, pin and
+  manual refresh (`WidgetUpdater.updateAll`). The existing manifest
+  `BATTERY_CHANGED` entries may remain but are no longer relied on after a
+  process kill.
+- No foreground service, wake lock, new permission, new dependency or new
+  widget was added. The percentage, 16-segment Battery2 rendering and
+  charging/unknown estimate behaviour are unchanged.
+- Gallery copy now says "Best-effort level..." instead of "Live level..." and
+  the provider/catalog/README/ledger text states the bounded, deferrable
+  refresh plus manual app refresh. No live or instant background claim remains.
+
+### Verified in this run
+
+```
+./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+```
+
+Result: `BUILD SUCCESSFUL`; 48 unit/layout tests passed (0 failures, 0 errors,
+0 skipped), including 3 new `BatteryRefreshSchedulerTest` lifecycle assertions;
+lint 125 warnings, 0 errors. XML parse: 54 files, 0 errors. Debug APK:
+`app/build/outputs/apk/debug/app-debug.apk`,
+sha256 `7484661ca77062a8b175ccf8a86f5c6b5c125c88a365a376f4269f078a317684`.
+
+### Not verified in this run
+
+- No Android emulator binary or system image is installed in this runner (only
+  `adb`), and no device is attached, so app-resident `BATTERY_CHANGED`
+  73 -> 42 -> 100 delivery, process-kill recovery through the real inexact
+  alarm, the scheduled PendingIntent inspection, and the up-to-25-minute
+  deferred delivery are **not** runtime-verified here and are not claimed.
+- Do not claim immediate background refresh after an app kill. The next runtime
+  check should kill the process after a known level change and wait for the
+  system alarm (up to ~25 minutes) rather than triggering a manual refresh.
 
 ## KWGT Nothing_Battery2 native port
 

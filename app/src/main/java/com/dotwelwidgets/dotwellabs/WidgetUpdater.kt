@@ -32,6 +32,14 @@ object WidgetUpdater {
             updateProvider(context, manager, provider)
         }
         MinuteTickScheduler.schedule(context)
+        BatteryRefreshScheduler.schedule(context)
+    }
+
+    fun updateBatteryProviders(context: Context) {
+        val manager = AppWidgetManager.getInstance(context)
+        BatteryRefreshScheduler.providers.forEach { provider ->
+            updateProvider(context, manager, provider)
+        }
     }
 
     private fun updateProvider(

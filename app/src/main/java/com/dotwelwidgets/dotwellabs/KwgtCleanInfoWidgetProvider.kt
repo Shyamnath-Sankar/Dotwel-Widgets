@@ -30,6 +30,7 @@ import kotlin.math.roundToInt
 class KwgtCleanInfoWidgetProvider : BaseWidgetProvider() {
     override val layoutRes: Int = R.layout.widget_kwgt_clean_info
     override val tapAction: String = AlarmClock.ACTION_SHOW_ALARMS
+    override val refreshesBatteryAlarm: Boolean = true
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {

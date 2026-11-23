@@ -49,14 +49,22 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   Alarms & reminders access. Refreshes use Android's inexact 30-minute
   `updatePeriodMillis` plus date/time/timezone/boot, app-refresh and resize
   callbacks; exact midnight delivery is not promised.
-- Dotwel Battery and Battery Mini read the real system battery level
-  (`BATTERY_PROPERTY_CAPACITY` with a sticky `ACTION_BATTERY_CHANGED` fallback).
-  They use no fake charge value,
-  no new permission and no background service. The level is read when the widget
-  is refreshed: on the system widget update period (best-effort, 30-minute
-  minimum), resize, manual refresh and app resume. `ACTION_BATTERY_CHANGED` is
-  the sticky data source; Android does not deliver it to manifest receivers, so
-  per-change push updates are not claimed.
+- Dotwel Battery, Battery Mini, KWGT Battery2 and KWGT Clean Info read the real
+  system battery level (`BATTERY_PROPERTY_CAPACITY` with a sticky
+  `ACTION_BATTERY_CHANGED` fallback). They use no fake charge value, no new
+  permission and no background service. `BatteryRefreshScheduler` arms an
+  inexact, non-wakeup `ELAPSED_REALTIME` window only while one of those four
+  widgets is placed: about 15 minutes after each refresh with 10 minutes of
+  delivery flex, so a delivery can arrive up to roughly 25 minutes later and
+  Doze may defer it. Removing the last battery widget cancels the alarm.
+- While the app process is alive a dynamic `ACTION_BATTERY_CHANGED` receiver in
+  `DotwelApp` refreshes only the battery-capable providers on level/status
+  changes. Android does not deliver manifest `BATTERY_CHANGED` receivers to a
+  dead process, so after a process kill the recovery path is the inexact alarm
+  above, not an instant push. Refresh also runs on update, resize,
+  pin/app-start and the manual refresh button. The visible percentage is a
+  bounded best-effort snapshot; no hard 15-minute SLA or live/instant background
+  update is claimed.
 - Settings/preview activity: choose black, translucent or transparent; browse
   previews; refresh placed widgets; open this app's Alarms & reminders settings.
   Previews render only when visible or near-visible, use a bounded pixel budget,
@@ -73,6 +81,9 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   launcher pinning, battery-refresh timing, or pixel output.
 - Minute updates are best-effort. Deep idle and doze may defer the update, and
   this is not promised as minute-accurate.
+- Battery refreshes are best-effort too. The inexact alarm is not an exact
+  15-minute guarantee, is deferred by Doze and does not wake the device; use the
+  app's Refresh action when an immediate reading is needed.
 - If the user revokes Alarms & reminders access, Android stops the app and
   cancels its alarms. A placed clock falls back to the live system clock on its
   next update or resize; the fallback is not instant while the app is dead.

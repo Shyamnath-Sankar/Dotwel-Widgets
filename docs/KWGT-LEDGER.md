@@ -17,7 +17,7 @@ without a prohibited capability or unresolved third-party rights.
 
 | # | Exact preset name | Status | Dependency / remaining work |
 |---:|---|---|---|
-| 1 | `Clean_Time_Date_Info` | **implemented** | Native `KwgtCleanInfoWidgetProvider`; wide card with live TextClock h:mm / EEEE / uppercase MMMM d, oversized 19% ghost time, and real BatteryManager percentage refreshed on the system battery broadcast; no exact-alarm access required; runtime unverified. |
+| 1 | `Clean_Time_Date_Info` | **implemented** | Native `KwgtCleanInfoWidgetProvider`; wide card with live TextClock h:mm / EEEE / uppercase MMMM d, oversized 19% ghost time, and real BatteryManager percentage. Battery refresh is bounded best-effort: dynamic battery broadcast while the process is alive, otherwise an inexact non-wakeup ~15 min alarm with 10 min flex that Doze may defer; no exact-alarm access required; runtime unverified. |
 | 2 | `Interstellar_Analog` | pending | Custom dial artwork has no separate redistribution grant; would require original redraw. |
 | 3 | `Interstellar_Analog_Khaki_Field_Murph_Auto` | pending | Branded watch-face artwork and font rights unresolved; original redraw required. |
 | 4 | `Interstellar_Endurance` | pending | Spacecraft artwork rights unresolved; original redraw required. |
@@ -34,9 +34,9 @@ without a prohibited capability or unresolved third-party rights.
 | 15 | `Nothing_Analog_3` | pending | Analog layer conversion queued. |
 | 16 | `Nothing_Analog_5` | pending | Analog layer conversion queued. |
 | 17 | `Nothing_Analog_5_Transparent` | pending | Analog layer conversion queued. |
-| 18 | `Nothing_Battery` | **implemented** | Native `BatteryWidgetProvider`; real system level; runtime unverified. |
-| 19 | `Nothing_Battery2` | **implemented** | Native `KwgtBattery2WidgetProvider`; rounded surface, outlined 16-segment body with clip and nub, real level, system charging state and only real `computeChargeTimeRemaining` values; unknown estimates show `--` / `ESTIMATE UNAVAILABLE`; runtime unverified. |
-| 20 | `Nothing_Battery_Mini` | **implemented** | Native `BatteryMiniWidgetProvider`; real system level; runtime unverified. |
+| 18 | `Nothing_Battery` | **implemented** | Native `BatteryWidgetProvider`; real system level with bounded best-effort `BatteryRefreshScheduler` (inexact ELAPSED_REALTIME ~15 min + 10 min flex, does not wake the device); runtime unverified. |
+| 19 | `Nothing_Battery2` | **implemented** | Native `KwgtBattery2WidgetProvider`; rounded surface, outlined 16-segment body with clip and nub, real level, system charging state and only real `computeChargeTimeRemaining` values; unknown estimates show `--` / `ESTIMATE UNAVAILABLE`. Lifecycle: dynamic `BATTERY_CHANGED` only while the process lives, plus an inexact non-wakeup `BatteryRefreshScheduler` window (~15 min + 10 min flex, Doze-deferrable) and manual app refresh; not a live/instant claim; runtime unverified. |
+| 20 | `Nothing_Battery_Mini` | **implemented** | Native `BatteryMiniWidgetProvider`; real system level with bounded best-effort `BatteryRefreshScheduler` (inexact ELAPSED_REALTIME ~15 min + 10 min flex, does not wake the device); runtime unverified. |
 | 21 | `Nothing_CPU` | dependency | Per-process CPU/system usage needs restricted or unreliable data paths. |
 | 22 | `Nothing_Date_Time` | **implemented** | Native `KwgtDateTimeWidgetProvider`; live text clocks without optional exact-alarm access; runtime unverified. |
 | 23 | `Nothing_Date_Time2` | **implemented** | Native `KwgtDateTime2WidgetProvider`; upper-left date stack plus lower-right hour/minute discs; live text fallback without exact-alarm access; runtime unverified. |

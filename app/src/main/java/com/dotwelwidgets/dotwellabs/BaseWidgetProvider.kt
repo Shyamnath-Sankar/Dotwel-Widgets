@@ -18,6 +18,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
     protected abstract val layoutRes: Int
     protected open val tapAction: String? = null
     protected open val tapCategory: String? = null
+    protected open val refreshesBatteryAlarm: Boolean = false
 
     override fun onUpdate(
         context: Context,
@@ -27,6 +28,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         appWidgetIds.forEach { appWidgetId ->
             appWidgetManager.updateAppWidget(appWidgetId, buildViews(context, appWidgetId))
         }
+        if (refreshesBatteryAlarm) BatteryRefreshScheduler.schedule(context)
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -36,6 +38,22 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         newOptions: android.os.Bundle,
     ) {
         appWidgetManager.updateAppWidget(appWidgetId, buildViews(context, appWidgetId))
+        if (refreshesBatteryAlarm) BatteryRefreshScheduler.schedule(context)
+    }
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        if (refreshesBatteryAlarm) BatteryRefreshScheduler.schedule(context)
+    }
+
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        if (refreshesBatteryAlarm) BatteryRefreshScheduler.schedule(context)
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        super.onDeleted(context, appWidgetIds)
+        if (refreshesBatteryAlarm) BatteryRefreshScheduler.schedule(context)
     }
 
     protected fun refreshWidgets(context: Context) {

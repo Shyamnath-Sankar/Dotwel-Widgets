@@ -50,6 +50,7 @@ object Battery2State {
 class KwgtBattery2WidgetProvider : BaseWidgetProvider() {
     override val layoutRes: Int = R.layout.widget_kwgt_battery2
     override val tapAction: String? = null
+    override val refreshesBatteryAlarm: Boolean = true
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {

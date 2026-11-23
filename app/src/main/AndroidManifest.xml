@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
+        android:name=".DotwelApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -248,6 +249,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/kwgt_clean_info_widget_info" />
         </receiver>
+
+        <receiver
+            android:name=".BatteryRefreshReceiver"
+            android:exported="false" />
 
         <receiver
             android:name=".MinuteTickReceiver"
