@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 351a4f6dc34deaf65d6212f0907d6883eb3118b4
+          ref: 194ee687e9ad976d8024a6adbb6ba2cf358888d9
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -89,7 +89,7 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='8e9aa6f0bdc648187aad41d0d3d93bcb3ac12d35e5dfa4e0a3e0c74e366c491f':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='2ce68c21e290095e2b9b526b80cff4c424db3f1e644c8b79481b53a64f0c1855':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            def category(name):
             for retry in range(3):
@@ -117,7 +117,7 @@ jobs:
             report.setdefault('battery_snapshots',{})[name]={'description':desc,'device':adb('shell','dumpsys','battery').decode()}
             if needle not in desc:raise RuntimeError('Battery2 mismatch '+name+' '+desc)
             return r
-           snapshot('100','home-battery2-full-initial')
+           snapshot('100','home-battery2-full-initial');(OUT/'pre-transition-processes.txt').write_bytes(adb('shell','ps','-A'))
            for level,ac,status,label in [(73,0,3,'discharge73'),(42,1,2,'charging42'),(100,1,5,'full100')]:
             adb('shell','dumpsys','battery','unplug');adb('shell','dumpsys','battery','set','ac',str(ac));adb('shell','dumpsys','battery','set','status',str(status));adb('shell','dumpsys','battery','set','level',str(level))
             matched=False
