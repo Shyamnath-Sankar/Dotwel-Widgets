@@ -1,0 +1,9 @@
+{
+  "version": "0.1.8",
+  "tests": {},
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "119dffae4ec68a5a4267e1b89d0849d91f2bfe56006083a2c89cc48ea61dcbbb",
+  "error": "UI target not ready: Open Clocks,"
+}
