@@ -1,4 +1,4 @@
-name: Category grid and swipe widget sheet
+name: Wire saved category grid and sheet into activity
 on:
   workflow_dispatch:
 permissions:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 28172731351f177eb52af7c99b52f8a0b54b925f
+          ref: a40acfeecf0eb0e8232dc9f0dd53486c0bfe05e7
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -37,18 +37,16 @@ jobs:
           if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -c "agent/category-sheet-${GITHUB_RUN_ID}"
+          git switch -c "agent/category-wire-${GITHUB_RUN_ID}"
       - name: Apply reference-led widget browser and renderer polish
         timeout-minutes: 11
         env:
           OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
         run: |
           cat > /tmp/widget-task.txt <<'TASK'
-          Implement user's specific category-first navigation from preserved9provider source, not another widget import or broad redesign. User supplied two screenshots: first dark dotted HOME categorygrid of rounded darkgray squaretiles/black preview motif, labels underneath, floating bottomnav; second large rounded gray sheet with categoryheading/close, huge centered widgetpreview, name/size/description, red pill Addwidget and horizontal dotindicators. Match this visualhierarchy and behavior closely with ORIGINAL code-drawn art/fonts, no donorassetcopy. No wallpaper/paywall/promo/crown/fakenew badges. No unsupported features from donor inventory.
-          Use CATEGORY grid first: Clock,Calendar,Battery,Quotes available from real providers. Bluetooth,WiFi and other existing unsupported categories may appear clearly unavailable with0ready; do not invent connected devices or battery. Functional grouping not upstreamgroup name: KWGT Date Time belongs in Clock or Calendar with clear discoverability, keep accurate provider count9and3/40KWGT, original17pendingAwesome entries preserved. Representative previews from real renderers, not fake data.
-          Tap category opens custom dialog/sheet with rounded gray surface almost fullheight, big real selectedpreview, categorytitle/close, widgetname, actual size, short function/mode, red Addwidget directlybelow, horizontal swipe left/right through category entries and dotindicators. Add visible Previous/Next48dptargets for accessibility. Selection must atomically change preview/name/size/dots/entry callback; Add selected non-first provider, never stale first capture. Reuse existing onAdd including Worldzone setup and explicit liveclock optionalaccess flow. Existing same-renderer/native live previews and battery/style refresh retained. Do not render staticbitmaptime as live without optionalaccess.
-          Keep dotted HOMEheading/code dottedbackground/floatingbottomnavigation WidgetsStyleAbout; no stockphotography or copiedfonts.130percentfont/narrowwidth must remain readable, onecolumnallowed, sheet scrollable to Add and controls, respect bottominsets. No new permissions/services/dependencies. Real9providers/source licenses remain, nothing silent removed. Launcher untouched/repoPRIVATE/freeonly/NothingWidgetPort excluded.
-          Before cosmetics WRITE actual categorygrid and sheet logic early, not long research. Build/lint withoutsuppressions finalsavechecksum; no runtimeclaims. Fix known copy/state defects while editing: KWGTDateTime currently goes through generic analog fallback dialogue, give truthful live date/time text; STATE top still says8/2KWGT from priorpass, correct to9/3while keeping fullpending collection. About add actual DateTime mapping, not batteryonly. No new importattempt hidden here. Existing newprovider runtime on fixedhead runs independently, don't modify harness. Savebuildable source incrementbeforeminute8.
+          Finish existing partial category implementation NOW. Helpers already saved/built in a40acfee: WidgetCategory readyEntries/providerInfo/WidgetModeLabels in WidgetCatalog, WidgetPreviewBinder.bind(context,FrameLayout,entry,style) with real native fallbacks, SwipeFrameLayout.onSwipe direction, SquareFrameLayout, CategoryMotifView and bg_category_tile/bg_sheet_surface/bg_add_pill/ic_close/dotdrawables and40newstrings. MainActivity is STILL unchanged old filtered cardlist! This run must WIRE helpers into actual visible navigation, not make more unused helpers or research source. Write MainActivity within first2minutes.
+          Replace buildAvailableCards/front gallery with functional categorygrid: two rounded square gray tiles perrow with representative realpreview or CategoryMotifView, categorylabel/count underneath. Dark dotted HOMEheading/floatingbottomnav retained; remove filterchips for categoryfirst. WidgetCategory.values/categories give sources: Calendar date + KWGTDateTime;Clock4;Battery2;Quotes1;unavailable honest0withnoAdd. Preserveupcoming17andall9providers. No newfeature/import/permission/assets. Tapcategory opens custom scrollable rounded gray dialogsheet: categoryheading,48dpclose, hugecentered WidgetPreviewBinder preview within SwipeFrameLayout, selectedname,actualprovider size via providerInfo metadata, honestmode/description,redrounded Addwidgetbutton below,indicator dots,Previous/Next48dptargets. Swipe updates index then rebind ALL name/preview/size/dots/Add callback. Add invokes existingonAdd(entries[selectedIndex]), not firstcapturedentry. Explicitcontrols supportaccessibility. Native Worlddialog and optionalalarm livefallback preserved.130font/narrow allow1column/scrollable sheet/bottominsets. No fakeBluetoothdevicevalues/newbadges/crowns/wallpaperpromos.
+          Knownfixes: KWGTDateTime optionalaccessdialog incorrectlyanalog. Specialcase its title/message/plain choice to true live dateandtime. STATEtop still8providers/2KWGT, correct9/3unfinishedhonestly. AboutaddDateTimemapping. Do NOT claim anyruntimepassed; independentfixedheadruntimeongoing. RenderedUIactualpixelgateafter save. Buildassemble/lintnosuppression and finalAPKchecksum. Commitworkingactivitybeforeadditionalpolish. No longanalysis, no thumbnailtools/gitclone. RepoPRIVATE/launcheruntouched/freeonly/NothingWidgetPortexcluded.
           TASK
           timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
       - uses: actions/setup-java@v6
