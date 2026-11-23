@@ -104,7 +104,7 @@ jobs:
                except RuntimeError:break
               scroll()
             raise RuntimeError('Category did not open '+name)
-           category('Date');cap('02-date-first')
+           category('Calendar');cap('02-date-first')
            for variant in range(10):
             if find(tree(),'Add KWGT Clean Info',True) is not None:break
             click(wait_target('Next'))
