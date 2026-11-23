@@ -27,14 +27,21 @@ import kotlin.math.min
  *
  * Deliberate host adaptation: the source is a wide 916x226 strip whose narrow
  * centre day was the practical result of the upstream preview host aspect ratio.
- * A placed 4x1 host is shorter, so this renderer fits the same five columns into
- * the available height and width with a small positive gap, keeping every glyph
- * on-screen. The source ndot-47.ttf is replaced with Dotwel's app-owned
- * [DotGlyphFont]; no font file is copied.
+ * This renderer keeps that natural wide aspect. When the host is more square
+ * than the source (the gallery tile), the strip is centred in a letterboxed band
+ * instead of stretching a row across the full square, and the today highlight is
+ * limited to that band. The source ndot-47.ttf is replaced with Dotwel's
+ * app-owned [DotGlyphFont]; no font file is copied.
  *
  * The source highlight is `bg` (contrasting wallpaper tone). Dotwel replaces it
  * with a low-alpha ink wash so it remains visible over all three app-owned
  * widget backgrounds instead of disappearing into the black style.
+ *
+ * Fitting: the source text-size divisors limit each glyph's ink height. Width is
+ * limited by the real dot extent (`columns - 1 + 2 * radius`, not the nominal
+ * `columns` count), so a three-letter weekday cannot spill out of its own column
+ * or under the adjacent today highlight. Both weekday and date rows use their own
+ * height divisor.
  *
  * Sanitized source data: assets/kwgt/nothing_mini_calender.sanitized.json.
  */
@@ -43,8 +50,13 @@ object KwgtMiniCalendarRenderer {
     private const val WEEKDAY_DIVISOR = 6.291f
     private const val DATE_DIVISOR = 3.282f
     private const val SOURCE_WIDTH = 916f
+    private const val SOURCE_HEIGHT = 226f
     private const val SOURCE_MARGIN = 58f
+    private const val NATURAL_ASPECT = SOURCE_WIDTH / SOURCE_HEIGHT
+
+    /** Drawn ink bounds of one [DotGlyphFont] glyph: 6 pitches plus 0.4 each end. */
     private const val DOT_BOUND_ROWS = 6.8f
+    private const val GLYPH_RADIUS_RATIO = 0.40f
     private const val CONTENT_VERTICAL_RATIO = 0.92f
     private const val COLUMN_TEXT_RATIO = 0.92f
     private const val DOT_RADIUS_RATIO = 0.0397f
@@ -52,6 +64,35 @@ object KwgtMiniCalendarRenderer {
     private const val ROW_GAP_RATIO = 0.02f
     private const val HIGHLIGHT_ALPHA = 0x24
     private const val ACCENT_ALPHA = 0x80
+
+    internal data class ColumnLayout(
+        val day: MiniCalendarDay,
+        val centerX: Float,
+        val cellLeft: Float,
+        val cellRight: Float,
+        val weekdayPitch: Float,
+        val datePitch: Float,
+        val weekdayCenterY: Float,
+        val dateCenterY: Float,
+        val dotRadius: Float,
+        val dotCenterY: Float,
+    )
+
+    internal data class StripLayout(
+        val stripTop: Float,
+        val stripHeight: Float,
+        val contentTop: Float,
+        val contentBottom: Float,
+        val columnWidth: Float,
+        val gap: Float,
+        val highlightLeft: Float,
+        val highlightTop: Float,
+        val highlightRight: Float,
+        val highlightBottom: Float,
+        val columns: List<ColumnLayout>,
+    ) {
+        val stripBottom: Float get() = stripTop + stripHeight
+    }
 
     fun render(
         context: Context,
@@ -69,63 +110,168 @@ object KwgtMiniCalendarRenderer {
             Bitmap.createBitmap(safeWidth, safeHeight, Bitmap.Config.ARGB_8888)
         }
         val canvas = Canvas(bitmap)
-        val side = min(safeWidth, safeHeight).toFloat()
         val ink = UpstreamNtDraw.ink(context, style)
         val accent = withAlpha(ink, ACCENT_ALPHA)
         val todayHighlight = withAlpha(ink, HIGHLIGHT_ALPHA)
         val days = KwgtMiniCalendarDates.days(date)
-
-        val margin = safeWidth * (SOURCE_MARGIN / SOURCE_WIDTH)
-        val gap = max(1f, safeWidth * 0.005f)
-        val columnWidth = ((safeWidth - 2f * margin - 4f * gap) / 5f).coerceAtLeast(1f)
-        val todayCenter = safeWidth / 2f
+        val layout = layoutStrip(safeWidth, safeHeight, days)
 
         drawTodayHighlight(
             canvas = canvas,
-            centerX = todayCenter,
-            width = safeWidth.toFloat() / 5f,
-            height = safeHeight.toFloat(),
+            layout = layout,
             color = todayHighlight,
         )
 
-        days.forEachIndexed { index, day ->
-            val centerX = margin + gap / 2f + columnWidth / 2f +
-                index * (columnWidth + gap)
-            val color = if (day.offset == -2 || day.offset == 2) accent else ink
+        layout.columns.forEach { column ->
+            val color = if (column.day.offset == -2 || column.day.offset == 2) accent else ink
             drawColumn(
                 canvas = canvas,
-                context = context,
                 style = style,
-                day = day,
-                centerX = centerX,
-                columnWidth = columnWidth,
-                width = safeWidth.toFloat(),
-                height = safeHeight.toFloat(),
-                side = side,
+                column = column,
                 color = color,
             )
         }
         return bitmap
     }
 
+    /**
+     * Pure layout math shared by [render] and the unit assertions. All values are
+     * bitmap pixels. The vertical band is the source strip aspect fitted inside
+     * the host, so a square host letterboxes rather than stretching the row.
+     */
+    internal fun layoutStrip(
+        width: Int,
+        height: Int,
+        days: List<MiniCalendarDay>,
+    ): StripLayout {
+        val w = width.coerceAtLeast(1).toFloat()
+        val h = height.coerceAtLeast(1).toFloat()
+        val side = min(w, h)
+
+        val stripHeight = min(h, w / NATURAL_ASPECT).coerceAtLeast(1f)
+        val stripTop = (h - stripHeight) / 2f
+        val stripSide = min(side, stripHeight)
+
+        val margin = w * (SOURCE_MARGIN / SOURCE_WIDTH)
+        val gap = max(1f, w * 0.005f)
+        val columnWidth = ((w - 2f * margin - 4f * gap) / 5f).coerceAtLeast(1f)
+        val highlightWidth = (w / 5f).coerceAtLeast(1f)
+
+        // The source highlight is widgetWidth / 5, wider than the inner column.
+        // Keep every glyph clear of the adjacent highlight as well as its cell.
+        val neighbourDistance = columnWidth + gap / 2f
+        val highlightGuard = 2f * neighbourDistance - highlightWidth
+        val maxGlyphWidth = min(
+            columnWidth * COLUMN_TEXT_RATIO,
+            if (highlightGuard > 0f) highlightGuard else columnWidth * COLUMN_TEXT_RATIO,
+        ).coerceAtLeast(1f)
+
+        var weekdayPitch = days.minOfOrNull { day ->
+            min(
+                widthPitch(day.weekday, maxGlyphWidth),
+                heightPitch(side / WEEKDAY_DIVISOR),
+            )
+        }?.coerceAtLeast(0f) ?: 0f
+        var datePitch = days.minOfOrNull { day ->
+            min(
+                widthPitch(day.day, maxGlyphWidth),
+                heightPitch(side / DATE_DIVISOR),
+            )
+        }?.coerceAtLeast(0f) ?: 0f
+
+        var dotRadius = max(1f, stripSide * DOT_RADIUS_RATIO)
+        var rowGap = max(1f, stripSide * ROW_GAP_RATIO)
+        var dotGap = max(1f, stripSide * DOT_GAP_RATIO)
+        var total = totalHeight(weekdayPitch, datePitch, rowGap, dotGap, dotRadius)
+
+        val available = stripHeight * CONTENT_VERTICAL_RATIO
+        if (total > available && total > 0f) {
+            val scale = available / total
+            weekdayPitch *= scale
+            datePitch *= scale
+            dotRadius = max(0.6f, dotRadius * scale)
+            rowGap *= scale
+            dotGap *= scale
+        }
+
+        val weekdayHeight = weekdayPitch * DOT_BOUND_ROWS
+        val dateHeight = datePitch * DOT_BOUND_ROWS
+        total = totalHeight(weekdayPitch, datePitch, rowGap, dotGap, dotRadius)
+        val contentTop = stripTop + (stripHeight - total) / 2f
+
+        val weekdayCenterY = contentTop + weekdayHeight / 2f
+        val dateCenterY = contentTop + weekdayHeight + rowGap + dateHeight / 2f
+        val dotCenterY = contentTop + weekdayHeight + rowGap + dateHeight +
+            dotGap + dotRadius
+
+        val startX = margin + gap / 2f + columnWidth / 2f
+        val columns = days.mapIndexed { index, day ->
+            val centerX = startX + index * (columnWidth + gap)
+            ColumnLayout(
+                day = day,
+                centerX = centerX,
+                cellLeft = centerX - columnWidth / 2f,
+                cellRight = centerX + columnWidth / 2f,
+                weekdayPitch = weekdayPitch,
+                datePitch = datePitch,
+                weekdayCenterY = weekdayCenterY,
+                dateCenterY = dateCenterY,
+                dotRadius = dotRadius,
+                dotCenterY = dotCenterY,
+            )
+        }
+
+        val highlightHalfHeight = stripHeight * 0.49f
+        val stripCenterY = stripTop + stripHeight / 2f
+        return StripLayout(
+            stripTop = stripTop,
+            stripHeight = stripHeight,
+            contentTop = contentTop,
+            contentBottom = contentTop + total,
+            columnWidth = columnWidth,
+            gap = gap,
+            highlightLeft = w / 2f - highlightWidth / 2f,
+            highlightTop = stripCenterY - highlightHalfHeight,
+            highlightRight = w / 2f + highlightWidth / 2f,
+            highlightBottom = stripCenterY + highlightHalfHeight,
+            columns = columns,
+        )
+    }
+
+    /** Actual drawn width of [text] at [pitch], including the end dot radii. */
+    internal fun glyphWidth(text: String, pitch: Float): Float {
+        val columns = DotGlyphFont.columnsFor(text)
+        if (columns <= 0 || pitch <= 0f) return 0f
+        return (columns - 1 + 2f * GLYPH_RADIUS_RATIO) * pitch
+    }
+
+    private fun widthPitch(text: String, maxWidth: Float): Float {
+        if (maxWidth <= 0f) return 0f
+        val units = DotGlyphFont.columnsFor(text) - 1 + 2f * GLYPH_RADIUS_RATIO
+        return if (units <= 0f) 0f else maxWidth / units
+    }
+
+    private fun heightPitch(maxHeight: Float): Float =
+        if (maxHeight <= 0f) 0f else maxHeight / DOT_BOUND_ROWS
+
     private fun drawTodayHighlight(
         canvas: Canvas,
-        centerX: Float,
-        width: Float,
-        height: Float,
+        layout: StripLayout,
         color: Int,
     ) {
         if (Color.alpha(color) == 0) return
-        val halfWidth = width / 2f
-        val halfHeight = height * 0.49f
-        val corner = min(width, height) * 0.16f
+        val highlightHeight = layout.highlightBottom - layout.highlightTop
+        if (highlightHeight <= 0f) return
+        val width = layout.highlightRight - layout.highlightLeft
+        if (width <= 0f) return
+        val corner = min(width, highlightHeight) * 0.16f
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
         canvas.drawRoundRect(
             RectF(
-                centerX - halfWidth,
-                height / 2f - halfHeight,
-                centerX + halfWidth,
-                height / 2f + halfHeight,
+                layout.highlightLeft,
+                layout.highlightTop,
+                layout.highlightRight,
+                layout.highlightBottom,
             ),
             corner,
             corner,
@@ -135,75 +281,36 @@ object KwgtMiniCalendarRenderer {
 
     private fun drawColumn(
         canvas: Canvas,
-        context: Context,
         style: WidgetStyle,
-        day: MiniCalendarDay,
-        centerX: Float,
-        columnWidth: Float,
-        width: Float,
-        height: Float,
-        side: Float,
+        column: ColumnLayout,
         color: Int,
     ) {
-        val maxTextWidth = min(columnWidth * COLUMN_TEXT_RATIO, width * 0.9f)
-        var weekdayPitch = DotGlyphFont.fitPitch(
-            day.weekday,
-            maxTextWidth,
-            side / WEEKDAY_DIVISOR,
-        )
-        var datePitch = DotGlyphFont.fitPitch(
-            day.day,
-            maxTextWidth,
-            side / DATE_DIVISOR,
-        )
-        var dotRadius = max(1f, side * DOT_RADIUS_RATIO)
-        var rowGap = max(1f, side * ROW_GAP_RATIO)
-        var dotGap = max(1f, side * DOT_GAP_RATIO)
-
-        val maxHeight = height * CONTENT_VERTICAL_RATIO
-        var total = totalHeight(weekdayPitch, datePitch, rowGap, dotGap, dotRadius)
-        if (total > maxHeight) {
-            val scale = maxHeight / total
-            weekdayPitch *= scale
-            datePitch *= scale
-            dotRadius = max(0.6f, dotRadius * scale)
-            rowGap *= scale
-            dotGap *= scale
-            total = totalHeight(weekdayPitch, datePitch, rowGap, dotGap, dotRadius)
-        }
-
-        val weekdayCenterY = (height - total) / 2f + weekdayPitch * DOT_BOUND_ROWS / 2f
-        val dateCenterY = weekdayCenterY + weekdayPitch * DOT_BOUND_ROWS / 2f +
-            rowGap + datePitch * DOT_BOUND_ROWS / 2f
-        val dotCenterY = dateCenterY + datePitch * DOT_BOUND_ROWS / 2f +
-            dotGap + dotRadius
-
         val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
             this.color = color
             UpstreamNtDraw.shadow(style, this)
         }
         DotGlyphFont.drawCentered(
             canvas,
-            day.weekday,
-            centerX,
-            weekdayCenterY,
-            weekdayPitch,
+            column.day.weekday,
+            column.centerX,
+            column.weekdayCenterY,
+            column.weekdayPitch,
             paint,
         )
         DotGlyphFont.drawCentered(
             canvas,
-            day.day,
-            centerX,
-            dateCenterY,
-            datePitch,
+            column.day.day,
+            column.centerX,
+            column.dateCenterY,
+            column.datePitch,
             paint,
         )
-        if (day.isToday) {
+        if (column.day.isToday) {
             val dotPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 this.color = RED
                 UpstreamNtDraw.shadow(style, this)
             }
-            canvas.drawCircle(centerX, dotCenterY, dotRadius, dotPaint)
+            canvas.drawCircle(column.centerX, column.dotCenterY, column.dotRadius, dotPaint)
         }
     }
 
