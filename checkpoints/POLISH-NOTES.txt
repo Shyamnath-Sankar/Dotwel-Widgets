@@ -1,1 +1,4 @@
-Debug candidate. Runtime appearance and home widget behavior require independent review.
+Debug candidate 0.1.6. In-app Add Clock and Add Date pin requests are implemented.
+Actual launcher confirm/accept/cancel behavior and the unsupported-flow HOME path
+still require independent runtime pixel verification. This is not a Play-approved
+release.

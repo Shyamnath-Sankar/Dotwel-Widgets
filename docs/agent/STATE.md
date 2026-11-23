@@ -1,35 +1,56 @@
 # Build and verification state
 
-- Candidate: Dotwel Widgets 0.1.5 (versionCode 6).
-- Tested application source: c46d54754af46cd833975d1f80f74e337e11b7cd.
-- Candidate branch: agent/final-host-sizing-45059644402.
-- This is a polished Clock/Date debug test candidate, not a Play-approved release.
+- Candidate: Dotwel Widgets 0.1.6 (versionCode 7).
+- Tested application source: e79951cd1726a511fe05b308d23d146b4d15c1dd.
+- Candidate branch: agent/add-widget-flow-45113975964.
+- This is a debug test candidate, not a Play-approved release.
 - Default main remains unchanged. Launcher integration remains deferred.
 
-## Exact tested download
+## Exact candidate download
 
 Use only `checkpoints/dotwel-widgets-polish-debug.apk` on this candidate branch.
-It is 910811 bytes. `checkpoints/POLISH-SHA256SUMS` records its final checksum.
+It is 915019 bytes. `checkpoints/POLISH-SHA256SUMS` records its final checksum.
 The verified SHA-256 is:
 
-`9edb8b744810eaa40856eb47d4b505eb50a57e55f6ee25b4d21154523ba53df3`
+`1ef42595c5fb6eab84f0b6318d593e647a66194dca63c7c18083eac559bd13ee`
 
 Download page:
-https://github.com/Shyamnath-Sankar/Dotwel-Widgets/blob/agent/final-host-sizing-45059644402/checkpoints/dotwel-widgets-polish-debug.apk
+https://github.com/Shyamnath-Sankar/Dotwel-Widgets/blob/agent/add-widget-flow-45113975964/checkpoints/dotwel-widgets-polish-debug.apk
 
-The extra version-named APK was an earlier build with different bytes. It was
-removed to prevent installing the wrong artifact. The final POLISH APK and
-checksum were not changed or rebuilt during this documentation cleanup.
+The POLISH APK and POLISH-SHA256SUMS are the authoritative 0.1.6 artifacts.
+No extra version-named APK with different bytes is kept in `checkpoints/`.
+
+## What changed in 0.1.6
+
+- The first screen now shows Add Clock and Add Date before the previews and the
+  longer technical copy.
+- Each action checks `AppWidgetManager.isRequestPinAppWidgetSupported` at click
+  time and calls `requestPinAppWidget` with the exact `ClockWidgetProvider` or
+  `DateWidgetProvider` component.
+- A `true` return only shows a neutral request-sent message. The success
+  callback is used only to show a placed confirmation after the platform
+  reports widget creation.
+- Cancellation produces no callback and no success message. The screen remains
+  usable for another attempt.
+- Unsupported, false-return, and foreground/security-error paths show a
+  readable fallback dialog with HOME > long-press empty area > Widgets >
+  Dotwel Widgets > Clock or Date. Cancel and Back dismiss it.
+- Previews are labeled as previews and explicitly not draggable. Placement does
+  not require Alarms & reminders access.
+- The renderer, scheduler, widget providers, sizing/styles, optional alarm UX,
+  permissions, minSdk, and targetSdk are unchanged. No new permission, service,
+  dependency, or exported test component was added.
 
 ## Build and implementation
 
-Coding run:
-https://github.com/Shyamnath-Sankar/Dotwel-Widgets/actions/runs/45059644402
+`./gradlew assembleDebug lintDebug` succeeded in this coding step. Lint reported
+0 errors and 10 pre-existing warnings: target/compile SDK update notices, API-31
+widget attributes, Gradle/AGP update notices, and the bundled MIT text resource.
+No suppressions were added.
 
-The coding step reached its time limit. Subsequent deterministic assembleDebug
-and lintDebug both succeeded, and source plus the final APK were preserved.
-The run's overall failure status reflects that coding timeout, not a failed
-assemble or lint result.
+Deterministic rebuild check: two clean `./gradlew clean assembleDebug` runs
+produced the identical SHA-256 shown above. The final POLISH APK was copied from
+that deterministic build and `checkpoints/POLISH-SHA256SUMS` was regenerated.
 
 The actual home-screen clock uses circular-dot bitmap RemoteViews when optional
 Alarms & reminders access is enabled. Android 12+ host sizes select size-keyed
@@ -41,15 +62,38 @@ The sizing correction did not change the scheduler, permissions, package,
 SDK, signing or services. Settings text no longer contains the malformed
 apostrophe escape and explains that deep idle can delay updates.
 
-## Independent actual HOME verification
+## Developer verification note: DEBUG-only unsupported-flow override
 
-Exact candidate runtime:
-https://github.com/Shyamnath-Sankar/Dotwel-Widgets/actions/runs/45061373320
+This is not an in-app setting and cannot affect a release build. The extra is
+honored only when the installed app is debuggable and the value is explicitly
+true:
 
-Saved original captures:
-https://github.com/Shyamnath-Sankar/Dotwel-Widgets/tree/checkpoint/runtime-45061373320/runtime-evidence
+`adb shell am start -n com.dotwelwidgets.dotwellabs/.MainActivity --ez com.dotwelwidgets.dotwellabs.extra.DEBUG_FORCE_PIN_UNSUPPORTED true`
 
-Original screenshots and recorded state were inspected. Verified:
+It makes the Add actions show the manual fallback dialog so the unsupported UI
+can be checked deterministically. Normal launches do not set it. A separate
+runtime pass is still required for the real supported pin request, native
+launcher confirmation, accept, cancel, and the actual HOME fallback path.
+
+## Earlier 0.1.5 verified checkpoint (retained)
+
+The earlier exact 0.1.5 candidate and its independently verified HOME results
+remain on their own branch. They are historical and are not this 0.1.6 build.
+
+- 0.1.5 APK:
+  https://github.com/Shyamnath-Sankar/Dotwel-Widgets/blob/agent/final-host-sizing-45059644402/checkpoints/dotwel-widgets-polish-debug.apk
+- 0.1.5 SHA-256:
+  `9edb8b744810eaa40856eb47d4b505eb50a57e55f6ee25b4d21154523ba53df3`
+- Coding run: https://github.com/Shyamnath-Sankar/Dotwel-Widgets/actions/runs/45059644402
+- Runtime run: https://github.com/Shyamnath-Sankar/Dotwel-Widgets/actions/runs/45061373320
+- Original captures:
+  https://github.com/Shyamnath-Sankar/Dotwel-Widgets/tree/checkpoint/runtime-45061373320/runtime-evidence
+- Remaining-stage run:
+  https://github.com/Shyamnath-Sankar/Dotwel-Widgets/actions/runs/45063341690
+- Remaining-stage captures:
+  https://github.com/Shyamnath-Sankar/Dotwel-Widgets/tree/checkpoint/runtime-45063341690/runtime-evidence
+
+Verified on 0.1.5:
 
 - Default placed clock has large, round, unclipped dotted digits beside Date.
 - Actual HOME bitmap advances 07:38 to 07:39 after the background app process
@@ -60,18 +104,6 @@ Original screenshots and recorded state were inspected. Verified:
 - Black, translucent and transparent backgrounds work.
 - 12-hour and 24-hour display work. Both widgets fit at 130% system font scale.
 - Corrected settings copy is readable and includes the idle-delay caveat.
-
-That runtime stopped after a test-dismissal tap opened Google Search following
-a successful vertical resize. This was a harness interruption, not an app crash.
-Its remaining stages were completed separately on the same exact APK:
-
-https://github.com/Shyamnath-Sankar/Dotwel-Widgets/actions/runs/45063341690
-
-Original remaining-stage evidence:
-https://github.com/Shyamnath-Sankar/Dotwel-Widgets/tree/checkpoint/runtime-45063341690/runtime-evidence
-
-The remaining-stage run succeeded in 9m8s. Original screenshots were inspected:
-
 - Host bounds changed from [67,546,519,1134] to [67,546,519,1449], then returned
   to [67,546,519,1134]. Dots remained round, centered and unclipped.
 - After 75 seconds of emulator-forced deep idle, returning HOME without opening
@@ -80,9 +112,12 @@ The remaining-stage run succeeded in 9m8s. Original screenshots were inspected:
 
 ## Limits and remaining work
 
-- Resize verification covers growth and shrink-back to the default size.
-  A smaller-than-default compact host was not verified. The runtime report
-  explicitly retains that caveat.
+- The 0.1.6 Add Clock/Add Date buttons, native launcher confirmation,
+  accept/cancel behavior, and unsupported-flow HOME fallback still need
+  independent runtime pixel verification. Do not mark them verified from a
+  successful build.
+- 0.1.5 resize verification covers growth and shrink-back to the default size.
+  A smaller-than-default compact host was not verified.
 - The idle check is a bounded emulator observation. It does not promise exact
   minute updates during long Doze or reliability across every OEM launcher.
 - Android stops the app and cancels alarms when optional access is revoked.
@@ -91,12 +126,8 @@ The remaining-stage run succeeded in 9m8s. Original screenshots were inspected:
 - Current exact-candidate tests were on an Android 15 Pixel emulator. Physical
   device and other launcher testing remain useful before release.
 - Prior native Date day-transition behavior was tested on the preserved native
-  baseline; this exact candidate's runtime did not wait through another day.
+  baseline; the 0.1.5 runtime did not wait through another day.
 - Play policy requirements were considered, but no Play submission or approval
   occurred. Do not label this artifact Play-approved or production-ready.
 - Source promotion to default main and launcher integration are not part of
-  this candidate-only housekeeping.
-
-This cleanup changes documentation and removes the misleading duplicate APK
-only. It does not alter tested application source, workflows, the final POLISH
-APK or its checksum, and does not dispatch or require a rebuild.
+  this candidate-only work.
