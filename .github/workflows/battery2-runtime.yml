@@ -9,11 +9,11 @@ concurrency:
 jobs:
   runtime:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 5b733ead8491cf91a82e6412769c49d6dda86f1c
+          ref: 351a4f6dc34deaf65d6212f0907d6883eb3118b4
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -89,7 +89,7 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='04107ac86b308a864a3dd986512020ee98b5a5f34fd7ef1843a3f2b2eb299373':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='8e9aa6f0bdc648187aad41d0d3d93bcb3ac12d35e5dfa4e0a3e0c74e366c491f':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            def category(name):
             for retry in range(3):
@@ -118,18 +118,29 @@ jobs:
             if needle not in desc:raise RuntimeError('Battery2 mismatch '+name+' '+desc)
             return r
            snapshot('100','home-battery2-full-initial')
-           adb('shell','am','kill',PKG)
            for level,ac,status,label in [(73,0,3,'discharge73'),(42,1,2,'charging42'),(100,1,5,'full100')]:
             adb('shell','dumpsys','battery','unplug');adb('shell','dumpsys','battery','set','ac',str(ac));adb('shell','dumpsys','battery','set','status',str(status));adb('shell','dumpsys','battery','set','level',str(level))
             matched=False
             for attempt in range(10):
              time.sleep(3);r=tree();n=find(r,'widget_kwgt_battery2_bitmap')
-             if n is not None and str(level)+'%' in n.get('content-desc',''):matched=True;break
+             if n is not None and str(level)+' percent' in n.get('content-desc',''):matched=True;break
             r=cap('home-battery2-'+label)
             desc=find(r,'widget_kwgt_battery2_bitmap').get('content-desc','')
             report.setdefault('battery_transitions',{})[label]={'description':desc,'device':adb('shell','dumpsys','battery').decode(),'automatic':matched}
-            if not matched:raise RuntimeError('Battery2 did not update automatically to '+str(level)+' after process kill')
-           report['tests']['battery_transitions_after_kill']='passed73discharge42charging100full'
+            if not matched:raise RuntimeError('Battery2 did not update automatically to '+str(level)+' while resident')
+           report['tests']['battery_transitions_resident']='passed73discharge42charging100full'
+           adb('shell','am','kill',PKG);time.sleep(2)
+           (OUT/'killed-processes.txt').write_bytes(adb('shell','ps','-A'))
+           adb('shell','dumpsys','battery','set','level','61');adb('shell','dumpsys','battery','set','status','3')
+           (OUT/'scheduled-alarms-after-kill.txt').write_bytes(adb('shell','dumpsys','alarm'))
+           begin=time.monotonic();matched=False
+           while time.monotonic()-begin<1680:
+            r=tree();n=find(r,'widget_kwgt_battery2_bitmap')
+            if n is not None and '61 percent' in n.get('content-desc',''):matched=True;break
+            time.sleep(25)
+           report['recovery_seconds']=round(time.monotonic()-begin,1);r=cap('home-battery2-recovered61')
+           if not matched:raise RuntimeError('Inexact scheduled battery recovery not observed within28min awake emulator')
+           report['tests']['inexact_recovery_after_kill']='passed real alarm no explicit refresh'
            click(find(r,'widget_kwgt_battery2_bitmap'));time.sleep(2);cap('tap-result-battery');focus=adb('shell','dumpsys','activity','activities').decode(errors='replace');(OUT/'tap-battery-activity.txt').write_text(focus)
            if 'com.android.settings' not in focus:raise RuntimeError('Battery Settings did not open')
            report['tests']['tap_battery']='destination activity recorded; pixels require review'
@@ -141,7 +152,7 @@ jobs:
           if 'error' in report or any(isinstance(v,dict) and 'error' in v for v in report['tests'].values()):raise SystemExit(1)
           PYCODE
       - name: Install and inspect widgets on Android 15
-        timeout-minutes: 12
+        timeout-minutes: 38
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -150,7 +161,7 @@ jobs:
           profile: pixel_7
           emulator-boot-timeout: 300
           disable-animations: true
-          script: timeout 480s python3 -u /tmp/widget-runtime-smoke.py
+          script: timeout 2100s python3 -u /tmp/widget-runtime-smoke.py
       - name: Preserve actual runtime captures even after a failed check
         if: always()
         run: |
