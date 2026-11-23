@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 194ee687e9ad976d8024a6adbb6ba2cf358888d9
+          ref: 247227700167af8f1147856b54c54b1cebb29296
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -89,7 +89,7 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='2ce68c21e290095e2b9b526b80cff4c424db3f1e644c8b79481b53a64f0c1855':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='8916ee47d92c00a9ae3780a9d44cd0f53841a4af7a8182e967566fa291796427':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            def category(name):
             for retry in range(3):
