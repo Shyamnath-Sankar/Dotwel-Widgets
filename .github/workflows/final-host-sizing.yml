@@ -1,4 +1,4 @@
-name: Offline KWGT collection continuation
+name: Quotes and World runtime defect repair
 on:
   workflow_dispatch:
 permissions:
@@ -37,26 +37,22 @@ jobs:
           if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -c "agent/offline-collection-${GITHUB_RUN_ID}"
-      - name: Adapt offline KWGT presets into native providers
-        timeout-minutes: 16
+          git switch -c "agent/provider-repair-${GITHUB_RUN_ID}"
+      - name: Repair confirmed Quotes crash and World denied-access time
+        timeout-minutes: 9
         env:
           OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
         run: |
           cat > /tmp/widget-task.txt <<'TASK'
-          Continue actual requested collection from preserved buildable gallery candidatec29668f6e59e5b7d0659fe7ae14872d02b8f7b23. Repo stays PRIVATE, launcher untouched. NothingWidgetPort explicitly excluded. Existing AwesomeAWidgets and KWGT ports/credits retained. No paid model/service/dependencies. All40KWGT variants remain assigned, do not claim this run completes them. Existing eight providers only staged.
+          Make these two concrete runtime repairs NOW on current private widget candidate. Do not spend the budget planning or exploring unrelated collection. No new providers/UI redesign this run. No paid/new dependencies/permissions, launcher untouched. Keep0.1.7/versionCode8 unreleased, source attribution/licenses intact. Commit each working repair. Then assembleDebug lintDebug. Do not claim runtime success.
           
-          Implement the next manageable offline KWGT variants as real separate Android providers, not aliases or static cards. Inspect original MIT preset.json geometry/formulas at pinned AumGupta/KWGT-Widgets commit96ca27be4cbff35efec5a86c64dd39fd065c958f. Target Nothing_Date_Time, Nothing_Date_Time2, Nothing_Digital, Nothing_Digital2, Nothing_Analog_, Nothing_Analog_2, Nothing_Analog_3 in that order, finish/build a smaller subset well if needed. Fetch public original source through git when not already bundled. Preserve sanitized original geometry/layer/color/time formula data and map each new provider to actual originating preset/file/hash in40preset ledger. Use app-owned dot glyph/system serif/sans where source font rights unclear, explicitly record font substitution. No donor bitmaps/fonts/icons copied. Don't flatten genuinely different compositions into one generic renderer. Label minute-resolution adaptation honestly when original animates seconds; no service/second polling/exact-alarm escalation/new access.
+          1. Confirmed actual Quotes crash in API35 host with exact-size options: QuotesWidgetProvider.buildViews returns buildBitmapViews then calls views.setOnClickPendingIntent on that combined size-map RemoteViews. Android throws: combined orientation/size RemoteViews cannot be modified. Construct PendingIntent before buildBitmapViews and set quote tap on every child inside decorate callback. Search any other code modifying combined views and correct same concrete pattern only. Retain real daily quote and tap-to-next behavior. Need per-instance host sizes still supported.
           
-          Use real device date/time in preview and HOME. Reuse existing optional SCHEDULE_EXACT_ALARM flow: access off must place genuinely live TextClock/AnalogClock composition, access on styled bitmap minute update using shared scheduler; do not claim bitmap live without access. Add each implemented provider to manifest, picker metadata, updater, scheduler when minute driven, catalog and per-widget preview/Add. Keep dynamic available count honest and40ledger updated. Full upstream20+3 and40variants scope remains, no silently dropping.
+          2. Confirmed actual World Clock stale with exact access OFF. WorldWidgetProvider always renders bitmap while MinuteTickScheduler.schedule cancels without access. Actual HOME07:29 shows world07:28. Implement live native two-zone TextClock fallback with chosen zone IDs and labels when access denied, widget_world layout fields for actual timeZone; no frozen bitmap pretending live. Enabled mode keeps translated NtWorld bitmap rendering/shared minute schedule. Update gallery World preview likewise truthful current mode, concise enable setup/action where appropriate while preserving zone chooser and per-instance token config. On return from permission settings update all. No selfgrant, service, USE_EXACT_ALARM, or new permission. Existing digital denied/plain and allowed/dotted contract must remain unchanged. Fix onDisabled cancellation for minute providers only if clearly canceling all other placed minute widgets; prefer schedule() recalculation instead of unconditional cancel when other providers remain.
           
-          Preserve compact gallery and successful digital cancel/plain/access/ordinary-am-kill minute behavior. Independent runtime against current APK has passed those digital gates, not all providers. Existing world/quotes/battery runtime still in flight; don't claim those tested. Existing initial layouts world/quotes use render-error text as default while bitmap hidden, creating poor native picker preview; improve initial/picker display to neutral actual preview or clearly static named placeholder, never an error before renderer runs. Keep true fallback errors truthful. Avoid unrelated architecture refactor, no new permissions/account setup/weather/media access. Battery preview cache currently timebucket5minutes and onResume doesn't invalidate cache on battery state, inspect/correct if quick grounded fix; actual provider update must use current system battery.
-          
-          Per-card explanatory text is still implementation-heavy. While touching new entries keep it short, user-facing status, put technical/source detail in About/credits. Don't turn this into another UI-only run. Preserve48dp targets and130percent-font layout, existing style on upgrade.
-          
-          Build assembleDebug lintDebug with no suppression. Final APK and checksum saved only after final sources. STATE refers final checksum file, no intermediate hardcoded hash/runtime claim. Update exact implemented/unfinished list and source evidence. No blanket bugfree or completion claim. Commit small working increments so timeouts preserve buildable progress. Existing package/version0.1.7 versionCode8 unreleased candidate unchanged.
+          Original user additionally wants a reference-style2column dotted/red gallery and better actual widgets. Do NOT do that design in this repair run, stabilize first and record pending. Full AwesomeAWidgets+40KWGT collection remains assigned/incomplete, current8providers not completion. Previous broad15minute coding attempt made zero source changes; avoid repeating exploration. Return actual small edits promptly. Final external workflow rebuilds and preserves checksum after all sources, STATE should refer that checksum not hardcode intermediate. No private transcript or prompt details in app/docs.
           TASK
-          timeout --kill-after=15s 900s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+          timeout --kill-after=15s 480s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
       - uses: actions/setup-java@v6
         if: always()
         with:
