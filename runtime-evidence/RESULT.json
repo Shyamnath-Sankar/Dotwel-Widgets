@@ -1,0 +1,9 @@
+{
+  "version": "0.1.6",
+  "tests": {},
+  "caveats": [
+    "Actual pixels require independent review. Pixel emulator is not universal OEM launcher proof. Unsupported UI uses explicit DEBUG-only override."
+  ],
+  "sha256": "9b8e2a4d5b27c391fe7d8f8cbd38851fc3376c15846dc1381864b661bfefa6be",
+  "error": "Candidate APK hash mismatch"
+}
