@@ -1,4 +1,4 @@
-name: Repaired Mini Calendar pixels and tap gate
+name: Actual split clock pin minute and tap gate
 on:
   workflow_dispatch:
 permissions:
@@ -13,16 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 6152e18bb79ca5024e3dbe7104fa64d66d2409d0
-      - uses: actions/setup-java@v6
-        with:
-          distribution: zulu
-          java-version: 21
-      - name: Calendar arithmetic and layout unit tests
-        run: |
-          bash ./gradlew testDebugUnitTest --tests "*KwgtMiniCalendar*" --no-daemon
-          mkdir -p runtime-evidence/unit-tests
-          cp app/build/test-results/testDebugUnitTest/TEST-*KwgtMiniCalendar*.xml runtime-evidence/unit-tests/
+          ref: 525b5de4d9ce304b7fc006354032672a3b6e923d
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -98,7 +89,7 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='897fdcb019a74e1814396da4bf4a746d375270b0f222cd7e6ab5ec54858e7fc3':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='f1b66d3db677afc881925d8d1d75dbb0948eee10e11068ff3ec2e8836f8f4a5a':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            def category(name):
             for retry in range(3):
@@ -113,20 +104,33 @@ jobs:
                except RuntimeError:break
               scroll()
             raise RuntimeError('Category did not open '+name)
-           category('Calendar');wait_target('Add Date');cap('07-calendar-first')
-           for label in ('Add KWGT Date Time','Add KWGT Date Time 2','Add KWGT Mini Calendar'):
+           category('Clock');wait_target('Add Digital Clock');cap('03-clock-first')
+           for label in ('Add Analog Bold','Add Analog Scale','Add World Clock','Add KWGT Split Clock'):
             click(wait_target('Next'));wait_target(label)
-           cap('08-calendar-mini');click(wait_target('Add KWGT Mini Calendar'));cap('09-native-mini');n=native(tree())
-           if n is None:raise RuntimeError('Mini Calendar native pin prompt missing')
-           click(n);time.sleep(1);report['tests']['mini_native_pin']='fourth Calendar variant confirmed without Alarms dialog'
-           r=locate('widget_kwgt_mini_calendar_bitmap','home-mini-before');report['device_date']=adb('shell','date','+%Y-%m-%d_%a').decode().strip()
-           adb('shell','am','kill',PKG);home();cap('home-mini-after-kill');event=adb('shell','am','broadcast','-a','android.intent.action.DATE_CHANGED','-p',PKG,check=False);(OUT/'date-event-result.txt').write_bytes(event);home();cap('home-mini-after-date-event')
-           report['tests']['mini_date_event']='date broadcast requested and pixels captured; inspect current five-day values'
-           r=locate('widget_kwgt_mini_calendar_bitmap','home-mini-ready-tap');n=find(r,'widget_kwgt_mini_calendar_bitmap');click(n);time.sleep(2);cap('tap-result-calendar');focus=adb('shell','dumpsys','activity','activities').decode(errors='replace');(OUT/'tap-calendar-activity.txt').write_text(focus)
-           if 'com.google.android.calendar' not in focus and 'ResolverActivity' not in focus:raise RuntimeError('Calendar did not open')
-           report['tests']['mini_calendar_tap']='destination activity recorded; inspect pixels'
+           cap('08-clock-split')
+           click(wait_target('Add KWGT Split Clock'));click(wait_target('Add live split clock'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected fifth Clock variant and confirmed'
+           r=locate('kwgt_digital4_minute','home-kwgt-live-before');before=find(r,'kwgt_digital4_minute').get('text','')
+           adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
+           r=locate('kwgt_digital4_minute','home-kwgt-live-after');after=find(r,'kwgt_digital4_minute').get('text','');expected=adb('shell','date','+%M').decode().strip();report['kwgt_live_minute']={'before':before,'after':after,'device':expected}
+           if before==after or expected.upper()!=after.replace(' ','').upper():raise RuntimeError('KWGT native live minute failed')
+           report['tests']['kwgt_live_minute']='passed'
+           start();cap('gallery-after-live');click(button('Enable'))
+           for i in range(8):
+            r=tree();n=next((n for n in r.iter('node') if n.get('checkable')=='true'),None)
+            if n is not None:break
+            time.sleep(1)
+           cap('native-alarm-access')
+           if n is None:raise RuntimeError('No Android toggle')
+           if n.get('checked')!='true':click(n)
+           adb('shell','input','keyevent','4');start();cap('gallery-styled')
+           locate('widget_kwgt_digital4_bitmap','home-kwgt-styled-before')
+           adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
+           locate('widget_kwgt_digital4_bitmap','home-kwgt-styled-after');report['tests']['styled_after_process_kill']='captured, image time comparison required'
+           r=locate('widget_kwgt_digital4_bitmap','home-split-ready-tap');click(find(r,'widget_kwgt_digital4_bitmap'));time.sleep(2);cap('tap-result-clock');focus=adb('shell','dumpsys','activity','activities').decode(errors='replace');(OUT/'tap-clock-activity.txt').write_text(focus)
+           if 'com.google.android.deskclock' not in focus:raise RuntimeError('Clock app did not open')
+           report['tests']['tap_clock']='destination activity recorded; pixels require review'
            (OUT/'appwidget-dump.txt').write_bytes(adb('shell','dumpsys','appwidget'))
-
+          
           except Exception as e:report['error']=str(e);cap('99-fatal')
           finally:
            (OUT/'RESULT.json').write_text(json.dumps(report,indent=2));(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','3500',check=False));print(json.dumps(report,indent=2))
