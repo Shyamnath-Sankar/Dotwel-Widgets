@@ -1,4 +1,4 @@
-name: Repair KWGT date-time row spacing
+name: Fix visible category Add label
 on:
   workflow_dispatch:
 permissions:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 7e14ff2e7caaf01744330bd52d0fc8d352e466d3
+          ref: 8c898a30058960b56298b875a6de315d0b31a990
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -37,15 +37,14 @@ jobs:
           if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -c "agent/kwgt-spacing-${GITHUB_RUN_ID}"
+          git switch -c "agent/category-label-${GITHUB_RUN_ID}"
       - name: Apply reference-led widget browser and renderer polish
         timeout-minutes: 11
         env:
           OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
         run: |
           cat > /tmp/widget-task.txt <<'TASK'
-          NARROW diagnosed renderer repair only, now. Current source7e14ff2hasactualwiredcategorygrid/sheet/swipeand9providers includingKWGTDateTime. Preserveall. IndependentactualAndroidruntimeprovedliveandstyledminuteadvanceafterkill, but styled4dottedtextrowscollide. Diagnosis: KwgtDateTimeRenderer line102lineHeights=pitch*7; line103gap=-side*4/415 copiedfontstacknegativegap. Dotwel5x7fontfillslinebox, negativegapmakesrowsphysicallyoverlap. Fix to POSITIVE clear gap basedonpitch or side(roughlyside*.045) then fit totalstack with tops/bottoms padding, keepleftalignedweekday/redtime/month/ordinalday. Useactualdrawdotboundheight6.8*pitch, leaveatleast1.5pitchbetweenrows, ensurelongNOVEMBER/SEPTEMBERfitswidthwithoutoverlap. Currentwidget2x2tallcanvas shouldremainlegibleatactualhostsize. No sourcefontcopy. Retainsourceformula/provenanceanddocumentdeliberatelegibilityadaptationinsteadfalseexactgeometryclaim. Nootherglyphmetricschangeacrossapp.
-          Needrealcodeeditimmediately, no lengthyresearch/fullinventory. Inspectrenderer/fontdrawonce, modifyKwgtDateTimeRendereronlyplusprovenancecomment/test/stateifneeded. Unitpuremathlayoutassertionsifpractical: rowboundsnonoverlappingandwithinheightat200x200/300x400/400x200, widthfitlongmonth. Nonewdependencies/permissions/providerimport/UIrefactor. Preservecategorywirelogic/9countandDateTimecopyfix. UpdatefinalSTATEhonestlyincludingknownpixelsnotyetverifiedandchecksumfile. Buildassemble/lintwithout suppression,finalAPKchecksumsaved. No runtimepassclaims. RepoPRIVATE/freeonly/launcheruntouched/NothingWidgetPortexcluded. Finalactualpixelswillbeindependentlytestedafterthisrun.
+          NARROW diagnosed UI repair. Current9provider source8c898a30 passed actual Android15 categoryNext/Previous/swipe and selected Calendar second variant native pin, live09:46to09:47, dotted09:48to09:49 afterkill. Preserveall. Actualpixels revealed red Add pill totally blank. Independent source inspection finds rebind assigns add.contentDescription but NEVER add.text. Fix visible localized Add label in MainActivity category sheet, preferably current selected widget name if fits or simple Add widget, retaining existing dynamic contentDescription and onAdd(entries[selected]). Ensure52dpminheight,white15sptext visible at130font, no defaultpaddingclips. No other features/refactor/providers/assets/dependencies/permissions. Keep rowspacing fixed exactly. Buildassemble/lint andsave APK/checksum. Update STATE honestly. No runtimepassclaims for thisrevision until actualpixels. Blank130fontcapture from previous harness probably recreation screenshot race: do not speculativeappchange on that alone. Need immediate smallcorrectcodeedit, no researchphase. RepoPRIVATE/freeonly/NothingWidgetPortexcluded/launcheruntouched.
           TASK
           timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
       - uses: actions/setup-java@v6
