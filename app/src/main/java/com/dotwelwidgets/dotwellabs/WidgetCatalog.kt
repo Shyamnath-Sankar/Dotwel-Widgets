@@ -33,6 +33,7 @@ enum class PreviewKind {
     KWGT_DATE_TIME,
     KWGT_DATE_TIME_2,
     KWGT_DIGITAL_4,
+    KWGT_GRADIENT_CLOCK,
     KWGT_MINI_CALENDAR,
     PLACEHOLDER,
 }
@@ -274,6 +275,19 @@ object WidgetCatalog {
             action = CardAction.CLOCK_ACCESS,
         ),
         CatalogEntry(
+            id = "kwgt_gradient_clock",
+            name = "KWGT Gradient Clock",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Digital · red edge gradient circles / hh / minute chip",
+            descriptionRes = R.string.catalog_kwgt_gradient_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_GRADIENT_CLOCK,
+            providerClass = KwgtGradientClockWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_GRADIENT_CLOCK,
+            action = CardAction.CLOCK_ACCESS,
+        ),
+        CatalogEntry(
             id = "kwgt_mini_calendar",
             name = "KWGT Mini Calendar",
             group = WidgetGroup.KWGT,
@@ -385,6 +399,7 @@ enum class WidgetCategory(
             "analog_scale",
             "world",
             "kwgt_nothing_digital4",
+            "kwgt_gradient_clock",
         ),
     ),
     CALENDAR(
@@ -476,6 +491,11 @@ object WidgetModeLabels {
                 R.string.mode_kwgt_split_styled
             } else {
                 R.string.mode_kwgt_split_live
+            }
+            PreviewKind.KWGT_GRADIENT_CLOCK -> if (access) {
+                R.string.mode_kwgt_gradient_styled
+            } else {
+                R.string.mode_kwgt_gradient_live
             }
             PreviewKind.KWGT_MINI_CALENDAR -> R.string.mode_kwgt_mini_calendar
             PreviewKind.PLACEHOLDER -> entry.state.labelRes

@@ -716,29 +716,34 @@ class MainActivity : Activity() {
     private fun showMinuteAccessDialog(entry: CatalogEntry) {
         val clock = entry.id == "digital"
         val splitClock = entry.previewKind == PreviewKind.KWGT_DIGITAL_4
+        val gradientClock = entry.previewKind == PreviewKind.KWGT_GRADIENT_CLOCK
         val dateTime = entry.previewKind == PreviewKind.KWGT_DATE_TIME ||
             entry.previewKind == PreviewKind.KWGT_DATE_TIME_2
         val title = when {
             clock -> R.string.clock_access_dialog_title
             splitClock -> R.string.kwgt_digital4_access_dialog_title
+            gradientClock -> R.string.kwgt_gradient_access_dialog_title
             dateTime -> R.string.kwgt_datetime_access_dialog_title
             else -> R.string.minute_access_dialog_title
         }
         val message = when {
             clock -> R.string.clock_access_dialog_message
             splitClock -> R.string.kwgt_digital4_access_dialog_message
+            gradientClock -> R.string.kwgt_gradient_access_dialog_message
             dateTime -> R.string.kwgt_datetime_access_dialog_message
             else -> R.string.minute_access_dialog_message
         }
         val enable = when {
             clock -> R.string.clock_access_dialog_enable
             splitClock -> R.string.kwgt_digital4_access_dialog_enable
+            gradientClock -> R.string.kwgt_gradient_access_dialog_enable
             dateTime -> R.string.kwgt_datetime_access_dialog_enable
             else -> R.string.minute_access_dialog_enable
         }
         val plain = when {
             clock -> R.string.clock_access_dialog_plain
             splitClock -> R.string.kwgt_digital4_access_dialog_plain
+            gradientClock -> R.string.kwgt_gradient_access_dialog_plain
             dateTime -> R.string.kwgt_datetime_access_dialog_plain
             else -> R.string.minute_access_dialog_plain
         }

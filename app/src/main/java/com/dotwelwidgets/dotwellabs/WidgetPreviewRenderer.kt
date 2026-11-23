@@ -119,6 +119,14 @@ object WidgetPreviewRenderer {
                 now,
                 includeBackground = false,
             )
+            PreviewKind.KWGT_GRADIENT_CLOCK -> KwgtGradientClockRenderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                now,
+                includeBackground = false,
+            )
             PreviewKind.KWGT_MINI_CALENDAR -> KwgtMiniCalendarRenderer.render(
                 context,
                 size.width,
@@ -139,6 +147,7 @@ object WidgetPreviewRenderer {
         PreviewKind.KWGT_DATE_TIME,
         PreviewKind.KWGT_DATE_TIME_2,
         PreviewKind.KWGT_DIGITAL_4,
+        PreviewKind.KWGT_GRADIENT_CLOCK,
         -> true
         else -> false
     }

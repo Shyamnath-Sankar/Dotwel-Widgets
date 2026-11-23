@@ -19,6 +19,7 @@ object WidgetUpdater {
         KwgtDateTimeWidgetProvider::class.java,
         KwgtDateTime2WidgetProvider::class.java,
         KwgtDigital4WidgetProvider::class.java,
+        KwgtGradientClockWidgetProvider::class.java,
         KwgtMiniCalendarWidgetProvider::class.java,
     )
 

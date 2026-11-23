@@ -1,0 +1,178 @@
+{
+  "_source": {
+    "repository": "https://github.com/AumGupta/KWGT-Widgets",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "file": "widgets/Nothing_Digital.kwgt!preset.json",
+    "title": "Nothing_Digital",
+    "author": "Om Gupta",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": [
+      "preset_info.email removed",
+      "SINGLE_TAP launch intent strings removed",
+      "bundled ndot-47.ttf font reference replaced with Dotwel original dot glyphs"
+    ]
+  },
+  "preset_info": {
+    "title": "Nothing_Digital",
+    "version": 13
+  },
+  "preset_root": {
+    "internal_type": "RootLayerModule",
+    "globals_list": {
+      "side": {
+        "type": "NUMBER",
+        "global_formula": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$"
+      },
+      "bg": {
+        "type": "COLOR",
+        "global_formula": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "fg": {
+        "type": "COLOR",
+        "global_formula": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "primary": {
+        "type": "COLOR",
+        "value": "#FFD71921"
+      }
+    },
+    "viewgroup_items": [
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Bg",
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "h",
+          "paint_color": "bg"
+        },
+        "shape_corners": 58,
+        "internal_formulas": {
+          "shape_corners": "$gv(side)/5$"
+        },
+        "paint_color": "#FF1B1B1D"
+      },
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Gradient1",
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "side",
+          "paint_color": "primary"
+        },
+        "internal_formulas": {
+          "shape_width": "$gv(side)/1.1$",
+          "shape_height": "$gv(side)/1.1$",
+          "position_offset_x": "$gv(side)/1.1$",
+          "gradient_width": "45",
+          "gradient_offset": "69"
+        },
+        "paint_gradient": "LINEAR",
+        "paint_style": "FILL",
+        "paint_color": "#FFD71921"
+      },
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Gradient2",
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "side",
+          "paint_color": "primary"
+        },
+        "internal_formulas": {
+          "shape_width": "$gv(side)/1.4$",
+          "shape_height": "$gv(side)/1.4$",
+          "position_offset_x": "$gv(side)/1.4$",
+          "gradient_width": "71",
+          "gradient_offset": "61"
+        },
+        "paint_gradient": "LINEAR",
+        "paint_style": "FILL",
+        "paint_color": "#FFD71921"
+      },
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Gradient3",
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "side",
+          "paint_color": "primary"
+        },
+        "internal_formulas": {
+          "shape_width": "$gv(side)/2$",
+          "shape_height": "$gv(side)/2$",
+          "position_offset_x": "$gv(side)/2$",
+          "gradient_width": "54",
+          "gradient_offset": "64"
+        },
+        "paint_gradient": "LINEAR",
+        "paint_style": "FILL",
+        "paint_color": "#FFD71921"
+      },
+      {
+        "internal_type": "TextModule",
+        "internal_title": "Hour",
+        "text_expression": "$df(hh)$",
+        "text_family": "kfile://org.kustom.provider/fonts/ndot-47.ttf",
+        "text_size": 32.0,
+        "internal_globals": {
+          "paint_color": "fg"
+        },
+        "internal_formulas": {
+          "text_size": "$gv(side)/3$"
+        }
+      },
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "MinuteChip",
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "side",
+          "paint_color": "primary"
+        },
+        "internal_formulas": {
+          "shape_width": "$gv(side)/6$",
+          "shape_height": "$gv(side)/6$",
+          "position_offset_x": "$gv(side)/6$",
+          "gradient_width": "45",
+          "gradient_offset": "69"
+        },
+        "paint_gradient": "LINEAR",
+        "paint_style": "FILL",
+        "paint_color": "#FFD71921"
+      },
+      {
+        "internal_type": "TextModule",
+        "internal_title": "Minute",
+        "text_expression": "$df(mm)$",
+        "text_family": "kfile://org.kustom.provider/fonts/ndot-47.ttf",
+        "text_size": 32.0,
+        "internal_globals": {
+          "paint_color": "bg"
+        },
+        "internal_formulas": {
+          "text_size": "$gv(side)/12$"
+        }
+      }
+    ]
+  },
+  "dotwel_conversion": {
+    "provider": "KwgtGradientClockWidgetProvider",
+    "renderer": "KwgtGradientClockRenderer",
+    "retained": [
+      "side = min(width, height)",
+      "rounded corners = side / 5",
+      "three right-edge circles at side / 1.1, side / 1.4 and side / 2",
+      "circle gradient widths 45/71/54 and offsets 69/61/64",
+      "centred 12-hour hh at side / 3 in foreground ink",
+      "side / 6 primary minute chip at the right edge with mm at side / 12",
+      "no AM/PM layer; df(hh)/df(mm) only"
+    ],
+    "substitutions": [
+      "ndot-47.ttf replaced by app-owned DotGlyphFont 5x7 dot glyphs",
+      "rotated source gradients mapped to horizontal right-to-left fades",
+      "minute chip kept more opaque than the 45% source so mm stays legible",
+      "access-off widget uses live platform TextClocks over a time-free static gradient surface"
+    ]
+  }
+}

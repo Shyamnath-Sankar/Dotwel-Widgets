@@ -15,6 +15,7 @@ import android.widget.TextClock
 import android.widget.TextView
 import java.util.Calendar
 import java.util.Locale
+import kotlin.math.min
 
 /**
  * Shared preview host for the HOME category tiles and the category sheet.
@@ -75,6 +76,7 @@ object WidgetPreviewBinder {
         style: WidgetStyle,
         failed: Boolean = false,
     ) {
+        val width = container.width.takeIf { it > 0 } ?: dp(context, 220)
         val height = container.height.takeIf { it > 0 } ?: dp(context, 180)
         val ink = UpstreamNtDraw.ink(context, style)
         val accent = UpstreamNtDraw.accent(context, style)
@@ -124,6 +126,12 @@ object WidgetPreviewBinder {
             PreviewKind.KWGT_DIGITAL_4 -> {
                 container.addView(
                     splitClockFallback(context, ink),
+                    matchParams(),
+                )
+            }
+            PreviewKind.KWGT_GRADIENT_CLOCK -> {
+                container.addView(
+                    gradientClockFallback(context, style, width, height),
                     matchParams(),
                 )
             }
@@ -328,6 +336,86 @@ object WidgetPreviewBinder {
             addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
         }
         root.addView(timeStack, timeParams)
+        return root
+    }
+
+    private fun gradientClockFallback(
+        context: Context,
+        style: WidgetStyle,
+        widthPx: Int,
+        heightPx: Int,
+    ): FrameLayout {
+        val root = FrameLayout(context)
+        val background = try {
+            KwgtGradientClockRenderer.renderStaticBackground(
+                context,
+                widthPx,
+                heightPx,
+                style,
+            )
+        } catch (_: OutOfMemoryError) {
+            null
+        } catch (_: RuntimeException) {
+            null
+        }
+        if (background != null) {
+            root.addView(
+                ImageView(context).apply {
+                    setImageBitmap(background)
+                    scaleType = ImageView.ScaleType.FIT_CENTER
+                    contentDescription = null
+                    importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                },
+                matchParams(),
+            )
+        }
+        root.addView(
+            TextClock(context).apply {
+                setFormat12Hour("hh")
+                setFormat24Hour("hh")
+                setTextColor(UpstreamNtDraw.ink(context, style))
+                gravity = Gravity.CENTER
+                includeFontPadding = false
+                maxLines = 1
+                typeface = Typeface.MONOSPACE
+                setTypeface(typeface, Typeface.BOLD)
+                setPadding(0, 0, dp(context, 42), 0)
+                setAutoSizeTextTypeUniformWithConfiguration(
+                    8,
+                    96,
+                    2,
+                    TypedValue.COMPLEX_UNIT_SP,
+                )
+            },
+            matchParams(),
+        )
+        val chipSide = (min(widthPx, heightPx) / 6f)
+            .toInt()
+            .coerceAtLeast(dp(context, 18))
+        root.addView(
+            TextClock(context).apply {
+                setFormat12Hour("mm")
+                setFormat24Hour("mm")
+                setTextColor(KwgtGradientClockRenderer.minuteInk(context, style))
+                gravity = Gravity.CENTER
+                includeFontPadding = false
+                maxLines = 1
+                typeface = Typeface.MONOSPACE
+                setTypeface(typeface, Typeface.BOLD)
+                setBackgroundResource(R.drawable.bg_kwgt_gradient_minute_chip)
+                setAutoSizeTextTypeUniformWithConfiguration(
+                    7,
+                    20,
+                    1,
+                    TypedValue.COMPLEX_UNIT_SP,
+                )
+            },
+            FrameLayout.LayoutParams(
+                chipSide,
+                chipSide,
+                Gravity.END or Gravity.CENTER_VERTICAL,
+            ),
+        )
         return root
     }
 

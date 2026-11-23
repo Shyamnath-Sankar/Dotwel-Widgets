@@ -117,6 +117,21 @@ the app from About & source credits > View MIT license texts.
   platform serif regular and bold families; no upstream font file is bundled.
   The source tap intents and font payloads are omitted from the sanitized asset.
   Runtime is not claimed here.
+- `widgets/Nothing_Digital.kwgt!preset.json` -> `KwgtGradientClockRenderer.kt`,
+  `KwgtGradientClockWidgetProvider.kt`, and the sanitized data model
+  `app/src/main/assets/kwgt/nothing_digital.sanitized.json`. Retained: the
+  rounded `side / 5` surface, the three right-edge circles at `side / 1.1`,
+  `side / 1.4` and `side / 2` with source gradient offsets 69/61/64 and widths
+  45/71/54, the centred 12-hour `hh` at `side / 3` in foreground ink, and the
+  `side / 6` primary minute chip with `mm` at `side / 12`. The bundled
+  `ndot-47.ttf` is replaced by Dotwel's original dot glyphs. The source rotates
+  each gradient circle to 170 degrees; Android's `LinearGradient` is drawn on a
+  horizontal right-to-left axis while keeping the source offsets and widths, a
+  documented legibility approximation rather than pixel-identical output. The
+  minute chip is kept more opaque than the 45% source so `mm` stays legible on
+  all three app surfaces. Without optional exact-alarm access the provider uses
+  live platform TextClocks over a time-free static gradient surface. Runtime is
+  not claimed here.
 - `widgets/Nothing_Mini_Calender.kwgt!preset.json` -> `KwgtMiniCalendarRenderer.kt`,
   `KwgtMiniCalendarDates.kt`, `KwgtMiniCalendarWidgetProvider.kt`, and the
   sanitized data model
@@ -144,9 +159,9 @@ the app from About & source credits > View MIT license texts.
   replace the fonts.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
   `Nothing_Battery`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
-  `Nothing_Date_Time2`, and `Nothing_Mini_Calender` are implemented in this
-  checkpoint; the rest remain pending or dependency-blocked and are not claimed
-  as imported.
+  `Nothing_Date_Time2`, `Nothing_Digital4`, `Nothing_Digital`, and
+  `Nothing_Mini_Calender` are implemented in this checkpoint; the rest remain
+  pending or dependency-blocked and are not claimed as imported.
 
 ## Not included
 

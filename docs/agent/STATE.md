@@ -2,101 +2,67 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/split-host-repair-45178491151`, based on `525b5de`. The
-  separate launcher repository, default main, repository visibility and signing
-  setup are unchanged.
-- Scope of this run: repair the Android 15 native pin/placement inflation
-  failure for the 12th provider, `KwgtDigital4WidgetProvider` (KWGT Split
-  Clock). This was a real app defect, not a research task.
+- Branch: `agent/gradient-wire-45185550298`, based on `130e1dd`.
+- Scope of this run: finish the incomplete KWGT `Nothing_Digital` gradient-clock
+  import without rewriting the existing renderer, layouts, XML, or tests.
+  Preserve every previously wired provider.
 
-## Root cause
+## Wiring added
 
-`app/src/main/res/layout/widget_kwgt_digital4.xml` used a raw
-`<View android:id="@+id/kwgt_digital4_divider" ...>` for the centre divider.
-RemoteViews only inflates classes annotated `@RemoteViews.RemoteView` (the
-documented allowlist: `FrameLayout`, `LinearLayout`, `RelativeLayout`,
-`TextClock`, `TextView`, `ImageView`, etc.). `android.view.View` is not on that
-list, so both `initialLayout` and `previewLayout` inflation failed. On the
-Android 15 host this surfaced as the native pin preview "Couldn't add widget"
-and HOME never appearing.
+- New `KwgtGradientClockWidgetProvider` modelled on the Digital4 provider:
+  `KwgtGradientClockRenderer.render()` for the styled bitmap and
+  `renderStaticBackground()` behind live `TextClock` hh/mm when optional
+  exact-alarm access is absent. It uses the existing
+  `widget_kwgt_gradient_clock.xml` ids and host-size geometry, supports resize,
+  shares `MinuteTickScheduler`, handles minute ticks plus
+  time/timezone/date/boot broadcasts, and opens `ACTION_SHOW_ALARMS` on tap.
+- Added the `kwgt_gradient_clock` catalog entry as the sixth CLOCK variant and
+  seventh KWGT provider, with Add/pin wiring, `WidgetUpdater`, and
+  `PinResultReceiver` confirmation text.
+- Added the manifest receiver and the missing strings referenced by the existing
+  layout and widget-info XML (`kwgt_gradient_preview_description`,
+  `widget_kwgt_gradient_description`, plus content descriptions, label, catalog,
+  pin and access-dialog copy).
+- `MainActivity` now recognises `PreviewKind.KWGT_GRADIENT_CLOCK` for the alarm
+  access dialog, so its wording matches a clock rather than a date/time widget.
+- Category previews now render the actual `KwgtGradientClockRenderer` output.
+  Without optional exact-alarm access the preview fallback draws the same static
+  gradient surface under live `TextClock` hh/mm, matching the placed widget.
+- Added `app/src/main/assets/kwgt/nothing_digital.sanitized.json` and the
+  Nothing_Digital MIT provenance in `docs/ATTRIBUTION.md`. Updated the
+  `docs/KWGT-LEDGER.md` rows for `Nothing_Digital` and `Nothing_Digital4`.
 
-## Fix
-
-- Replaced the raw `<View>` divider with a static `<ImageView>` at
-  `app/src/main/res/layout/widget_kwgt_digital4.xml`. The id, `1dp` width,
-  `match_parent` height and `@color/dot_accent` (`#D71921`) background are
-  preserved, so the source split composition and geometry are unchanged.
-- Marked the divider decorative with `contentDescription="@null"` and
-  `importantForAccessibility="no"`; the two live `TextClock` children are
-  untouched.
-- No provider Kotlin change was needed: `kwgt_digital4_divider` is not
-  referenced at runtime and the fallback `LinearLayout` content description is
-  unchanged.
-- Audited the other new provider layouts (`widget_kwgt_datetime.xml`,
-  `widget_kwgt_datetime2.xml`, `widget_kwgt_mini_calendar.xml`). None contains a
-  raw `<View>`, `<Space>`, `<include>`, `<merge>` or custom view. The
-  `ScrollView` and `DotHeadingView` are in `activity_main.xml` (an Activity
-  layout, not a RemoteViews layout) and were not changed.
-- Preserved all 12 registered providers, source composition, Mini Calendar fit,
-  provenance, labels and the shared `MinuteTickScheduler`. No feature,
-  permission, dependency, font or asset was added. NothingWidgetPort remains
-  excluded; the launcher is untouched.
-
-## Regression test
-
-Added `app/src/test/java/com/dotwelwidgets/dotwellabs/RemoteViewsLayoutSafetyTest.kt`.
-It reads the four shipped provider layout XML files and asserts every tag is on
-the RemoteViews-supported list, and that the split-clock divider is a static
-`1dp` `ImageView` with the accent background. Both tests failed against the
-pre-fix layout and pass after the fix.
-
-## Build and lint in this run
+## Verified here
 
 ```
-./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon
+./gradlew assembleDebug testDebugUnitTest --no-daemon
+./gradlew lintDebug --no-daemon
 ```
 
-Result: `BUILD SUCCESSFUL`. All unit tests pass. Lint: `0 errors, 103 warnings`
-(no suppressions added or changed). Warnings are the pre-existing SDK/AGP,
-API-gate, legacy-resource, plural, small-text, RTL-symmetry and static-context
-notices.
+Result: `BUILD SUCCESSFUL`; all unit tests pass; lint `0 errors, 106 warnings`.
+The manifest now registers 13 widget providers, of which 7 are KWGT source
+ports: Battery, Battery Mini, Date Time, Date Time 2, Split Clock, Gradient
+Clock, and Mini Calendar. The existing renderer, layouts, XML and renderer tests
+were not rewritten.
 
-The packaged layout was checked with `aapt2 dump xmltree`: the divider is an
-`ImageView` with `contentDescription=@null` and
-`importantForAccessibility=2` (`no`), not a raw `View`.
-
-## Artifact
-
-Debug APK: `checkpoints/dotwel-widgets-digital4-rvfix-debug.apk`.
-SHA-256 in `checkpoints/DIGITAL4-RVFIX-SHA256SUMS`:
+Debug APK: `checkpoints/dotwel-widgets-gradient-clock-debug.apk`.
+SHA-256 in `checkpoints/GRADIENT-CLOCK-SHA256SUMS`:
 
 ```
-5acfc938fae85921ea41bc8e0bcd9fe5385da44a958ba5161cab7cbf3519cb41  checkpoints/dotwel-widgets-digital4-rvfix-debug.apk
+41f269bd829110b01fe464983bafb0f784763179fb42652d83a3fa416dc784d8  checkpoints/dotwel-widgets-gradient-clock-debug.apk
 ```
 
-Older checkpoint APKs and checksum files were left untouched.
+Older checkpoint APKs were left untouched.
 
-## Verified versus not verified
+## Not verified
 
-Verified here: root cause, layout fix, regression tests, source compiles, debug
-APK assembles, lint has no errors, the packaged layout no longer contains a raw
-`View`, and all 12 providers/resources are still packaged.
-
-Not verified here: actual Android-host native pin preview, HOME placement,
-screenshots, resize, style switching, or minute advance. Runtime remains
-pending. The independent native / plain-minute / styled-minute / tap-gate run
-still has to be executed. No runtime or screenshot pass is claimed for the
-split clock.
-
-## Limits and remaining work
-
-- README and `docs/KWGT-LEDGER.md` still describe the previous 11-provider
-  checkpoint and still mark `Nothing_Digital4` pending. They were not rewritten
-  in this narrow repair.
-- The collection remains incomplete: the remaining KWGT presets are still
-  pending or dependency-blocked.
+- No Android host was available in this run. Native pin preview, HOME placement,
+  resize, style switching, minute advance, boot/timezone refresh, and tap
+  behaviour for the gradient clock are not runtime-verified. No screenshot or
+  runtime pass is claimed.
+- The KWGT collection is still incomplete: 7 of 40 presets are implemented; the
+  rest remain pending or dependency-blocked and are not claimed as imported.
 - Weather, Photo, Away, Compass, Snake, media/notification, CPU and iOS
-  Komponent presets remain in their prior blocked or pending states.
-- OEM OnePlus entries and the NothingWidgetPort remain excluded.
+  Komponent presets remain pending or blocked.
 - Play policy review, signing-key setup, repository visibility changes, launcher
   integration and default-main promotion remain outside this checkpoint.
