@@ -1,4 +1,4 @@
-name: Battery and quote placement diagnostics
+name: Repaired Quotes tap and World live minute check
 on:
   workflow_dispatch:
 permissions:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: c29668f6e59e5b7d0659fe7ae14872d02b8f7b23
+          ref: 3d3d637e91488e7f2a2b24a2964806ff46db421f
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -58,7 +58,7 @@ jobs:
            home()
            for i,d in enumerate((0,1,1,1,1,-1,-1,-1,-1)):
             if d:adb('shell','input','swipe',str(w*(8 if d==1 else 2)//10),str(h//2),str(w*(2 if d==1 else 8)//10),str(h//2),'350');time.sleep(.6)
-            r=cap(name+'-page-'+str(i))
+            r=tree()
             if find(r,needle) is not None:return cap(name)
            raise RuntimeError('HOME view missing '+needle)
           def pin(label,name,plain=None):
@@ -72,7 +72,7 @@ jobs:
            try:
             print('START '+name,flush=True);fn();report['tests'].setdefault(name,'passed');(OUT/'RESULT.json').write_text(json.dumps(report,indent=2));print('DONE '+name,flush=True)
            except Exception as e:
-            report['tests'][name]={'error':str(e)};cap('failure-'+name);(OUT/'RESULT.json').write_text(json.dumps(report,indent=2));print('FAILED '+name+': '+str(e),flush=True)
+            report['tests'][name]={'error':str(e)};cap('failure-'+name);raise
           try:
            w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','input','keyevent','82');home();cap('00-preinstall-host');(OUT/'preinstall-logcat.txt').write_bytes(adb('logcat','-d','-t','2000',check=False));(OUT/'preinstall-processes.txt').write_bytes(adb('shell','ps','-A',check=False))
            for i in range(4):
@@ -83,18 +83,21 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='6ff87b965ba7ece5eca5da792a61581f5db996e8f129178ca004296bb5c1d556':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='f6e3cdeafdbaff12b64d72a71ad724d56ee5f4667a1c682516b2aef593585d94':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            adb('shell','settings','put','system','font_scale','1.3');adb('shell','am','force-stop',PKG);start();cap('02-gallery-large-font');adb('shell','settings','put','system','font_scale','1.0')
-           for label,name,needle in [('Add Nothing Battery (KWGT)','battery','widget_battery_bitmap'),('Add Nothing Battery Mini (KWGT)','battery-mini','widget_battery_bitmap'),('Add Quotes','quotes','widget_quotes_bitmap')]:
-            def run(label=label,name=name,needle=needle):
-             pin(label,name);locate(needle,'home-'+name)
-             (OUT/('appwidget-'+name+'.txt')).write_bytes(adb('shell','dumpsys','appwidget'))
-            test(name,run)
-           (OUT/'world-prefs.xml').write_bytes(adb('shell','run-as',PKG,'cat','shared_prefs/dotwel_world.xml',check=False))
+           test('quotes',lambda:pin('Add Quotes','quotes'))
+           r=locate('widget_quotes_bitmap','home-quotes-before');n=find(r,'widget_quotes_bitmap');before=adb('shell','run-as',PKG,'cat','shared_prefs/dotwel_quotes.xml',check=False).decode()
+           click(n);time.sleep(1);cap('home-quotes-after');after=adb('shell','run-as',PKG,'cat','shared_prefs/dotwel_quotes.xml',check=False).decode();report['quote_prefs']={'before':before,'after':after}
+           if before==after:raise RuntimeError('Quote tap did not advance')
+           test('world',lambda:pin('Add World Clock','world'))
+           r=locate('world_clock_a','world-live-before');before=find(r,'world_clock_a').get('text','')
+           adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
+           r=locate('world_clock_a','world-live-after');after=find(r,'world_clock_a').get('text','');expected=adb('shell','date','+%H:%M').decode().strip();report['world_live_minute']={'before':before,'after':after,'device':expected}
+           if before==after or expected not in after:raise RuntimeError('World native denied-access minute failed')
+           report['tests']['world_live_minute']='passed'
           except Exception as e:report['error']=str(e);cap('99-fatal')
           finally:
-           (OUT/'appwidget-final.txt').write_bytes(adb('shell','dumpsys','appwidget',check=False))
            (OUT/'RESULT.json').write_text(json.dumps(report,indent=2));(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','3500',check=False));print(json.dumps(report,indent=2))
           if 'error' in report or any(isinstance(v,dict) and 'error' in v for v in report['tests'].values()):raise SystemExit(1)
           PYCODE
