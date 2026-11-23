@@ -1,0 +1,25 @@
+{
+  "version": "0.1.8",
+  "tests": {
+    "native_category_analog3": "confirmed",
+    "app_process_killed": "verified absent",
+    "live_hands_after_kill": "cropped hand pixels changed across native minute; requires visual audit",
+    "tap_clock": "destination activity recorded; pixels require review"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "119dffae4ec68a5a4267e1b89d0849d91f2bfe56006083a2c89cc48ea61dcbbb",
+  "clock_bounds": [
+    88,
+    252,
+    498,
+    798
+  ],
+  "live_time": {
+    "before": "Mon Nov 23 22:54:25 UTC 2026\n",
+    "after": "Mon Nov 23 22:55:23 UTC 2026\n"
+  },
+  "hand_pixel_difference": 4.359045832216564,
+  "alarm_access": "No operations.\nDefault mode: default\n"
+}
