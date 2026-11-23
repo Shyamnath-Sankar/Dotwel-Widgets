@@ -93,7 +93,10 @@ cropped source preview. Time, weekday and date are live platform TextClocks, so
 no frozen bitmap time is shown and no exact-alarm access is required. Only the
 static card/battery background is a bitmap. The percentage reads the real
 `BatteryManager` level through the existing `BatteryState` path and refreshes on
-`ACTION_BATTERY_CHANGED`, date/time/time-zone/boot and resize updates.
+`ACTION_BATTERY_CHANGED`, date/time/time-zone/boot and resize updates. The source
+time readout is fixed 12-hour `h:mm`, so the TextClock uses `h:mm` for both
+`format12Hour` and `format24Hour` and 24-hour devices still match the source;
+the fallback background slot is a supported `ImageView` rather than a raw `View`.
 
 Nothing_Battery keeps these author relationships:
 

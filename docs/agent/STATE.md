@@ -2,7 +2,21 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/digital3-helper-45217649073`, based on `ce464a0`.
+- Branch: `agent/clean-host-45232311604`, based on `c98e068`.
+
+## CleanInfo compatibility fixes
+
+- `layout/widget_kwgt_clean_info.xml` used a raw `<View>` for
+  `kwgt_clean_info_bg_fallback`, which RemoteViews does not support; a native
+  host rejected the layout even when the view was `GONE`. It is now an
+  `ImageView` with the same id, `match_parent` size, `fitXY` scale and
+  `GONE` default. The layout no longer contains a raw `<View>`.
+- The source readout is fixed 12-hour `h:mm`, but the layout's
+  `format24Hour` was `H:mm`. It is now `h:mm` for both 12-hour and 24-hour
+  devices, matching the source.
+- All 14 existing providers, foreground conditional repair, platform font
+  substitution, permissions, services and dependencies are unchanged. The
+  battery `TextView` has padding only; its geometry was not altered.
 
 ## Compiler fix run (ce464a0)
 
@@ -74,23 +88,23 @@
 ## Verified here
 
 ```
-python3 ElementTree parse of app/src/main/**/*.xml   -> 50 files, 0 errors
-./gradlew :app:assembleDebug :app:lintDebug :app:testDebugUnitTest
+python3 ElementTree parse of app/src/main/**/*.xml   -> 52 files, 0 errors
+./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 ```
 
-Result: `BUILD SUCCESSFUL`; 33 unit/layout tests passed (0 failures); lint
-`0 errors, 112 warnings`. The manifest registers 14 widget providers, of which
-8 are KWGT source ports. The fresh debug APK is
-`app/build/outputs/apk/debug/app-debug.apk`; CI uploads it on success. The stale
-build output APK was deleted before this build; older checkpoint APKs were left
-untouched. The APK is build-verified only, not runtime-verified.
+Result: `BUILD SUCCESSFUL`; 40 unit/layout tests passed (0 failures, 0 errors);
+lint `0 errors, 117 warnings`. The CleanInfo layout has 0 raw `<View>` elements
+and both `format12Hour` and `format24Hour` are `h:mm`. The manifest registers 14
+widget providers, of which 8 are KWGT source ports. The fresh debug APK is
+`app/build/outputs/apk/debug/app-debug.apk`; CI uploads it on success. The APK is
+build-verified only, not runtime-verified.
 
 ## Not verified
 
 - No Android host was available in this run. Placement, resize, style switching,
   minute advance, process-kill recovery, boot/timezone refresh, tap behaviour and
-  visual output for Digital3 are not runtime-verified. No screenshot or runtime
-  pass is claimed.
+  visual output for CleanInfo (and the other providers) are not runtime-verified.
+  No screenshot or runtime pass is claimed.
 - The KWGT collection is still incomplete: 8 of 40 presets are implemented; the
   remaining 32 stay pending or dependency-blocked and are not claimed as
   imported.
