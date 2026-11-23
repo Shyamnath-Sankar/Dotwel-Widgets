@@ -1,0 +1,21 @@
+{
+  "version": "0.1.6",
+  "tests": {
+    "first_screen": "Both Add controls visible without scrolling",
+    "cancel": "Native prompt dismissed, no Clock view on HOME",
+    "pin_clock": "Accepted real native prompt via in-app Add; actual provider view visible",
+    "pin_date": "Accepted real native prompt via in-app Add; actual provider view visible",
+    "unsupported": "DEBUG-only override: Clock and Date dialog readable; Back, retry and Got it work",
+    "minute_after_kill": {
+      "before": "Dotwel clock, 05:26",
+      "after": "Dotwel clock, 05:27",
+      "device_time": "05:27",
+      "passed": true
+    }
+  },
+  "caveats": [
+    "Actual pixels require independent review. Pixel emulator is not universal OEM launcher proof. Unsupported UI uses explicit DEBUG-only override."
+  ],
+  "sha256": "9b8e2a4d5b27c391fe7d8f8cbd38851fc3376c15846dc1381864b661bfefa6be",
+  "pid_after_kill": ""
+}
