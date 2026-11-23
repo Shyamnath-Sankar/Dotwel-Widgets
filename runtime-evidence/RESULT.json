@@ -1,0 +1,25 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "native_category_clean": "confirmed",
+    "native_category_battery2": "confirmed"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "04107ac86b308a864a3dd986512020ee98b5a5f34fd7ef1843a3f2b2eb299373",
+  "battery_snapshots": {
+    "home-battery2-full-initial": {
+      "description": "KWGT Battery2, 100 percent, full",
+      "device": "Current Battery Service state:\n  AC powered: true\n  USB powered: false\n  Wireless powered: false\n  Dock powered: false\n  Max charging current: 5000000\n  Max charging voltage: 5000000\n  Charge counter: 10000\n  status: 2\n  health: 2\n  present: true\n  level: 100\n  scale: 100\n  voltage: 5000\n  temperature: 250\n  technology: Li-ion\n  Charging state: 0\n  Charging policy: 0\n"
+    }
+  },
+  "battery_transitions": {
+    "discharge73": {
+      "description": "KWGT Battery2, 100 percent, full",
+      "device": "Current Battery Service state:\n  (UPDATES STOPPED -- use 'reset' to restart)\n  AC powered: false\n  USB powered: false\n  Wireless powered: false\n  Dock powered: false\n  Max charging current: 5000000\n  Max charging voltage: 5000000\n  Charge counter: 10000\n  status: 3\n  health: 2\n  present: true\n  level: 73\n  scale: 100\n  voltage: 5000\n  temperature: 250\n  technology: Li-ion\n  Charging state: 0\n  Charging policy: 0\n",
+      "automatic": false
+    }
+  },
+  "error": "Battery2 did not update automatically to 73 after process kill"
+}
