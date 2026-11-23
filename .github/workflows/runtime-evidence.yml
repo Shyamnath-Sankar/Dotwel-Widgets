@@ -110,8 +110,8 @@ jobs:
            cap('08-calendar-mini');click(wait_target('Add KWGT Mini Calendar'));cap('09-native-mini');n=native(tree())
            if n is None:raise RuntimeError('Mini Calendar native pin prompt missing')
            click(n);time.sleep(1);report['tests']['mini_native_pin']='fourth Calendar variant confirmed without Alarms dialog'
-           r=locate('widget_kwgt_mini_calendar_bitmap','home-mini-before');report['device_date']=adb('shell','date','+%Y-%m-%d %a').decode().strip()
-           adb('shell','am','kill',PKG);home();cap('home-mini-after-kill');adb('shell','am','broadcast','-a','android.intent.action.DATE_CHANGED','-p',PKG,check=False);home();cap('home-mini-after-date-event')
+           r=locate('widget_kwgt_mini_calendar_bitmap','home-mini-before');report['device_date']=adb('shell','date','+%Y-%m-%d_%a').decode().strip()
+           adb('shell','am','kill',PKG);home();cap('home-mini-after-kill');event=adb('shell','am','broadcast','-a','android.intent.action.DATE_CHANGED','-p',PKG,check=False);(OUT/'date-event-result.txt').write_bytes(event);home();cap('home-mini-after-date-event')
            report['tests']['mini_date_event']='date broadcast requested and pixels captured; inspect current five-day values'
            n=find(tree(),'widget_kwgt_mini_calendar_bitmap');click(n);time.sleep(2);cap('tap-result-calendar');focus=adb('shell','dumpsys','activity','activities').decode(errors='replace');(OUT/'tap-calendar-activity.txt').write_text(focus)
            if 'com.google.android.calendar' not in focus and 'ResolverActivity' not in focus:raise RuntimeError('Calendar did not open')
