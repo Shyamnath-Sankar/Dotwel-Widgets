@@ -13,7 +13,8 @@ https://github.com/SameerAlSahab/AwesomeAWidgets
 Pinned source commit: `0fae60722764bda790f89bd94119c6dab854d90e`
 
 Copyright (c) 2026 Sameer Al Sahab. Licensed under the MIT License. The full MIT
-text is bundled in `app/src/main/res/raw/awesomeawidgets_mit.txt`.
+text is bundled in `app/src/main/res/raw/awesomeawidgets_mit.txt` and is
+reachable in the app from About & source credits > View MIT license texts.
 
 ### Adapted author-written behaviour (precise mapping)
 
@@ -70,7 +71,9 @@ https://github.com/AumGupta/KWGT-Widgets
 
 Pinned source commit: `96ca27be4cbff35efec5a86c64dd39fd065c958f`
 
-Copyright (c) 2024 Om Gupta. Licensed under the MIT License.
+Copyright (c) 2024 Om Gupta. Licensed under the MIT License. The full MIT text
+is bundled in `app/src/main/res/raw/kwgt_widgets_mit.txt` and is reachable in
+the app from About & source credits > View MIT license texts.
 
 ### Adapted presets
 

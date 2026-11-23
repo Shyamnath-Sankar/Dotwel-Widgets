@@ -9,11 +9,21 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   conversions from the MIT KWGT-Widgets presets. The full 40-preset source-port
   status is in `docs/KWGT-LEDGER.md`; only those two presets are implemented, the
   rest remain pending or dependency-blocked.
-- Gallery cards put Add directly below each preview. Ready cards ask the current
-  launcher to pin the matching provider through the platform request-pin API;
-  the launcher owns the confirmation. Unsupported pinning shows a readable
-  manual HOME > Widgets path. Pending cards stay disabled and say what is
-  missing.
+- The front screen is a compact visual gallery: title, short subtitle, style
+  chips, an actionable dotted-update control, and the available previews. Add
+  sits directly below each preview. Available cards ask the current launcher to
+  pin the matching provider through the platform request-pin API; the launcher
+  owns the confirmation. Unsupported pinning shows a readable manual HOME >
+  Widgets path. The 17 not-yet-available catalog items are collapsed under an
+  Upcoming section with an honest reason on expansion, so they do not obscure
+  the available collection.
+- Clock and analog previews follow the real current mode. With Alarms &
+  reminders access off, the preview uses the same live native `TextClock` or
+  platform `AnalogClock` fallback as the placed widget; no dotted bitmap is
+  shown or implied. With access on, the preview calls the same dotted/styled
+  renderer as the widget, and returning from Android settings refreshes it.
+  Every gallery image is labeled as a preview. Source/provenance text lives in
+  an About & source credits dialog with the bundled MIT license texts.
 - World Clock configuration is transferred to the actual `appWidgetId` returned
   by the launcher, is stored per instance, and uses a unique pending token so a
   cancelled pin cannot leak into another instance. Adding World from the system
@@ -34,8 +44,10 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   minimum), resize, manual refresh and app resume. `ACTION_BATTERY_CHANGED` is
   the sticky data source; Android does not deliver it to manifest receivers, so
   per-change push updates are not claimed.
-- Settings/preview activity: choose black, translucent or transparent; see a live
-  preview; refresh placed widgets; open this app's Alarms & reminders settings.
+- Settings/preview activity: choose black, translucent or transparent; browse
+  previews; refresh placed widgets; open this app's Alarms & reminders settings.
+  Previews render only when visible or near-visible, use a bounded pixel budget,
+  and do not recycle a bitmap that may still be drawing.
 - Permissions: optional `SCHEDULE_EXACT_ALARM` only. No `USE_EXACT_ALARM`,
   INTERNET, foreground service, accessibility, overlay, notification/media access,
   location, calendar, or boot permission. The app never grants alarm access

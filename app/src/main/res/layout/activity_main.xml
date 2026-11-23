@@ -9,32 +9,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="20dp"
-        android:paddingTop="20dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="28dp">
+        android:paddingStart="18dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="24dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="serif"
-            android:letterSpacing="0.02"
             android:text="@string/app_name"
             android:textColor="@color/widget_ink"
-            android:textSize="28sp" />
+            android:textSize="24sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="@string/settings_subtitle"
             android:textColor="@color/widget_muted"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="12dp"
             android:letterSpacing="0.18"
             android:text="@string/style_label"
             android:textColor="@color/widget_muted"
@@ -44,7 +44,7 @@
             android:id="@+id/style_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:orientation="horizontal">
 
             <RadioButton
@@ -52,33 +52,47 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:buttonTint="@color/dot_accent"
+                android:background="@drawable/bg_style_chip"
+                android:button="@null"
+                android:gravity="center"
                 android:minHeight="48dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
                 android:text="@string/style_black"
                 android:textColor="@color/widget_ink"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <RadioButton
                 android:id="@+id/style_translucent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:buttonTint="@color/dot_accent"
+                android:background="@drawable/bg_style_chip"
+                android:button="@null"
+                android:gravity="center"
                 android:minHeight="48dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
                 android:text="@string/style_translucent"
                 android:textColor="@color/widget_ink"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <RadioButton
                 android:id="@+id/style_transparent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:buttonTint="@color/dot_accent"
+                android:background="@drawable/bg_style_chip"
+                android:button="@null"
+                android:gravity="center"
                 android:minHeight="48dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
                 android:text="@string/style_transparent"
                 android:textColor="@color/widget_ink"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
         </RadioGroup>
 
@@ -86,46 +100,60 @@
             android:id="@+id/clock_setup_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="12dp"
             android:background="@drawable/bg_setup_card"
-            android:orientation="vertical"
-            android:padding="14dp">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp">
 
-            <TextView
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="serif"
-                android:text="@string/clock_setup_title"
-                android:textColor="@color/widget_ink"
-                android:textSize="17sp" />
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingEnd="8dp">
 
-            <TextView
-                android:id="@+id/clock_setup_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:lineSpacingExtra="2dp"
-                android:text="@string/exact_alarm_status_disabled_short"
-                android:textColor="@color/widget_muted"
-                android:textSize="13sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="serif"
+                    android:text="@string/clock_setup_title"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/clock_setup_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:lineSpacingExtra="1dp"
+                    android:text="@string/exact_alarm_status_disabled_short"
+                    android:textColor="@color/widget_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/exact_alarm_button"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:backgroundTint="@color/dot_accent"
                 android:minHeight="48dp"
-                android:text="@string/exact_alarm_enable"
+                android:minWidth="96dp"
+                android:text="@string/exact_alarm_enable_short"
                 android:textColor="@android:color/white"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
         </LinearLayout>
 
         <TextView
+            android:id="@+id/gallery_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="18dp"
             android:letterSpacing="0.18"
             android:text="@string/gallery_label"
             android:textColor="@color/widget_muted"
@@ -134,7 +162,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="3dp"
             android:text="@string/gallery_note"
             android:textColor="@color/widget_muted"
             android:textSize="12sp" />
@@ -143,14 +171,35 @@
             android:id="@+id/gallery_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:orientation="vertical" />
+
+        <Button
+            android:id="@+id/upcoming_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#1B1E24"
+            android:gravity="start|center_vertical"
+            android:minHeight="48dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/widget_muted"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:id="@+id/upcoming_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/refresh_widgets"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:backgroundTint="@color/dot_accent"
             android:minHeight="48dp"
             android:text="@string/refresh_widgets"
@@ -160,20 +209,22 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:lineSpacingExtra="3dp"
+            android:layout_marginTop="12dp"
+            android:lineSpacingExtra="2dp"
             android:text="@string/settings_hint"
             android:textColor="@color/widget_muted"
             android:textSize="12sp" />
 
-        <TextView
+        <Button
+            android:id="@+id/about_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:lineSpacingExtra="3dp"
-            android:text="@string/attribution_short"
-            android:textColor="@color/settings_faint"
-            android:textSize="11sp" />
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#1B1E24"
+            android:minHeight="48dp"
+            android:text="@string/about_button"
+            android:textColor="@color/widget_ink"
+            android:textSize="13sp" />
 
     </LinearLayout>
 

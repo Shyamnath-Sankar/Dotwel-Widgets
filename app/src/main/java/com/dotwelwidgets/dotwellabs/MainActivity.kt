@@ -14,7 +14,6 @@ import android.content.IntentFilter
 import android.content.pm.ApplicationInfo
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -24,15 +23,15 @@ import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowInsets
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioGroup
+import android.widget.ScrollView
 import android.widget.Spinner
+import android.widget.TextClock
 import android.widget.TextView
 import android.widget.Toast
 import java.util.Calendar
@@ -43,8 +42,16 @@ class MainActivity : Activity() {
     private val tag = "MainActivity"
     private val cards = mutableListOf<CardHolder>()
     private val previewBitmaps = mutableMapOf<ImageView, Bitmap>()
+    private val availableEntries = WidgetCatalog.entries.filter {
+        it.state == ImportState.READY && it.providerClass != null
+    }
+    private val upcomingEntries = WidgetCatalog.entries.filterNot {
+        it.state == ImportState.READY && it.providerClass != null
+    }
     private var exactAlarmReceiverRegistered = false
     private var pendingEntryAfterAccess: CatalogEntry? = null
+    private var upcomingBuilt = false
+    private val initialRender = Runnable { renderVisiblePreviews() }
 
     private val exactAlarmReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -52,6 +59,7 @@ class MainActivity : Activity() {
                 AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
             ) {
                 updateClockStateUi()
+                renderVisiblePreviews()
                 WidgetUpdater.updateAll(this@MainActivity)
             }
         }
@@ -59,7 +67,7 @@ class MainActivity : Activity() {
 
     private val tick = object : Runnable {
         override fun run() {
-            renderAllPreviews()
+            renderVisiblePreviews()
             val now = System.currentTimeMillis()
             handler.postDelayed(this, 60_000L - (now % 60_000L) + 100L)
         }
@@ -80,7 +88,7 @@ class MainActivity : Activity() {
             val style = styleFor(checkedId) ?: return@setOnCheckedChangeListener
             WidgetPrefs.setStyle(this, style)
             applyStyleToFrames(style)
-            renderAllPreviews()
+            renderVisiblePreviews()
             WidgetUpdater.updateAll(this)
         }
 
@@ -92,7 +100,17 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.exact_alarm_button).setOnClickListener {
             requestExactAlarmAccess()
         }
+        findViewById<Button>(R.id.upcoming_toggle).setOnClickListener {
+            toggleUpcoming()
+        }
+        findViewById<Button>(R.id.about_button).setOnClickListener {
+            showAboutDialog()
+        }
+        findViewById<ScrollView>(R.id.settings_root).setOnScrollChangeListener { _, _, _, _, _ ->
+            renderVisiblePreviews()
+        }
         updateClockStateUi()
+        findViewById<View>(R.id.settings_root).post(initialRender)
     }
 
     override fun onStart() {
@@ -125,8 +143,9 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         handler.removeCallbacks(tick)
-        handler.post(tick)
         updateClockStateUi()
+        renderVisiblePreviews()
+        handler.post(tick)
         WidgetUpdater.updateAll(this)
         val waiting = pendingEntryAfterAccess
         if (waiting != null && MinuteTickScheduler.hasExactAccess(this)) {
@@ -141,8 +160,8 @@ class MainActivity : Activity() {
     }
 
     override fun onDestroy() {
-        handler.removeCallbacks(tick)
-        previewBitmaps.values.forEach { it.recycle() }
+        handler.removeCallbacksAndMessages(null)
+        findViewById<View>(R.id.settings_root)?.removeCallbacks(initialRender)
         previewBitmaps.clear()
         cards.clear()
         super.onDestroy()
@@ -173,24 +192,53 @@ class MainActivity : Activity() {
     private fun buildGallery() {
         val container = findViewById<LinearLayout>(R.id.gallery_container)
         val inflater = LayoutInflater.from(this)
-        WidgetGroup.values().forEach { group ->
-            val entries = WidgetCatalog.entries.filter { it.group == group }
-            if (entries.isEmpty()) return@forEach
-            val header = TextView(this).apply {
-                text = getString(group.labelRes)
-                setTextColor(getColor(R.color.widget_muted))
-                textSize = 11f
-                letterSpacing = 0.18f
-                setPadding(4, 14, 4, 4)
-            }
-            container.addView(header)
-            entries.forEach { entry ->
-                val root = inflater.inflate(R.layout.item_widget_card, container, false)
-                container.addView(root)
-                cards += CardHolder(entry, root)
-            }
+        availableEntries.forEach { entry ->
+            val root = inflater.inflate(R.layout.item_widget_card, container, false)
+            container.addView(root)
+            cards += CardHolder(entry, root)
         }
         cards.forEach { bindCard(it) }
+        findViewById<TextView>(R.id.gallery_label).text = getString(
+            R.string.gallery_available_count,
+            availableEntries.size,
+            WidgetCatalog.entries.size,
+        )
+        val toggle = findViewById<Button>(R.id.upcoming_toggle)
+        toggle.visibility = if (upcomingEntries.isEmpty()) View.GONE else View.VISIBLE
+        toggle.text = getString(R.string.upcoming_toggle_format, upcomingEntries.size)
+    }
+
+    private fun toggleUpcoming() {
+        val container = findViewById<LinearLayout>(R.id.upcoming_container)
+        val toggle = findViewById<Button>(R.id.upcoming_toggle)
+        if (container.visibility == View.VISIBLE) {
+            container.visibility = View.GONE
+            toggle.text = getString(R.string.upcoming_toggle_format, upcomingEntries.size)
+            return
+        }
+        if (!upcomingBuilt) {
+            buildUpcomingRows(container)
+            upcomingBuilt = true
+        }
+        container.visibility = View.VISIBLE
+        toggle.text = getString(R.string.upcoming_hide)
+    }
+
+    private fun buildUpcomingRows(container: LinearLayout) {
+        val inflater = LayoutInflater.from(this)
+        upcomingEntries.forEach { entry ->
+            val row = inflater.inflate(R.layout.item_upcoming_row, container, false)
+            row.findViewById<TextView>(R.id.upcoming_name).text = entry.name
+            row.findViewById<TextView>(R.id.upcoming_reason).text = getString(
+                R.string.upcoming_row_reason_format,
+                getString(entry.group.labelRes),
+                getString(entry.detailRes),
+            )
+            val status = row.findViewById<TextView>(R.id.upcoming_status)
+            status.text = getString(entry.state.labelRes)
+            status.backgroundTintList = ColorStateList.valueOf(stateColor(entry.state))
+            container.addView(row)
+        }
     }
 
     private fun bindCard(holder: CardHolder) {
@@ -200,9 +248,6 @@ class MainActivity : Activity() {
         val chip = root.findViewById<TextView>(R.id.card_status_chip)
         chip.text = getString(entry.state.labelRes)
         chip.backgroundTintList = ColorStateList.valueOf(stateColor(entry.state))
-        root.findViewById<TextView>(R.id.card_upstream).text = entry.upstream
-        root.findViewById<TextView>(R.id.card_description).setText(entry.descriptionRes)
-        root.findViewById<TextView>(R.id.card_status_detail).setText(entry.detailRes)
 
         val add = root.findViewById<Button>(R.id.card_add)
         val ready = entry.state == ImportState.READY && entry.providerClass != null
@@ -285,7 +330,6 @@ class MainActivity : Activity() {
             .distinctBy { it.zoneId }
         val labels = zones.map { "${it.label} · ${it.zoneId}" }
         val current = WorldPrefs.previewZones(this)
-        val inflater = LayoutInflater.from(this)
         val content = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(20), dp(8), dp(20), 0)
@@ -318,7 +362,9 @@ class MainActivity : Activity() {
                 )
                 val token = UUID.randomUUID().toString()
                 WorldPrefs.setPending(this, token, chosen)
-                renderAllPreviews()
+                cards.filter { it.entry.action == CardAction.WORLD_ZONES }
+                    .forEach { it.lastRenderKey = null }
+                renderVisiblePreviews()
                 requestPin(entry, token)
             }
             .setNegativeButton(R.string.world_cancel, null)
@@ -388,6 +434,30 @@ class MainActivity : Activity() {
             .show()
     }
 
+    private fun showAboutDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.about_title)
+            .setMessage(R.string.about_body)
+            .setPositiveButton(R.string.about_close, null)
+            .setNeutralButton(R.string.about_licenses) { _, _ -> showLicenseDialog() }
+            .show()
+    }
+
+    private fun showLicenseDialog() {
+        val awesome = readRawText(R.raw.awesomeawidgets_mit)
+        val kwgt = readRawText(R.raw.kwgt_widgets_mit)
+        val body = "AwesomeAWidgets\n================\n\n$awesome\n\n" +
+            "KWGT-Widgets\n================\n\n$kwgt"
+        AlertDialog.Builder(this)
+            .setTitle(R.string.about_license_title)
+            .setMessage(body)
+            .setPositiveButton(R.string.about_close, null)
+            .show()
+    }
+
+    private fun readRawText(resourceId: Int): String =
+        resources.openRawResource(resourceId).bufferedReader().use { it.readText() }
+
     private fun updateClockStateUi() {
         val status = findViewById<TextView>(R.id.clock_setup_status)
         val button = findViewById<Button>(R.id.exact_alarm_button)
@@ -412,19 +482,55 @@ class MainActivity : Activity() {
         val entry = holder.entry
         val secondary = holder.root.findViewById<Button>(R.id.card_secondary)
         val detail = holder.root.findViewById<TextView>(R.id.card_status_detail)
-        if (entry.action == CardAction.CLOCK_ACCESS) {
-            val access = MinuteTickScheduler.hasExactAccess(this)
-            secondary.visibility = if (access) View.GONE else View.VISIBLE
-            secondary.setText(R.string.exact_alarm_enable)
-            val clock = entry.id == "digital"
-            detail.text = when {
-                access && clock -> getString(R.string.clock_dotted_detail)
-                access -> getString(R.string.analog_dotted_detail)
-                clock -> getString(R.string.clock_plain_detail)
-                else -> getString(R.string.analog_fallback_detail)
+        val badge = holder.root.findViewById<TextView>(R.id.card_preview_badge)
+        if (holder.lastRenderFailed) {
+            detail.setText(R.string.preview_render_failed_detail)
+            badge.setText(
+                if (WidgetPreviewRenderer.usesMinuteBitmap(entry.previewKind)) {
+                    R.string.preview_badge_live
+                } else {
+                    R.string.preview_badge_unavailable
+                },
+            )
+        }
+        when (entry.action) {
+            CardAction.CLOCK_ACCESS -> {
+                val access = MinuteTickScheduler.hasExactAccess(this)
+                secondary.visibility = if (access) View.GONE else View.VISIBLE
+                secondary.setText(R.string.exact_alarm_enable)
+                val clock = entry.id == "digital"
+                if (!holder.lastRenderFailed) {
+                    detail.setText(
+                        when {
+                            access && clock -> R.string.clock_dotted_detail
+                            access -> R.string.analog_dotted_detail
+                            clock -> R.string.clock_plain_detail
+                            else -> R.string.analog_fallback_detail
+                        },
+                    )
+                    badge.setText(
+                        when {
+                            access && clock -> R.string.preview_badge_dotted
+                            access -> R.string.preview_badge_styled
+                            else -> R.string.preview_badge_live
+                        },
+                    )
+                }
             }
-        } else if (entry.action == CardAction.WORLD_ZONES) {
-            secondary.visibility = View.VISIBLE
+            CardAction.WORLD_ZONES -> {
+                secondary.visibility = View.VISIBLE
+                if (!holder.lastRenderFailed) {
+                    detail.setText(entry.detailRes)
+                    badge.setText(R.string.preview_badge)
+                }
+            }
+            CardAction.NONE -> {
+                secondary.visibility = View.GONE
+                if (!holder.lastRenderFailed) {
+                    detail.setText(entry.detailRes)
+                    badge.setText(R.string.preview_badge)
+                }
+            }
         }
     }
 
@@ -435,25 +541,213 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun renderAllPreviews() {
+    private fun renderVisiblePreviews() {
+        if (isFinishing || isDestroyed) return
         val style = WidgetPrefs.style(this)
-        cards.forEach { renderCard(it, style) }
+        cards.forEach { holder ->
+            if (isCardNearVisible(holder)) renderCard(holder, style)
+        }
+    }
+
+    private fun isCardNearVisible(holder: CardHolder): Boolean {
+        val scroll = findViewById<ScrollView>(R.id.settings_root)
+        if (scroll.height <= 0) return true
+        if (!holder.root.isShown) return false
+        val scrollLocation = IntArray(2)
+        val cardLocation = IntArray(2)
+        scroll.getLocationInWindow(scrollLocation)
+        holder.root.getLocationInWindow(cardLocation)
+        val buffer = dp(180)
+        val cardTop = cardLocation[1]
+        val cardHeight = holder.root.height.takeIf { it > 0 } ?: dp(240)
+        val cardBottom = cardTop + cardHeight
+        return cardBottom >= scrollLocation[1] - buffer &&
+            cardTop <= scrollLocation[1] + scroll.height + buffer
     }
 
     private fun renderCard(holder: CardHolder, style: WidgetStyle) {
+        if (isFinishing || isDestroyed) return
         val frame = holder.root.findViewById<View>(R.id.card_preview_frame)
-        val image = holder.root.findViewById<ImageView>(R.id.card_preview)
         if (frame.width <= 0 || frame.height <= 0) {
-            frame.post { renderCard(holder, style) }
+            attachLayoutListener(holder)
             return
         }
         val padding = dp(10)
         val width = (frame.width - padding * 2).coerceAtLeast(1)
         val height = (frame.height - padding * 2).coerceAtLeast(1)
-        val bitmap = WidgetPreviewRenderer.render(this, holder.entry, width, height, style)
-        val previous = previewBitmaps.put(image, bitmap)
+        val access = MinuteTickScheduler.hasExactAccess(this)
+        val key = previewKey(holder, style, width, height, access)
+        if (holder.lastRenderKey == key) return
+
+        val entry = holder.entry
+        when (entry.previewKind) {
+            PreviewKind.CLOCK -> {
+                if (!access) {
+                    holder.lastRenderFailed = false
+                    showClockFallback(holder, style, failed = false)
+                } else if (!renderBitmap(holder, style, width, height)) {
+                    holder.lastRenderFailed = true
+                    showClockFallback(holder, style, failed = true)
+                } else {
+                    holder.lastRenderFailed = false
+                    holder.root.findViewById<TextView>(R.id.card_status_detail)
+                        .setText(R.string.clock_dotted_detail)
+                    holder.root.findViewById<TextView>(R.id.card_preview_badge)
+                        .setText(R.string.preview_badge_dotted)
+                }
+            }
+            PreviewKind.ANALOG_BOLD,
+            PreviewKind.ANALOG_SCALE,
+            -> {
+                if (!access) {
+                    holder.lastRenderFailed = false
+                    showAnalogFallback(holder, failed = false)
+                } else if (!renderBitmap(holder, style, width, height)) {
+                    holder.lastRenderFailed = true
+                    showAnalogFallback(holder, failed = true)
+                } else {
+                    holder.lastRenderFailed = false
+                    holder.root.findViewById<TextView>(R.id.card_status_detail)
+                        .setText(R.string.analog_dotted_detail)
+                    holder.root.findViewById<TextView>(R.id.card_preview_badge)
+                        .setText(R.string.preview_badge_styled)
+                }
+            }
+            else -> {
+                if (renderBitmap(holder, style, width, height)) {
+                    holder.lastRenderFailed = false
+                    holder.root.findViewById<TextView>(R.id.card_status_detail)
+                        .setText(entry.detailRes)
+                    holder.root.findViewById<TextView>(R.id.card_preview_badge)
+                        .setText(R.string.preview_badge)
+                } else {
+                    holder.lastRenderFailed = true
+                    val image = holder.root.findViewById<ImageView>(R.id.card_preview)
+                    image.setImageDrawable(null)
+                    image.visibility = View.GONE
+                    holder.root.findViewById<TextView>(R.id.card_status_detail)
+                        .setText(R.string.preview_render_failed_detail)
+                    holder.root.findViewById<TextView>(R.id.card_preview_badge)
+                        .setText(R.string.preview_badge_unavailable)
+                }
+            }
+        }
+        holder.lastRenderKey = key
+    }
+
+    private fun attachLayoutListener(holder: CardHolder) {
+        if (holder.layoutListenerAttached) return
+        holder.layoutListenerAttached = true
+        val frame = holder.root.findViewById<View>(R.id.card_preview_frame)
+        frame.addOnLayoutChangeListener(
+            object : View.OnLayoutChangeListener {
+                override fun onLayoutChange(
+                    view: View,
+                    left: Int,
+                    top: Int,
+                    right: Int,
+                    bottom: Int,
+                    oldLeft: Int,
+                    oldTop: Int,
+                    oldRight: Int,
+                    oldBottom: Int,
+                ) {
+                    if (right - left <= 0 || bottom - top <= 0) return
+                    view.removeOnLayoutChangeListener(this)
+                    holder.layoutListenerAttached = false
+                    renderVisiblePreviews()
+                }
+            },
+        )
+    }
+
+    private fun previewKey(
+        holder: CardHolder,
+        style: WidgetStyle,
+        width: Int,
+        height: Int,
+        access: Boolean,
+    ): String {
+        val entry = holder.entry
+        val now = System.currentTimeMillis()
+        val bucket = when {
+            WidgetPreviewRenderer.usesMinuteBitmap(entry.previewKind) && !access -> 0L
+            entry.previewKind == PreviewKind.CLOCK ||
+                entry.previewKind == PreviewKind.ANALOG_BOLD ||
+                entry.previewKind == PreviewKind.ANALOG_SCALE ||
+                entry.previewKind == PreviewKind.WORLD -> now / 60_000L
+            entry.previewKind == PreviewKind.DATE ||
+                entry.previewKind == PreviewKind.QUOTES -> now / 86_400_000L
+            entry.previewKind == PreviewKind.KWGT_BATTERY ||
+                entry.previewKind == PreviewKind.KWGT_BATTERY_MINI -> now / 300_000L
+            else -> 0L
+        }
+        val zones = if (entry.previewKind == PreviewKind.WORLD) {
+            WorldPrefs.previewZones(this).joinToString(",") { it.zoneId }
+        } else {
+            ""
+        }
+        return "${entry.id}|${style.id}|${width}x${height}|$access|$bucket|$zones"
+    }
+
+    private fun renderBitmap(
+        holder: CardHolder,
+        style: WidgetStyle,
+        width: Int,
+        height: Int,
+    ): Boolean {
+        val bitmap = try {
+            WidgetPreviewRenderer.render(this, holder.entry, width, height, style)
+        } catch (_: OutOfMemoryError) {
+            null
+        } catch (_: RuntimeException) {
+            null
+        } ?: return false
+        val image = holder.root.findViewById<ImageView>(R.id.card_preview)
+        previewBitmaps[image] = bitmap
         image.setImageBitmap(bitmap)
-        previous?.recycle()
+        image.visibility = View.VISIBLE
+        holder.root.findViewById<TextClock>(R.id.card_preview_clock).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.GONE
+        return true
+    }
+
+    private fun showClockFallback(holder: CardHolder, style: WidgetStyle, failed: Boolean) {
+        val image = holder.root.findViewById<ImageView>(R.id.card_preview)
+        previewBitmaps.remove(image)
+        image.setImageDrawable(null)
+        image.visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.GONE
+        val textClock = holder.root.findViewById<TextClock>(R.id.card_preview_clock)
+        textClock.visibility = View.VISIBLE
+        textClock.setTextColor(UpstreamNtDraw.ink(this, style))
+        holder.root.findViewById<TextView>(R.id.card_status_detail).setText(
+            if (failed) {
+                R.string.preview_render_failed_detail
+            } else {
+                R.string.clock_plain_detail
+            },
+        )
+        holder.root.findViewById<TextView>(R.id.card_preview_badge)
+            .setText(R.string.preview_badge_live)
+    }
+
+    private fun showAnalogFallback(holder: CardHolder, failed: Boolean) {
+        val image = holder.root.findViewById<ImageView>(R.id.card_preview)
+        previewBitmaps.remove(image)
+        image.setImageDrawable(null)
+        image.visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_clock).visibility = View.GONE
+        holder.root.findViewById<View>(R.id.card_preview_analog).visibility = View.VISIBLE
+        holder.root.findViewById<TextView>(R.id.card_status_detail).setText(
+            if (failed) {
+                R.string.preview_render_failed_detail
+            } else {
+                R.string.analog_fallback_detail
+            },
+        )
+        holder.root.findViewById<TextView>(R.id.card_preview_badge)
+            .setText(R.string.preview_badge_live)
     }
 
     private fun stateColor(state: ImportState): Int = when (state) {
@@ -497,7 +791,11 @@ class MainActivity : Activity() {
     private fun dp(value: Int): Int =
         (value * resources.displayMetrics.density).toInt()
 
-    private class CardHolder(val entry: CatalogEntry, val root: View)
+    private class CardHolder(val entry: CatalogEntry, val root: View) {
+        var lastRenderKey: String? = null
+        var layoutListenerAttached: Boolean = false
+        var lastRenderFailed: Boolean = false
+    }
 
     private companion object {
         const val EXTRA_DEBUG_FORCE_PIN_UNSUPPORTED =
