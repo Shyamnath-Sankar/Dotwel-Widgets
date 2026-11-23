@@ -2,11 +2,16 @@ package com.dotwelwidgets.dotwellabs
 
 import android.app.Activity
 import android.app.AlarmManager
+import android.app.AlertDialog
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
 import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ApplicationInfo
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -14,6 +19,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.widget.Button
@@ -25,6 +31,7 @@ import java.util.Calendar
 
 class MainActivity : Activity() {
     private val handler = Handler(Looper.getMainLooper())
+    private val tag = "MainActivity"
     private var clockBitmap: Bitmap? = null
     private var dateBitmap: Bitmap? = null
     private var exactAlarmReceiverRegistered = false
@@ -58,6 +65,13 @@ class MainActivity : Activity() {
 
         group.check(buttonFor(current))
         applyPreview(current)
+
+        findViewById<Button>(R.id.add_clock).setOnClickListener {
+            requestPin(PinResultReceiver.PIN_KIND_CLOCK, ClockWidgetProvider::class.java)
+        }
+        findViewById<Button>(R.id.add_date).setOnClickListener {
+            requestPin(PinResultReceiver.PIN_KIND_DATE, DateWidgetProvider::class.java)
+        }
 
         group.setOnCheckedChangeListener { _, checkedId ->
             val style = styleFor(checkedId) ?: return@setOnCheckedChangeListener
@@ -195,6 +209,57 @@ class MainActivity : Activity() {
         }
     }
 
+    private fun requestPin(kind: String, provider: Class<*>) {
+        if (isDebugForcePinUnsupported()) {
+            showPinFallbackDialog()
+            return
+        }
+        val manager = AppWidgetManager.getInstance(this)
+        if (!manager.isRequestPinAppWidgetSupported) {
+            showPinFallbackDialog()
+            return
+        }
+        val callback = PendingIntent.getBroadcast(
+            this,
+            if (kind == PinResultReceiver.PIN_KIND_CLOCK) 1 else 2,
+            Intent(this, PinResultReceiver::class.java).apply {
+                action = PinResultReceiver.ACTION_PIN_RESULT
+                putExtra(PinResultReceiver.EXTRA_PIN_KIND, kind)
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        val requested = try {
+            manager.requestPinAppWidget(ComponentName(this, provider), null, callback)
+        } catch (error: SecurityException) {
+            Log.w(tag, "Pin request was rejected", error)
+            false
+        } catch (error: IllegalStateException) {
+            Log.w(tag, "Pin request needs a foreground activity", error)
+            false
+        }
+        if (requested) {
+            Toast.makeText(this, R.string.pin_request_sent, Toast.LENGTH_LONG).show()
+        } else {
+            showPinFallbackDialog()
+        }
+    }
+
+    private fun isDebugForcePinUnsupported(): Boolean {
+        val debuggable =
+            (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        return debuggable &&
+            intent.getBooleanExtra(EXTRA_DEBUG_FORCE_PIN_UNSUPPORTED, false)
+    }
+
+    private fun showPinFallbackDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.pin_unavailable_title)
+            .setMessage(R.string.pin_unavailable_message)
+            .setPositiveButton(R.string.pin_unavailable_close, null)
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
     private fun renderPreviews() {
         renderPreview(R.id.preview_clock, clock = true)
         renderPreview(R.id.preview_date, clock = false)
@@ -241,5 +306,10 @@ class MainActivity : Activity() {
         R.id.style_translucent -> WidgetStyle.TRANSLUCENT
         R.id.style_transparent -> WidgetStyle.TRANSPARENT
         else -> null
+    }
+
+    private companion object {
+        const val EXTRA_DEBUG_FORCE_PIN_UNSUPPORTED =
+            "com.dotwelwidgets.dotwellabs.extra.DEBUG_FORCE_PIN_UNSUPPORTED"
     }
 }

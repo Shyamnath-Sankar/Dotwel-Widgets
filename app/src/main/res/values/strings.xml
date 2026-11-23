@@ -2,7 +2,12 @@
 <resources>
     <string name="app_name">Dotwel Widgets</string>
     <string name="settings_subtitle">Circular-dot clock and serif date for your home screen.</string>
-    <string name="preview_label">LIVE PREVIEW</string>
+    <string name="placement_label">PLACE ON HOME SCREEN</string>
+    <string name="add_clock">Add Clock</string>
+    <string name="add_date">Add Date</string>
+    <string name="placement_note">Tap Add Clock or Add Date. Your launcher asks you to confirm placement on the home screen. Previews below are not draggable; no alarm access is needed.</string>
+    <string name="preview_label">PREVIEWS</string>
+    <string name="preview_only_note">These cards are previews only. Use the Add buttons above; they cannot be dragged onto the home screen.</string>
     <string name="clock_format_12">hh\nmm</string>
     <string name="clock_format_24">HH\nmm</string>
     <string name="preview_note">Previews are rendered live in the app. When Alarms &amp; reminders access is enabled, placed clocks use the dotted bitmap updated about once a minute; deep idle can delay an update. Otherwise they use the live system text clock.</string>
@@ -22,7 +27,14 @@
     <string name="exact_alarm_unavailable">Android settings could not be opened. Open App info &gt; Alarms &amp; reminders for Dotwel Widgets.</string>
     <string name="refresh_widgets">Refresh widgets</string>
     <string name="widgets_refreshed">Widgets refreshed</string>
-    <string name="settings_hint">Long-press your home screen, open Widgets, then choose Dotwel Clock or Dotwel Date. Resize either widget from its handles. Style changes apply to every placed widget.</string>
+    <string name="pin_request_sent">Request sent to your launcher. Confirm placement there. If you cancel, nothing is added.</string>
+    <string name="pin_clock_confirmed">Clock added to your home screen.</string>
+    <string name="pin_date_confirmed">Date added to your home screen.</string>
+    <string name="pin_widget_confirmed">Widget added to your home screen.</string>
+    <string name="pin_unavailable_title">Place widget manually</string>
+    <string name="pin_unavailable_message">Your launcher did not open a placement prompt. You can add the widget manually:\n\n1. Go to your home screen.\n2. Long-press an empty area.\n3. Tap Widgets.\n4. Choose Dotwel Widgets.\n5. Pick Dotwel Clock or Dotwel Date.\n\nNo Alarms &amp; reminders access is needed to place either widget.</string>
+    <string name="pin_unavailable_close">Got it</string>
+    <string name="settings_hint">Use Add Clock or Add Date above. If your launcher does not show a placement prompt, long-press an empty area of the home screen, open Widgets, choose Dotwel Widgets, then pick Clock or Date. Resize either widget from its handles. Style changes apply to every placed widget.</string>
     <string name="attribution_short">Original dot-matrix geometry and platform serif. Design inspired by Nothing OS; this app is not affiliated with Nothing Technology Limited.</string>
     <string name="widget_clock_label">Dotwel Clock</string>
     <string name="widget_clock_description">A live stacked-hours-and-minutes clock. The dotted bitmap updates about once a minute when Alarms &amp; reminders access is enabled; deep idle can delay an update. Otherwise the system text clock is shown.</string>

@@ -33,9 +33,58 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:letterSpacing="0.18"
+            android:text="@string/placement_label"
+            android:textColor="@color/widget_muted"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/add_clock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/dot_accent"
+            android:minHeight="52dp"
+            android:text="@string/add_clock"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/add_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/dot_accent"
+            android:minHeight="52dp"
+            android:text="@string/add_date"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:lineSpacingExtra="3dp"
+            android:text="@string/placement_note"
+            android:textColor="@color/widget_muted"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:letterSpacing="0.18"
             android:text="@string/preview_label"
             android:textColor="@color/widget_muted"
             android:textSize="11sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:lineSpacingExtra="3dp"
+            android:text="@string/preview_only_note"
+            android:textColor="@color/widget_muted"
+            android:textSize="12sp" />
 
         <FrameLayout
             android:id="@+id/preview_card_clock"
@@ -101,7 +150,8 @@
         <Button
             android:id="@+id/exact_alarm_button"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
+            android:minHeight="52dp"
             android:layout_marginTop="12dp"
             android:backgroundTint="@color/dot_accent"
             android:text="@string/exact_alarm_enable"
@@ -136,7 +186,8 @@
             <RadioButton
                 android:id="@+id/style_black"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:buttonTint="@color/dot_accent"
                 android:text="@string/style_black"
                 android:textColor="@color/widget_ink"
@@ -145,7 +196,8 @@
             <RadioButton
                 android:id="@+id/style_translucent"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:buttonTint="@color/dot_accent"
                 android:text="@string/style_translucent"
                 android:textColor="@color/widget_ink"
@@ -154,7 +206,8 @@
             <RadioButton
                 android:id="@+id/style_transparent"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:buttonTint="@color/dot_accent"
                 android:text="@string/style_transparent"
                 android:textColor="@color/widget_ink"
@@ -165,7 +218,8 @@
         <Button
             android:id="@+id/refresh_widgets"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
+            android:minHeight="52dp"
             android:layout_marginTop="20dp"
             android:backgroundTint="@color/dot_accent"
             android:text="@string/refresh_widgets"
