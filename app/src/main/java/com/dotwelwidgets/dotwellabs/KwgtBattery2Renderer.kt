@@ -530,7 +530,7 @@ object KwgtBattery2Renderer {
     ) {
         val maxWidth = (
             2f * min(layout.infoCenterX, layout.width - layout.infoCenterX) -
-                2f * layout.side * 0.01f
+                2f * layout.side * 0.08f
             ).coerceAtLeast(1f)
         val typeface = Typeface.create("sans-serif", Typeface.BOLD)
         val valuePaint = Paint(
