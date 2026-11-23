@@ -1,4 +1,4 @@
-name: Isolated ordinary-process-death minute check
+name: World quotes and KWGT battery placement check
 on:
   workflow_dispatch:
 permissions:
@@ -43,9 +43,10 @@ jobs:
            start()
            # Reset scroll through activity recreation, without force-stop or alarm cancellation.
            adb('shell','am','force-stop',PKG);start()
-           for i in range(4):
+           for i in range(12):
             r=tree();n=find(r,label,True)
             if n is not None:return n
+            if not any(n.get('package','')==PKG for n in r.iter('node')):raise RuntimeError('App left foreground while locating '+label)
             scroll()
            raise RuntimeError('Gallery control missing '+label)
           def native(r):
@@ -85,38 +86,12 @@ jobs:
            if report['sha256']!='6ff87b965ba7ece5eca5da792a61581f5db996e8f129178ca004296bb5c1d556':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
            adb('shell','settings','put','system','font_scale','1.3');adb('shell','am','force-stop',PKG);start();cap('02-gallery-large-font');adb('shell','settings','put','system','font_scale','1.0')
-           def cancel_clock():
-            click(button('Add Digital Clock'));r=cap('03-denied-explanation')
-            if find(r,'Add plain live clock',True) is None:raise RuntimeError('Missing explicit fallback choice')
-            click(find(r,'Add plain live clock',True));r=cap('04-native-cancel');
-            if native(r) is None:raise RuntimeError('No native prompt')
-            adb('shell','input','keyevent','4');home();r=cap('05-home-cancel')
-            if find(r,'clock_time') is not None:raise RuntimeError('Canceled clock placed')
-           test('clock_plain',lambda:pin('Add Digital Clock','clock-plain','Add plain live clock'))
-           test('home_plain',lambda:locate('clock_time','06-home-plain'))
-           def enable():
-            start();click(button('Enable'))
-            for i in range(8):
-             r=tree();n=next((n for n in r.iter('node') if n.get('checkable')=='true'),None)
-             if n is not None:break
-             time.sleep(1)
-            cap('07-native-access')
-            if n is None:raise RuntimeError('No Android toggle')
-            if n.get('checked')!='true':click(n)
-            adb('shell','input','keyevent','4');start();cap('08-access-return');locate('widget_clock_bitmap','09-home-dots')
-           test('enable_setup',enable)
-           def freshness():
-            home();r=cap('20-before-ordinary-kill');before=find(r,'widget_clock_bitmap').get('content-desc','')
-            (OUT/'alarms-before.txt').write_bytes(adb('shell','dumpsys','alarm'))
-            (OUT/'access-before.txt').write_bytes(adb('shell','appops','get',PKG,'SCHEDULE_EXACT_ALARM',check=False))
-            adb('shell','am','kill',PKG);report['ordinary_kill_pid']=adb('shell','pidof',PKG,check=False).decode().strip()
-            if report['ordinary_kill_pid']:raise RuntimeError('am kill did not remove process')
-            seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
-            r=cap('21-after-minute');after=find(r,'widget_clock_bitmap').get('content-desc','');device=adb('shell','date','+%H:%M').decode().strip()
-            report['freshness']={'before':before,'after':after,'device':device,'death':'am kill only, no force-stop after access setup'}
-            (OUT/'alarms-after.txt').write_bytes(adb('shell','dumpsys','alarm'))
-            if before==after or device not in after:raise RuntimeError('Isolated ordinary-kill minute freshness failed')
-           test('freshness',freshness)
+           for label,name,needle in [('Add World Clock','world','widget_world_bitmap'),('Add Quotes','quotes','widget_quotes_bitmap'),('Add Nothing Battery (KWGT)','battery','widget_battery_bitmap'),('Add Nothing Battery Mini (KWGT)','battery-mini','widget_battery_bitmap')]:
+            def run(label=label,name=name,needle=needle):
+             pin(label,name);locate(needle,'home-'+name)
+             (OUT/('appwidget-'+name+'.txt')).write_bytes(adb('shell','dumpsys','appwidget'))
+            test(name,run)
+           (OUT/'world-prefs.xml').write_bytes(adb('shell','run-as',PKG,'cat','shared_prefs/dotwel_world.xml',check=False))
           except Exception as e:report['error']=str(e);cap('99-fatal')
           finally:
            (OUT/'RESULT.json').write_text(json.dumps(report,indent=2));(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','3500',check=False));print(json.dumps(report,indent=2))
