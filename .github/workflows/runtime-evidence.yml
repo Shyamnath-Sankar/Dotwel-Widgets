@@ -1,4 +1,4 @@
-name: Actual category swipe and repaired KWGT HOME check
+name: Final visible Add and large font runtime
 on:
   workflow_dispatch:
 permissions:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 8c898a30058960b56298b875a6de315d0b31a990
+          ref: 76cf4fa6a5bb50d9fd4446ab91dccc539c11a54e
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -30,7 +30,7 @@ jobs:
            try:return ET.fromstring(adb('exec-out','cat','/sdcard/window.xml',check=False))
            except:return ET.Element('empty')
           def cap(name):
-           (OUT/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'));r=tree();(OUT/(name+'.xml')).write_bytes(ET.tostring(r));return r
+           r=tree();time.sleep(.5);(OUT/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'));(OUT/(name+'.xml')).write_bytes(ET.tostring(r));return r
           def find(r,s,exact=False):
            return next((n for n in r.iter('node') if any((s.lower()==n.get(k,'').lower() if exact else s.lower() in n.get(k,'').lower()) for k in ('text','content-desc','resource-id'))),None)
           def wait_target(s,exact=True):
@@ -89,9 +89,9 @@ jobs:
            else:raise RuntimeError('Launcher readiness failed before app install')
            (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-           if report['sha256']!='d57cc9ef363fb851d0116ed9c9ab1b9bc9e677b06299bebe825f1e147664c323':raise RuntimeError('Final APK hash mismatch')
+           if report['sha256']!='3b6ffe66a3fcb00c4f40125c7908bc3d0ef9859eed3b00ff656a0030ea45932b':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
-           adb('shell','settings','put','system','font_scale','1.3');adb('shell','am','force-stop',PKG);start();cap('02-gallery-large-font');adb('shell','settings','put','system','font_scale','1.0')
+           adb('shell','settings','put','system','font_scale','1.3');adb('shell','am','force-stop',PKG);start();wait_target('Open Clock,',False);cap('02-gallery-large-font')
            def category(name):
             adb('shell','am','force-stop',PKG);start()
             for attempt in range(12):
@@ -99,12 +99,12 @@ jobs:
              if n is not None:click(n);return
              scroll()
             raise RuntimeError('Missing category '+name)
-           category('Clock');cap('03-clock-first');click(wait_target('Next'));cap('04-clock-next');click(wait_target('Previous widget'));cap('05-clock-prev')
+           category('Clock');wait_target('Add widget');cap('03-clock-first');click(wait_target('Next'));cap('04-clock-next');click(wait_target('Previous widget'));cap('05-clock-prev')
            r=tree();n=find(r,'Preview of Digital Clock')
            if n is None:n=find(r,'Digital Clock')
            if n is None:raise RuntimeError('Clock first selection missing')
            adb('shell','input','swipe',str(w*8//10),str(h*4//10),str(w*2//10),str(h*4//10),'450');time.sleep(1);cap('06-clock-after-swipe')
-           adb('shell','input','keyevent','4');category('Calendar');cap('07-calendar-first');click(wait_target('Next'));cap('08-calendar-kwgt')
+           adb('shell','input','keyevent','4');adb('shell','settings','put','system','font_scale','1.0');category('Calendar');cap('07-calendar-first');click(wait_target('Next'));cap('08-calendar-kwgt')
            click(wait_target('Add KWGT Date Time'));click(wait_target('Add live date & time'));cap('09-native-kwgt');click(native(tree()));time.sleep(1);report['tests']['native_category_kwgt']='selected second Calendar variant and confirmed'
            r=locate('kwgt_time','home-kwgt-live-before');before=find(r,'kwgt_time').get('text','')
            adb('shell','am','kill',PKG);seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(70-seconds)
