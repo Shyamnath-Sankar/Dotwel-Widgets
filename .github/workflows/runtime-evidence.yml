@@ -1,4 +1,4 @@
-name: Remaining resize idle and reboot verification
+name: Native in-app Add Clock Date verification
 on:
   workflow_dispatch:
 permissions:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: c46d54754af46cd833975d1f80f74e337e11b7cd
+          ref: e6d01e1edf483ba004ab47d3a90f952a0d02bb5e
       - name: Enable emulator acceleration
         run: sudo chmod 666 /dev/kvm
       - name: Prepare bounded evidence script
@@ -22,222 +22,119 @@ jobs:
           import subprocess as sp, pathlib, time, re, xml.etree.ElementTree as ET, json, hashlib
           OUT=pathlib.Path('runtime-evidence'); OUT.mkdir(exist_ok=True)
           PKG='com.dotwelwidgets.dotwellabs'
-          
           def adb(*a,check=True):
               r=sp.run(['adb',*a],capture_output=True,timeout=35)
               if check and r.returncode: raise RuntimeError(r.stderr.decode(errors='replace'))
               return r.stdout
-          
           def capture(name):
               (OUT/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'))
               adb('shell','uiautomator','dump','/sdcard/window.xml',check=False)
-              raw=adb('exec-out','cat','/sdcard/window.xml',check=False)
-              (OUT/(name+'.xml')).write_bytes(raw)
+              raw=adb('exec-out','cat','/sdcard/window.xml',check=False);(OUT/(name+'.xml')).write_bytes(raw)
               try:return ET.fromstring(raw)
               except:return ET.Element('empty')
-          
-          def box(n):
-              return list(map(int,re.findall(r'\d+',n.attrib.get('bounds',''))))
-          
-          def click(n):
-              b=box(n)
-              if len(b)!=4:raise RuntimeError('No tap bounds')
-              adb('shell','input','tap',str((b[0]+b[2])//2),str((b[1]+b[3])//2));time.sleep(1)
-          
           def find(root,needle):
               for n in root.iter('node'):
                   if any(needle.lower() in n.attrib.get(k,'').lower() for k in ('text','content-desc','resource-id')):return n
               return None
-          
-          def recover_pixel_dialog(root):
-              title=find(root,"Pixel Launcher isn't responding")
-              if title is None:return False
-              close=find(root,'android:id/aerr_close')
-              if close is None:raise RuntimeError('Pixel Launcher ANR has no close control')
-              capture('00-pixel-launcher-anr');click(close);return True
-          
-          def wait_home():
-              home();stable=0
-              for attempt in range(18):
-                  root=capture('00-home-readiness')
-                  if recover_pixel_dialog(root):home();stable=0;continue
-                  if find(root,"isn't responding") is not None:raise RuntimeError('Non-Pixel ANR during emulator readiness')
-                  ready=any(n.attrib.get('package','')=='com.google.android.apps.nexuslauncher' for n in root.iter('node'))
-                  stable=stable+1 if ready else 0
-                  if stable>=2:return
-                  time.sleep(5)
-              raise RuntimeError('Emulator home did not stabilize within bounded readiness wait')
-          
-          def start():
-              adb('shell','am','start','-W','-n',PKG+'/.MainActivity');time.sleep(2)
-          
-          def home():
-              adb('shell','input','keyevent','3');time.sleep(2)
-          
-          def locate(expected,name):
-              home()
-              root=capture(name)
-              if find(root,expected) is not None:return root
-              for i,direction in enumerate(('left','right','right')):
-                  xa,xb=(w*8//10,w*2//10) if direction=='left' else (w*2//10,w*8//10)
-                  adb('shell','input','swipe',str(xa),str(h//2),str(xb),str(h//2),'450');time.sleep(1)
+          def box(n):return list(map(int,re.findall(r'\d+',n.attrib.get('bounds',''))))
+          def click(n):
+              if n is None:raise RuntimeError('Required UI control absent')
+              b=box(n)
+              if len(b)!=4:raise RuntimeError('Required UI bounds absent')
+              adb('shell','input','tap',str((b[0]+b[2])//2),str((b[1]+b[3])//2));time.sleep(1)
+          def home():adb('shell','input','keyevent','3');time.sleep(2)
+          def start(debug=False):
+              adb('shell','am','force-stop',PKG)
+              args=['shell','am','start','-W','-n',PKG+'/.MainActivity']
+              if debug:args+=['--ez',PKG+'.extra.DEBUG_FORCE_PIN_UNSUPPORTED','true']
+              adb(*args);time.sleep(2)
+          def locate(needle,name):
+              home();root=capture(name)
+              if find(root,needle) is not None:return root
+              for i,(a,b) in enumerate(((8,2),(2,8),(2,8))):
+                  adb('shell','input','swipe',str(w*a//10),str(h//2),str(w*b//10),str(h//2),'450');time.sleep(1)
                   root=capture(name+'-page-'+str(i))
-                  if find(root,expected) is not None:return root
-              raise RuntimeError('Actual provider view not visible on bounded HOME pages: '+expected)
-          
-          def apply_style(style):
-              start();root=capture('style-controls-'+style)
-              n=find(root,'style_'+style)
-              if n is None:raise RuntimeError('Style control missing '+style)
-              click(n);home()
-          
-          
+                  if find(root,needle) is not None:return root
+              raise RuntimeError('Actual HOME provider missing: '+needle)
           def settings_find(needle):
-              root=capture('settings-find-'+needle)
-              for i in range(5):
-                  node=find(root,needle)
-                  if node is not None and len(box(node))==4 and box(node)[3]>box(node)[1]:return node
-                  adb('shell','input','swipe',str(w//2),str(h*8//10),str(w//2),str(h*3//10),'400');time.sleep(.6)
-                  root=capture('settings-find-'+needle+'-'+str(i))
-              raise RuntimeError('Settings control not visible: '+needle)
-          
-          def toggle_alarm_ui(desired,name):
-              root=capture(name+'-before')
-              switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and find(n,'Allow setting alarms and reminders') is not None),None)
-              for attempt in range(6):
-                  if switch is not None:break
-                  time.sleep(2)
-                  root=capture(name+'-readiness-'+str(attempt))
-                  switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and find(n,'Allow setting alarms and reminders') is not None),None)
-              if switch is None:raise RuntimeError('Android alarm-access switch missing after bounded readiness wait')
-              if (switch.attrib.get('checked')=='true')!=desired:click(switch)
-              root=capture(name+'-after')
-              switch=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and find(n,'Allow setting alarms and reminders') is not None),None)
-              if switch is None or (switch.attrib.get('checked')=='true')!=desired:raise RuntimeError('Android access state not confirmed')
-              adb('shell','input','keyevent','4');time.sleep(2)
-          
-          report={'version_expected':'0.1.5','install':False,'placed':[],'styles':[],'caveats':['Actual screenshots require independent pixel review. Idle precision and instant fallback after external revocation are not claimed.']}
+              for i in range(8):
+                  root=capture('settings-'+needle+'-'+str(i));n=find(root,needle)
+                  if n is not None:return n
+                  adb('shell','input','swipe',str(w//2),str(h*8//10),str(w//2),str(h*3//10),'450');time.sleep(.5)
+              raise RuntimeError('Settings control absent '+needle)
+          def confirm(root):
+              for label in ('Add to home screen','Add automatically','Add widget'):
+                  n=find(root,label)
+                  if n is not None and n.attrib.get('clickable')=='true':return n
+              return next((n for n in root.iter('node') if n.attrib.get('text','').lower()=='add' and n.attrib.get('clickable')=='true'),None)
+          report={'version':'0.1.6','tests':{},'caveats':['Actual pixels require independent review. Pixel emulator is not universal OEM launcher proof. Unsupported UI uses explicit DEBUG-only override.']}
           try:
-              adb('shell','input','keyevent','82');wait_home()
+              adb('shell','input','keyevent','82');home()
+              for i in range(12):
+                  root=capture('00-home-ready')
+                  crash=find(root,'android:id/aerr_close')
+                  if crash is not None:click(crash);home()
+                  elif any(n.attrib.get('package','')=='com.google.android.apps.nexuslauncher' for n in root.iter('node')):break
+                  time.sleep(4)
               apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk')
-              report['apk_sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-              checksum=pathlib.Path('checkpoints/POLISH-SHA256SUMS').read_text().split()[0]
-              if report['apk_sha256']!=checksum:raise RuntimeError('Pinned candidate checksum mismatch')
-              print(adb('install','-r',str(apk)).decode());report['install']=True
-              package_state=adb('shell','dumpsys','package',PKG).decode(errors='replace')
-              (OUT/'installed-package.txt').write_text(package_state)
-              if 'versionName=0.1.5' not in package_state:raise RuntimeError('Installed version is not the reviewed0.1.5 candidate')
-              size=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))
-              w,h=size[-2:]
-              start();capture('01-settings-initial');home()
-              for idx,label in enumerate(('Dotwel Clock','Dotwel Date')):
-                  home()
-                  # Inspected API35 Pixel7 HOME has blank space below the first clock at55% height.
-                  # The old one-third-height coordinate was inside the already-placed clock.
-                  x,y=w//2,h*55//100
-                  adb('shell','input','swipe',str(x),str(y),str(x),str(y),'1400');time.sleep(1)
-                  root=capture('10-menu-'+str(idx))
-                  n=next((n for n in root.iter('node') if n.attrib.get('package','')=='com.google.android.apps.nexuslauncher' and n.attrib.get('text','')=='Widgets' and n.attrib.get('resource-id','').endswith('/bubble_text')),None)
-                  if n is None:raise RuntimeError('Exact Pixel HOME Widgets menu not visible')
-                  click(n);root=capture('11-picker-'+str(idx))
-                  search=find(root,'widgets_search_bar_edit_text')
-                  if search is not None:
-                      click(search);adb('shell','input','text','Dotwel');adb('shell','input','keyevent','4');time.sleep(1);root=capture('12-search-'+str(idx))
-                  app=find(root,'Dotwel Widgets')
-                  if app is not None:
-                      b=box(app)
-                      if b[3]>h*0.8:
-                          adb('shell','input','swipe',str(w//2),str(h*8//10),str(w//2),str(h*4//10),'500');time.sleep(1);root=capture('12-scrolled-'+str(idx));app=find(root,'Dotwel Widgets')
-                      if app is not None:click(app);root=capture('13-expanded-'+str(idx))
-                  cell=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('WidgetCell') and n.attrib.get('content-desc','').startswith(label+' widget,')),None)
-                  if cell is None:raise RuntimeError('Exact WidgetCell missing: '+label)
-                  b=box(cell);sx=(b[0]+b[2])//2;sy=(b[1]+b[3])//2
-                  click(cell);root=capture('14-widget-selected-'+str(idx))
-                  add=find(root,'Add to home screen')
-                  if add is None:add=find(root,'Add widget')
-                  if add is None:add=next((n for n in root.iter('node') if n.attrib.get('text','').lower()=='add'),None)
-                  if add is not None:click(add)
-                  else:adb('shell','input','draganddrop',str(sx),str(sy),str(w//2),str(h*(3 if idx==0 else 6)//10),'1800')
-                  time.sleep(2);adb('shell','input','keyevent','4');time.sleep(1)
-                  expected='clock_time' if idx==0 else 'date_day'
-                  root=locate(expected,'15-home-after-'+str(idx))
-                  dump=adb('shell','dumpsys','appwidget').decode(errors='replace')
-                  (OUT/('appwidget-'+str(idx)+'.txt')).write_text(dump)
-                  report['placed'].append({'requested':label,'status':'actual provider view visible, pixels require review'})
-              report['denied_fallback']='Actual clock_time TextClock visible before Android access grant'
-              start();click(settings_find('exact_alarm_button'));toggle_alarm_ui(True,'20-android-access-grant')
-              start();capture('21-settings-enabled');home()
-              root=locate('widget_clock_bitmap','22-actual-dot-clock-before')
-              node=find(root,'widget_clock_bitmap');before=node.attrib.get('content-desc','')
-              if find(root,'clock_time') is not None:raise RuntimeError('Native fallback visible alongside enabled bitmap')
-              (OUT/'alarm-enabled.txt').write_bytes(adb('shell','dumpsys','alarm'))
-              report['prior_exact_candidate_checks']='45061373320: sized HOME minute after process kill, revoke/fallback/regrant, styles and font checks already preserved'
-              adb('shell','settings','put','system','time_12_24','24');time.sleep(1)
-              start();home()
-              root=locate('widget_clock_bitmap','29-clock-before-resize')
-              host=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'widget_clock_bitmap') is not None),None)
-              if host is None:raise RuntimeError('Actual bitmap host bounds missing')
-              seconds=int(adb('shell','date','+%s').decode().strip())%60
-              if seconds>50:time.sleep(62-seconds)
-              b=box(host);cx=(b[0]+b[2])//2;cy=(b[1]+b[3])//2
-              adb('shell','input','swipe',str(cx),str(cy),str(cx),str(cy),'1500');time.sleep(1);capture('30-resize-handles')
-              adb('shell','input','swipe',str(cx),str(b[3]+1),str(cx),str(min(h*6//10,b[3]+h//8)),'1200');time.sleep(2)
-              adb('shell','input','keyevent','4');home()
-              root=locate('widget_clock_bitmap','31-clock-grown-vertical')
-              host=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'widget_clock_bitmap') is not None),None)
-              grown=box(host) if host is not None else []
-              report['resize_bounds']={'before':b,'grown':grown}
-              if len(grown)==4 and grown[3]-grown[1]>b[3]-b[1]:
-                  gx=(grown[0]+grown[2])//2;gy=(grown[1]+grown[3])//2
-                  adb('shell','input','swipe',str(gx),str(gy),str(gx),str(gy),'1500');time.sleep(1);capture('31b-grown-resize-handles')
-                  adb('shell','input','swipe',str(gx),str(grown[3]+1),str(gx),str(max(grown[1]+h//12,b[3]-h//10)),'1200');time.sleep(2)
-                  adb('shell','input','keyevent','4');home()
-                  root=locate('widget_clock_bitmap','31c-clock-shrunk-vertical')
-                  host=next((n for n in root.iter('node') if n.attrib.get('class','').endswith('AppWidgetHostView') and find(n,'widget_clock_bitmap') is not None),None)
-                  shrunk=box(host) if host is not None else []
-                  report['resize_bounds']['shrunk']=shrunk
-                  if len(shrunk)!=4 or shrunk[3]-shrunk[1]>=b[3]-b[1]:report['caveats'].append('Shrink did not produce a shorter-than-default host; no compact resize pass claimed.')
-              else:report['caveats'].append('Vertical drag did not grow the actual host; no resize pass claimed.')
-              # Bounded deep-idle observation. No exact minute delivery promise during idle.
-              adb('shell','dumpsys','battery','unplug',check=False)
-              adb('shell','input','keyevent','223');time.sleep(2)
-              idle_reply=adb('shell','dumpsys','deviceidle','force-idle',check=False).decode(errors='replace')
-              report['idle_force_reply']=idle_reply.strip()
-              (OUT/'idle-state-before.txt').write_bytes(adb('shell','dumpsys','deviceidle',check=False))
-              time.sleep(75)
-              (OUT/'alarm-during-idle.txt').write_bytes(adb('shell','dumpsys','alarm',check=False))
-              adb('shell','dumpsys','deviceidle','unforce',check=False)
-              adb('shell','dumpsys','battery','reset',check=False)
-              adb('shell','input','keyevent','224');adb('shell','input','keyevent','82');wait_home()
-              root=locate('widget_clock_bitmap','45-clock-after-idle-return')
-              actual=find(root,'widget_clock_bitmap').attrib.get('content-desc','')
-              expected=adb('shell','date','+%H:%M').decode().strip()
-              for retry in range(3):
-                  if expected in actual:break
-                  time.sleep(5);root=locate('widget_clock_bitmap','45-clock-after-idle-return-'+str(retry));actual=find(root,'widget_clock_bitmap').attrib.get('content-desc','');expected=adb('shell','date','+%H:%M').decode().strip()
-              report['idle_return']={'device_time':expected,'bitmap_description':actual,'matches_device_time':expected in actual,'note':'Bounded emulator observation, not a guarantee of deep-idle minute precision'}
-              if expected not in actual:
-                  report['caveats'].append('Bitmap remained behind device time in the bounded idle-return check; app-resume recovery checked separately.')
-                  start();home();locate('widget_clock_bitmap','46-clock-after-idle-explicit-resume')
-              adb('reboot');sp.run(['adb','wait-for-device'],check=True,timeout=180)
-              for attempt in range(30):
-                  if adb('shell','getprop','sys.boot_completed',check=False).decode().strip()=='1':break
-                  time.sleep(3)
-              else:raise RuntimeError('Reboot failed within90seconds')
-              adb('shell','input','keyevent','82');wait_home()
-              root=locate('widget_clock_bitmap','32-clock-after-reboot');report['reboot_bitmap']=find(root,'widget_clock_bitmap').attrib.get('content-desc','')
-              locate('date_day','33-date-after-reboot')
-              (OUT/'alarm-after-reboot.txt').write_bytes(adb('shell','dumpsys','alarm'))
-          
+              report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
+              if report['sha256']!='1ef42595c5fb6eab84f0b6318d593e647a66194dca63c7c18083eac559bd13ee':raise RuntimeError('Candidate APK hash mismatch')
+              adb('install','-r',str(apk));state=adb('shell','dumpsys','package',PKG).decode();(OUT/'installed-package.txt').write_text(state)
+              if 'versionName=0.1.6' not in state:raise RuntimeError('Wrong installed version')
+              w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:]
+              adb('shell','settings','put','system','time_12_24','24')
+              start();root=capture('01-app-first-screen')
+              for name in ('add_clock','add_date'):
+                  if find(root,name) is None:raise RuntimeError('First-screen Add missing '+name)
+              report['tests']['first_screen']='Both Add controls visible without scrolling'
+              adb('shell','settings','put','system','font_scale','1.3');start();root=capture('02-app-large-font')
+              for name in ('add_clock','add_date'):
+                  if find(root,name) is None:raise RuntimeError('Large-font Add missing '+name)
+              adb('shell','settings','put','system','font_scale','1.0');start()
+              root=capture('03-before-clock-request');click(find(root,'add_clock'));root=capture('04-native-clock-confirm-cancel')
+              if confirm(root) is None:raise RuntimeError('Native Clock confirmation absent')
+              cancel=next((n for n in root.iter('node') if n.attrib.get('text','').lower()=='cancel' and n.attrib.get('clickable')=='true'),None)
+              if cancel is not None:click(cancel)
+              else:adb('shell','input','keyevent','4')
+              root=capture('05-after-cancel-app');home();root=capture('06-home-after-cancel')
+              if find(root,'clock_time') is not None or find(root,'widget_clock_bitmap') is not None:raise RuntimeError('Cancelled Clock appeared on HOME')
+              (OUT/'appwidget-after-cancel.txt').write_bytes(adb('shell','dumpsys','appwidget'))
+              report['tests']['cancel']='Native prompt dismissed, no Clock view on HOME'
+              for idx,kind in enumerate(('clock','date')):
+                  start();root=capture('10-app-retry-'+kind);click(find(root,'add_'+kind));root=capture('11-native-confirm-'+kind)
+                  button=confirm(root)
+                  if button is None:raise RuntimeError('Native accept button missing '+kind)
+                  click(button);time.sleep(2);capture('12-after-accept-'+kind)
+                  locate('clock_time' if kind=='clock' else 'date_day','13-home-'+kind)
+                  (OUT/('appwidget-after-'+kind+'.txt')).write_bytes(adb('shell','dumpsys','appwidget'))
+                  report['tests']['pin_'+kind]='Accepted real native prompt via in-app Add; actual provider view visible'
+              start(True);root=capture('20-debug-unsupported-start');click(find(root,'add_clock'));root=capture('21-unsupported-dialog')
+              if find(root,'Place widget manually') is None or find(root,'Long-press') is None:raise RuntimeError('Readable manual fallback absent')
+              adb('shell','input','keyevent','4');root=capture('22-fallback-back');click(find(root,'add_date'));root=capture('23-fallback-date-retry')
+              click(find(root,'Got it'));capture('24-fallback-dismissed')
+              report['tests']['unsupported']='DEBUG-only override: Clock and Date dialog readable; Back, retry and Got it work'
+              start();click(settings_find('exact_alarm_button'))
+              for i in range(8):
+                  root=capture('30-android-alarm-'+str(i));toggle=next((n for n in root.iter('node') if n.attrib.get('checkable')=='true' and find(n,'Allow setting alarms and reminders') is not None),None)
+                  if toggle is not None:break
+                  time.sleep(2)
+              if toggle is None:raise RuntimeError('Native Android alarm toggle absent')
+              if toggle.attrib.get('checked')!='true':click(toggle)
+              capture('31-alarm-enabled');adb('shell','input','keyevent','4');time.sleep(1)
+              # Resume without force-stop so the existing scheduled alarm remains in its real lifecycle.
+              adb('shell','am','start','-W','-n',PKG+'/.MainActivity');time.sleep(2)
+              root=locate('widget_clock_bitmap','32-dot-clock-before-kill');before=find(root,'widget_clock_bitmap').attrib.get('content-desc','')
+              home();adb('shell','am','kill',PKG);pid=adb('shell','pidof',PKG,check=False).decode().strip();report['pid_after_kill']=pid
+              if pid:raise RuntimeError('App process did not die')
+              seconds=int(adb('shell','date','+%s').decode())%60;time.sleep(65-seconds)
+              root=locate('widget_clock_bitmap','33-dot-clock-next-minute');after=find(root,'widget_clock_bitmap').attrib.get('content-desc','');expected=adb('shell','date','+%H:%M').decode().strip()
+              report['tests']['minute_after_kill']={'before':before,'after':after,'device_time':expected,'passed':before!=after and expected in after}
+              if not report['tests']['minute_after_kill']['passed']:raise RuntimeError('Actual bitmap failed minute-after-kill check')
+              locate('date_day','34-final-home-date')
           except Exception as e:
               report['error']=str(e);capture('99-failure');print('RUNTIME BLOCKER',str(e))
           finally:
-              adb('shell','dumpsys','deviceidle','unforce',check=False)
-              adb('shell','dumpsys','battery','reset',check=False)
-              (OUT/'render-diagnostic-logcat.txt').write_bytes(adb('logcat','-d','-t','2500',check=False))
-              (OUT/'RESULT.json').write_text(json.dumps(report,indent=2))
-              (OUT/'logcat.txt').write_bytes(adb('logcat','-d','-s','AndroidRuntime','ActivityManager','ActivityTaskManager',check=False))
-              print(json.dumps(report,indent=2))
+              (OUT/'RESULT.json').write_text(json.dumps(report,indent=2));(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','2500',check=False));print(json.dumps(report,indent=2))
           if 'error' in report:raise SystemExit(1)
           PYCODE
       - name: Install and inspect widgets on Android 15
