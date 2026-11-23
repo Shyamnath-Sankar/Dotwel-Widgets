@@ -1,0 +1,18 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "native_category_kwgt": "selected actual Digital3 Clock variant and confirmed",
+    "kwgt_live_minute": "passed",
+    "styled_after_process_kill": "captured, image time comparison required",
+    "tap_clock": "destination activity recorded; pixels require review"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "dbfe2fd0f8fddf19c46ab7cfe94255750c61378033fee92176e424154d503d41",
+  "kwgt_live_minute": {
+    "before": "20",
+    "after": "21",
+    "device": "21"
+  }
+}
