@@ -1,0 +1,11 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "mini_native_pin": "fourth Calendar variant confirmed without Alarms dialog"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "2e68598609919c0e68d66184bfc58b1c1f2f00b72fb7cf326711435b456d342d",
+  "error": "date: Max 1 argument (see \"date --help\")\n"
+}
