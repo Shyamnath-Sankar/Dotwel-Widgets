@@ -1,0 +1,16 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "pin_world": "Native confirmation accepted",
+    "world": "passed",
+    "pin_quotes": "Native confirmation accepted",
+    "quotes": {
+      "error": "HOME view missing widget_quotes_bitmap"
+    }
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "6ff87b965ba7ece5eca5da792a61581f5db996e8f129178ca004296bb5c1d556",
+  "error": "HOME view missing widget_quotes_bitmap"
+}
