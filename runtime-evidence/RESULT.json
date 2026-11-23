@@ -1,0 +1,13 @@
+{
+  "version": "0.1.7",
+  "tests": {
+    "kwgt_datetime": {
+      "error": "Missing UI target"
+    }
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "1f4320bbf0905371fd603f095745f01c51ba23a0a4d40849bb79eaf71eafad33",
+  "error": "Missing UI target"
+}
