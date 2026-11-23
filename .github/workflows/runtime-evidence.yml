@@ -78,7 +78,7 @@ jobs:
                   time.sleep(4)
               apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk')
               report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
-              if report['sha256']!='1ef42595c5fb6eab84f0b6318d593e647a66194dca63c7c18083eac559bd13ee':raise RuntimeError('Candidate APK hash mismatch')
+              if report['sha256']!='9b8e2a4d5b27c391fe7d8f8cbd38851fc3376c15846dc1381864b661bfefa6be':raise RuntimeError('Candidate APK hash mismatch')
               adb('install','-r',str(apk));state=adb('shell','dumpsys','package',PKG).decode();(OUT/'installed-package.txt').write_text(state)
               if 'versionName=0.1.6' not in state:raise RuntimeError('Wrong installed version')
               w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:]
