@@ -1,7 +1,7 @@
 # Build and verification state
 
 - Candidate: Dotwel Widgets 0.1.6 (versionCode 7).
-- Tested application source: e79951cd1726a511fe05b308d23d146b4d15c1dd.
+- Tested candidate commit: e6d01e1edf483ba004ab47d3a90f952a0d02bb5e. Application implementation was written at e79951cd1726a511fe05b308d23d146b4d15c1dd; final APK preservation followed at e6d01e1e.
 - Candidate branch: agent/add-widget-flow-45113975964.
 - This is a debug test candidate, not a Play-approved release.
 - Default main remains unchanged. Launcher integration remains deferred.
@@ -12,7 +12,7 @@ Use only `checkpoints/dotwel-widgets-polish-debug.apk` on this candidate branch.
 It is 915019 bytes. `checkpoints/POLISH-SHA256SUMS` records its final checksum.
 The verified SHA-256 is:
 
-`1ef42595c5fb6eab84f0b6318d593e647a66194dca63c7c18083eac559bd13ee`
+`9b8e2a4d5b27c391fe7d8f8cbd38851fc3376c15846dc1381864b661bfefa6be`
 
 Download page:
 https://github.com/Shyamnath-Sankar/Dotwel-Widgets/blob/agent/add-widget-flow-45113975964/checkpoints/dotwel-widgets-polish-debug.apk
@@ -48,9 +48,13 @@ No extra version-named APK with different bytes is kept in `checkpoints/`.
 widget attributes, Gradle/AGP update notices, and the bundled MIT text resource.
 No suppressions were added.
 
-Deterministic rebuild check: two clean `./gradlew clean assembleDebug` runs
-produced the identical SHA-256 shown above. The final POLISH APK was copied from
-that deterministic build and `checkpoints/POLISH-SHA256SUMS` was regenerated.
+Final artifact verification: the final saved POLISH APK is 915019 bytes and
+matches its committed POLISH-SHA256SUMS and the independent runtime's installed
+artifact hash above. An earlier revision of this STATE file reported an
+intermediate build hash; runtime 45115605374 rejected that mismatch before
+installation. This corrected record describes the final saved APK actually
+tested by runtime 45117118514. No byte-identical clean-rebuild claim is made
+for this final saved artifact.
 
 The actual home-screen clock uses circular-dot bitmap RemoteViews when optional
 Alarms & reminders access is enabled. Android 12+ host sizes select size-keyed
@@ -71,9 +75,41 @@ true:
 `adb shell am start -n com.dotwelwidgets.dotwellabs/.MainActivity --ez com.dotwelwidgets.dotwellabs.extra.DEBUG_FORCE_PIN_UNSUPPORTED true`
 
 It makes the Add actions show the manual fallback dialog so the unsupported UI
-can be checked deterministically. Normal launches do not set it. A separate
-runtime pass is still required for the real supported pin request, native
-launcher confirmation, accept, cancel, and the actual HOME fallback path.
+can be checked deterministically. Normal launches do not set it. The independent runtime below exercised real supported pin requests and
+native launcher confirmation. The unsupported dialog was exercised through
+this DEBUG-only override, not through a genuinely unsupported OEM launcher.
+
+## Independent 0.1.6 runtime verification
+
+Run: https://github.com/Shyamnath-Sankar/Dotwel-Widgets/actions/runs/45117118514
+
+Original captures:
+https://github.com/Shyamnath-Sankar/Dotwel-Widgets/tree/checkpoint/runtime-45117118514/runtime-evidence
+
+The run installed the exact final APK hash above on an Android 15 Pixel 7
+emulator. Original screenshot pixels were independently inspected, including:
+
+- Add Clock and Add Date visible on the first screen without scrolling at
+  normal and 130% system font scale. Previews clearly labeled non-draggable.
+- The real native launcher confirmation for both Clock and Date, opened by
+  tapping the in-app Add buttons. No shell widget binding was used.
+- Clock cancellation left no Clock view on HOME. A retry then accepted and
+  placed Clock. Accepting Date placed the native Date beside Clock.
+- DEBUG-only unsupported override showed readable manual HOME / Widgets
+  instructions for Clock and Date. Back, retry, and Got it worked. This is
+  dialog-path coverage, not genuine unsupported-launcher compatibility proof.
+- Placement worked with optional alarm access still off, showing the live
+  native Clock fallback. The native Android access toggle was then used to
+  enable dotted minute updates.
+- Actual HOME circular-dot bitmap advanced from 05:26 to 05:27 after the
+  background process was killed and its PID was confirmed absent. Device
+  time was 05:27. Clock dots and serif Date were round/unclipped and readable.
+
+Placement is established by the real HOME views and appwidget diagnostic
+captures, not by requestPinAppWidget returning true or by a success toast.
+The callback toast itself was not independently verified. The user device's
+unknown launcher remains untested; launchers own support and confirmation.
+No source rebuild or main-branch application promotion followed this test.
 
 ## Earlier 0.1.5 verified checkpoint (retained)
 
@@ -112,10 +148,9 @@ Verified on 0.1.5:
 
 ## Limits and remaining work
 
-- The 0.1.6 Add Clock/Add Date buttons, native launcher confirmation,
-  accept/cancel behavior, and unsupported-flow HOME fallback still need
-  independent runtime pixel verification. Do not mark them verified from a
-  successful build.
+- Native in-app placement is verified on the Android 15 Pixel emulator only.
+  Other launchers and the user device remain untested. Unsupported fallback
+  dialog coverage used the explicit DEBUG-only override.
 - 0.1.5 resize verification covers growth and shrink-back to the default size.
   A smaller-than-default compact host was not verified.
 - The idle check is a bounded emulator observation. It does not promise exact
