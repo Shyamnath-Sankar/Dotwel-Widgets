@@ -1,0 +1,87 @@
+name: Add source Clean Time Date Info widget
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 5016fe6f23dff2a0d53dc05817403b3a3aff40b9
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/kwgt-clean-info-${GITHUB_RUN_ID}"
+      - name: Apply reference-led widget browser and renderer polish
+        timeout-minutes: 11
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/AumGupta/KWGT-Widgets/96ca27be4cbff35efec5a86c64dd39fd065c958f/widgets/Clean_Time_Date_Info.kwgt -o /tmp/clean.kwgt
+          mkdir -p /tmp/clean-preset && unzip -oq /tmp/clean.kwgt -d /tmp/clean-preset
+          cat > /tmp/widget-task.txt <<'TASK'
+          Implement ONE next actual KWGT Clean_Time_Date_Info native widget from /tmp/clean-preset/preset.json now (MIT pinned96ca27be4cbff35efec5a86c64dd39fd065c958f), based on14tested5016fe6. New KwgtCleanInfoWidgetProvider catalog KWGT Clean Info under DATE, notaliasexisting. ReadactualJSONonce thenwrite. Composition source553x248 widecard: bgdark16161D/lightE4E4FF rounded38; bottomleft weekdayEEEE69bold+uppercaseMMMM d24 atleft28 bottom28 gap-15; giant CENTERRIGHT h:mm196 at19percentforegroundalpha; top-left batterybody59x28rounded6 plusnub10.5x16rounded4 and truebilevel16boldpercent inbgink. Sourcefgformula malformed missingcommas, document explicit repair darkwhite/lightblack basedonintendedconditional/sourcepalette. ProductSans fonts notredistributed, platform sans-serif substitute. Sourcepreview is cropped, derivegeometryfromJSON andfittextwithinbounds rather than reproduceaccidentalclipping. Preserveoverlappingoversizedghosttimeasintentionalbacklayer, butweekday/date/batteryreadable. Keepall14includinglatestDigital3hostsize/sourcejointfixuntouched.
+          Use LIVE native TextClock time h:mm, weekdayEEEE, uppercase date MMMM d wherepossible, optional alarm NOTrequired. Do notfrozenbitmaptime. StaticprogrammaticbackgroundbatteryupdatesrealBatteryManagerlevel usingexistingbatterybroadcastpath. Noestimates/fakevalues/network. NoextraPermissions/services/dependencies/assets/fonts. NativeRemoteViewssupportedclassesonly, no rawView. Coordinate nativeviews usingactualhostDP/pixels NOTWidgetSizing downsampledraster; responsivevariantmappingtargetawarehelper exists fromDigital3. Addcatalogpreviewusing samecomposition, Add/pin/providerinfo/manifest/WidgetUpdater/boot/date/timezone/resize andbatterychange integration. ClocktapACTION_SHOW_ALARMSperupstream. First buildbyminute7, no longinventory/plan-onlyrun.
+          AddsanitizedactualJSONwithoutemail/fontpayload andMITattribution/ledger9of40implemented15providerspendingruntime, notfullcollection. Unitfit/batterybounds/dateformat tests practical, assembletestlint. No otherprovidercosmeticchanges. Freeonly/private/launcheruntouched. Endcodeby9min. Finalruntimegate actualnativepin/timeafterkill/batterydisplay/tap/pixels stillrequired.
+          TASK
+          timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          rm -f checkpoints/dotwel-widgets-polish-debug.apk checkpoints/POLISH-SHA256SUMS
+          bash ./gradlew assembleDebug testDebugUnitTest --no-daemon
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug --no-daemon
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
