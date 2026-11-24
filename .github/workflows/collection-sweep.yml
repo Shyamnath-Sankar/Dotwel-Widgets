@@ -1,0 +1,177 @@
+name: Sequential collection43 native host and gallery sweep
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-runtime
+  cancel-in-progress: false
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 3e0a86002e09e04d090d6733ab07068f9116ca4c
+      - name: Enable emulator acceleration
+        run: sudo chmod 666 /dev/kvm
+      - name: Prepare bounded evidence script
+        run: |
+          python3 -m pip install --break-system-packages Pillow
+          cat > /tmp/widget-runtime-smoke.py <<'PYCODE'
+          import subprocess as sp,pathlib,time,re,xml.etree.ElementTree as ET,json,hashlib
+          OUT=pathlib.Path('runtime-evidence');OUT.mkdir(exist_ok=True);PKG='com.dotwelwidgets.dotwellabs'
+          ENTRIES=[{'id': 'digital', 'name': 'Digital Clock', 'provider': 'ClockWidgetProvider', 'category': 'Clock'}, {'id': 'analog_bold', 'name': 'Analog Bold', 'provider': 'AnalogBoldWidgetProvider', 'category': 'Clock'}, {'id': 'analog_scale', 'name': 'Analog Scale', 'provider': 'AnalogScaleWidgetProvider', 'category': 'Clock'}, {'id': 'date', 'name': 'Date', 'provider': 'DateWidgetProvider', 'category': 'Calendar'}, {'id': 'world', 'name': 'World Clock', 'provider': 'WorldWidgetProvider', 'category': 'Clock'}, {'id': 'wx_nothing_temp', 'name': 'Nothing Temp', 'provider': 'NothingTempWidgetProvider', 'category': 'Quotes'}, {'id': 'wx_nothing_sun', 'name': 'Nothing Sun Info', 'provider': 'NothingSunInfoWidgetProvider', 'category': 'Quotes'}, {'id': 'quotes', 'name': 'Quotes', 'provider': 'QuotesWidgetProvider', 'category': 'Quotes'}, {'id': 'kwgt_nothing_battery', 'name': 'Battery Gauge', 'provider': 'BatteryWidgetProvider', 'category': 'Battery'}, {'id': 'kwgt_nothing_battery_mini', 'name': 'Battery Mini', 'provider': 'BatteryMiniWidgetProvider', 'category': 'Battery'}, {'id': 'kwgt_nothing_battery2', 'name': 'KWGT Battery2', 'provider': 'KwgtBattery2WidgetProvider', 'category': 'Battery'}, {'id': 'kwgt_nothing_date_time', 'name': 'KWGT Date Time', 'provider': 'KwgtDateTimeWidgetProvider', 'category': 'Calendar'}, {'id': 'kwgt_nothing_date_time2', 'name': 'KWGT Date Time 2', 'provider': 'KwgtDateTime2WidgetProvider', 'category': 'Calendar'}, {'id': 'kwgt_nothing_digital4', 'name': 'KWGT Split Clock', 'provider': 'KwgtDigital4WidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_nothing_digital3', 'name': 'KWGT Digital3 Dot Clock', 'provider': 'KwgtDigital3WidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_gradient_clock', 'name': 'KWGT Gradient Clock', 'provider': 'KwgtGradientClockWidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_analog2_clock', 'name': 'KWGT Analog2', 'provider': 'KwgtAnalog2WidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_future_clock', 'name': 'KWGT Future Clock', 'provider': 'KwgtFutureWidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_nothing_analog3', 'name': 'KWGT Analog3', 'provider': 'KwgtAnalog3WidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_analog_seconds_clock', 'name': 'KWGT Analog Seconds', 'provider': 'KwgtAnalogSecondsWidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_nothing_analog5', 'name': 'KWGT Analog5', 'provider': 'KwgtAnalog5WidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_nothing_analog5_transparent', 'name': 'KWGT Analog5 Clear', 'provider': 'KwgtAnalog5TransparentWidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_orbit_clock', 'name': 'KWGT Orbit Clock', 'provider': 'KwgtOrbitClockWidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_mini_calendar', 'name': 'KWGT Mini Calendar', 'provider': 'KwgtMiniCalendarWidgetProvider', 'category': 'Calendar'}, {'id': 'kwgt_clean_info', 'name': 'KWGT Clean Info', 'provider': 'KwgtCleanInfoWidgetProvider', 'category': 'Calendar'}, {'id': 'kwgt_ios_battery', 'name': 'KWGT iOS Battery', 'provider': 'IosBatteryWidgetProvider', 'category': 'Battery'}, {'id': 'kwgt_nothing_digital2', 'name': 'KWGT Digital2 Minutes', 'provider': 'KwgtDigital2WidgetProvider', 'category': 'Clock'}, {'id': 'kwgt_nothing_date_time3', 'name': 'KWGT Date Time 3 Weather', 'provider': 'KwgtDateTime3WidgetProvider', 'category': 'Calendar'}, {'id': 'kwgt_interstellar_endurance', 'name': 'KWGT Endurance', 'provider': 'KwgtInterstellarEnduranceProvider', 'category': 'Clock'}, {'id': 'kwgt_interstellar_endurance_analog', 'name': 'KWGT Endurance Analog', 'provider': 'KwgtInterstellarEnduranceAnalogProvider', 'category': 'Clock'}, {'id': 'kwgt_interstellar_endurance_analog_2', 'name': 'KWGT Endurance Analog 2', 'provider': 'KwgtInterstellarEnduranceAnalog2Provider', 'category': 'Clock'}, {'id': 'media_m3_expanded', 'name': 'Material3 Media Expanded', 'provider': 'Material3ExpandedMediaProvider', 'category': 'Media player'}, {'id': 'media_m3_output', 'name': 'Material3 Media Output', 'provider': 'Material3MediaOutputProvider', 'category': 'Media player'}, {'id': 'media_mini', 'name': 'Mini Media Player', 'provider': 'MiniMediaPlayerProvider', 'category': 'Media player'}, {'id': 'media_minimal', 'name': 'Minimal Media Player', 'provider': 'MinimalMediaPlayerProvider', 'category': 'Media player'}, {'id': 'media_minimal2', 'name': 'Minimal Media Player 2', 'provider': 'MinimalMediaPlayer2Provider', 'category': 'Media player'}, {'id': 'media_minimal3', 'name': 'Minimal Media Player 3', 'provider': 'MinimalMediaPlayer3Provider', 'category': 'Media player'}, {'id': 'media_master', 'name': 'Nothing Master Widget', 'provider': 'NothingMasterWidgetProvider', 'category': 'Media player'}, {'id': 'media_nothing_player', 'name': 'Nothing Media Player', 'provider': 'NothingMediaPlayerProvider', 'category': 'Media player'}, {'id': 'media_nothing_player2', 'name': 'Nothing Media Player2', 'provider': 'NothingMediaPlayer2Provider', 'category': 'Media player'}, {'id': 'media_nothing_player3', 'name': 'Nothing Media Player3', 'provider': 'NothingMediaPlayer3Provider', 'category': 'Media player'}, {'id': 'media_universal', 'name': 'Universal Media Player', 'provider': 'UniversalMediaPlayerProvider', 'category': 'Media player'}, {'id': 'media_notification', 'name': 'Notification Widget', 'provider': 'MaterialNotificationWidgetProvider', 'category': 'Media player'}]
+          report={'source':'3e0a86002e09e04d090d6733ab07068f9116ca4c','tests':{},'failures':[],'limits':['Native standalone AppWidgetHost, not final Pixel launcher placement acceptance for every provider.','Gallery Add is checked independently; native confirmation is captured then cancelled.','No source repair during this sweep.','Media and weather permission-on/live fixture checks remain separately identified.']}
+          def adb(*a,check=True):
+           r=sp.run(['adb',*a],capture_output=True,timeout=40)
+           if check and r.returncode:raise RuntimeError(r.stderr.decode(errors='replace'))
+           return r.stdout
+          def tree():
+           raw=adb('shell','am','instrument','-w','org.dotwel.snapshot/.Snapshot',check=False).decode(errors='replace');i=raw.find('<hierarchy');j=raw.find('</hierarchy>')
+           if i<0 or j<0:raise RuntimeError('No fresh tree')
+           return ET.fromstring(raw[i:j+12])
+          def cap(name):
+           (OUT/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'))
+           try:(OUT/(name+'.xml')).write_bytes(ET.tostring(tree()))
+           except Exception:pass
+          def find(r,s,exact=False):return next((n for n in r.iter('node') if any((s.lower()==n.get(k,'').lower() if exact else s.lower() in n.get(k,'').lower()) for k in ('text','content-desc','resource-id'))),None)
+          def click(n):
+           if n is None:raise RuntimeError('Missing UI target')
+           b=list(map(int,re.findall(r'\d+',n.get('bounds',''))));adb('shell','input','tap',str((b[0]+b[2])//2),str((b[1]+b[3])//2));time.sleep(.45)
+          def start():adb('shell','am','start','-W','-n',PKG+'/.MainActivity');time.sleep(.4)
+          def seek(s,exact=False):
+           for i in range(15):
+            n=find(tree(),s,exact)
+            if n is not None:return n
+            adb('shell','input','swipe','500','1500','500','650','250')
+           raise RuntimeError('UI target missing '+s)
+          def save():
+           (OUT/'RESULT.json').write_text(json.dumps(report,indent=2))
+           (OUT/'FAILURE-LEDGER.md').write_text('# Sequential sweep failures\n\n'+'\n'.join('- '+str(x) for x in report['failures']))
+          def fail(e,stage,err):report['failures'].append({'provider':e['provider'],'stage':stage,'cause':str(err)});save()
+          def host(e,width=320,height=260):
+           adb('shell','am','start','-W','-n','org.dotwel.host/.Host','--es','provider',PKG+'/.'+e['provider'],'--ei','width',str(width),'--ei','height',str(height));time.sleep(.6)
+          def style(s):
+           adb('shell','am','force-stop',PKG);start();click(seek('Style',True));click(seek(s,True));time.sleep(.5)
+          try:
+           apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest();assert report['sha256']=='44ebb889f250e19886e08b9a0c23bff8457132def8f62baf1eebfd2230945769'
+           adb('install','-r',str(apk));adb('install','-r','/tmp/host/helper.apk');adb('shell','appwidget','grantbind','--package','org.dotwel.host','--user','0')
+           start();cap('000-default-off');(OUT/'default-prefs.txt').write_bytes(adb('shell','run-as',PKG,'ls','shared_prefs',check=False))
+           for ix,e in enumerate(ENTRIES):
+            prefix=f'{ix+1:02d}-'+e['id'];report['tests'][e['id']]={};print('START',prefix,flush=True)
+            try:
+             adb('shell','am','force-stop',PKG);start();click(seek('Open '+e['category']+',',False))
+             for page in range(24):
+              r=tree();add=find(r,'Add '+e['name'],True)
+              if add is not None:break
+              n=find(r,'Next',True)
+              if n is None:raise RuntimeError('Category Next missing')
+              click(n)
+             else:raise RuntimeError('Individual gallery item not found')
+             cap(prefix+'-gallery');click(add);time.sleep(.5);r=tree()
+             if e['id']=='world':
+              n=find(r,'Save and add',True)
+              if n is not None:click(n);r=tree()
+             # Some apps show their permission explanation before a native Add prompt.
+             if not any(find(r,x,True) is not None for x in ['Add to home screen','Add automatically','Add widget','Add']):
+              cap(prefix+'-add-explanation');raise RuntimeError('Native pin confirmation not reached; inspect explanation')
+             cap(prefix+'-native-pin');report['tests'][e['id']]['gallery_add']='Native prompt captured, cancelled for isolated host sweep';adb('shell','input','keyevent','4')
+            except Exception as ex:fail(e,'gallery_add',ex);cap(prefix+'-gallery-failure')
+            try:
+             style('Black');host(e);cap(prefix+'-host-black');adb('shell','am','kill',PKG);time.sleep(1);cap(prefix+'-host-killed')
+             for st in ['Translucent','Transparent','Black']:
+              style(st);host(e);cap(prefix+'-host-'+st.lower()+'-cycle')
+             host(e,180,180);cap(prefix+'-host-small');host(e,360,180);cap(prefix+'-host-wide')
+             report['tests'][e['id']]['native_host']='Inflated actual AppWidgetHost, style and resize captures pending pixel review'
+             adb('shell','input','tap','540','800');time.sleep(.5);cap(prefix+'-tap')
+            except Exception as ex:fail(e,'native_host',ex);cap(prefix+'-host-failure')
+            save();print('DONE',prefix,flush=True)
+           # Shared clock movement with owner process killed.
+           for e in ENTRIES:
+            if e['id'] in ['kwgt_interstellar_endurance','kwgt_orbit_clock','kwgt_nothing_digital2']:
+             host(e);adb('shell','am','kill',PKG);cap(e['id']+'-tick-before');time.sleep(66);cap(e['id']+'-tick-after')
+           report['failures'].append({'provider':'all three Endurance','stage':'source audit','cause':'Seconds/hour/minute rendered as sampled bitmap, not OS live rotations. Fails live-clock implementation gate.'})
+           report['failures'].append({'provider':'media set','stage':'source audit','cause':'Repository has no MediaController callbacks or active-session listener; state/progress updates can remain stale until another notification/update.'})
+          except Exception as ex:report['fatal']=str(ex);cap('999-fatal')
+          finally:
+           save();(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','6000',check=False));(OUT/'appwidget-dump.txt').write_bytes(adb('shell','dumpsys','appwidget',check=False));print(json.dumps(report,indent=2))
+          PYCODE
+      - name: Build isolated no-idle snapshot test helper
+        run: |
+          set -eu
+          mkdir -p /tmp/snapshot/classes /tmp/snapshot/dex
+          cat > /tmp/snapshot/AndroidManifest.xml <<'MANIFEST'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.dotwel.snapshot"><uses-sdk android:minSdkVersion="26" android:targetSdkVersion="28"/><application android:label="Snapshot test helper" android:debuggable="true"/><instrumentation android:name=".Snapshot" android:targetPackage="org.dotwel.snapshot"/></manifest>
+          MANIFEST
+          cat > /tmp/snapshot/Snapshot.java <<'JAVA'
+          package org.dotwel.snapshot;
+          import android.app.Instrumentation;
+          import android.os.Bundle;
+          import android.graphics.Rect;
+          import android.view.accessibility.AccessibilityNodeInfo;
+          public class Snapshot extends Instrumentation {
+           public void onCreate(Bundle b){super.onCreate(b);start();}
+           static String esc(CharSequence s){return s==null?"":s.toString().replace("&","&amp;").replace("<","&lt;").replace("\"","&quot;").replace("\n","&#10;");}
+           void node(AccessibilityNodeInfo n,StringBuilder s){if(n==null || !n.isVisibleToUser())return;Rect r=new Rect();n.getBoundsInScreen(r);if(r.width()<=0 || r.height()<=0)return;s.append("<node text=\"").append(esc(n.getText())).append("\" content-desc=\"").append(esc(n.getContentDescription())).append("\" resource-id=\"").append(esc(n.getViewIdResourceName())).append("\" package=\"").append(esc(n.getPackageName())).append("\" clickable=\"").append(n.isClickable()).append("\" bounds=\"[").append(r.left).append(',').append(r.top).append("][").append(r.right).append(',').append(r.bottom).append("]\">");for(int i=0;i<n.getChildCount();i++)node(n.getChild(i),s);s.append("</node>");}
+           public void onStart(){Bundle out=new Bundle();try{android.app.UiAutomation u=getUiAutomation();android.accessibilityservice.AccessibilityServiceInfo info=u.getServiceInfo();info.flags|=android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS;u.setServiceInfo(info);AccessibilityNodeInfo root=null;for(int i=0;i<20 && root==null;i++){root=u.getRootInActiveWindow();if(root==null)Thread.sleep(100);}StringBuilder s=new StringBuilder("<hierarchy>");node(root,s);s.append("</hierarchy>");out.putString("xml",s.toString());finish(-1,out);}catch(Exception e){out.putString("error",e.toString());finish(1,out);}}
+          }
+          JAVA
+          SDK="$ANDROID_HOME"
+          ANDROID_JAR=$(find "$SDK/platforms" -name android.jar | sort -V | tail -1)
+          BT=$(find "$SDK/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
+          javac -source 8 -target 8 -cp "$ANDROID_JAR" -d /tmp/snapshot/classes /tmp/snapshot/Snapshot.java
+          "$BT/d8" --lib "$ANDROID_JAR" --output /tmp/snapshot/dex /tmp/snapshot/classes/org/dotwel/snapshot/Snapshot.class
+          "$BT/aapt2" link -o /tmp/snapshot/helper.apk --manifest /tmp/snapshot/AndroidManifest.xml -I "$ANDROID_JAR"
+          (cd /tmp/snapshot/dex && zip -q /tmp/snapshot/helper.apk classes.dex)
+          keytool -genkeypair -keystore /tmp/snapshot/debug.keystore -storepass android -keypass android -alias androiddebugkey -dname CN=Android -keyalg RSA -validity 1
+          "$BT/apksigner" sign --ks /tmp/snapshot/debug.keystore --ks-pass pass:android /tmp/snapshot/helper.apk
+      - name: Build isolated native AppWidgetHost helper
+        run: |
+          set -eu
+          mkdir -p /tmp/host/classes /tmp/host/dex
+          cat > /tmp/host/AndroidManifest.xml <<'MANIFEST'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.dotwel.host"><uses-sdk android:minSdkVersion="26" android:targetSdkVersion="28"/><uses-permission android:name="android.permission.BIND_APPWIDGET"/><application android:label="Isolated native widget host" android:debuggable="true" android:theme="@android:style/Theme.Material.Light.NoActionBar"><activity android:name=".Host" android:exported="true" android:launchMode="singleTask"/></application></manifest>
+          MANIFEST
+          cat > /tmp/host/Host.java <<'JAVA'
+          package org.dotwel.host;
+          import android.app.*;import android.appwidget.*;import android.os.*;import android.content.*;import android.widget.*;import android.graphics.Color;import android.view.Gravity;
+          public class Host extends Activity {
+           AppWidgetHost host; int id=-1;String prior="";
+           public void onCreate(Bundle b){super.onCreate(b);host=new AppWidgetHost(this,9321);host.startListening();show(getIntent());}
+           protected void onNewIntent(Intent i){super.onNewIntent(i);setIntent(i);show(i);}
+           void show(Intent i){try{String p=i.getStringExtra("provider");ComponentName c=ComponentName.unflattenFromString(p);AppWidgetManager m=AppWidgetManager.getInstance(this);int w=i.getIntExtra("width",320),h=i.getIntExtra("height",260);if(!p.equals(prior)){if(id>=0)host.deleteAppWidgetId(id);id=host.allocateAppWidgetId();Bundle o=new Bundle();o.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH,w);o.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH,w);o.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT,h);o.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT,h);if(!m.bindAppWidgetIdIfAllowed(id,c,o))throw new RuntimeException("bind refused");prior=p;}AppWidgetHostView v=host.createView(this,id,m.getAppWidgetInfo(id));v.updateAppWidgetSize(null,w,h,w,h);FrameLayout root=new FrameLayout(this);root.setBackgroundColor(Color.rgb(85,110,115));float d=getResources().getDisplayMetrics().density;FrameLayout.LayoutParams q=new FrameLayout.LayoutParams((int)(w*d),(int)(h*d),Gravity.CENTER);root.addView(v,q);TextView label=new TextView(this);label.setText(c.getShortClassName()+" / "+w+"x"+h+" / widgetId="+id);label.setTextColor(Color.WHITE);root.addView(label,new FrameLayout.LayoutParams(-1,80,Gravity.TOP));setContentView(root);}catch(Exception e){TextView t=new TextView(this);t.setText("HOST ERROR "+e);setContentView(t);}}
+          }
+          JAVA
+          ANDROID_JAR=$(find "$ANDROID_HOME/platforms" -name android.jar | sort -V | tail -1)
+          BT=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
+          javac -source 8 -target 8 -cp "$ANDROID_JAR" -d /tmp/host/classes /tmp/host/Host.java
+          "$BT/d8" --lib "$ANDROID_JAR" --output /tmp/host/dex /tmp/host/classes/org/dotwel/host/Host.class
+          "$BT/aapt2" link -o /tmp/host/helper.apk --manifest /tmp/host/AndroidManifest.xml -I "$ANDROID_JAR"
+          (cd /tmp/host/dex && zip -q /tmp/host/helper.apk classes.dex)
+          "$BT/apksigner" sign --ks /tmp/snapshot/debug.keystore --ks-pass pass:android /tmp/host/helper.apk
+      - name: Install and inspect widgets on Android 15
+        timeout-minutes: 54
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          emulator-boot-timeout: 300
+          disable-animations: true
+          script: adb shell input keyevent 82 && sleep 80 && adb install -r /tmp/snapshot/helper.apk && timeout 3100s python3 -u /tmp/widget-runtime-smoke.py
+      - name: Preserve actual runtime captures even after a failed check
+        if: always()
+        run: |
+          set -eu
+          test -d runtime-evidence || { echo 'Emulator never produced runtime evidence'; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          branch="checkpoint/runtime-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git add -f runtime-evidence
+          git commit -m 'test: preserve actual emulator screenshots and behavior evidence'
+          git push origin "$branch"
+          printf 'Evidence branch: %s\nScreenshots require human inspection before any pass claim.\n' "$branch" >> "$GITHUB_STEP_SUMMARY"
