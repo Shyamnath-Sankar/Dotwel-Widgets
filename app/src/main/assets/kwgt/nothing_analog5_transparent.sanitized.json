@@ -1,0 +1,148 @@
+{
+  "provenance": {
+    "source": "https://github.com/AumGupta/KWGT-Widgets",
+    "file": "widgets/Nothing_Analog_5_Transparent.kwgt!preset.json",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": "Author email, tap intents and any font payload references were removed. Layer geometry, formulas and CLEAR paint modes are retained. The source defines side, fg and primary globals but no bg or h global."
+  },
+  "preset_info": {
+    "author": "Om Gupta",
+    "title": "NothingAnalog5 Transparent",
+    "version": 13,
+    "width": 415,
+    "height": 542,
+    "features": "ANALOG_CLOCK"
+  },
+  "config_scale_value": 157.74908,
+  "globals": {
+    "side": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$",
+    "fg": "$if(si(darkwp)=1, #FFFFFFFF, #FF1B1B1D)$",
+    "primary": "#FFD71921"
+  },
+  "missing_global_adaptation": {
+    "bg": "The source has no bg global and no filled dial card. The clip shape is used only as an outer mask; no background fill is invented.",
+    "h": "The Clip and CLEAR ShapeModules reference an undefined h global. This port normalises the host to the 277 square design viewport used by the other Nothing analog ports and uses each CLEAR width as its square height. This is a documented port choice, not proof of the missing source height.",
+    "scale": "config_scale_value 157.74908 is recorded from the actual source but the native 277 vector viewport is used instead of applying the Kustom scale at runtime.",
+    "contrast": "The source fg follows the wallpaper (darkwp). RemoteViews cannot safely sample the wallpaper, so this port applies a manual wallpaper-contrast override per Dotwel style: BLACK and TRANSPARENT use white ticks/minute hand, TRANSLUCENT uses dark #1B1B1D ticks/minute hand. All three styles keep a transparent dial card.",
+    "clear": "The two CLEAR ShapeModules are real transparent cut-outs in the generated vectors. The combined vector uses android:fillType=evenOdd so the CLEAR rounded rectangles are holes in the static tick polygons, not an opaque background fill."
+  },
+  "layers": [
+    {
+      "internal_type": "ShapeModule",
+      "internal_title": "Clip",
+      "shape_width": "$gv(side)/1.08$",
+      "shape_height": "h (missing; normalised to side 277)",
+      "shape_corners": "$gv(side)/5$",
+      "paint_color": "bg (missing; clip mask only, not drawn)",
+      "fx_mask": "CLIP_ALL",
+      "native_port": "277-tall rounded clip path, width 277/1.08, corner 277/5"
+    },
+    {
+      "internal_type": "ProgressModule",
+      "internal_title": "MinTicks",
+      "internal_globals": {
+        "color_fgcolor": "fg",
+        "color_bgcolor": "fg",
+        "style_size": "side"
+      },
+      "internal_formulas": {
+        "style_height": "$gv(side)/5$",
+        "style_size": "$gv(side)*1.05$"
+      },
+      "progress_progress": "CUSTOM",
+      "progress_max": 20.0,
+      "progress_level": 20.0,
+      "progress_mode": "SHAPES",
+      "progress_count": 60.0,
+      "style_style": "CIRCLE",
+      "style_shape": "RECT",
+      "style_width": 4.0,
+      "style_height": 50.0,
+      "native_port": "60 radial 4 x 55.4 rect ticks on the 277*1.05 ring (centre radius 145.425), clipped by the rounded clip path and cut by both CLEAR masks (their union is the larger first CLEAR)"
+    },
+    {
+      "internal_type": "ShapeModule",
+      "internal_title": "Overlay",
+      "shape_width": "$gv(side)/1.15$",
+      "shape_height": "h (missing; square width fallback)",
+      "shape_corners": "$gv(side)/6.5$",
+      "paint_color": "bg (missing)",
+      "paint_mode": "CLEAR",
+      "native_port": "real even-odd hole: square rounded overlay side 277/1.15, corner 277/6.5, subtracted after minute ticks and before hour ticks"
+    },
+    {
+      "internal_type": "ProgressModule",
+      "internal_title": "HourTicks",
+      "internal_globals": {
+        "color_fgcolor": "fg",
+        "color_bgcolor": "fg",
+        "style_size": "side"
+      },
+      "internal_formulas": {
+        "style_height": "$gv(side)/4$"
+      },
+      "progress_progress": "CUSTOM",
+      "progress_max": 20.0,
+      "progress_level": 20.0,
+      "progress_mode": "SHAPES",
+      "progress_count": 12.0,
+      "style_style": "CIRCLE",
+      "style_shape": "RECT",
+      "style_width": 6.0,
+      "style_height": 68.0,
+      "native_port": "12 radial 6 x 69.25 rect ticks on the 277 ring (centre radius 138.5), clipped by the rounded clip path and cut by the last CLEAR mask"
+    },
+    {
+      "internal_type": "ShapeModule",
+      "internal_title": "Overlay",
+      "shape_width": "$gv(side)/1.3$",
+      "shape_height": "h (missing; square width fallback)",
+      "shape_corners": "$gv(side)/7$",
+      "paint_color": "bg (missing)",
+      "paint_mode": "CLEAR",
+      "native_port": "real even-odd hole: square rounded overlay side 277/1.3, corner 277/7, subtracted after hour ticks and clearing all previous static tick layers"
+    },
+    {
+      "internal_type": "OverlapLayerModule",
+      "internal_title": "Hour hand",
+      "config_rotate_mode": "CLOCK_HOUR_SMOOTH",
+      "internal_formulas": {
+        "shape_width": "$gv(side)/13.19$",
+        "shape_height": "$gv(side)/4.134$",
+        "position_padding_bottom": "$gv(side)/6.155$"
+      },
+      "shape_corners": 360,
+      "paint_color": "primary",
+      "native_port": "reuses the source-identical filled red #FFD71921 21 x 67.005 pill vector"
+    },
+    {
+      "internal_type": "OverlapLayerModule",
+      "internal_title": "Min hand",
+      "config_rotate_mode": "CLOCK_MINUTE",
+      "internal_formulas": {
+        "shape_width": "$gv(side)/25.18$",
+        "shape_height": "$gv(side)/2.77$",
+        "position_padding_bottom": "$gv(side)/3.112$"
+      },
+      "shape_corners": 360,
+      "paint_color": "fg",
+      "native_port": "reuses the source-identical filled foreground 11.0008 x 100 pill vector; white or dark follows the manual style contrast"
+    }
+  ],
+  "native_port": {
+    "provider": "KwgtAnalog5TransparentWidgetProvider",
+    "clock": "android.widget.AnalogClock",
+    "viewport": 277,
+    "dial_center": 138.5,
+    "minute_ring": "277*1.05 = 290.85 diameter; centre radius 145.425; tick 4 x 55.4",
+    "hour_ring": "277 diameter; centre radius 138.5; tick 6 x 69.25",
+    "outer_clip": "width 277/1.08 = 256.4815, height 277, corner 277/5 = 55.4",
+    "first_clear": "width 277/1.15 = 240.8696, square height, corner 277/6.5 = 42.6154",
+    "second_clear": "width 277/1.3 = 213.0769, square height, corner 277/7 = 39.5714",
+    "minutes_cut_by": "both CLEAR masks; the second square is nested inside the first, so their union boundary is the first CLEAR",
+    "hours_cut_by": "last CLEAR only",
+    "tap": "removed; the native provider uses ACTION_SHOW_ALARMS",
+    "runtime": "build-verified only; no placement, resize, style switch or wall-clock movement claim"
+  }
+}

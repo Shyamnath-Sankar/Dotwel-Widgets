@@ -207,6 +207,33 @@ the app from About & source credits > View MIT license texts.
   No runtime AnalogClock setter, bitmap time, minute alarm, service, permission,
   font, raster asset or new dependency is used. The gallery preview inflates the
   same native layout. Runtime inflation and actual hand movement are not claimed.
+- `widgets/Nothing_Analog_5_Transparent.kwgt!preset.json` ->
+  `KwgtAnalog5TransparentWidgetProvider.kt`, the three
+  `widget_kwgt_analog5clear_{black,translucent,transparent}.xml` layouts, the
+  new `dw_analog5clear_dial_white` / `dw_analog5clear_dial_dark` cut-out vector
+  dials, the reused source-identical Analog5 hand vectors, and the sanitized
+  data model `app/src/main/assets/kwgt/nothing_analog5_transparent.sanitized.json`.
+  Retained from the actual transparent preset: `config_scale_value`
+  157.74908, the 277 square design viewport, `side = min(width,height)`, the
+  wallpaper `fg` formula, primary red `#FFD71921`, outer clip `side / 1.08` with
+  `side / 5` corners, 60 minute ticks 4 x `side / 5` on the
+  `style_size = side * 1.05` ring, 12 hour ticks 6 x `side / 4` on the 277 ring,
+  first CLEAR overlay `side / 1.15` with `side / 6.5` corners after the minute
+  ticks, last CLEAR overlay `side / 1.3` with `side / 7` corners after the hour
+  ticks, and the source hand formulas. The CLEAR overlays are real even-odd
+  transparent holes in the static tick vector, not a background-coloured fill;
+  the nested second CLEAR is inside the first, so the minute ticks subtract the
+  CLEAR union and the hour ticks subtract only the last CLEAR. The source has no
+  `bg` or `h` global: no filled dial card is drawn, each CLEAR height is
+  normalised to its width, and the clip height uses the 277 design side. Because
+  RemoteViews cannot safely sample the wallpaper, all three layouts are
+  transparent with a manual contrast choice: white ticks/minute hand on black
+  and transparent styles, dark `#1B1B1D` on translucent. The layouts embed a
+  native `android.widget.AnalogClock` with vector `android:dial`,
+  `android:hand_hour` and `android:hand_minute`; no runtime setter, bitmap time,
+  minute alarm, font, raster asset, permission, service or dependency is used.
+  The gallery preview inflates the same native layout. Runtime inflation, resize,
+  style switching and actual hand movement are not claimed.
 - `widgets/Nothing_Mini_Calender.kwgt!preset.json` -> `KwgtMiniCalendarRenderer.kt`,
   `KwgtMiniCalendarDates.kt`, `KwgtMiniCalendarWidgetProvider.kt`, and the
   sanitized data model
@@ -253,11 +280,12 @@ the app from About & source credits > View MIT license texts.
   replace the fonts.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
   `Clean_Time_Date_Info`, `Nothing_Analog_3`, `Nothing_Analog_5`,
-  `Nothing_Battery`, `Nothing_Battery2`, `Nothing_Battery_Mini`, `Nothing_Date_Time`,
+  `Nothing_Analog_5_Transparent`, `Nothing_Battery`, `Nothing_Battery2`,
+  `Nothing_Battery_Mini`, `Nothing_Date_Time`,
   `Nothing_Date_Time2`, `Nothing_Digital4`, `Nothing_Digital3`,
   `Nothing_Digital`, and `Nothing_Mini_Calender` are implemented in this
-  checkpoint (12 of 40); the rest remain pending or dependency-blocked and are
-  not claimed as imported. All 18 registered providers are build-verified only
+  checkpoint (13 of 40); the rest remain pending or dependency-blocked and are
+  not claimed as imported. All 19 registered providers are build-verified only
   and remain runtime-unverified.
 
 ## Not included

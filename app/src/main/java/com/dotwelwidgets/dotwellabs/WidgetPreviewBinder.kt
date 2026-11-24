@@ -47,6 +47,10 @@ object WidgetPreviewBinder {
             bindNativeAnalog5(context, container, style)
             return
         }
+        if (entry.previewKind == PreviewKind.KWGT_ANALOG_5_CLEAR) {
+            bindNativeAnalog5Clear(context, container, style)
+            return
+        }
         if (WidgetPreviewRenderer.usesMinuteBitmap(entry.previewKind) &&
             !MinuteTickScheduler.hasExactAccess(context)
         ) {
@@ -97,6 +101,18 @@ object WidgetPreviewBinder {
         style: WidgetStyle,
     ) {
         val layout = KwgtAnalog5WidgetProvider.layoutFor(style)
+        container.addView(
+            LayoutInflater.from(context).inflate(layout, container, false),
+            matchParams(),
+        )
+    }
+
+    private fun bindNativeAnalog5Clear(
+        context: Context,
+        container: FrameLayout,
+        style: WidgetStyle,
+    ) {
+        val layout = KwgtAnalog5TransparentWidgetProvider.layoutFor(style)
         container.addView(
             LayoutInflater.from(context).inflate(layout, container, false),
             matchParams(),

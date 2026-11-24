@@ -4,11 +4,11 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 ## Current checkpoint (0.1.8, versionCode 9)
 
 - `com.dotwelwidgets.dotwellabs`, minSdk 26, compile/target SDK 36.
-- Fourteen registered providers: dot clock, date, Analog Bold, Analog Scale,
-  world clock, quotes, and eight native KWGT-Widgets conversions (Nothing
-  Battery, Battery Mini, Date Time, Date Time 2, Digital3, Digital4, Digital,
-  and Mini Calendar). The full 40-preset source-port status is in
-  `docs/KWGT-LEDGER.md`; only those eight presets are implemented, the rest
+- Nineteen registered providers: dot clock, date, Analog Bold, Analog Scale,
+  world clock, quotes, and eleven native KWGT-Widgets conversions (Nothing
+  Battery, Battery Mini, Battery2, Date Time, Date Time 2, Digital3, Digital4,
+  Digital, Analog3, Analog5, and Analog5 Clear). The full 40-preset source-port
+  status is in `docs/KWGT-LEDGER.md`; thirteen presets are implemented, the rest
   remain pending or dependency-blocked.
 - The front screen is a category grid: a dotted HOME heading, a short subtitle,
   an actionable dotted-update control, and rounded square category tiles with a

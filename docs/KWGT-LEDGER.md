@@ -33,7 +33,7 @@ without a prohibited capability or unresolved third-party rights.
 | 14 | `Nothing_Analog_2` | pending | Analog layer conversion queued. |
 | 15 | `Nothing_Analog_3` | **implemented** | Native `KwgtAnalog3WidgetProvider`; 277 vector dial with two hollow rounded capsule hands in a platform `android.widget.AnalogClock`, which rotates the hands automatically. Black `#1B1B1D` / white hands, translucent `#A6FFFFFF` / dark hands, transparent no dial / white hands. No seconds, bitmap time, minute alarm, permission or service; runtime unverified. |
 | 16 | `Nothing_Analog_5` | **implemented** | Native `KwgtAnalog5WidgetProvider`; 277 rounded-square vector dial with a clipped 60-tick minute ring and 12-tick hour ring, two square rounded overlays, a red `#D71921` filled hour pill and foreground minute pill in a platform `android.widget.AnalogClock`. Black `#1B1B1D` / white ticks, translucent `#A6FFFFFF` / dark ticks, transparent no filled dial with ticks and hands. Uses the source `CLOCK_HOUR_SMOOTH` / `CLOCK_MINUTE` semantics through the platform clock; no seconds, bitmap time, minute alarm, permission or service; runtime unverified. |
-| 17 | `Nothing_Analog_5_Transparent` | pending | Analog layer conversion queued. |
+| 17 | `Nothing_Analog_5_Transparent` | **implemented** | Native `KwgtAnalog5TransparentWidgetProvider`; actual transparent source port with the source `style_size = side * 1.05` minute ring, `side / 5` outer clip corners, `side / 6.5` first CLEAR corners, and real even-odd CLEAR cut-outs rather than a painted background. All three Dotwel styles are transparent with no filled dial card; white ticks/minute hand on black/transparent and dark `#1B1B1D` on translucent are a documented manual wallpaper-contrast choice. Red `#D71921` hour pill and foreground minute pill in a platform `android.widget.AnalogClock`; no bitmap time, minute alarm, permission or service; runtime unverified. |
 | 18 | `Nothing_Battery` | **implemented** | Native `BatteryWidgetProvider`; real system level with bounded best-effort `BatteryRefreshScheduler` (inexact ELAPSED_REALTIME ~15 min + 10 min flex, does not wake the device); runtime unverified. |
 | 19 | `Nothing_Battery2` | **implemented** | Native `KwgtBattery2WidgetProvider`; rounded surface, outlined 16-segment body with clip and nub, real level, system charging state and only real `computeChargeTimeRemaining` values; unknown estimates show `--` / `ESTIMATE UNAVAILABLE`. Lifecycle: dynamic `BATTERY_CHANGED` only while the process lives, plus an inexact non-wakeup `BatteryRefreshScheduler` window (~15 min + 10 min flex, Doze-deferrable) and manual app refresh; not a live/instant claim; runtime unverified. |
 | 20 | `Nothing_Battery_Mini` | **implemented** | Native `BatteryMiniWidgetProvider`; real system level with bounded best-effort `BatteryRefreshScheduler` (inexact ELAPSED_REALTIME ~15 min + 10 min flex, does not wake the device); runtime unverified. |
@@ -60,15 +60,16 @@ without a prohibited capability or unresolved third-party rights.
 
 ## Implemented in this checkpoint
 
-Twelve of the 40 presets now have native providers: `Clean_Time_Date_Info`,
-`Nothing_Analog_3`, `Nothing_Analog_5`, `Nothing_Battery`, `Nothing_Battery2`,
+Thirteen of the 40 presets now have native providers: `Clean_Time_Date_Info`,
+`Nothing_Analog_3`, `Nothing_Analog_5`, `Nothing_Analog_5_Transparent`,
+`Nothing_Battery`, `Nothing_Battery2`,
 `Nothing_Battery_Mini`, `Nothing_Date_Time`, `Nothing_Date_Time2`,
 `Nothing_Digital`, `Nothing_Digital3`, `Nothing_Digital4` and
-`Nothing_Mini_Calender`. All 18 registered providers are build-verified only and
+`Nothing_Mini_Calender`. All 19 registered providers are build-verified only and
 remain runtime-unverified in this checkpoint. The sanitized transcriptions are
 under `app/src/main/assets/kwgt/`, including
 `clean_time_date_info.sanitized.json`, `nothing_analog3.sanitized.json`,
-`nothing_analog5.sanitized.json`, `nothing_battery.sanitized.json`, `nothing_battery2.sanitized.json`,
+`nothing_analog5.sanitized.json`, `nothing_analog5_transparent.sanitized.json`, `nothing_battery.sanitized.json`, `nothing_battery2.sanitized.json`,
 `nothing_battery_mini.sanitized.json`,
 `nothing_date_time.sanitized.json`, `nothing_date_time2.sanitized.json`,
 `nothing_digital.sanitized.json`, `nothing_digital3.sanitized.json`,
@@ -130,6 +131,40 @@ and minute hand, translucent uses `#A6FFFFFF` with dark ticks and minute hand,
 transparent keeps the ticks and hands with no filled dial. The hour pill stays
 `#D71921` in every style. Runtime inflation on a launcher and actual hand
 movement are not verified in this checkpoint.
+
+Nothing_Analog_5_Transparent keeps these actual-source relationships:
+
+- source canvas 415 x 542; `side = min(width, height)`; source
+  `config_scale_value = 157.74908`; 277 square design viewport chosen for the
+  native vectors (the scale is recorded, not applied at runtime)
+- source globals are `side`, wallpaper-based `fg` and `primary` red `#FFD71921`;
+  the source has no `bg` and no `h` global, so no filled dial card is drawn
+- outer clip rounded rectangle width `side / 1.08`, height normalised to the 277
+  side, corners `side / 5` (55.4); this differs from the Analog5 `/ 6` corner
+- 60 minute rect ticks width 4, height `side / 5`, on the source
+  `style_size = side * 1.05` ring (centre radius 145.425, outer 173.125); this
+  is the actual transparent source value, not the Analog5 `style_size = side`
+- 12 hour rect ticks width 6, height `side / 4`, centred on the 277 ring
+- first CLEAR square rounded overlay width `side / 1.15`, corner `side / 6.5`
+  (42.6154), applied after the minute ticks and before the hour ticks
+- last CLEAR square rounded overlay width `side / 1.3`, corner `side / 7`
+  (39.5714), applied after the hour ticks and clearing all earlier static ticks
+- both CLEAR shapes are rendered as real even-odd transparent holes in the
+  static tick vector; there is no background-coloured approximation. The
+  minute tick path subtracts the CLEAR union (the nested second CLEAR is inside
+  the first), and the hour tick path subtracts the last CLEAR only
+- filled rounded hour pill and minute pill reuse the source-identical Analog5
+  formulas; the hour pill is always red `#FFD71921`
+- rotation `CLOCK_HOUR_SMOOTH` and `CLOCK_MINUTE` are provided by the platform
+  `AnalogClock`; the source has no seconds layer
+
+The source `fg` formula depends on `darkwp` (wallpaper). RemoteViews cannot
+safely sample the wallpaper, so all three layouts keep a transparent dial and
+choose contrast manually: black and transparent styles use white ticks/minute
+hand, translucent uses dark `#1B1B1D` ticks/minute hand. The missing `h` global
+is a documented port choice: CLEAR heights use each CLEAR width (square) and the
+clip height uses the 277 design side. Runtime inflation on a launcher, resize,
+style switching and actual hand movement are not verified in this checkpoint.
 
 Nothing_Battery keeps these author relationships:
 

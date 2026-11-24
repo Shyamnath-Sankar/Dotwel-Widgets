@@ -28,6 +28,9 @@ class RemoteViewsLayoutSafetyTest {
         "widget_kwgt_analog5_black.xml",
         "widget_kwgt_analog5_translucent.xml",
         "widget_kwgt_analog5_transparent.xml",
+        "widget_kwgt_analog5clear_black.xml",
+        "widget_kwgt_analog5clear_translucent.xml",
+        "widget_kwgt_analog5clear_transparent.xml",
     )
 
     private val remoteViewsSafeTags = setOf(

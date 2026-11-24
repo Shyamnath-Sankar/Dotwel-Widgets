@@ -246,6 +246,20 @@
         </receiver>
 
         <receiver
+            android:name=".KwgtAnalog5TransparentWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_analog5clear_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_analog5clear_widget_info" />
+        </receiver>
+
+        <receiver
             android:name=".KwgtMiniCalendarWidgetProvider"
             android:exported="true"
             android:label="@string/widget_kwgt_mini_calendar_label">

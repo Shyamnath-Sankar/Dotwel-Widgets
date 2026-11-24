@@ -38,6 +38,7 @@ enum class PreviewKind {
     KWGT_GRADIENT_CLOCK,
     KWGT_ANALOG_3,
     KWGT_ANALOG_5,
+    KWGT_ANALOG_5_CLEAR,
     KWGT_MINI_CALENDAR,
     KWGT_CLEAN_INFO,
     PLACEHOLDER,
@@ -344,6 +345,19 @@ object WidgetCatalog {
             action = CardAction.NONE,
         ),
         CatalogEntry(
+            id = "kwgt_nothing_analog5_transparent",
+            name = "KWGT Analog5 Clear",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Analog_5_Transparent · 277 clear-cut tick dial / 1.05 minute ring",
+            descriptionRes = R.string.catalog_kwgt_analog5clear_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_ANALOG_5_CLEAR,
+            providerClass = KwgtAnalog5TransparentWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_ANALOG_5_CLEAR,
+            action = CardAction.NONE,
+        ),
+        CatalogEntry(
             id = "kwgt_mini_calendar",
             name = "KWGT Mini Calendar",
             group = WidgetGroup.KWGT,
@@ -472,6 +486,7 @@ enum class WidgetCategory(
             "kwgt_gradient_clock",
             "kwgt_nothing_analog3",
             "kwgt_nothing_analog5",
+            "kwgt_nothing_analog5_transparent",
         ),
     ),
     CALENDAR(
@@ -582,6 +597,7 @@ object WidgetModeLabels {
             }
             PreviewKind.KWGT_ANALOG_3 -> R.string.mode_kwgt_analog3
             PreviewKind.KWGT_ANALOG_5 -> R.string.mode_kwgt_analog5
+            PreviewKind.KWGT_ANALOG_5_CLEAR -> R.string.mode_kwgt_analog5clear
             PreviewKind.KWGT_MINI_CALENDAR -> R.string.mode_kwgt_mini_calendar
             PreviewKind.KWGT_CLEAN_INFO -> R.string.mode_kwgt_clean_info
             PreviewKind.PLACEHOLDER -> entry.state.labelRes
