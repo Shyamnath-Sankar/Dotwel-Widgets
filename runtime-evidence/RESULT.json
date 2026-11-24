@@ -1,0 +1,9 @@
+{
+  "version": "0.1.8",
+  "tests": {},
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "55c9b4d632203ce00c85e40bf4b9e9316e0c4f3df07ab45eea6bf5ff23f5b403",
+  "error": "UI target not ready: Add KWGT Analog5Clear"
+}
