@@ -43,6 +43,10 @@ object WidgetPreviewBinder {
             bindNativeAnalog3(context, container, style)
             return
         }
+        if (entry.previewKind == PreviewKind.KWGT_ANALOG_SECONDS) {
+            bindNativeAnalogSeconds(context, container, style)
+            return
+        }
         if (entry.previewKind == PreviewKind.KWGT_ANALOG_5) {
             bindNativeAnalog5(context, container, style)
             return
@@ -89,6 +93,31 @@ object WidgetPreviewBinder {
         style: WidgetStyle,
     ) {
         val layout = KwgtAnalog3WidgetProvider.layoutFor(style)
+        container.addView(
+            LayoutInflater.from(context).inflate(layout, container, false),
+            matchParams(),
+        )
+    }
+
+    private fun bindNativeAnalogSeconds(
+        context: Context,
+        container: FrameLayout,
+        style: WidgetStyle,
+    ) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
+            container.addView(
+                TextView(context).apply {
+                    text = context.getString(R.string.ledger_unavailable_pre31)
+                    setTextColor(UpstreamNtDraw.muted(context, style))
+                    gravity = Gravity.CENTER
+                    textSize = 12f
+                    setPadding(dp(context, 10), dp(context, 10), dp(context, 10), dp(context, 10))
+                },
+                matchParams(),
+            )
+            return
+        }
+        val layout = KwgtAnalogSecondsWidgetProvider.layoutFor(style)
         container.addView(
             LayoutInflater.from(context).inflate(layout, container, false),
             matchParams(),

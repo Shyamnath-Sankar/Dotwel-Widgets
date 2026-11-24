@@ -29,7 +29,7 @@ without a prohibited capability or unresolved third-party rights.
 | 10 | `Minimal_Media_Player` | dependency | Media/notification access is prohibited for this app. |
 | 11 | `Minimal_Media_Player_2` | dependency | Media/notification access is prohibited for this app. |
 | 12 | `Minimal_Media_Player_3` | dependency | Media/notification access is prohibited for this app. |
-| 13 | `Nothing_Analog_` | pending | Analog layer conversion queued behind the battery/time ports. |
+| 13 | `Nothing_Analog_` | **implemented** | Native `KwgtAnalogSecondsWidgetProvider`; exact source-seconds port. 277 viewport, filled `#1B1B1D` dial, filled hour capsule 277/11.54 x 277/3.378 at `138.5 - (277/4.616)/2`, constant `#6C696E` minute capsule 277/27.7 x 277/2.473 at `138.5 - (277/2.7426)/2`, and the source `#D71921` second circle (diameter 277/23.08) at radius `(277/1.145)/2`. Android 12+ native `android:hand_second` rotates the full-viewport second drawable from the 12 o'clock zero position, absorbing the source `CLOCK_SECOND` 90 offset; the source second toggle is active, not frozen or omitted. Receiver is disabled below API 31 via a `false`/`true` `values`/`values-v31` bool and the catalog marks it unavailable there with no no-seconds fallback. Black/translucent/transparent retain the three documented hour/dial styles with constant minute and second colours. Second-tick fps is system configured and may be disabled. No bitmap time, alarm, service, permission or new dependency; runtime unverified. |
 | 14 | `Nothing_Analog_2` | pending | Analog layer conversion queued. |
 | 15 | `Nothing_Analog_3` | **implemented** | Native `KwgtAnalog3WidgetProvider`; 277 vector dial with two hollow rounded capsule hands in a platform `android.widget.AnalogClock`, which rotates the hands automatically. Black `#1B1B1D` / white hands, translucent `#A6FFFFFF` / dark hands, transparent no dial / white hands. No seconds, bitmap time, minute alarm, permission or service; runtime unverified. |
 | 16 | `Nothing_Analog_5` | **implemented** | Native `KwgtAnalog5WidgetProvider`; 277 rounded-square vector dial with a clipped 60-tick minute ring and 12-tick hour ring, two square rounded overlays, a red `#D71921` filled hour pill and foreground minute pill in a platform `android.widget.AnalogClock`. Black `#1B1B1D` / white ticks, translucent `#A6FFFFFF` / dark ticks, transparent no filled dial with ticks and hands. Uses the source `CLOCK_HOUR_SMOOTH` / `CLOCK_MINUTE` semantics through the platform clock; no seconds, bitmap time, minute alarm, permission or service; runtime unverified. |
@@ -60,15 +60,16 @@ without a prohibited capability or unresolved third-party rights.
 
 ## Implemented in this checkpoint
 
-Thirteen of the 40 presets now have native providers: `Clean_Time_Date_Info`,
-`Nothing_Analog_3`, `Nothing_Analog_5`, `Nothing_Analog_5_Transparent`,
+Fourteen of the 40 presets now have native providers: `Clean_Time_Date_Info`,
+`Nothing_Analog_`, `Nothing_Analog_3`, `Nothing_Analog_5`, `Nothing_Analog_5_Transparent`,
 `Nothing_Battery`, `Nothing_Battery2`,
 `Nothing_Battery_Mini`, `Nothing_Date_Time`, `Nothing_Date_Time2`,
 `Nothing_Digital`, `Nothing_Digital3`, `Nothing_Digital4` and
-`Nothing_Mini_Calender`. All 19 registered providers are build-verified only and
+`Nothing_Mini_Calender`. All 20 registered providers are build-verified only and
 remain runtime-unverified in this checkpoint. The sanitized transcriptions are
 under `app/src/main/assets/kwgt/`, including
 `clean_time_date_info.sanitized.json`, `nothing_analog3.sanitized.json`,
+`nothing_analog_seconds.sanitized.json`,
 `nothing_analog5.sanitized.json`, `nothing_analog5_transparent.sanitized.json`, `nothing_battery.sanitized.json`, `nothing_battery2.sanitized.json`,
 `nothing_battery_mini.sanitized.json`,
 `nothing_date_time.sanitized.json`, `nothing_date_time2.sanitized.json`,

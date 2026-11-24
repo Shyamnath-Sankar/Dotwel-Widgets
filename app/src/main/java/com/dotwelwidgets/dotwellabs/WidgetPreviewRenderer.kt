@@ -152,6 +152,7 @@ object WidgetPreviewRenderer {
                 includeBackground = false,
             )
             PreviewKind.KWGT_ANALOG_3 -> null
+            PreviewKind.KWGT_ANALOG_SECONDS -> null
             PreviewKind.KWGT_ANALOG_5 -> null
             PreviewKind.KWGT_ANALOG_5_CLEAR -> null
             PreviewKind.KWGT_MINI_CALENDAR -> KwgtMiniCalendarRenderer.render(

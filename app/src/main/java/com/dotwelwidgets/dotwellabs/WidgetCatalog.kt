@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
+import android.os.Build
 
 enum class WidgetGroup(val labelRes: Int) {
     CLOCKS(R.string.category_clocks),
@@ -37,6 +38,7 @@ enum class PreviewKind {
     KWGT_DIGITAL_4,
     KWGT_GRADIENT_CLOCK,
     KWGT_ANALOG_3,
+    KWGT_ANALOG_SECONDS,
     KWGT_ANALOG_5,
     KWGT_ANALOG_5_CLEAR,
     KWGT_MINI_CALENDAR,
@@ -65,6 +67,8 @@ data class CatalogEntry(
 )
 
 object WidgetCatalog {
+    private val analogSecondsSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
     val entries: List<CatalogEntry> = listOf(
         CatalogEntry(
             id = "digital",
@@ -332,6 +336,27 @@ object WidgetCatalog {
             action = CardAction.NONE,
         ),
         CatalogEntry(
+            id = "kwgt_analog_seconds_clock",
+            name = "KWGT Analog Seconds",
+            group = WidgetGroup.KWGT,
+            state = if (analogSecondsSupported) {
+                ImportState.READY
+            } else {
+                ImportState.UNAVAILABLE
+            },
+            upstream = "KWGT Nothing_Analog_ · 277 source-seconds dial · active CLOCK_SECOND",
+            descriptionRes = R.string.catalog_kwgt_analog_seconds_desc,
+            detailRes = if (analogSecondsSupported) {
+                R.string.ledger_ready_analog_seconds
+            } else {
+                R.string.ledger_unavailable_pre31
+            },
+            previewKind = PreviewKind.KWGT_ANALOG_SECONDS,
+            providerClass = KwgtAnalogSecondsWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_ANALOG_SECONDS,
+            action = CardAction.NONE,
+        ),
+        CatalogEntry(
             id = "kwgt_nothing_analog5",
             name = "KWGT Analog5",
             group = WidgetGroup.KWGT,
@@ -485,6 +510,7 @@ enum class WidgetCategory(
             "kwgt_nothing_digital3",
             "kwgt_gradient_clock",
             "kwgt_nothing_analog3",
+            "kwgt_analog_seconds_clock",
             "kwgt_nothing_analog5",
             "kwgt_nothing_analog5_transparent",
         ),
@@ -596,6 +622,7 @@ object WidgetModeLabels {
                 R.string.mode_kwgt_gradient_live
             }
             PreviewKind.KWGT_ANALOG_3 -> R.string.mode_kwgt_analog3
+            PreviewKind.KWGT_ANALOG_SECONDS -> R.string.mode_kwgt_analog_seconds
             PreviewKind.KWGT_ANALOG_5 -> R.string.mode_kwgt_analog5
             PreviewKind.KWGT_ANALOG_5_CLEAR -> R.string.mode_kwgt_analog5clear
             PreviewKind.KWGT_MINI_CALENDAR -> R.string.mode_kwgt_mini_calendar
