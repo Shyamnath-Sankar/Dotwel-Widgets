@@ -28,6 +28,7 @@ object WidgetUpdater {
         KwgtAnalogSecondsWidgetProvider::class.java,
         KwgtAnalog5WidgetProvider::class.java,
         KwgtAnalog5TransparentWidgetProvider::class.java,
+        KwgtOrbitClockWidgetProvider::class.java,
         KwgtMiniCalendarWidgetProvider::class.java,
         KwgtCleanInfoWidgetProvider::class.java,
         IosBatteryWidgetProvider::class.java,

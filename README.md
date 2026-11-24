@@ -4,12 +4,13 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 ## Current checkpoint (0.1.8, versionCode 9)
 
 - `com.dotwelwidgets.dotwellabs`, minSdk 26, compile/target SDK 36.
-- Twenty-one registered providers: dot clock, date, Analog Bold, Analog Scale,
-  world clock, quotes, and thirteen native KWGT-Widgets conversions (Nothing
+- Twenty-six registered providers: dot clock, date, Analog Bold, Analog Scale,
+  world clock, quotes, and twenty native KWGT-Widgets conversions (Nothing
   Battery, Battery Mini, Battery2, Date Time, Date Time 2, Digital3, Digital4,
-  Digital, Analog2, Analog3, Analog Seconds, Analog5, and Analog5 Clear). The
-  full 40-preset source-port status is in `docs/KWGT-LEDGER.md`; fifteen presets
-  are implemented, the rest remain pending or dependency-blocked. `Nothing_Analog_`
+  Digital, Analog2, Analog3, Analog Seconds, Analog5, Analog5 Clear, and Orbit
+  Clock). The full 40-preset source-port status is in `docs/KWGT-LEDGER.md`;
+  twenty presets are implemented, the rest remain pending or
+  dependency-blocked. `Nothing_Analog_`
   and `Nothing_Analog_2` are the exact source-seconds ports: their native second
   hands are offered only on Android 12+ (`android:hand_second`), the receivers are
   disabled below API 31, and second-tick fps is system configured and may be

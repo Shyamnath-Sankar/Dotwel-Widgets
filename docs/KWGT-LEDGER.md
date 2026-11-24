@@ -45,7 +45,7 @@ without a prohibited capability or unresolved third-party rights.
 | 26 | `Nothing_Digital2` | pending | Digital layer conversion queued; can reuse the existing minute schedule. |
 | 27 | `Nothing_Digital3` | **implemented** | Native `KwgtDigital3WidgetProvider`; 4x4 minute-lit dot matrix with red hh/mm, uppercase aa and source thresholds; live TextClock fallback without exact-alarm access; runtime unverified. |
 | 28 | `Nothing_Digital4` | **implemented** | Native `KwgtDigital4WidgetProvider`; red hh / centre divider / ink mm split; live text fallback without exact-alarm access; runtime unverified. |
-| 29 | `Nothing_Digital_Clock` | pending | Digital layer conversion queued. |
+| 29 | `Nothing_Digital_Clock` | **implemented** | Native `KwgtOrbitClockWidgetProvider`; actual-source 277 outer circle, 164 inner disc, central live `hh:mm` TextClock, 205 hour orbit and 245 minute orbit at 0.5 stroke, red `#D71921` hour dot at radius 102 and minute dot at radius 122.5, both diameter 12. Native `android.widget.AnalogClock` with vector dial and transparent 277 hand vectors rotates the dots; the source 90 offset plus 204/245 stack padding maps to the 12-o'clock vector zero. The source Time TextModule omits `text_expression`; the 02:11 embedded preview is recorded as a preview-led `hh:mm` repair. Stored `CLOCK_SECOND` formula values carry inactive toggle 0, so no seconds and no API 31 gate were added. Three styles; no bitmap time, alarm, service, permission or dependency; runtime unverified. |
 | 30 | `Nothing_Future_Clock` | **implemented** | Native `KwgtFutureWidgetProvider`; three sweeping gradient discs for hour, minute and second with platform-clock rotation and live labels. Android 12+ for the seconds disc; runtime unverified. |
 | 31 | `Nothing_Master_Widget` | dependency | Combines media/notification data with weather; media access is prohibited. |
 | 32 | `Nothing_Media_Player` | dependency | Media/notification access is prohibited for this app. |
@@ -60,18 +60,18 @@ without a prohibited capability or unresolved third-party rights.
 
 ## Implemented in this checkpoint
 
-Nineteen of the 40 presets now have native providers: `Clean_Time_Date_Info`,
+Twenty of the 40 presets now have native providers: `Clean_Time_Date_Info`,
 `iOS_Battery_Widget`, `Nothing_Analog_`, `Nothing_Analog_2`,
 `Nothing_Analog_3`, `Nothing_Analog_5`, `Nothing_Analog_5_Transparent`,
 `Nothing_Battery`, `Nothing_Battery2`, `Nothing_Battery_Mini`,
 `Nothing_Date_Time`, `Nothing_Date_Time2`, `Nothing_Digital`,
-`Nothing_Digital3`, `Nothing_Digital4`, `Nothing_Future_Clock`,
-`Nothing_Mini_Calender`, `Nothing_Sun_Info` and `Nothing_Temp`. The app also
-ships six upstream-derived native providers (digital, bold analog, scale analog,
-date, world and quotes), for 25 registered providers in total. All 25 are
-build-verified only and remain runtime-unverified in this checkpoint; this is
-not a claim of completion or runtime acceptance. The sanitized transcriptions
-are under `app/src/main/assets/kwgt/`, including
+`Nothing_Digital3`, `Nothing_Digital4`, `Nothing_Digital_Clock`,
+`Nothing_Future_Clock`, `Nothing_Mini_Calender`, `Nothing_Sun_Info` and
+`Nothing_Temp`. The app also ships six upstream-derived native providers
+(digital, bold analog, scale analog, date, world and quotes), for 26 registered
+providers in total. All 26 are build-verified only and remain runtime-unverified
+in this checkpoint; this is not a claim of completion or runtime acceptance. The
+sanitized transcriptions are under `app/src/main/assets/kwgt/`, including
 `clean_time_date_info.sanitized.json`, `ios_battery.sanitized.json`,
 `nothing_analog2.sanitized.json`, `nothing_analog3.sanitized.json`,
 `nothing_analog_seconds.sanitized.json`, `nothing_analog5.sanitized.json`,
@@ -79,9 +79,9 @@ are under `app/src/main/assets/kwgt/`, including
 `nothing_battery2.sanitized.json`, `nothing_battery_mini.sanitized.json`,
 `nothing_date_time.sanitized.json`, `nothing_date_time2.sanitized.json`,
 `nothing_digital.sanitized.json`, `nothing_digital3.sanitized.json`,
-`nothing_digital4.sanitized.json`, `nothing_future_clock.sanitized.json`,
-`nothing_mini_calender.sanitized.json`, `nothing_sun_info.sanitized.json` and
-`nothing_temp.sanitized.json`.
+`nothing_digital4.sanitized.json`, `nothing_digital_clock.sanitized.json`,
+`nothing_future_clock.sanitized.json`, `nothing_mini_calender.sanitized.json`,
+`nothing_sun_info.sanitized.json` and `nothing_temp.sanitized.json`.
 
 Clean_Time_Date_Info keeps these author relationships:
 
@@ -284,6 +284,41 @@ setter, bitmap time, minute alarm, permission, service or dependency is used.
 The preview inflates the same native layout so it shows the same vectors and the
 current time. Runtime inflation on a launcher and actual minute-hand movement
 are not verified in this checkpoint.
+
+Nothing_Digital_Clock keeps these actual-source relationships:
+
+- source canvas 415 x 542; `side = min(width, height)`; 277 square design viewport
+- 277 outer circle in the source `bg` formula; 164 inner circle using the active
+  `minute` global (white in dark mode); central `hh:mm` at source size 46/277
+  with offsets +3/-4
+- 205 hour orbit and 245 minute orbit, each a 0.5 stroke; source `orbits`
+  `#80FFFFFF` in dark mode and `#801B1B1D` in light mode
+- hour dot diameter 12 in the source primary `#D71921`; minute dot diameter 12
+- hour and minute dots at radius 102 and 122.5, derived from the horizontal
+  stack right paddings 204/245 inside the 277 viewport
+- stored rotate modes `CLOCK_HOUR_SMOOTH` and `CLOCK_MINUTE` with
+  `config_rotate_offset` 90; the stored `CLOCK_SECOND` formula values carry
+  inactive toggle 0 and were not used
+
+The Time TextModule has no `text_expression` in the source. The embedded
+upstream preview clearly shows `02:11`, so Dotwel records an explicit
+preview-led `hh:mm` repair and uses live `TextClock` formats `hh:mm` (12-hour,
+zero-padded) and `HH:mm` (24-hour, zero-padded). This is not a claim that a
+literal source expression was present. The source font reference is replaced by
+the Android platform sans-serif family; no font file is bundled.
+
+The source 90 offset and the 9-o'clock dot placement cancel: a dot at 12 o'clock
+in a transparent 277 hand vector, rotated by the platform `AnalogClock` in the
+normal clockwise direction, lands at the same angle as the source. At 02:11 the
+red hour dot is around 2 and the minute dot just after 2. The static vector dial
+carries the outer circle, inner circle and both orbits; the platform rotates the
+two dot hands itself. Black uses the source `#1B1B1D` outer circle with a white
+inner disc and dark central ink, translucent uses `#A6FFFFFF` with a dark inner
+disc and white ink, and transparent keeps the white inner disc and orbits with
+no filled outer card. The hour dot stays red and the minute dot stays visible in
+all three styles. No seconds hand, API 31 restriction, bitmap time, alarm,
+service, permission, font, raster asset or new dependency is added. Runtime
+inflation, resize, style switching and actual dot movement are not verified.
 
 Sanitized out of the assets and implementations: the author email, the background
 `SINGLE_TAP` intent string, and the bundled `ndot-47.ttf`. Dotwel's original

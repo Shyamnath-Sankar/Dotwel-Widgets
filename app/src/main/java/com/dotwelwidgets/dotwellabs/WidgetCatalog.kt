@@ -43,6 +43,7 @@ enum class PreviewKind {
     KWGT_ANALOG_SECONDS,
     KWGT_ANALOG_5,
     KWGT_ANALOG_5_CLEAR,
+    KWGT_ORBIT,
     KWGT_MINI_CALENDAR,
     KWGT_CLEAN_INFO,
     KWGT_IOS_BATTERY,
@@ -457,6 +458,19 @@ object WidgetCatalog {
             action = CardAction.NONE,
         ),
         CatalogEntry(
+            id = "kwgt_orbit_clock",
+            name = "KWGT Orbit Clock",
+            group = WidgetGroup.KWGT,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Digital_Clock · 277 circles / 205+245 orbits / red hour dot",
+            descriptionRes = R.string.catalog_kwgt_orbit_desc,
+            detailRes = R.string.ledger_ready_kwgt,
+            previewKind = PreviewKind.KWGT_ORBIT,
+            providerClass = KwgtOrbitClockWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_ORBIT,
+            action = CardAction.NONE,
+        ),
+        CatalogEntry(
             id = "kwgt_mini_calendar",
             name = "KWGT Mini Calendar",
             group = WidgetGroup.KWGT,
@@ -602,6 +616,7 @@ enum class WidgetCategory(
             "kwgt_analog_seconds_clock",
             "kwgt_nothing_analog5",
             "kwgt_nothing_analog5_transparent",
+            "kwgt_orbit_clock",
         ),
     ),
     CALENDAR(
@@ -719,6 +734,7 @@ object WidgetModeLabels {
             PreviewKind.KWGT_ANALOG_SECONDS -> R.string.mode_kwgt_analog_seconds
             PreviewKind.KWGT_ANALOG_5 -> R.string.mode_kwgt_analog5
             PreviewKind.KWGT_ANALOG_5_CLEAR -> R.string.mode_kwgt_analog5clear
+            PreviewKind.KWGT_ORBIT -> R.string.mode_kwgt_orbit
             PreviewKind.KWGT_MINI_CALENDAR -> R.string.mode_kwgt_mini_calendar
             PreviewKind.KWGT_CLEAN_INFO -> R.string.mode_kwgt_clean_info
             PreviewKind.KWGT_IOS_BATTERY -> R.string.mode_ios_battery

@@ -70,6 +70,10 @@ object WidgetPreviewBinder {
             bindNativeAnalog5Clear(context, container, style)
             return
         }
+        if (entry.previewKind == PreviewKind.KWGT_ORBIT) {
+            bindNativeOrbit(context, container, style)
+            return
+        }
         if (WidgetPreviewRenderer.usesMinuteBitmap(entry.previewKind) &&
             !MinuteTickScheduler.hasExactAccess(context)
         ) {
@@ -256,6 +260,18 @@ object WidgetPreviewBinder {
         style: WidgetStyle,
     ) {
         val layout = KwgtAnalog5TransparentWidgetProvider.layoutFor(style)
+        container.addView(
+            LayoutInflater.from(context).inflate(layout, container, false),
+            matchParams(),
+        )
+    }
+
+    private fun bindNativeOrbit(
+        context: Context,
+        container: FrameLayout,
+        style: WidgetStyle,
+    ) {
+        val layout = KwgtOrbitClockWidgetProvider.layoutFor(style)
         container.addView(
             LayoutInflater.from(context).inflate(layout, container, false),
             matchParams(),

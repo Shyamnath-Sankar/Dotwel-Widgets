@@ -45,6 +45,7 @@ class PinResultReceiver : BroadcastReceiver() {
             PIN_KIND_KWGT_ANALOG_SECONDS -> R.string.pin_kwgt_analog_seconds_confirmed
             PIN_KIND_KWGT_ANALOG_5 -> R.string.pin_kwgt_analog5_confirmed
             PIN_KIND_KWGT_ANALOG_5_CLEAR -> R.string.pin_kwgt_analog5clear_confirmed
+            PIN_KIND_KWGT_ORBIT -> R.string.pin_kwgt_orbit_confirmed
             PIN_KIND_KWGT_MINI_CALENDAR -> R.string.pin_kwgt_mini_calendar_confirmed
             PIN_KIND_KWGT_CLEAN_INFO -> R.string.pin_kwgt_clean_info_confirmed
             PIN_KIND_KWGT_IOS_BATTERY -> R.string.pin_kwgt_ios_battery_confirmed
@@ -82,6 +83,7 @@ class PinResultReceiver : BroadcastReceiver() {
         const val PIN_KIND_KWGT_ANALOG_SECONDS = "kwgt_analog_seconds"
         const val PIN_KIND_KWGT_ANALOG_5 = "kwgt_analog_5"
         const val PIN_KIND_KWGT_ANALOG_5_CLEAR = "kwgt_analog_5_clear"
+        const val PIN_KIND_KWGT_ORBIT = "kwgt_orbit_clock"
         const val PIN_KIND_KWGT_MINI_CALENDAR = "kwgt_mini_calendar"
         const val PIN_KIND_KWGT_CLEAN_INFO = "kwgt_clean_info"
         const val PIN_KIND_KWGT_IOS_BATTERY = "kwgt_ios_battery"

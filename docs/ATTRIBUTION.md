@@ -183,6 +183,36 @@ the app from About & source credits > View MIT license texts.
   service, permission or new dependency is used. The gallery preview inflates
   the same native layout. Runtime inflation on a launcher and actual hand
   movement are not claimed here.
+- `widgets/Nothing_Digital_Clock.kwgt!preset.json` ->
+  `KwgtOrbitClockWidgetProvider.kt`, the three
+  `widget_kwgt_orbit_{black,translucent,transparent}.xml` layouts, the
+  `dw_orbit_dial_*`, `dw_orbit_hour` and `dw_orbit_minute_*` vector resources
+  and the sanitized data model
+  `app/src/main/assets/kwgt/nothing_digital_clock.sanitized.json`. Retained:
+  the 277 outer circle in the source `bg` formula, the 164 inner circle using
+  the active `minute` global (white in dark mode), the central `hh:mm` at
+  source size 46/277 with offsets +3/-4, the 205 hour orbit and 245 minute orbit
+  at 0.5 stroke, the 12 hour dot in source primary `#D71921`, the 12 minute dot,
+  the stored `CLOCK_HOUR_SMOOTH` / `CLOCK_MINUTE` rotate modes with offset 90,
+  and the 204/245 horizontal-stack right paddings that place the dot centres at
+  radius 102/122.5. The source Time TextModule omits `text_expression`; the
+  embedded preview shows `02:11`, so a live `TextClock` with `hh:mm` (12-hour,
+  zero-padded) and `HH:mm` (24-hour, zero-padded) is a documented preview-led
+  repair, not a literal source expression. The stored `CLOCK_SECOND` formula
+  values carry inactive toggle 0 and are not used: no seconds hand and no API 31
+  gate are added. The source font reference is replaced by the Android platform
+  sans-serif family; no font file is bundled. The source launch-app tap event is
+  replaced by `AlarmClock.ACTION_SHOW_ALARMS`. The static vector dial carries the
+  outer circle, inner circle and both orbits; transparent 277 hand vectors carry
+  the dots at 12 o'clock, so the platform `AnalogClock` clockwise rotation
+  absorbs the source 90 offset and matches the 02:11 preview (hour around 2,
+  minute just after 2). Black uses `#1B1B1D` with a white inner disc and dark
+  central ink, translucent uses `#A6FFFFFF` with a dark inner disc and white
+  ink, and transparent keeps the white inner disc and orbits with no filled
+  outer card. The gallery preview inflates the same native layout. No bitmap
+  time, minute alarm, permission, service, font or new dependency is used;
+  runtime inflation, resize, style switching and actual dot movement are not
+  claimed here.
 - `widgets/Nothing_Analog_2.kwgt!preset.json` -> `KwgtAnalog2WidgetProvider.kt`,
   the three base `widget_kwgt_analog2_{black,translucent,transparent}.xml`
   layouts plus the API 31 `layout-v31` counterparts, the `dw_analog2_*` vector
