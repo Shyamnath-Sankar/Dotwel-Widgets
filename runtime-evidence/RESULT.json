@@ -1,0 +1,71 @@
+{
+  "version": "0.1.8",
+  "tests": {
+    "native_category_future": "confirmed",
+    "app_process_killed": "verified absent",
+    "live_hands_after_kill": "cropped hand pixels changed across native minute; requires visual audit",
+    "tap_clock": "destination activity recorded; pixels require review",
+    "size-narrow": "actual launcher bounds changed; pixels need review",
+    "size-tall": "actual launcher bounds changed; pixels need review",
+    "size-wide": "actual launcher bounds changed; pixels need review",
+    "size-restored": "actual launcher bounds changed; pixels need review"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "50ce3f5e72f023ac7fcf03974317c8151dd1bf47054d86084c38b9949909975a",
+  "clock_bounds": [
+    78,
+    242,
+    1002,
+    808
+  ],
+  "labels_before": {
+    "hour": "05 hr",
+    "minute": "34 min",
+    "second": "26 sec"
+  },
+  "labels_after": {
+    "hour": "05 hr",
+    "minute": "34 min",
+    "second": "48 sec"
+  },
+  "live_time": {
+    "before": "Tue Nov 24 05:34:30 UTC 2026\n",
+    "after": "Tue Nov 24 05:34:50 UTC 2026\n"
+  },
+  "hand_pixel_difference": 8.240525522769339,
+  "alarm_access": "No operations.\nDefault mode: default\n",
+  "size_bounds": {
+    "default": [
+      78,
+      242,
+      1002,
+      808
+    ],
+    "size-narrow": [
+      78,
+      242,
+      755,
+      808
+    ],
+    "size-tall": [
+      78,
+      242,
+      755,
+      1123
+    ],
+    "size-wide": [
+      78,
+      242,
+      1002,
+      1123
+    ],
+    "size-restored": [
+      78,
+      242,
+      1002,
+      808
+    ]
+  }
+}
