@@ -1,0 +1,104 @@
+name: Implement remaining actual-source collection batch
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 26564068cbeca4278d66288468b250e7130683e1
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/collection-batch-${GITHUB_RUN_ID}"
+      - name: Apply reference-led widget browser and renderer polish
+        timeout-minutes: 48
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          mkdir -p /tmp/upstream-presets
+          curl -fsSL https://api.github.com/repos/AumGupta/KWGT-Widgets/zipball/96ca27be4cbff35efec5a86c64dd39fd065c958f -o /tmp/kwgt-source.zip
+          unzip -oq /tmp/kwgt-source.zip -d /tmp/upstream-presets
+          cat > /tmp/widget-task.txt <<'TASK'
+          Batch implementation sprint in existing PRIVATE Dotwel-Widgets only, base 26564068cbeca4278d66288468b250e7130683e1 (26 providers). Implement ALL remaining compatible actual-source presets together BEFORE any per-widget native acceptance loops. User explicitly chose implement-all, sequential test sweep with failure/cause ledger, THEN repair sprint. This job is implementation+compile/unit/lint only. No native emulator job yet. Preserve existing providers and Orbit contrast repair. Never edit launcher/production, visibility/history, credentials or workflow permissions. Use existing free model, no paid tools or services.
+
+          Source authority is actual AumGupta/KWGT-Widgets pinned96ca27be4cbff35efec5a86c64dd39fd065c958f MIT presets downloaded under /tmp/upstream-presets. Read each preset.json inside widgets/*.kwgt plus embedded previews as source evidence. No preset archive, upstream preview, proprietary font or unlicensed bitmap in app. Platform fonts and original vector icons substitute explicitly. Preserve geometry, expressions, active/NEVER toggles, ancestor visibility and z-order. Sanitized source transcriptions and exact source mappings must ship; do not fake import by renaming existing designs. Prior docs are stale and contain incorrect exclusion claims, not authority.
+
+          TARGETS 5 clock/weather/shape presets:
+          (1) Nothing_Digital2: preceding minute/source r1m, central live hh:mm, following minute/source a1m, source proportions/negative stack margin. Central source omits expression, embedded preview supplies hh:mm: explicitly document preview-led repair. Source Bg missing global h: document fit repair, no false formula attribution. Keep OS-owned TextClock updates, previous/next can use TextClock timeZone? Better custom native TextClock subclass NOT RemoteViews allowed. Use existing minute scheduler only if genuinely needed, lifecycle refresh; no frozen time claims. Preserve source relative-minute semantics (r subtract, a add), use real clock + bounded update with honest lifecycle limitations if native unable.
+          (2) Nothing_Date_Time3: source center time expression missing, preview-led hh:mm repair; AM/PM, date, current temp/condition/AQI. Extend existing off-by-default manual-city Open-Meteo weather path to current weather+condition and air-quality endpoint only when weather enabled. Existing opt-in text must disclose both forecast and air quality; city no GPS. Data cache-only providers, app-resume refresh at most hourly, no background network. AQI must identify its actual scale (e.g. US AQI) and timestamp, unknown/stale/revoked states honest. No invented AQI or arbitrary mapping from temperature. Open-Meteo free personal noncommercial attribution for weather and CAMS air quality. Verify actual API schema from endpoint responses rather than assuming. Extend generation+lock race and disable/cache deletion protections to new data; exclude from backups. Source trailing-space accent-global typo repaired explicitly. If AQI request fails, other weather must still work and show AQI unavailable.
+          (3-5) Interstellar_Endurance, Interstellar_Endurance_Analog, Interstellar_Endurance_Analog_2. Audit shows these are 206-208 ShapeModules, 93 StackLayers, ~50 Overlaps and 6 ProgressModules, with NO bitmap/font assets. Old rights exclusion was WRONG for these source-authored shape drawings. Convert actual source shape geometry, repeat rings, modules/tunnels/clips, hands and active time rotations. Do not replace source spacecraft with a generic ring. Build a reusable source-shape compiler/renderer if helpful, preserving stack arrangement and clipping. Native platform AnalogClock can rotate source-rendered transparent vectors/bitmaps as hands for time-dependent layers while preserving source z-order. Active seconds require API31+ native seconds, use existing availability gate, no silent no-seconds substitute. Existing AnalogClock only downscales intrinsic art: match overlay centerInside and actual target sizing. Document source malformed ##FF363636 repair. Do not bundle third-party art. Inspect source globals/rotations before deciding each provider's API restriction.
+
+          TARGETS 12 media/notification presets: Material3_Expanded_Media_Player, Material3_Media_Player_Output, Mini_Media_Player, Minimal_Media_Player, Minimal_Media_Player_2, Minimal_Media_Player_3, Nothing_Master_Widget, Nothing_Media_Player, Nothing_Media_Player2, Nothing_Media_Player3, Universal_Media_Player, material_notification_widget. All need actual-source geometry+expressions converted separately, gallery and individual Add. Implement a shared Android NotificationListenerService/MediaSession bridge, OFF BY DEFAULT. The user has now explicitly approved building these with an in-app explanation asking the installer to enable Android notification access themselves. That does NOT authorize enabling it automatically, hiding disclosure, uploading or retaining notification content, contacts access, background networking, or other permissions. Build prompt/settings stating Android notification access can read notifications/media metadata and allows supported playback controls. App stays usable and other widgets work when declined; each dependent widget shows honest enable-access/empty-state and tap opens explanation, not a fake song/notification. Enable only via Android system access screen after explicit in-app tap. No self-grant, adb grant in production, blanket app-blocking, foreground service or polling loop. Shared listener bound by Android only, service protected BIND_NOTIFICATION_LISTENER_SERVICE. Live active MediaSessions with genuine metadata, cover art local-only runtime, transport play/pause/previous/next where supported, actual playback position extrapolation while playing, player launch tap using genuine session intent. Respect unsupported controls, no fake progress, no media defaults presented as live data. Source ni/mi formulas mapped to genuine notification/session data; active notification text local memory only with sensible privacy defaults (mask message contents unless installer explicitly opts in), clear on revoke/disconnect and avoid logs/backups. If no permission/session, explain empty state. Listener must update providers on notification/session events, process-death rebind and revoke. Gallery sample artwork/content may be labeled preview only, never used on live HOME. Master weather must reuse same manual-city opt-in. Shape/icon substitutions original, no copyrighted fonts bundled. Output device capabilities honest: show actual safe platform metadata where available, not fabricated headphones/speaker state.
+
+          Audit the TWO other Interstellar presets separately: Interstellar_Analog and Interstellar_Analog_Khaki_Field_Murph_Auto have bitmap references. Determine whether active raster assets have clear license/provenance; don't bundle unresolved watch-face branding/artwork. If unresolved, keep NOT implemented with exact asset/path and active-toggle evidence, not blanket entire-family exclusion. Nothing_CPU is whole-device rm(cused/csys/cusr/cidle), NOT per-process. Android26+ proc/stat access is restricted; do not fake whole-device CPU with per-process data. Establish exact source requirement and platform limitation in ledger, unavailable catalog entry if not viable.
+
+          Aim 43 real providers = existing26 +5 +12 if source audit confirms. A provider counts only with manifest, catalog, genuine preview/provider renderer, individual Add pin route, all three styles (where source style compatible), placement/resize-safe RemoteViews using allowed tags, genuine dynamic data and truthful limitations. No unsupported raw View/Chronometer tricks, no arbitrary bitmap time frozen until app opens. Keep premium gallery description <=45words and no runtime-tested claims before later sweep. Add unit regression tests for source geometry/formulas, relative dates/minutes boundaries, data privacy/revoke/races, shared media metadata transport guards, catalog/manifest consistency, disabled/empty states. Existing tests no suppression or deletion. Update docs/KWGT-LEDGER.md and README counts to actual implemented number, distinguish build vs sweep acceptance, remove false notification-prohibited and shape-rights statements, retain real unresolved dependency rows. Add docs/BATCH-SWEEP-PLAN.md listing every registered provider and sequential checks to run afterwards: gallery visible/Add/pin/HOME readable, data change/time tick after process kill, styles black->translucent->transparent->black, narrow/wide resize, tap, permission denied/granted/revoke, weather off/error/cache and media stopped/playing/empty. No per-widget fixes/testing loop in this implementation job.
+
+          Work through all targets in this sprint, save complete source even if tool time runs out. Use remaining time efficiently. Build assembleDebug/testDebugUnitTest/lintDebug will run after coding; fix compile errors proactively. If genuinely infeasible, record exact remaining preset/cause, never count stub providers or silently omit source components. No completion/native acceptance claim.
+          TASK
+          timeout --kill-after=15s 2700s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          rm -f checkpoints/dotwel-widgets-polish-debug.apk checkpoints/POLISH-SHA256SUMS
+          pkill -f '[K]otlinCompileDaemon' || true
+          bash ./gradlew --stop || true
+          rm -rf app/build/kotlin
+          bash ./gradlew assembleDebug testDebugUnitTest -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
