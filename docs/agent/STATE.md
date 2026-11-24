@@ -2,10 +2,62 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/analog3-finish-45278310728`, based on the verified Battery2
-  branch.
+- Branch: `agent/analog2-45315994221`, based on the verified Analog3 branch.
 - No launcher repository, visibility, workflow, signing key, permission,
   dependency or existing provider rendering was changed in this run.
+
+## KWGT Nothing_Analog_2 native port
+
+- Added the 21st provider and 15th KWGT source port, `KwgtAnalog2WidgetProvider`,
+  as a distinct catalog entry `KWGT Analog2` (`kwgt_analog2_clock`) in the
+  existing Clock category. The existing 20 providers, layouts, vectors and
+  descriptions are unchanged.
+- Source: `/tmp/analog2-preset/preset.json` (NothingAnalog2 v13, canvas
+  415x542), sanitized to
+  `app/src/main/assets/kwgt/nothing_analog2.sanitized.json` with the author
+  email, launch-app tap intent, font payloads and assets removed; formulas and
+  active toggles retained.
+- Actual source geometry: filled 277 circle dial; sharp hour rect 6 x 74 at
+  centre Y `138.5 - 64/2`; sharp minute rect 6 x 100 at centre Y
+  `138.5 - 112/2`; red seconds rect 130 x 3 with right padding 100 and the
+  active `CLOCK_SECOND` 90 offset, represented as a full-viewport vertical rect
+  x 137..140, centre Y 88.5, extent 23.5..153.5; 12 hour ticks 8 x 16.5 on the
+  `style_size 250` ring; 60 minute ticks 11 x 8 on the `style_size 258` ring;
+  red centre circle diameter 16. The actual source uses 277, not 279.
+- The source paints the ticks and centre after the hands. The layouts keep that
+  z-order with a transparent full-viewport `fitCenter` ImageView overlay
+  (`kwgt_analog2_overlay`) above the native `android.widget.AnalogClock`; the
+  overlay vectors contain the 12 + 60 ticks and the red centre. Both clock and
+  overlay are `match_parent` and centered.
+- Three styles: black `#1B1B1D` dial / white ink; translucent `#A6FFFFFF` /
+  dark `#1B1B1D` ink; transparent no filled dial / white ink. Red seconds and
+  centre stay `#D71921` in all styles. The source minute global formula is
+  active, so the raw gray minute value is not used; the minute raw width 6 is
+  retained because the active width toggle has no formula.
+- The centre ShapeModule has no explicit type; Kustom's CIRCLE default is
+  documented and used (diameter 16), not a new invented geometry.
+- API gate: minSdk stays 26. Only `layout-v31` wires `android:hand_second`; the
+  receiver is disabled below API 31 with the existing
+  `kwgt_analog_seconds_available` false/true bool, and the catalog entry is
+  UNAVAILABLE there with no silently degraded seconds. No new bool, permission,
+  dependency, alarm, service, font, artwork or network path was added.
+- Catalog/Add/manifest/updater/pin are wired: id `kwgt_analog2_clock`, pin kind
+  `kwgt_analog_2`, provider list entry, Clock category, and gallery preview
+  inflating the same native layout. The widget picker description is 18 words:
+  "A Nothing-style analog clock with a red seconds hand. Android 12 or newer.
+  Seconds follow your device settings."
+- The prior native `android:hand_second` mechanism was independently reported to
+  move the red seconds after an app kill. This Analog2 build was not runtime
+  tested in this runner; seconds movement, non-square host alignment, resize and
+  style switching remain runtime-unverified here.
+- Tests: `KwgtAnalog2LayoutTest` covers the API gate, all three base and v31
+  layouts' RemoteViews tags, the exact 72 ticks and red centre, overlay-above-
+  clock z-order, `match_parent`/`fitCenter` alignment, source hand/dial vectors,
+  and the sanitized source formulas/toggles. `RemoteViewsLayoutSafetyTest` now
+  also parses the three Analog2 base layouts.
+- Attribution/ledger updated to 15 of 40 presets and 21 registered providers;
+  rights and the MIT notices are unchanged. The existing 20-provider checkpoint
+  artifacts remain in `checkpoints/`.
 
 ## KWGT Nothing_Analog_3 native port
 

@@ -39,6 +39,10 @@ object WidgetPreviewBinder {
             R.string.sheet_preview_description_format,
             entry.name,
         )
+        if (entry.previewKind == PreviewKind.KWGT_ANALOG_2) {
+            bindNativeAnalog2(context, container, style)
+            return
+        }
         if (entry.previewKind == PreviewKind.KWGT_ANALOG_3) {
             bindNativeAnalog3(context, container, style)
             return
@@ -85,6 +89,31 @@ object WidgetPreviewBinder {
         } else {
             bindNativeFallback(context, container, entry, style, failed = true)
         }
+    }
+
+    private fun bindNativeAnalog2(
+        context: Context,
+        container: FrameLayout,
+        style: WidgetStyle,
+    ) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
+            container.addView(
+                TextView(context).apply {
+                    text = context.getString(R.string.ledger_unavailable_pre31)
+                    setTextColor(UpstreamNtDraw.muted(context, style))
+                    gravity = Gravity.CENTER
+                    textSize = 12f
+                    setPadding(dp(context, 10), dp(context, 10), dp(context, 10), dp(context, 10))
+                },
+                matchParams(),
+            )
+            return
+        }
+        val layout = KwgtAnalog2WidgetProvider.layoutFor(style)
+        container.addView(
+            LayoutInflater.from(context).inflate(layout, container, false),
+            matchParams(),
+        )
     }
 
     private fun bindNativeAnalog3(

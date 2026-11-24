@@ -151,6 +151,7 @@ object WidgetPreviewRenderer {
                 now,
                 includeBackground = false,
             )
+            PreviewKind.KWGT_ANALOG_2 -> null
             PreviewKind.KWGT_ANALOG_3 -> null
             PreviewKind.KWGT_ANALOG_SECONDS -> null
             PreviewKind.KWGT_ANALOG_5 -> null

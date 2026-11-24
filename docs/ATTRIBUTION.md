@@ -183,6 +183,32 @@ the app from About & source credits > View MIT license texts.
   service, permission or new dependency is used. The gallery preview inflates
   the same native layout. Runtime inflation on a launcher and actual hand
   movement are not claimed here.
+- `widgets/Nothing_Analog_2.kwgt!preset.json` -> `KwgtAnalog2WidgetProvider.kt`,
+  the three base `widget_kwgt_analog2_{black,translucent,transparent}.xml`
+  layouts plus the API 31 `layout-v31` counterparts, the `dw_analog2_*` vector
+  resources and the sanitized data model
+  `app/src/main/assets/kwgt/nothing_analog2.sanitized.json`. Retained: the 277
+  filled circular dial, the sharp hour RECT 6 x 74 centred at
+  `138.5 - 64/2`, the sharp minute RECT 6 x 100 centred at `138.5 - 112/2`,
+  the red `#D71921` seconds RECT 130 x 3 with right padding 100 and the active
+  `CLOCK_SECOND` 90-degree offset (native zero vertical at x 138.5, centre Y
+  88.5, extent 23.5..153.5), 12 hour ticks 8 x 16.5 on the `style_size 250`
+  ring (radius 125), 60 minute ticks 11 x 8 on the `style_size 258` ring
+  (radius 129), and the red centre circle diameter 16. The source paints the
+  ticks and centre after the hands, so the RemoteViews composition places a
+  transparent full-viewport `fitCenter` overlay vector above the native
+  `android.widget.AnalogClock`; the clock still rotates the hour, minute and
+  second hands itself. Only the `layout-v31` files wire `android:hand_second`;
+  the base layouts stay valid but are unreachable because the receiver is
+  disabled below API 31 by the existing `false`/`true` `values`/`values-v31`
+  bool, and the catalog marks the entry unavailable there with no silently
+  degraded seconds. Black uses `#1B1B1D` with white ink, translucent
+  `#A6FFFFFF` with dark ink, and transparent no filled dial with white ink; the
+  seconds and centre stay red. The minute width has an active toggle but no
+  formula, so the raw 6 is retained. The centre shape has no explicit type;
+  Kustom's CIRCLE default is documented rather than replaced with a new shape.
+  Runtime inflation, non-square host scaling and actual second movement are not
+  claimed here.
 - `widgets/Nothing_Analog_.kwgt!preset.json` -> `KwgtAnalogSecondsWidgetProvider.kt`,
   the three base `widget_kwgt_analog_seconds_{black,translucent,transparent}.xml`
   layouts plus the API 31 `layout-v31` counterparts, the
@@ -303,13 +329,14 @@ the app from About & source credits > View MIT license texts.
   Dotwel's original dot glyphs or the documented platform font substitution
   replace the fonts.
 - The full 40-preset source-port ledger is `docs/KWGT-LEDGER.md`. Only
-  `Clean_Time_Date_Info`, `Nothing_Analog_`, `Nothing_Analog_3`, `Nothing_Analog_5`,
+  `Clean_Time_Date_Info`, `Nothing_Analog_`, `Nothing_Analog_2`,
+  `Nothing_Analog_3`, `Nothing_Analog_5`,
   `Nothing_Analog_5_Transparent`, `Nothing_Battery`, `Nothing_Battery2`,
   `Nothing_Battery_Mini`, `Nothing_Date_Time`,
   `Nothing_Date_Time2`, `Nothing_Digital4`, `Nothing_Digital3`,
   `Nothing_Digital`, and `Nothing_Mini_Calender` are implemented in this
-  checkpoint (14 of 40); the rest remain pending or dependency-blocked and are
-  not claimed as imported. All 20 registered providers are build-verified only
+  checkpoint (15 of 40); the rest remain pending or dependency-blocked and are
+  not claimed as imported. All 21 registered providers are build-verified only
   and remain runtime-unverified.
 
 ## Not included
