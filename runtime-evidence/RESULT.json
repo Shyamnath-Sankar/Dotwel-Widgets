@@ -1,0 +1,43 @@
+{
+  "version": "0.1.8",
+  "tests": {
+    "default_off": "No weather preference/location/cache before enable",
+    "initial_fetch": "No cache; bounded retry via explicit UI refresh",
+    "actual_network_fetch": "NETWORK failure honestly surfaced, continuing native unknown-state test",
+    "pin_temp": "Native confirmation accepted",
+    "pin_sun": "Native confirmation accepted",
+    "killed": "process absent",
+    "disable_delete": "No city or forecast cache remains; actual native disabled captures saved"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "744113378d5bf9bd4b4ff2f58bbe957d1269a9591ecf02665d2cebf41c9f92fa",
+  "has_forecast": false,
+  "weather_temp_nodes": [
+    {
+      "text": "",
+      "content-desc": "Weather refresh failed \u00b7 Tap to retry",
+      "resource-id": "com.dotwelwidgets.dotwellabs:id/weather_temp_bitmap",
+      "package": "com.dotwelwidgets.dotwellabs",
+      "clickable": "false",
+      "bounds": "[88,252][498,798]"
+    }
+  ],
+  "weather_sun_nodes": [
+    {
+      "text": "",
+      "content-desc": "Weather refresh failed \u00b7 Tap to retry",
+      "resource-id": "com.dotwelwidgets.dotwellabs:id/weather_sun_bitmap",
+      "package": "com.dotwelwidgets.dotwellabs",
+      "clickable": "false",
+      "bounds": "[582,252][992,798]"
+    }
+  ],
+  "temp_bounds": [
+    88,
+    252,
+    498,
+    798
+  ]
+}

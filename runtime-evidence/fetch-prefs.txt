@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <boolean name="weather_enabled" value="true" />
+    <long name="weather_last_auto_attempt" value="1795509799642" />
+    <string name="weather_failure_location">{&quot;name&quot;:&quot;Oslo&quot;,&quot;country&quot;:&quot;Norway&quot;,&quot;admin1&quot;:&quot;Oslo&quot;,&quot;latitude&quot;:59.91273,&quot;longitude&quot;:10.74609,&quot;timezone&quot;:&quot;Europe\/Oslo&quot;}</string>
+    <string name="weather_failure_reason">NETWORK</string>
+    <string name="weather_location">{&quot;name&quot;:&quot;Oslo&quot;,&quot;country&quot;:&quot;Norway&quot;,&quot;admin1&quot;:&quot;Oslo&quot;,&quot;latitude&quot;:59.91273,&quot;longitude&quot;:10.74609,&quot;timezone&quot;:&quot;Europe\/Oslo&quot;}</string>
+    <long name="weather_failure_at" value="1795509815160" />
+</map>
