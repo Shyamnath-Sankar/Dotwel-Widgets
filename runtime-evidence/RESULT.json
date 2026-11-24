@@ -1,0 +1,9 @@
+{
+  "version": "0.1.8",
+  "tests": {},
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "60319d6132018755035390832d824b9201af96c7df01264a7ad4c53c1c013e3f",
+  "error": "HOME view missing kwgt_orbit"
+}
