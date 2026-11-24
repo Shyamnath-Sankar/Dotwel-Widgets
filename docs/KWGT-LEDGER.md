@@ -300,3 +300,5 @@ terms with attribution; any separate commercial launcher use must be reviewed
 before shipping.
 
 Analog2 overlay uses centerInside to match native AnalogClock downscale-only intrinsic size behavior, including large host cells.
+
+Future Clock: native three equal columns now have 0.1-column responsive gaps, preserving source18 gap relative to h/2 discs at its916x542 reference. On narrow/tall hosts discs fit columns and cannot touch. Actual runtime pending for this repair.
