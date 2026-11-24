@@ -1,0 +1,8 @@
+{
+  "version": "0.1.8",
+  "tests": {},
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "error": "System launcher did not become ready before appinstall"
+}
