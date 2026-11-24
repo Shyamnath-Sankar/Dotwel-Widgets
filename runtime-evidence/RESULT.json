@@ -1,0 +1,9 @@
+{
+  "version": "0.1.8",
+  "tests": {},
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "32865216424e0f759150102ef14d41b2cb3e2f7aa383746d10dcebf8889cdf1c",
+  "error": "RuntimeError('UI target not ready: Next')"
+}
