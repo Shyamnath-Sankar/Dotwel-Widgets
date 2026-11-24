@@ -1,0 +1,91 @@
+name: Add actual iOS Battery source widget
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: aa6e9d61a90e264162410864dd9d1a6d85a75702
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/ios-battery-${GITHUB_RUN_ID}"
+      - name: Apply reference-led widget browser and renderer polish
+        timeout-minutes: 11
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/AumGupta/KWGT-Widgets/96ca27be4cbff35efec5a86c64dd39fd065c958f/widgets/iOS_Battery_Widget.kwgt -o /tmp/ios-battery.kwgt
+          mkdir -p /tmp/ios-battery-preset && unzip -oq /tmp/ios-battery.kwgt -d /tmp/ios-battery-preset
+          cat > /tmp/widget-task.txt <<'TASK'
+          Add ONE actual-source iOS_Battery_Widget provider, existing24candidate preserved. Read actual /tmp/ios-battery-preset/preset.json and embedded preview pixels before editing. User authorized compatible actualsource privatepersonal use; this task grants no wider scope. No launcher, production, visibility/history, replacementrepo, proprietaryfont, paidservice, notification/media permission. New provider25 pendingindependentnativeverification, never claim accepted/completed. Current24alreadycompiles/tests/lintpasses, weather native stillpending. Preserve all24 geometry and behavior.
+          Actual source is ordinary battery despite stale Komponent description calling itmedia: config_visible toggle0 makes Niagara/media formula INACTIVE. No media dependency. Background roundedrectangle corners69 bg#B75B5B5B with rwidth/rheight globals; battery percentage bottomleft padding32left16bottom text92, ProductSans substituted platform sans. Ring top-left padding32 with circlesize92 strokewidth10 darktrack#343434; activecolorformula level<15 red#ED1B24, <25 orange#FA9F1B, otherwisegreen#3ABD54. Actual preview81percent ringapprox81percent green atupperleft, centered whitebatteryicon, large81percent bottomleft. Native actual battery/charging only, no fixedfakevalues. Iconformula chargingfalse lowbatteryalert elsebatterystd, chargingtrue batterychargingfull; original simple vectors required, no proprietaryfonticon assets. Source fx_gradient_bitmap formula refers cover but no gradientmode selected and preview isflat; omit nonrendered mediaeffect explicitly, no album retrieval. Verify toggles semantics from existing sourceimporter/tests, do not assume every storedformula active. Sanitized preset provenance removeemails/tap/fonts/binaryassets, retain exact structural/formula logic.
+          Use proven existing battery snapshot and postkillrefresh architecture incl15mininexact+10minalarm already used Battery2; don't add newservice/exactalarm/backgroundpolling/dependency. Actual realtime response whileapprunning, hostupdates afterkilled use existingbatteryrefresh, document Dozelimits. Add tile in batterycategory, sensible minimum2x2, directAdd under preview, actualnativeplacement, tap batterysettings, style mappings black/translucent/transparent withclearbatterypercent contrast. Keep source geometryresponsive contained for2x2/2x3/4x2 and no aspectdistortion; fituniform if necessary report sourceadaptation. ExistingWidgetSizing separates rasterandactualhostcoords. Use supportedRemoteViews only.
+          Tests actualsource toggles+thresholds14/15/24/25/100/unknown, chargingicons, ringsweep, minsizecontainment allstyles; existingbatteryrefresh tests. Update actualdocs paths discovered, ledger25=6Awesome19KWGT buildonlypendingnative, correct old iOSmedia blocked label. Do not hardcode oldoverallcounts elsewhere until audit. Assemble/unit/lint no suppressions; finishcodewithin8min. Maintain all existing24. Repository remains private; no network in batterywidgets. Do not spend money. Save source/APK evencodingtimeout, finalsummary accurate tests vsnativeunverified.
+          TASK
+          timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          rm -f checkpoints/dotwel-widgets-polish-debug.apk checkpoints/POLISH-SHA256SUMS
+          pkill -f '[K]otlinCompileDaemon' || true
+          bash ./gradlew --stop || true
+          rm -rf app/build/kotlin
+          bash ./gradlew assembleDebug testDebugUnitTest -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
