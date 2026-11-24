@@ -1,0 +1,35 @@
+{
+  "version": "0.1.8",
+  "tests": {
+    "native_category_future": "confirmed",
+    "app_process_killed": "verified absent",
+    "live_hands_after_kill": "cropped hand pixels changed across native minute; requires visual audit"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "7e30f70ba0ae2f67a11086c0f986df42f3efb677d7712ab8ada4952108463861",
+  "clock_bounds": [
+    78,
+    242,
+    1002,
+    808
+  ],
+  "labels_before": {
+    "hour": "04 hr",
+    "minute": "48 min",
+    "second": "34 sec"
+  },
+  "labels_after": {
+    "hour": "04 hr",
+    "minute": "48 min",
+    "second": "54 sec"
+  },
+  "live_time": {
+    "before": "Tue Nov 24 04:48:38 UTC 2026\n",
+    "after": "Tue Nov 24 04:49:00 UTC 2026\n"
+  },
+  "hand_pixel_difference": 262.75547053064724,
+  "alarm_access": "No operations.\nDefault mode: default\n",
+  "error": "Clock app did not open"
+}
