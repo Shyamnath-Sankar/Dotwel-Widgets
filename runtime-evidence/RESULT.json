@@ -1,0 +1,9 @@
+{
+  "version": "0.1.8",
+  "tests": {},
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "c751c88d3684ea03a32411a490b99cd104c71eaaf92784e708690527041b4dd5",
+  "error": "HOME view missing ios_battery"
+}
