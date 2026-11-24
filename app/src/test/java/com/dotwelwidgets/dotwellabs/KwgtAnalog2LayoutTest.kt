@@ -75,7 +75,7 @@ class KwgtAnalog2LayoutTest {
                 assertEquals("$folder/${case.style} overlay width", "match_parent", overlay.getAttribute("android:layout_width"))
                 assertEquals("$folder/${case.style} overlay height", "match_parent", overlay.getAttribute("android:layout_height"))
                 assertEquals("$folder/${case.style} overlay gravity", "center", overlay.getAttribute("android:layout_gravity"))
-                assertEquals("$folder/${case.style} overlay scale", "fitCenter", overlay.getAttribute("android:scaleType"))
+                assertEquals("$folder/${case.style} overlay scale", "centerInside", overlay.getAttribute("android:scaleType"))
                 assertEquals("@drawable/${case.overlay}", overlay.getAttribute("android:src"))
             }
         }

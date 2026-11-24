@@ -298,3 +298,5 @@ transport source in `weather/` is not registered as a provider and is isolated
 from the current widget set. Personal, noncommercial use is within Open-Meteo
 terms with attribution; any separate commercial launcher use must be reviewed
 before shipping.
+
+Analog2 overlay uses centerInside to match native AnalogClock downscale-only intrinsic size behavior, including large host cells.
