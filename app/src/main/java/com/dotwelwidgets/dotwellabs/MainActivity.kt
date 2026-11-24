@@ -38,6 +38,8 @@ import android.widget.ScrollView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import com.dotwelwidgets.dotwellabs.media.MediaAccess
+import com.dotwelwidgets.dotwellabs.media.MediaPrefs
 import com.dotwelwidgets.dotwellabs.weather.WeatherCache
 import com.dotwelwidgets.dotwellabs.weather.WeatherController
 import com.dotwelwidgets.dotwellabs.weather.WeatherDisplay
@@ -120,6 +122,12 @@ class MainActivity : Activity() {
                 showWeatherSettingsDialog()
             }
         }
+        if (intent.getBooleanExtra(EXTRA_SHOW_MEDIA_ACCESS, false)) {
+            intent.removeExtra(EXTRA_SHOW_MEDIA_ACCESS)
+            findViewById<View>(R.id.settings_root).post {
+                showMediaAccessDialog()
+            }
+        }
         findViewById<View>(R.id.settings_root).post(initialRender)
     }
 
@@ -171,6 +179,10 @@ class MainActivity : Activity() {
         setIntent(intent)
         if (intent.getBooleanExtra(EXTRA_OPEN_WEATHER, false)) {
             showWeatherSettingsDialog()
+        }
+        if (intent.getBooleanExtra(EXTRA_SHOW_MEDIA_ACCESS, false)) {
+            intent.removeExtra(EXTRA_SHOW_MEDIA_ACCESS)
+            showMediaAccessDialog()
         }
     }
 
@@ -751,8 +763,85 @@ class MainActivity : Activity() {
                     showWeatherSettingsDialog { requestPin(entry) }
                 }
             }
+            CardAction.MEDIA_ACCESS -> {
+                if (MediaAccess.isGranted(this)) {
+                    requestPin(entry)
+                } else {
+                    showMediaAccessDialog()
+                }
+            }
             CardAction.NONE -> requestPin(entry)
         }
+    }
+
+
+    private fun showMediaAccessDialog() {
+        val granted = MediaAccess.isGranted(this)
+        val content = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = (resources.displayMetrics.density * 20).toInt()
+            setPadding(pad, pad, pad, pad)
+        }
+        content.addView(
+            TextView(this).apply {
+                text = getString(
+                    R.string.media_access_settings_status,
+                    getString(
+                        if (granted) R.string.media_access_granted
+                        else R.string.media_access_denied,
+                    ),
+                )
+                setTextColor(Color.WHITE)
+                textSize = 14f
+            },
+        )
+        content.addView(
+            TextView(this).apply {
+                text = getString(R.string.media_access_explain)
+                setTextColor(Color.LTGRAY)
+                textSize = 13f
+                setPadding(0, (resources.displayMetrics.density * 12).toInt(), 0, 0)
+            },
+        )
+        val toggle = android.widget.CheckBox(this).apply {
+            text = getString(R.string.media_text_toggle)
+            isChecked = MediaPrefs.showNotificationText(this@MainActivity)
+            setTextColor(Color.WHITE)
+            setPadding(0, (resources.displayMetrics.density * 16).toInt(), 0, 0)
+            setOnCheckedChangeListener { _, checked ->
+                MediaPrefs.setShowNotificationText(this@MainActivity, checked)
+                WidgetUpdater.updateMediaProviders(this@MainActivity)
+            }
+        }
+        content.addView(toggle)
+        content.addView(
+            TextView(this).apply {
+                text = getString(R.string.media_text_note)
+                setTextColor(Color.GRAY)
+                textSize = 12f
+                setPadding(0, (resources.displayMetrics.density * 6).toInt(), 0, 0)
+            },
+        )
+        AlertDialog.Builder(this)
+            .setTitle(R.string.media_access_title)
+            .setView(content)
+            .setPositiveButton(R.string.media_access_open) { _, _ ->
+                val opened = runCatching {
+                    startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                }.isSuccess
+                if (!opened) {
+                    Toast.makeText(
+                        this,
+                        R.string.media_access_open,
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }
+            }
+            .setNeutralButton(R.string.media_refresh) { _, _ ->
+                WidgetUpdater.updateMediaProviders(this)
+            }
+            .setNegativeButton(R.string.media_close, null)
+            .show()
     }
 
     private fun showMinuteAccessDialog(entry: CatalogEntry) {
@@ -1074,5 +1163,7 @@ class MainActivity : Activity() {
             "com.dotwelwidgets.dotwellabs.action.OPEN_WEATHER"
         const val EXTRA_OPEN_WEATHER =
             "com.dotwelwidgets.dotwellabs.extra.OPEN_WEATHER"
+        const val EXTRA_SHOW_MEDIA_ACCESS =
+            "com.dotwelwidgets.dotwellabs.extra.SHOW_MEDIA_ACCESS"
     }
 }

@@ -1,0 +1,342 @@
+package com.dotwelwidgets.dotwellabs
+
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.Context
+import android.content.Intent
+import android.view.View
+import android.widget.RemoteViews
+import com.dotwelwidgets.dotwellabs.media.MediaActionReceiver
+import com.dotwelwidgets.dotwellabs.media.MediaSessionRepository
+import com.dotwelwidgets.dotwellabs.media.MediaSnapshot
+import com.dotwelwidgets.dotwellabs.media.MediaTransportAction
+import com.dotwelwidgets.dotwellabs.media.MediaWidgetKind
+import com.dotwelwidgets.dotwellabs.media.MediaRenderers
+import com.dotwelwidgets.dotwellabs.weather.WeatherRenderState
+
+/**
+ * Shared real-data media provider. It never invents a song, artwork, progress or
+ * playback state. Without notification access or an active session it shows an
+ * honest empty state whose tap opens the in-app access explanation.
+ */
+abstract class BaseMediaWidgetProvider : BaseWidgetProvider() {
+    override val layoutRes: Int = R.layout.widget_media
+    protected abstract val mediaKind: MediaWidgetKind
+    protected open val minuteRefresh: Boolean = false
+
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray,
+    ) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        if (minuteRefresh) MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: android.os.Bundle,
+    ) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        if (minuteRefresh) MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        if (minuteRefresh) MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        if (minuteRefresh) MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        super.onDeleted(context, appWidgetIds)
+        if (minuteRefresh) MinuteTickScheduler.schedule(context)
+    }
+
+    override fun onReceive(context: Context, intent: Intent) {
+        when (intent.action) {
+            MinuteTickScheduler.ACTION_TICK,
+            Intent.ACTION_TIME_CHANGED,
+            Intent.ACTION_TIMEZONE_CHANGED,
+            Intent.ACTION_DATE_CHANGED,
+            Intent.ACTION_BOOT_COMPLETED,
+            -> {
+                refreshWidgets(context)
+                if (minuteRefresh) MinuteTickScheduler.schedule(context)
+                return
+            }
+        }
+        super.onReceive(context, intent)
+    }
+
+    override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
+        val snapshot = MediaSessionRepository.snapshot(context)
+        val hasContent = when (mediaKind) {
+            MediaWidgetKind.NOTIFICATION ->
+                snapshot.accessGranted &&
+                    (snapshot.notification != null || snapshot.hasPlayback)
+            else -> snapshot.accessGranted && snapshot.hasPlayback
+        }
+        if (!hasContent) {
+            return emptyViews(context, appWidgetId, snapshot)
+        }
+        val weather = if (mediaKind == MediaWidgetKind.NOTHING_MASTER) {
+            WeatherRenderState.from(context)
+        } else {
+            null
+        }
+        return buildBitmapViews(
+            context,
+            appWidgetId,
+            R.id.widget_media_bitmap,
+            R.id.media_message,
+            render = { widthPx, heightPx ->
+                MediaRenderers.render(
+                    context,
+                    mediaKind,
+                    widthPx,
+                    heightPx,
+                    WidgetPrefs.style(context),
+                    snapshot,
+                    weather,
+                )
+            },
+        ) { views, usedBitmap ->
+            bindLive(views, context, appWidgetId, snapshot, usedBitmap)
+        }
+    }
+
+    private fun bindLive(
+        views: RemoteViews,
+        context: Context,
+        appWidgetId: Int,
+        snapshot: MediaSnapshot,
+        usedBitmap: Boolean,
+    ) {
+        views.setInt(R.id.widget_root, "setBackgroundResource", R.drawable.bg_widget_none)
+        views.setViewVisibility(R.id.media_message, View.GONE)
+        views.setViewVisibility(R.id.media_overlay, View.VISIBLE)
+        bindRootClick(views, context, appWidgetId, snapshot)
+        bindTransport(views, context, appWidgetId, snapshot)
+        views.setViewVisibility(
+            R.id.media_clear,
+            if (mediaKind == MediaWidgetKind.NOTIFICATION &&
+                snapshot.notification != null
+            ) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            },
+        )
+        if (usedBitmap) {
+            views.setContentDescription(
+                R.id.widget_media_bitmap,
+                mediaDescription(context, snapshot),
+            )
+        }
+    }
+
+    private fun emptyViews(
+        context: Context,
+        appWidgetId: Int,
+        snapshot: MediaSnapshot,
+    ): RemoteViews {
+        val views = baseViews(context, appWidgetId)
+        views.setInt(
+            R.id.widget_root,
+            "setBackgroundResource",
+            WidgetPrefs.style(context).backgroundRes,
+        )
+        views.setViewVisibility(R.id.widget_media_bitmap, View.GONE)
+        views.setViewVisibility(R.id.media_overlay, View.GONE)
+        views.setViewVisibility(R.id.media_clear, View.GONE)
+        views.setViewVisibility(R.id.media_message, View.VISIBLE)
+        views.setTextColor(
+            R.id.media_message,
+            UpstreamNtDraw.muted(context, WidgetPrefs.style(context)),
+        )
+        views.setTextViewText(R.id.media_message, emptyMessage(context, snapshot))
+        val intent = Intent(context, MainActivity::class.java)
+            .putExtra(MainActivity.EXTRA_SHOW_MEDIA_ACCESS, true)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        views.setOnClickPendingIntent(
+            R.id.widget_root,
+            PendingIntent.getActivity(
+                context,
+                appWidgetId,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            ),
+        )
+        return views
+    }
+
+    private fun emptyMessage(context: Context, snapshot: MediaSnapshot): String = when {
+        !snapshot.accessGranted -> context.getString(R.string.media_empty_access_off)
+        mediaKind == MediaWidgetKind.NOTIFICATION ->
+            context.getString(R.string.media_empty_no_notification)
+        snapshot.hasSession -> context.getString(R.string.media_empty_no_metadata)
+        else -> context.getString(R.string.media_empty_no_session)
+    }
+
+    private fun bindRootClick(
+        views: RemoteViews,
+        context: Context,
+        appWidgetId: Int,
+        snapshot: MediaSnapshot,
+    ) {
+        val playerIntent = MediaSessionRepository.playerIntent(context)
+        val intent = playerIntent ?: Intent(context, MainActivity::class.java)
+            .putExtra(MainActivity.EXTRA_SHOW_MEDIA_ACCESS, true)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        views.setOnClickPendingIntent(
+            R.id.widget_root,
+            PendingIntent.getActivity(
+                context,
+                appWidgetId,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            ),
+        )
+    }
+
+    private fun bindTransport(
+        views: RemoteViews,
+        context: Context,
+        appWidgetId: Int,
+        snapshot: MediaSnapshot,
+    ) {
+        bindTransportButton(
+            views,
+            context,
+            appWidgetId,
+            R.id.media_previous,
+            MediaTransportAction.PREVIOUS,
+            snapshot.canSkipPrevious,
+        )
+        bindTransportButton(
+            views,
+            context,
+            appWidgetId,
+            R.id.media_play_pause,
+            MediaTransportAction.PLAY_PAUSE,
+            snapshot.canPlayPause,
+        )
+        bindTransportButton(
+            views,
+            context,
+            appWidgetId,
+            R.id.media_next,
+            MediaTransportAction.NEXT,
+            snapshot.canSkipNext,
+        )
+        views.setViewVisibility(
+            R.id.media_clear,
+            if (mediaKind == MediaWidgetKind.NOTIFICATION) View.VISIBLE else View.GONE,
+        )
+        val clear = Intent(context, MediaActionReceiver::class.java).apply {
+            action = MediaActionReceiver.ACTION_CLEAR_NOTIFICATION
+        }
+        views.setOnClickPendingIntent(
+            R.id.media_clear,
+            PendingIntent.getBroadcast(
+                context,
+                appWidgetId * 10 + 9,
+                clear,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            ),
+        )
+    }
+
+    private fun bindTransportButton(
+        views: RemoteViews,
+        context: Context,
+        appWidgetId: Int,
+        viewId: Int,
+        action: MediaTransportAction,
+        enabled: Boolean,
+    ) {
+        if (!enabled) {
+            views.setViewVisibility(viewId, View.INVISIBLE)
+            return
+        }
+        views.setViewVisibility(viewId, View.VISIBLE)
+        val intent = Intent(context, MediaActionReceiver::class.java).apply {
+            this.action = MediaActionReceiver.ACTION
+            putExtra(MediaActionReceiver.EXTRA_TRANSPORT, action.name)
+        }
+        views.setOnClickPendingIntent(
+            viewId,
+            PendingIntent.getBroadcast(
+                context,
+                appWidgetId * 10 + action.ordinal + 1,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            ),
+        )
+    }
+
+    private fun mediaDescription(context: Context, snapshot: MediaSnapshot): String {
+        val title = snapshot.notification?.title ?: snapshot.title
+        val artist = snapshot.notification?.text ?: snapshot.artist
+        return context.getString(
+            R.string.media_content_description,
+            title ?: context.getString(R.string.media_empty_no_metadata),
+            artist ?: "",
+        )
+    }
+}
+
+class Material3ExpandedMediaProvider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.M3_EXPANDED
+}
+
+class Material3MediaOutputProvider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.M3_OUTPUT
+}
+
+class MiniMediaPlayerProvider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.MINI
+}
+
+class MinimalMediaPlayerProvider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.MINIMAL
+}
+
+class MinimalMediaPlayer2Provider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.MINIMAL_2
+}
+
+class MinimalMediaPlayer3Provider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.MINIMAL_3
+}
+
+class NothingMasterWidgetProvider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.NOTHING_MASTER
+    override val minuteRefresh: Boolean = true
+}
+
+class NothingMediaPlayerProvider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.NOTHING_PLAYER
+}
+
+class NothingMediaPlayer2Provider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.NOTHING_PLAYER_2
+}
+
+class NothingMediaPlayer3Provider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.NOTHING_PLAYER_3
+}
+
+class UniversalMediaPlayerProvider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.UNIVERSAL
+}
+
+class MaterialNotificationWidgetProvider : BaseMediaWidgetProvider() {
+    override val mediaKind: MediaWidgetKind = MediaWidgetKind.NOTIFICATION
+}

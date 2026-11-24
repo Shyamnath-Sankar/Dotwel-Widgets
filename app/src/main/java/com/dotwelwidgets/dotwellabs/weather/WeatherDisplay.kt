@@ -93,6 +93,48 @@ object WeatherDisplay {
     fun unitSymbol(unit: TemperatureUnit): String =
         if (unit == TemperatureUnit.FAHRENHEIT) "F" else "C"
 
+
+    fun currentTemperatureText(snapshot: WeatherSnapshot): String? {
+        val value = snapshot.current.temperature
+        if (!value.isFinite()) return null
+        return "${value.roundToInt()}\u00B0${unitSymbol(snapshot.unit)}"
+    }
+
+    /**
+     * Open-Meteo `weather_code` follows the WMO 4677 interpretation table. The
+     * label is a short description, never a fabricated icon or measurement.
+     */
+    fun conditionLabel(code: Int): String = when (code) {
+        0 -> "Clear"
+        1 -> "Mainly clear"
+        2 -> "Partly cloudy"
+        3 -> "Overcast"
+        45, 48 -> "Fog"
+        51, 53, 55 -> "Drizzle"
+        56, 57 -> "Freezing drizzle"
+        61, 63, 65 -> "Rain"
+        66, 67 -> "Freezing rain"
+        71, 73, 75 -> "Snow"
+        77 -> "Snow grains"
+        80, 81, 82 -> "Showers"
+        85, 86 -> "Snow showers"
+        95 -> "Thunderstorm"
+        96, 99 -> "Thunderstorm with hail"
+        else -> "Unknown"
+    }
+
+    fun currentConditionText(snapshot: WeatherSnapshot): String =
+        conditionLabel(snapshot.current.weatherCode)
+
+    /**
+     * The configured Open-Meteo air-quality endpoint reports United States AQI.
+     * A missing reading is shown as unavailable, never as zero.
+     */
+    fun airQualityText(snapshot: WeatherSnapshot): String {
+        val aqi = snapshot.airQuality?.usAqi ?: return "AQI --"
+        return "AQI $aqi"
+    }
+
     fun highLowText(day: WeatherDay, unit: TemperatureUnit): String? {
         val max = temperature(day.temperatureMax, unit) ?: return null
         val min = temperature(day.temperatureMin, unit) ?: return null

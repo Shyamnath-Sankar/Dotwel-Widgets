@@ -4,17 +4,14 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 ## Current checkpoint (0.1.8, versionCode 9)
 
 - `com.dotwelwidgets.dotwellabs`, minSdk 26, compile/target SDK 36.
-- Twenty-six registered providers: dot clock, date, Analog Bold, Analog Scale,
-  world clock, quotes, and twenty native KWGT-Widgets conversions (Nothing
-  Battery, Battery Mini, Battery2, Date Time, Date Time 2, Digital3, Digital4,
-  Digital, Analog2, Analog3, Analog Seconds, Analog5, Analog5 Clear, and Orbit
-  Clock). The full 40-preset source-port status is in `docs/KWGT-LEDGER.md`;
-  twenty presets are implemented, the rest remain pending or
-  dependency-blocked. `Nothing_Analog_`
-  and `Nothing_Analog_2` are the exact source-seconds ports: their native second
-  hands are offered only on Android 12+ (`android:hand_second`), the receivers are
-  disabled below API 31, and second-tick fps is system configured and may be
-  disabled by the OS.
+- Forty-three registered providers: dot clock, date, Analog Bold, Analog Scale,
+  world clock, quotes, thirty-seven native KWGT-Widgets preset ports, and the
+  twelve media/notification providers. The full 40-preset source-port status is
+  in `docs/KWGT-LEDGER.md`; 37 presets are implemented and 3 remain blocked or
+  unavailable. `Nothing_Analog_` and `Nothing_Analog_2` are the exact
+  source-seconds ports: their native second hands are offered only on Android
+  12+ (`android:hand_second`), the receivers are disabled below API 31, and
+  second-tick fps is system configured and may be disabled by the OS.
 - The front screen is a category grid: a dotted HOME heading, a short subtitle,
   an actionable dotted-update control, and rounded square category tiles with a
   real representative preview or a Dotwel motif. Each tile shows the category
@@ -74,10 +71,13 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   previews; refresh placed widgets; open this app's Alarms & reminders settings.
   Previews render only when visible or near-visible, use a bounded pixel budget,
   and do not recycle a bitmap that may still be drawing.
-- Permissions: optional `SCHEDULE_EXACT_ALARM` only. No `USE_EXACT_ALARM`,
-  INTERNET, foreground service, accessibility, overlay, notification/media access,
-  location, calendar, or boot permission. The app never grants alarm access
-  itself.
+- Permissions and capabilities: optional `SCHEDULE_EXACT_ALARM` for minute
+  bitmap updates, `INTERNET` used only by the opt-in Open-Meteo weather/air-quality
+  refresh, and an off-by-default notification-listener service for the media and
+  notification widgets. The listener is bound only after you enable Android
+  notification access yourself; the app never grants it. No foreground service,
+  accessibility, overlay, location, calendar or boot permission. Widget updates
+  read caches only and never perform network I/O.
 
 ## Limits
 
@@ -92,8 +92,16 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 - If the user revokes Alarms & reminders access, Android stops the app and
   cancels its alarms. A placed clock falls back to the live system clock on its
   next update or resize; the fallback is not instant while the app is dead.
-- Weather remains pending: only a partial, unregistered Open-Meteo domain and
-  transport layer exists. No weather widget is enabled.
+- Weather is optional and off by default. After you enable it and choose a city,
+  the app may request a forecast, current conditions and a separate US AQI
+  reading at most hourly on app resume. Widgets read only the private cache.
+  AQI failure does not discard a valid weather reading.
+- Media and notification widgets are off until you enable Android notification
+  access. Message text is masked by default, cover art and notification text are
+  held in memory only, and transport buttons are hidden when the session does
+  not advertise the action. Interstellar seconds-driven source layers are
+  sampled at each widget update, not live; this limitation is stated in the
+  catalog and ledger.
 
 Build with `./gradlew assembleDebug`. See `docs/ATTRIBUTION.md` for third-party
 notices, `docs/KWGT-LEDGER.md` for the 40-preset status, and

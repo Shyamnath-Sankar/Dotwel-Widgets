@@ -44,6 +44,10 @@ class RemoteViewsLayoutSafetyTest {
         "widget_kwgt_orbit_black.xml",
         "widget_kwgt_orbit_translucent.xml",
         "widget_kwgt_orbit_transparent.xml",
+        "widget_kwgt_digital2.xml",
+        "widget_kwgt_date_time3.xml",
+        "widget_interstellar.xml",
+        "widget_media.xml",
     )
 
     private val remoteViewsSafeTags = setOf(

@@ -34,6 +34,23 @@ object WidgetUpdater {
         IosBatteryWidgetProvider::class.java,
         NothingTempWidgetProvider::class.java,
         NothingSunInfoWidgetProvider::class.java,
+        KwgtDigital2WidgetProvider::class.java,
+        KwgtDateTime3WidgetProvider::class.java,
+        KwgtInterstellarEnduranceProvider::class.java,
+        KwgtInterstellarEnduranceAnalogProvider::class.java,
+        KwgtInterstellarEnduranceAnalog2Provider::class.java,
+        Material3ExpandedMediaProvider::class.java,
+        Material3MediaOutputProvider::class.java,
+        MiniMediaPlayerProvider::class.java,
+        MinimalMediaPlayerProvider::class.java,
+        MinimalMediaPlayer2Provider::class.java,
+        MinimalMediaPlayer3Provider::class.java,
+        NothingMasterWidgetProvider::class.java,
+        NothingMediaPlayerProvider::class.java,
+        NothingMediaPlayer2Provider::class.java,
+        NothingMediaPlayer3Provider::class.java,
+        UniversalMediaPlayerProvider::class.java,
+        MaterialNotificationWidgetProvider::class.java,
     )
 
     fun updateAll(context: Context) {
@@ -49,6 +66,26 @@ object WidgetUpdater {
         val manager = AppWidgetManager.getInstance(context)
         updateProvider(context, manager, NothingTempWidgetProvider::class.java)
         updateProvider(context, manager, NothingSunInfoWidgetProvider::class.java)
+        updateProvider(context, manager, NothingMasterWidgetProvider::class.java)
+        updateProvider(context, manager, KwgtDateTime3WidgetProvider::class.java)
+    }
+
+    fun updateMediaProviders(context: Context) {
+        val manager = AppWidgetManager.getInstance(context)
+        listOf(
+            Material3ExpandedMediaProvider::class.java,
+            Material3MediaOutputProvider::class.java,
+            MiniMediaPlayerProvider::class.java,
+            MinimalMediaPlayerProvider::class.java,
+            MinimalMediaPlayer2Provider::class.java,
+            MinimalMediaPlayer3Provider::class.java,
+            NothingMasterWidgetProvider::class.java,
+            NothingMediaPlayerProvider::class.java,
+            NothingMediaPlayer2Provider::class.java,
+            NothingMediaPlayer3Provider::class.java,
+            UniversalMediaPlayerProvider::class.java,
+            MaterialNotificationWidgetProvider::class.java,
+        ).forEach { updateProvider(context, manager, it) }
     }
 
     fun updateBatteryProviders(context: Context) {

@@ -6,6 +6,10 @@ import android.graphics.Canvas
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.RectF
+import com.dotwelwidgets.dotwellabs.media.MediaRenderers
+import com.dotwelwidgets.dotwellabs.media.MediaSessionRepository
+import com.dotwelwidgets.dotwellabs.media.MediaWidgetKind
+import com.dotwelwidgets.dotwellabs.weather.WeatherRenderState
 import java.util.Calendar
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -187,11 +191,101 @@ object WidgetPreviewRenderer {
                     includeBackground = true,
                 )
             }
+            PreviewKind.KWGT_DIGITAL_2 -> KwgtDigital2Renderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                includeBackground = false,
+            )
+            PreviewKind.KWGT_DATE_TIME_3 -> KwgtDateTime3Renderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                WeatherRenderState.from(context),
+            )
+            PreviewKind.INTERSTELLAR_ENDURANCE -> interstellar(
+                context,
+                size.width,
+                size.height,
+                style,
+                InterstellarShapeCompiler.Variant.ENDURANCE,
+            )
+            PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG -> interstellar(
+                context,
+                size.width,
+                size.height,
+                style,
+                InterstellarShapeCompiler.Variant.ANALOG,
+            )
+            PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG_2 -> interstellar(
+                context,
+                size.width,
+                size.height,
+                style,
+                InterstellarShapeCompiler.Variant.ANALOG_2,
+            )
+            PreviewKind.MEDIA_M3_EXPANDED,
+            PreviewKind.MEDIA_M3_OUTPUT,
+            PreviewKind.MEDIA_MINI,
+            PreviewKind.MEDIA_MINIMAL,
+            PreviewKind.MEDIA_MINIMAL_2,
+            PreviewKind.MEDIA_MINIMAL_3,
+            PreviewKind.MEDIA_MASTER,
+            PreviewKind.MEDIA_PLAYER,
+            PreviewKind.MEDIA_PLAYER_2,
+            PreviewKind.MEDIA_PLAYER_3,
+            PreviewKind.MEDIA_UNIVERSAL,
+            PreviewKind.MEDIA_NOTIFICATION,
+            -> {
+                val kind = mediaKind(entry.previewKind) ?: MediaWidgetKind.M3_EXPANDED
+                MediaRenderers.render(
+                    context,
+                    kind,
+                    size.width,
+                    size.height,
+                    style,
+                    MediaSessionRepository.snapshot(context),
+                    if (entry.previewKind == PreviewKind.MEDIA_MASTER) {
+                        WeatherRenderState.from(context)
+                    } else {
+                        null
+                    },
+                )
+            }
             PreviewKind.WX_TEMP,
             PreviewKind.WX_SUN,
             -> null
             PreviewKind.PLACEHOLDER -> placeholder(context, entry, size.width, size.height, style)
         }
+    }
+
+    private fun interstellar(
+        context: Context,
+        width: Int,
+        height: Int,
+        style: WidgetStyle,
+        variant: InterstellarShapeCompiler.Variant,
+    ): Bitmap? {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) return null
+        return InterstellarShapeCompiler.render(context, variant, width, height, style)
+    }
+
+    private fun mediaKind(kind: PreviewKind): MediaWidgetKind? = when (kind) {
+        PreviewKind.MEDIA_M3_EXPANDED -> MediaWidgetKind.M3_EXPANDED
+        PreviewKind.MEDIA_M3_OUTPUT -> MediaWidgetKind.M3_OUTPUT
+        PreviewKind.MEDIA_MINI -> MediaWidgetKind.MINI
+        PreviewKind.MEDIA_MINIMAL -> MediaWidgetKind.MINIMAL
+        PreviewKind.MEDIA_MINIMAL_2 -> MediaWidgetKind.MINIMAL_2
+        PreviewKind.MEDIA_MINIMAL_3 -> MediaWidgetKind.MINIMAL_3
+        PreviewKind.MEDIA_MASTER -> MediaWidgetKind.NOTHING_MASTER
+        PreviewKind.MEDIA_PLAYER -> MediaWidgetKind.NOTHING_PLAYER
+        PreviewKind.MEDIA_PLAYER_2 -> MediaWidgetKind.NOTHING_PLAYER_2
+        PreviewKind.MEDIA_PLAYER_3 -> MediaWidgetKind.NOTHING_PLAYER_3
+        PreviewKind.MEDIA_UNIVERSAL -> MediaWidgetKind.UNIVERSAL
+        PreviewKind.MEDIA_NOTIFICATION -> MediaWidgetKind.NOTIFICATION
+        else -> null
     }
 
     fun usesMinuteBitmap(kind: PreviewKind): Boolean = when (kind) {

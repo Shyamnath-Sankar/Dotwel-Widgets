@@ -73,6 +73,7 @@ object HttpWeatherTransport : WeatherTransport {
 object WeatherRepository {
     private const val FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
     private const val GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
+    private const val AIR_QUALITY_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
     private const val MAX_QUERY_LENGTH = 120
 
     fun searchCities(
@@ -148,6 +149,8 @@ object WeatherRepository {
                 return WeatherResult.Failure(WeatherResult.Reason.CANCELLED, cached)
             }
             val snapshot = parseSnapshot(location, unit, forecast, now)
+            val airQuality = fetchAirQuality(location, transport, snapshot)
+            val withAir = snapshot.copy(airQuality = airQuality)
             if (context != null) {
                 synchronized(WeatherSettings.STATE_LOCK) {
                     if (shouldCommit() &&
@@ -155,12 +158,19 @@ object WeatherRepository {
                         WeatherSettings.location(context) == location &&
                         WeatherSettings.unit(context) == unit
                     ) {
-                        WeatherCache.save(context, forecast, location, unit, now)
+                        WeatherCache.save(
+                            context,
+                            forecast,
+                            location,
+                            unit,
+                            now,
+                            airQuality,
+                        )
                         WeatherSettings.clearFailure(context)
                     }
                 }
             }
-            WeatherResult.Success(snapshot)
+            WeatherResult.Success(withAir)
         } catch (error: Exception) {
             val reason = when (error) {
                 is IOException -> WeatherResult.Reason.NETWORK
@@ -169,6 +179,43 @@ object WeatherRepository {
             }
             WeatherResult.Failure(reason, cached)
         }
+    }
+
+
+    /**
+     * Open-Meteo's air-quality endpoint is a separate request. A failure here
+     * must never discard a valid forecast, so the result is nullable and the
+     * caller keeps the weather snapshot unchanged.
+     */
+    private fun fetchAirQuality(
+        location: GeoLocation,
+        transport: WeatherTransport,
+        snapshot: WeatherSnapshot,
+    ): WeatherAirQuality? = runCatching {
+        val url = buildString {
+            append(AIR_QUALITY_URL)
+            append("?latitude=").append(location.latitude)
+            append("&longitude=").append(location.longitude)
+            append("&current=us_aqi")
+            append("&timezone=auto")
+        }
+        parseAirQuality(transport.get(url))
+    }.getOrNull()
+
+    internal fun parseAirQuality(body: String): WeatherAirQuality? {
+        val root = JSONObject(body)
+        val current = root.optJSONObject("current") ?: return null
+        if (!current.has("us_aqi")) return null
+        val value = current.optInt("us_aqi", -1)
+        if (value < 0) return null
+        val zone = runCatching {
+            ZoneId.of(root.optString("timezone").ifBlank { "UTC" })
+        }.getOrDefault(ZoneOffset.UTC)
+        val observed = current.optString("time").let { parseLocal(it, zone) }
+        return WeatherAirQuality(
+            usAqi = value,
+            observedAtEpochMillis = observed,
+        )
     }
 
     fun loadCached(context: Context): WeatherSnapshot? = WeatherCache.load(context)
@@ -260,6 +307,8 @@ internal object WeatherCache {
     private const val KEY_LOCATION = "cache_location"
     private const val KEY_UNIT = "cache_unit"
     private const val KEY_FETCHED_AT = "cache_fetched_at"
+    private const val KEY_AQI_US = "cache_aqi_us"
+    private const val KEY_AQI_AT = "cache_aqi_at"
 
     private var context: Context? = null
 
@@ -273,6 +322,7 @@ internal object WeatherCache {
         location: GeoLocation,
         unit: TemperatureUnit,
         fetchedAt: Long,
+        airQuality: WeatherAirQuality? = null,
     ) {
         val prefs = context.getSharedPreferences(
             WeatherSettings.PREFS,
@@ -283,6 +333,8 @@ internal object WeatherCache {
             .putString(KEY_LOCATION, WeatherSettings.encodeLocation(location))
             .putString(KEY_UNIT, unit.name)
             .putLong(KEY_FETCHED_AT, fetchedAt)
+            .putInt(KEY_AQI_US, airQuality?.usAqi ?: -1)
+            .putLong(KEY_AQI_AT, airQuality?.observedAtEpochMillis ?: -1L)
             .apply()
     }
 
@@ -307,12 +359,24 @@ internal object WeatherCache {
         }.getOrNull() ?: return null
         if (cachedUnit != WeatherSettings.unit(context)) return null
         return runCatching {
-            WeatherRepository.parseSnapshot(
+            val aqi = prefs.getInt(KEY_AQI_US, -1)
+            val snapshot = WeatherRepository.parseSnapshot(
                 cachedLocation,
                 cachedUnit,
                 forecast,
                 fetchedAt,
             )
+            if (aqi < 0) {
+                snapshot
+            } else {
+                snapshot.copy(
+                    airQuality = WeatherAirQuality(
+                        usAqi = aqi,
+                        observedAtEpochMillis = prefs.getLong(KEY_AQI_AT, -1L)
+                            .takeIf { it > 0L },
+                    ),
+                )
+            }
         }.getOrNull()
     }
 
@@ -323,6 +387,8 @@ internal object WeatherCache {
             .remove(KEY_LOCATION)
             .remove(KEY_UNIT)
             .remove(KEY_FETCHED_AT)
+            .remove(KEY_AQI_US)
+            .remove(KEY_AQI_AT)
             .apply()
     }
 }

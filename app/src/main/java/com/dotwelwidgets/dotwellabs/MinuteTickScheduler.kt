@@ -21,6 +21,12 @@ object MinuteTickScheduler {
         KwgtDateTime2WidgetProvider::class.java,
         KwgtDigital4WidgetProvider::class.java,
         KwgtDigital3WidgetProvider::class.java,
+        NothingMasterWidgetProvider::class.java,
+        KwgtDigital2WidgetProvider::class.java,
+        KwgtDateTime3WidgetProvider::class.java,
+        KwgtInterstellarEnduranceProvider::class.java,
+        KwgtInterstellarEnduranceAnalogProvider::class.java,
+        KwgtInterstellarEnduranceAnalog2Provider::class.java,
     )
 
     fun hasExactAccess(context: Context): Boolean {

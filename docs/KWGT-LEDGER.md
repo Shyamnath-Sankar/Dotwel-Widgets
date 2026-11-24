@@ -18,17 +18,17 @@ without a prohibited capability or unresolved third-party rights.
 | # | Exact preset name | Status | Dependency / remaining work |
 |---:|---|---|---|
 | 1 | `Clean_Time_Date_Info` | **implemented** | Native `KwgtCleanInfoWidgetProvider`; wide card with live TextClock h:mm / EEEE / uppercase MMMM d, oversized 19% ghost time, and real BatteryManager percentage. Battery refresh is bounded best-effort: dynamic battery broadcast while the process is alive, otherwise an inexact non-wakeup ~15 min alarm with 10 min flex that Doze may defer; no exact-alarm access required; runtime unverified. |
-| 2 | `Interstellar_Analog` | pending | Custom dial artwork has no separate redistribution grant; would require original redraw. |
-| 3 | `Interstellar_Analog_Khaki_Field_Murph_Auto` | pending | Branded watch-face artwork and font rights unresolved; original redraw required. |
-| 4 | `Interstellar_Endurance` | pending | Spacecraft artwork rights unresolved; original redraw required. |
-| 5 | `Interstellar_Endurance_Analog` | pending | Spacecraft artwork rights unresolved; original redraw required. |
-| 6 | `Interstellar_Endurance_Analog_2` | pending | Spacecraft artwork rights unresolved; original redraw required. |
-| 7 | `Material3_Expanded_Media_Player` | dependency | Media/notification access is prohibited for this app. |
-| 8 | `Material3_Media_Player_Output` | dependency | Media/notification access is prohibited for this app. |
-| 9 | `Mini_Media_Player` | dependency | Media/notification access is prohibited for this app. |
-| 10 | `Minimal_Media_Player` | dependency | Media/notification access is prohibited for this app. |
-| 11 | `Minimal_Media_Player_2` | dependency | Media/notification access is prohibited for this app. |
-| 12 | `Minimal_Media_Player_3` | dependency | Media/notification access is prohibited for this app. |
+| 2 | `Interstellar_Analog` | blocked | Source `ShapeModule` Lines uses `fx_gradient_bitmap` `kfile://org.kustom.provider/bitmaps/IMG718befb261acf17a52fc205d18d0efe8`; provenance/redistribution grant unresolved, so no bitmap is bundled. Native redraw would be a separate original asset task. |
+| 3 | `Interstellar_Analog_Khaki_Field_Murph_Auto` | blocked | Five `BitmapModule`s reference `IMG1624e2ce457a50dd7d112dbb0ea90d2b`, `IMGefbbf6e7d14b6b4d37ec363d3ae494fd`, `IMG54339d4ea5aa221031a056f1a88f89b4` and `IMGcb239f2ed780a09d48828a39c8687086` (x2). The bundled `Roboto-Regular.ttf` is not shipped; provenance/redistribution grant unresolved. |
+| 4 | `Interstellar_Endurance` | **implemented** | Native `KwgtInterstellarEnduranceProvider`; reusable source-shape compiler from sanitized JSON preserving 206 ShapeModules, 93 stacks, 49 overlaps and 6 progress modules. No bitmap/font asset; seconds layers sampled per update, not claimed live. Malformed `##FF363636` repaired to `#FF363636`. Android 12+ catalog gate; build-only verification, runtime sweep pending. |
+| 5 | `Interstellar_Endurance_Analog` | **implemented** | Native `KwgtInterstellarEnduranceAnalogProvider`; source-shape compiler with 208 shapes, 93 stacks, 53 overlaps, 6 progress modules plus hour/minute hands. No bitmap/font asset; seconds layers sampled per update. Android 12+ catalog gate; build-only verification, runtime sweep pending. |
+| 6 | `Interstellar_Endurance_Analog_2` | **implemented** | Native `KwgtInterstellarEnduranceAnalog2Provider`; source-shape compiler with 208 shapes, 93 stacks, 51 overlaps, 6 progress modules plus stepped hour/minute hands. No bitmap/font asset; seconds layers sampled per update. Android 12+ catalog gate; build-only verification, runtime sweep pending. |
+| 7 | `Material3_Expanded_Media_Player` | **implemented** | Native `Material3ExpandedMediaProvider`; real MediaSession metadata/art/position and guarded transport actions. Off until the user enables Android notification access; honest empty state when declined. Build-only verification, runtime sweep pending. |
+| 8 | `Material3_Media_Player_Output` | **implemented** | Native `Material3MediaOutputProvider`; real session data plus the player app label where Android provides it. No fabricated output device. Off until the user enables notification access. Build-only verification, runtime sweep pending. |
+| 9 | `Mini_Media_Player` | **implemented** | Native `MiniMediaPlayerProvider`; real cover/title/artist and play-pause guard. Off until the user enables notification access. Build-only verification, runtime sweep pending. |
+| 10 | `Minimal_Media_Player` | **implemented** | Native `MinimalMediaPlayerProvider`; real horizontal session bar and transport guards. Off until the user enables notification access. Build-only verification, runtime sweep pending. |
+| 11 | `Minimal_Media_Player_2` | **implemented** | Native `MinimalMediaPlayer2Provider`; real accent bar, rounded art and round play control. Off until the user enables notification access. Build-only verification, runtime sweep pending. |
+| 12 | `Minimal_Media_Player_3` | **implemented** | Native `MinimalMediaPlayer3Provider`; real progress line and transport guards. Off until the user enables notification access. Build-only verification, runtime sweep pending. |
 | 13 | `Nothing_Analog_` | **implemented** | Native `KwgtAnalogSecondsWidgetProvider`; exact source-seconds port. 277 viewport, filled `#1B1B1D` dial, filled hour capsule 277/11.54 x 277/3.378 at `138.5 - (277/4.616)/2`, constant `#6C696E` minute capsule 277/27.7 x 277/2.473 at `138.5 - (277/2.7426)/2`, and the source `#D71921` second circle (diameter 277/23.08) at radius `(277/1.145)/2`. Android 12+ native `android:hand_second` rotates the full-viewport second drawable from the 12 o'clock zero position, absorbing the source `CLOCK_SECOND` 90 offset; the source second toggle is active, not frozen or omitted. Receiver is disabled below API 31 via a `false`/`true` `values`/`values-v31` bool and the catalog marks it unavailable there with no no-seconds fallback. Black/translucent/transparent retain the three documented hour/dial styles with constant minute and second colours. Second-tick fps is system configured and may be disabled. No bitmap time, alarm, service, permission or new dependency; runtime unverified. |
 | 14 | `Nothing_Analog_2` | **implemented** | Native `KwgtAnalog2WidgetProvider`; exact source port. 277 filled circular dial, sharp hour rect 6 x 74 centred at `138.5 - 64/2`, sharp minute rect 6 x 100 centred at `138.5 - 112/2`, and the `#D71921` seconds rect 130 x 3 with right padding 100 and the active `CLOCK_SECOND` 90 offset (native zero vertical at x 138.5, centre Y 88.5, extent 23.5..153.5). 12 hour ticks 8 x 16.5 on the `style_size 250` ring and 60 minute ticks 11 x 8 on the `style_size 258` ring are drawn in a transparent full-viewport `fitCenter` overlay above the native `android.widget.AnalogClock`, preserving the source tick/centre z-order above the hands; the red centre circle diameter 16 is last. Only `layout-v31` wires `android:hand_second`; the receiver is disabled below API 31 by `kwgt_analog_seconds_available` and the catalog marks it unavailable with no silently degraded seconds. The minute raw width 6 is retained because its active toggle has no formula; the centre's missing type is documented as Kustom's CIRCLE default. Black `#1B1B1D` / white ink, translucent `#A6FFFFFF` / dark ink, transparent no dial / white ink; red seconds and centre constant. No bitmap time, alarm, service, permission or new dependency; non-square host scaling and runtime unverified. |
 | 15 | `Nothing_Analog_3` | **implemented** | Native `KwgtAnalog3WidgetProvider`; 277 vector dial with two hollow rounded capsule hands in a platform `android.widget.AnalogClock`, which rotates the hands automatically. Black `#1B1B1D` / white hands, translucent `#A6FFFFFF` / dark hands, transparent no dial / white hands. No seconds, bitmap time, minute alarm, permission or service; runtime unverified. |
@@ -37,41 +37,49 @@ without a prohibited capability or unresolved third-party rights.
 | 18 | `Nothing_Battery` | **implemented** | Native `BatteryWidgetProvider`; real system level with bounded best-effort `BatteryRefreshScheduler` (inexact ELAPSED_REALTIME ~15 min + 10 min flex, does not wake the device); runtime unverified. |
 | 19 | `Nothing_Battery2` | **implemented** | Native `KwgtBattery2WidgetProvider`; rounded surface, outlined 16-segment body with clip and nub, real level, system charging state and only real `computeChargeTimeRemaining` values; unknown estimates show `--` / `ESTIMATE UNAVAILABLE`. Lifecycle: dynamic `BATTERY_CHANGED` only while the process lives, plus an inexact non-wakeup `BatteryRefreshScheduler` window (~15 min + 10 min flex, Doze-deferrable) and manual app refresh; not a live/instant claim; runtime unverified. |
 | 20 | `Nothing_Battery_Mini` | **implemented** | Native `BatteryMiniWidgetProvider`; real system level with bounded best-effort `BatteryRefreshScheduler` (inexact ELAPSED_REALTIME ~15 min + 10 min flex, does not wake the device); runtime unverified. |
-| 21 | `Nothing_CPU` | dependency | Per-process CPU/system usage needs restricted or unreliable data paths. |
+| 21 | `Nothing_CPU` | unavailable | Source uses whole-device `$rm(cused)$`, `$rm(csys)$`, `$rm(cusr)$` and `$rm(cidle)$`, not per-process data. Android 26+ does not expose whole-device CPU time counters to this app through a supported widget path. No percentages are fabricated; catalog entry is unavailable. |
 | 22 | `Nothing_Date_Time` | **implemented** | Native `KwgtDateTimeWidgetProvider`; live text clocks without optional exact-alarm access; runtime unverified. |
 | 23 | `Nothing_Date_Time2` | **implemented** | Native `KwgtDateTime2WidgetProvider`; upper-left date stack plus lower-right hour/minute discs; live text fallback without exact-alarm access; runtime unverified. |
-| 24 | `Nothing_Date_Time3` | pending | Depends on the pending Open-Meteo weather/temperature/AQI path. |
+| 24 | `Nothing_Date_Time3` | **implemented** | Native `KwgtDateTime3WidgetProvider`; live time/date TextClocks, AM/PM, and optional manual-city current temperature/condition plus US AQI from the private cache. Central time expression is a preview-led repair; the source global `accent ` trailing-space typo is repaired explicitly. Weather off by default. Build-only verification, runtime sweep pending. |
 | 25 | `Nothing_Digital` | **implemented** | Native `KwgtGradientClockWidgetProvider`; right-edge gradient circles, 12-hour hh and red minute chip; live text fallback without exact-alarm access; runtime unverified. |
-| 26 | `Nothing_Digital2` | pending | Digital layer conversion queued; can reuse the existing minute schedule. |
+| 26 | `Nothing_Digital2` | **implemented** | Native `KwgtDigital2WidgetProvider`; source right-aligned stack with `r1m`/`a1m` relative minutes and a live TextClock hh:mm repair for the missing central expression. Source background height `h` is an undeclared fit repair. Relative labels refresh via the existing minute scheduler; no frozen bitmap time. Build-only verification, runtime sweep pending. |
 | 27 | `Nothing_Digital3` | **implemented** | Native `KwgtDigital3WidgetProvider`; 4x4 minute-lit dot matrix with red hh/mm, uppercase aa and source thresholds; live TextClock fallback without exact-alarm access; runtime unverified. |
 | 28 | `Nothing_Digital4` | **implemented** | Native `KwgtDigital4WidgetProvider`; red hh / centre divider / ink mm split; live text fallback without exact-alarm access; runtime unverified. |
 | 29 | `Nothing_Digital_Clock` | **implemented** | Native `KwgtOrbitClockWidgetProvider`; actual-source 277 outer circle, 164 inner disc, central live `hh:mm` TextClock, 205 hour orbit and 245 minute orbit at 0.5 stroke, red `#D71921` hour dot at radius 102 and minute dot at radius 122.5, both diameter 12. Native `android.widget.AnalogClock` with vector dial and transparent 277 hand vectors rotates the dots; the source 90 offset plus 204/245 stack padding maps to the 12-o'clock vector zero. The source Time TextModule omits `text_expression`; the 02:11 embedded preview is recorded as a preview-led `hh:mm` repair. Stored `CLOCK_SECOND` formula values carry inactive toggle 0, so no seconds and no API 31 gate were added. Three styles; no bitmap time, alarm, service, permission or dependency; runtime unverified. |
 | 30 | `Nothing_Future_Clock` | **implemented** | Native `KwgtFutureWidgetProvider`; three sweeping gradient discs for hour, minute and second with platform-clock rotation and live labels. Android 12+ for the seconds disc; runtime unverified. |
-| 31 | `Nothing_Master_Widget` | dependency | Combines media/notification data with weather; media access is prohibited. |
-| 32 | `Nothing_Media_Player` | dependency | Media/notification access is prohibited for this app. |
-| 33 | `Nothing_Media_Player2` | dependency | Media/notification access is prohibited for this app. |
-| 34 | `Nothing_Media_Player3` | dependency | Media/notification access is prohibited for this app. |
+| 31 | `Nothing_Master_Widget` | **implemented** | Native `NothingMasterWidgetProvider`; real battery, date, cached optional weather with US AQI, and real media only after the user enables notification access. No fabricated media. Build-only verification, runtime sweep pending. |
+| 32 | `Nothing_Media_Player` | **implemented** | Native `NothingMediaPlayerProvider`; real circular player, art, progress and guarded controls. Off until the user enables notification access. Build-only verification, runtime sweep pending. |
+| 33 | `Nothing_Media_Player2` | **implemented** | Native `NothingMediaPlayer2Provider`; real title/artist/package pill and round play control. Off until the user enables notification access. Build-only verification, runtime sweep pending. |
+| 34 | `Nothing_Media_Player3` | **implemented** | Native `NothingMediaPlayer3Provider`; real side-panel player, progress and guarded transport. Off until the user enables notification access. Build-only verification, runtime sweep pending. |
 | 35 | `Nothing_Mini_Calender` | **implemented** | Native `KwgtMiniCalendarWidgetProvider`; five-day date-only strip, no calendar or exact-alarm permission; runtime unverified. |
 | 36 | `Nothing_Sun_Info` | **implemented** | Native `NothingSunInfoWidgetProvider`; next cached sunrise/sunset for a manually chosen city, optional Open-Meteo opt-in, polar or unknown data shows Unavailable. Runtime unverified. |
 | 37 | `Nothing_Temp` | **implemented** | Native `NothingTempWidgetProvider`; today's forecast low and day high/low for a manually chosen city from cached data, optional Open-Meteo opt-in, no matching day shows `--`. Runtime unverified. |
-| 38 | `Universal_Media_Player` | dependency | Media/notification access is prohibited for this app. |
+| 38 | `Universal_Media_Player` | **implemented** | Native `UniversalMediaPlayerProvider`; real wide player with cover/info/progress/controls. Off until the user enables notification access. Build-only verification, runtime sweep pending. |
 | 39 | `iOS_Battery_Widget` | **implemented** | Native `IosBatteryWidgetProvider`; real level and charging state, 92 ring / 10 stroke / 32 padding / 69 corners normalised to the visible 290 Komponent card (not the 416 preview canvas), platform sans-serif and original battery vectors. The stale media/cover formula is inactive. Bounded Doze-deferrable battery refresh; runtime unverified. |
-| 40 | `material_notification_widget` | dependency | Notification access is prohibited for this app. |
+| 40 | `material_notification_widget` | **implemented** | Native `MaterialNotificationWidgetProvider`; latest real notification title/message/app/time with masked message text by default and an explicit CLEAR action. Off until the user enables notification access. Build-only verification, runtime sweep pending. |
 
 ## Implemented in this checkpoint
 
-Twenty of the 40 presets now have native providers: `Clean_Time_Date_Info`,
-`iOS_Battery_Widget`, `Nothing_Analog_`, `Nothing_Analog_2`,
-`Nothing_Analog_3`, `Nothing_Analog_5`, `Nothing_Analog_5_Transparent`,
-`Nothing_Battery`, `Nothing_Battery2`, `Nothing_Battery_Mini`,
-`Nothing_Date_Time`, `Nothing_Date_Time2`, `Nothing_Digital`,
-`Nothing_Digital3`, `Nothing_Digital4`, `Nothing_Digital_Clock`,
-`Nothing_Future_Clock`, `Nothing_Mini_Calender`, `Nothing_Sun_Info` and
-`Nothing_Temp`. The app also ships six upstream-derived native providers
-(digital, bold analog, scale analog, date, world and quotes), for 26 registered
-providers in total. All 26 are build-verified only and remain runtime-unverified
-in this checkpoint; this is not a claim of completion or runtime acceptance. The
-sanitized transcriptions are under `app/src/main/assets/kwgt/`, including
+Thirty-seven of the 40 presets now have native providers: the previous twenty
+(`Clean_Time_Date_Info`, `iOS_Battery_Widget`, `Nothing_Analog_`,
+`Nothing_Analog_2`, `Nothing_Analog_3`, `Nothing_Analog_5`,
+`Nothing_Analog_5_Transparent`, `Nothing_Battery`, `Nothing_Battery2`,
+`Nothing_Battery_Mini`, `Nothing_Date_Time`, `Nothing_Date_Time2`,
+`Nothing_Digital`, `Nothing_Digital3`, `Nothing_Digital4`,
+`Nothing_Digital_Clock`, `Nothing_Future_Clock`, `Nothing_Mini_Calender`,
+`Nothing_Sun_Info`, `Nothing_Temp`) plus the three Endurance shape clocks, the
+seven remaining media/notification presets, `Nothing_Date_Time3`,
+`Nothing_Digital2`, `Nothing_Master_Widget`, `Nothing_Media_Player`,
+`Nothing_Media_Player2`, `Nothing_Media_Player3`, `Universal_Media_Player` and
+`material_notification_widget`. The app also ships six upstream-derived native
+providers (digital, bold analog, scale analog, date, world and quotes), for 43
+registered providers in total. All 43 are build-verified only and remain
+runtime-unverified in this checkpoint; this is not a claim of completion or
+runtime acceptance. The three unresolved presets are recorded above:
+`Interstellar_Analog` and `Interstellar_Analog_Khaki_Field_Murph_Auto` are
+blocked on third-party bitmap rights, and `Nothing_CPU` is unavailable because
+Android does not expose the required whole-device CPU counters. The sanitized
+transcriptions are under `app/src/main/assets/kwgt/`, including
 `clean_time_date_info.sanitized.json`, `ios_battery.sanitized.json`,
 `nothing_analog2.sanitized.json`, `nothing_analog3.sanitized.json`,
 `nothing_analog_seconds.sanitized.json`, `nothing_analog5.sanitized.json`,
@@ -81,7 +89,11 @@ sanitized transcriptions are under `app/src/main/assets/kwgt/`, including
 `nothing_digital.sanitized.json`, `nothing_digital3.sanitized.json`,
 `nothing_digital4.sanitized.json`, `nothing_digital_clock.sanitized.json`,
 `nothing_future_clock.sanitized.json`, `nothing_mini_calender.sanitized.json`,
-`nothing_sun_info.sanitized.json` and `nothing_temp.sanitized.json`.
+`nothing_sun_info.sanitized.json`, `nothing_temp.sanitized.json`,
+`nothing_digital2.sanitized.json`, `nothing_date_time3.sanitized.json`,
+`interstellar_endurance.sanitized.json`,
+`interstellar_endurance_analog.sanitized.json` and
+`interstellar_endurance_analog_2.sanitized.json`.
 
 Clean_Time_Date_Info keeps these author relationships:
 
@@ -338,10 +350,177 @@ providers. Weather is off by default and nothing is requested before consent;
 the city is chosen manually with no GPS or device-location access. After consent
 and a selected city, opening or resuming the app may refresh a stale cached
 forecast at most once an hour; there is no background network polling. Widget
-updates read only the private cache. The other weather variants remain pending.
-Personal, noncommercial use is within Open-Meteo terms with attribution; any
-separate commercial launcher use must be reviewed before shipping.
+updates read only the private cache. Current conditions and US AQI are included;
+see the later weather section. Personal, noncommercial use is within Open-Meteo
+terms with attribution; any separate commercial launcher use must be reviewed
+before shipping.
 
 Analog2 overlay uses centerInside to match native AnalogClock downscale-only intrinsic size behavior, including large host cells.
 
 Future Clock: native three equal columns now have 0.1-column responsive gaps, preserving source18 gap relative to h/2 discs at its916x542 reference. On narrow/tall hosts discs fit columns and cannot touch. Actual runtime pending for this repair.
+
+## Media and notification bridge
+
+The twelve media/notification presets share one native
+`NotificationListenerService` plus `MediaSessionManager` bridge. It is off by
+default: the user must tap the in-app explanation and then enable Android
+notification access themselves. The app never self-grants, polls in a loop,
+runs a foreground service, performs background network I/O, or writes
+notification text/art to disk. Notification title and body are masked to bullets
+unless the user explicitly enables the text toggle; that preference is excluded
+from backup. Cached notification data is cleared on revoke/disconnect. Transport
+buttons are hidden unless the active session advertises the action, and CLEAR
+only cancels the currently cached notification through the listener API.
+Metadata, artwork and playback position are read live; absent access or session
+shows an honest empty state.
+
+## Nothing_Digital2
+
+Retained source geometry: `side = min(rwidth, rheight)`, background width `side`
+with corners `side / 5`, right inset `side / 8.5`, stack margin
+`-side / 21.875`, previous `df(mm, r1m)` and next `df(mm, a1m)` at `side / 5`.
+Repairs: the background height global `h` is undeclared, so the port uses the
+host height and labels it a fit repair; the central TextModule has no
+expression, so the port supplies live `hh:mm`/`HH:mm` in a platform TextClock
+based on the preview/source intent. Relative labels refresh from the existing
+minute scheduler; no frozen bitmap time is shown.
+
+## Nothing_Date_Time3
+
+Retained source geometry: right-aligned stack at `side / 8.5` and
+`side / 30.083`, time `side / 2.8`, AM/PM `side / 5`, date `side / 6.5`,
+weather `side / 8`. The central time expression is a preview-led `hh:mm`
+repair. The source global is literally `accent ` with a trailing space; the port
+reads the intended `accent` colour and records this explicit typo repair.
+Weather is the optional manual-city cache path, now including current
+temperature, WMO condition and US AQI. Missing AQI shows `AQI --`.
+
+## Interstellar shape compiler
+
+The three Endurance presets are rendered by a reusable compiler that reads
+sanitized source JSON. It preserves the author ShapeModule types/geometry,
+StackLayer order and margins, OverlapLayer z-order, progress counts and rotation
+modes (`CLOCK_SECOND`, `CLOCK_MINUTE`, `CLOCK_HOUR`, `CLOCK_HOUR_SMOOTH`,
+`DEG90/180/270`, `FLIP_X/Y`, `MANUAL`). Formula evaluation supports the subset
+the source uses and skips unsupported expressions rather than guessing. The
+source declares no clipping flag, so no clipping is invented. The malformed
+source colour `##FF363636` is repaired to `#FF363636`. No bitmap, font or
+third-party artwork is bundled. Seconds-driven layers are sampled at each widget
+update; the catalog and widget copy do not claim live seconds. The catalog gates
+these entries to Android 12+ for the supported RemoteViews path.
+
+## Interstellar bitmap audit
+
+`Interstellar_Analog` is blocked, not family-excluded: its `ShapeModule` Lines
+uses `fx_gradient_bitmap`
+`kfile://org.kustom.provider/bitmaps/IMG718befb261acf17a52fc205d18d0efe8`.
+`Interstellar_Analog_Khaki_Field_Murph_Auto` is blocked on five `BitmapModule`
+references (`IMG1624e2ce457a50dd7d112dbb0ea90d2b`,
+`IMGefbbf6e7d14b6b4d37ec363d3ae494fd`,
+`IMG54339d4ea5aa221031a056f1a88f89b4`,
+`IMGcb239f2ed780a09d48828a39c8687086` twice) and a bundled
+`Roboto-Regular.ttf`. No provenance or redistribution grant was found, so no
+image or font is shipped. These are separate original-art tasks, not a reason to
+exclude the Endurance shapes.
+
+## Nothing_CPU audit
+
+The source formulas are whole-device `$rm(cused)$`, `$rm(csys)$`, `$rm(cusr)$`
+and `$rm(cidle)$`, not per-process usage. Android 26+ does not expose the
+required whole-device CPU time counters to this app through a supported widget
+path. The port does not fake percentages; the catalog entry is unavailable and
+the exact requirement is recorded here.
+
+## Weather current and air quality
+
+The existing optional Open-Meteo refresh now also reads current temperature,
+WMO condition and a separate `air-quality-api.open-meteo.com` request using
+`current=us_aqi`. The schema was checked against a live response containing
+`current_units.us_aqi = "USAQI"` and `current.us_aqi`. AQI failure is isolated:
+the forecast snapshot is kept and `AQI --` is shown. The cache stores the US AQI
+value and observation time with the forecast, and widget updates still read only
+the private cache. The user-facing disclosure names both requests and the US AQI
+scale.
+
+## Media and notification bridge
+
+The twelve media/notification presets share one native
+`NotificationListenerService` plus `MediaSessionManager` bridge. It is off by
+default: the user must tap the in-app explanation and then enable Android
+notification access themselves. The app never self-grants, polls in a loop,
+runs a foreground service, performs background network I/O, or writes
+notification text/art to disk. Notification title and body are masked to bullets
+unless the user explicitly enables the text toggle; that preference is excluded
+from backup. Cached notification data is cleared on revoke/disconnect. Transport
+buttons are hidden unless the active session advertises the action, and CLEAR
+only cancels the currently cached notification through the listener API.
+Metadata, artwork and playback position are read live; absent access or session
+shows an honest empty state.
+
+## Nothing_Digital2
+
+Retained source geometry: `side = min(rwidth, rheight)`, background width `side`
+with corners `side / 5`, right inset `side / 8.5`, stack margin
+`-side / 21.875`, previous `df(mm, r1m)` and next `df(mm, a1m)` at `side / 5`.
+Repairs: the background height global `h` is undeclared, so the port uses the
+host height and labels it a fit repair; the central TextModule has no
+expression, so the port supplies live `hh:mm`/`HH:mm` in a platform TextClock
+based on the preview/source intent. Relative labels refresh from the existing
+minute scheduler; no frozen bitmap time is shown.
+
+## Nothing_Date_Time3
+
+Retained source geometry: right-aligned stack at `side / 8.5` and
+`side / 30.083`, time `side / 2.8`, AM/PM `side / 5`, date `side / 6.5`,
+weather `side / 8`. The central time expression is a preview-led `hh:mm`
+repair. The source global is literally `accent ` with a trailing space; the port
+reads the intended `accent` colour and records this explicit typo repair.
+Weather is the optional manual-city cache path, now including current
+temperature, WMO condition and US AQI. Missing AQI shows `AQI --`.
+
+## Interstellar shape compiler
+
+The three Endurance presets are rendered by a reusable compiler that reads
+sanitized source JSON. It preserves the author ShapeModule types/geometry,
+StackLayer order and margins, OverlapLayer z-order, progress counts and rotation
+modes (`CLOCK_SECOND`, `CLOCK_MINUTE`, `CLOCK_HOUR`, `CLOCK_HOUR_SMOOTH`,
+`DEG90/180/270`, `FLIP_X/Y`, `MANUAL`). Formula evaluation supports the subset
+the source uses and skips unsupported expressions rather than guessing. The
+source declares no clipping flag, so no clipping is invented. The malformed
+source colour `##FF363636` is repaired to `#FF363636`. No bitmap, font or
+third-party artwork is bundled. Seconds-driven layers are sampled at each widget
+update; the catalog and widget copy do not claim live seconds. The catalog gates
+these entries to Android 12+ for the supported RemoteViews path.
+
+## Interstellar bitmap audit
+
+`Interstellar_Analog` is blocked, not family-excluded: its `ShapeModule` Lines
+uses `fx_gradient_bitmap`
+`kfile://org.kustom.provider/bitmaps/IMG718befb261acf17a52fc205d18d0efe8`.
+`Interstellar_Analog_Khaki_Field_Murph_Auto` is blocked on five `BitmapModule`
+references (`IMG1624e2ce457a50dd7d112dbb0ea90d2b`,
+`IMGefbbf6e7d14b6b4d37ec363d3ae494fd`,
+`IMG54339d4ea5aa221031a056f1a88f89b4`,
+`IMGcb239f2ed780a09d48828a39c8687086` twice) and a bundled
+`Roboto-Regular.ttf`. No provenance or redistribution grant was found, so no
+image or font is shipped. These are separate original-art tasks, not a reason to
+exclude the Endurance shapes.
+
+## Nothing_CPU audit
+
+The source formulas are whole-device `$rm(cused)$`, `$rm(csys)$`, `$rm(cusr)$`
+and `$rm(cidle)$`, not per-process usage. Android 26+ does not expose the
+required whole-device CPU time counters to this app through a supported widget
+path. The port does not fake percentages; the catalog entry is unavailable and
+the exact requirement is recorded here.
+
+## Weather current and air quality
+
+The existing optional Open-Meteo refresh now also reads current temperature,
+WMO condition and a separate `air-quality-api.open-meteo.com` request using
+`current=us_aqi`. The schema was checked against a live response containing
+`current_units.us_aqi = "USAQI"` and `current.us_aqi`. AQI failure is isolated:
+the forecast snapshot is kept and `AQI --` is shown. The cache stores the US AQI
+value and observation time with the forecast, and widget updates still read only
+the private cache. The user-facing disclosure names both requests and the US AQI
+scale.

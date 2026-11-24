@@ -49,8 +49,28 @@ class PinResultReceiver : BroadcastReceiver() {
             PIN_KIND_KWGT_MINI_CALENDAR -> R.string.pin_kwgt_mini_calendar_confirmed
             PIN_KIND_KWGT_CLEAN_INFO -> R.string.pin_kwgt_clean_info_confirmed
             PIN_KIND_KWGT_IOS_BATTERY -> R.string.pin_kwgt_ios_battery_confirmed
+            PIN_KIND_KWGT_DIGITAL_2 -> R.string.pin_kwgt_digital2_confirmed
+            PIN_KIND_KWGT_DATE_TIME_3 -> R.string.pin_kwgt_date_time3_confirmed
+            PIN_KIND_KWGT_INTERSTELLAR_ENDURANCE ->
+                R.string.pin_kwgt_interstellar_endurance_confirmed
+            PIN_KIND_KWGT_INTERSTELLAR_ANALOG ->
+                R.string.pin_kwgt_interstellar_analog_confirmed
+            PIN_KIND_KWGT_INTERSTELLAR_ANALOG_2 ->
+                R.string.pin_kwgt_interstellar_analog2_confirmed
             PIN_KIND_WEATHER_TEMP -> R.string.pin_weather_temp_confirmed
             PIN_KIND_WEATHER_SUN -> R.string.pin_weather_sun_confirmed
+            PIN_KIND_MEDIA_EXPANDED -> R.string.pin_media_expanded_confirmed
+            PIN_KIND_MEDIA_OUTPUT -> R.string.pin_media_output_confirmed
+            PIN_KIND_MEDIA_MINI -> R.string.pin_media_mini_confirmed
+            PIN_KIND_MEDIA_MINIMAL -> R.string.pin_media_minimal_confirmed
+            PIN_KIND_MEDIA_MINIMAL2 -> R.string.pin_media_minimal2_confirmed
+            PIN_KIND_MEDIA_MINIMAL3 -> R.string.pin_media_minimal3_confirmed
+            PIN_KIND_MEDIA_MASTER -> R.string.pin_media_master_confirmed
+            PIN_KIND_MEDIA_PLAYER -> R.string.pin_media_player_confirmed
+            PIN_KIND_MEDIA_PLAYER2 -> R.string.pin_media_player2_confirmed
+            PIN_KIND_MEDIA_PLAYER3 -> R.string.pin_media_player3_confirmed
+            PIN_KIND_MEDIA_UNIVERSAL -> R.string.pin_media_universal_confirmed
+            PIN_KIND_MEDIA_NOTIFICATION -> R.string.pin_media_notification_confirmed
             else -> R.string.pin_widget_confirmed
         }
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
@@ -87,7 +107,24 @@ class PinResultReceiver : BroadcastReceiver() {
         const val PIN_KIND_KWGT_MINI_CALENDAR = "kwgt_mini_calendar"
         const val PIN_KIND_KWGT_CLEAN_INFO = "kwgt_clean_info"
         const val PIN_KIND_KWGT_IOS_BATTERY = "kwgt_ios_battery"
+        const val PIN_KIND_KWGT_DIGITAL_2 = "kwgt_digital_2"
+        const val PIN_KIND_KWGT_DATE_TIME_3 = "kwgt_date_time_3"
+        const val PIN_KIND_KWGT_INTERSTELLAR_ENDURANCE = "kwgt_interstellar_endurance"
+        const val PIN_KIND_KWGT_INTERSTELLAR_ANALOG = "kwgt_interstellar_analog"
+        const val PIN_KIND_KWGT_INTERSTELLAR_ANALOG_2 = "kwgt_interstellar_analog_2"
         const val PIN_KIND_WEATHER_TEMP = "weather_temp"
         const val PIN_KIND_WEATHER_SUN = "weather_sun"
+        const val PIN_KIND_MEDIA_EXPANDED = "media_expanded"
+        const val PIN_KIND_MEDIA_OUTPUT = "media_output"
+        const val PIN_KIND_MEDIA_MINI = "media_mini"
+        const val PIN_KIND_MEDIA_MINIMAL = "media_minimal"
+        const val PIN_KIND_MEDIA_MINIMAL2 = "media_minimal2"
+        const val PIN_KIND_MEDIA_MINIMAL3 = "media_minimal3"
+        const val PIN_KIND_MEDIA_MASTER = "media_master"
+        const val PIN_KIND_MEDIA_PLAYER = "media_player"
+        const val PIN_KIND_MEDIA_PLAYER2 = "media_player2"
+        const val PIN_KIND_MEDIA_PLAYER3 = "media_player3"
+        const val PIN_KIND_MEDIA_UNIVERSAL = "media_universal"
+        const val PIN_KIND_MEDIA_NOTIFICATION = "media_notification"
     }
 }
