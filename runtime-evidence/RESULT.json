@@ -1,0 +1,12 @@
+{
+  "version": "0.1.8",
+  "tests": {
+    "default_off": "No weather preference/location/cache before enable",
+    "actual_network_fetch": "Manual consent and Oslo Norway selection; real forecast cached"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "744113378d5bf9bd4b4ff2f58bbe957d1269a9591ecf02665d2cebf41c9f92fa",
+  "error": "UI target not ready: Close category"
+}
