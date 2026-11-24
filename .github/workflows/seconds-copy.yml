@@ -1,0 +1,92 @@
+name: Shorten native seconds gallery copy
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 696ec0bce439fd84e84cf51a0875c22d70d7f71e
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/seconds-copy-${GITHUB_RUN_ID}"
+      - name: Keep formulas in documentation and concise gallery words
+        run: |
+          python3 - <<'PYCODE'
+          import pathlib, re
+          p=pathlib.Path('app/src/main/res/values/strings.xml');s=p.read_text()
+          values={
+          'mode_kwgt_analog_seconds':'Live seconds • Android 12+',
+          'catalog_kwgt_analog_seconds_desc':'A clean analog clock with a red seconds dot, adapted from Nothing_Analog_. Choose a dark, pale or transparent face. Requires Android 12 or newer. Seconds follow your device settings.',
+          'widget_kwgt_analog_seconds_description':'Analog clock with a red seconds dot. Android 12 or newer. Seconds follow your device settings.',
+          'ledger_ready_analog_seconds':'Live native clock • Android 12+',
+          'ledger_unavailable_pre31':'Requires Android 12 or newer for the seconds dot.'}
+          for key,value in values.items():
+           s,n=re.subn(r'(<string name="'+key+r'"[^>]*>).*?(</string>)',lambda m:m[1]+value+m[2],s,flags=re.S);assert n==1,key
+          p.write_text(s)
+          PYCODE
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          rm -f checkpoints/dotwel-widgets-polish-debug.apk checkpoints/POLISH-SHA256SUMS
+          pkill -f '[K]otlinCompileDaemon' || true
+          bash ./gradlew --stop || true
+          rm -rf app/build/kotlin
+          bash ./gradlew assembleDebug testDebugUnitTest -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
