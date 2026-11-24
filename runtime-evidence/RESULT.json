@@ -1,0 +1,232 @@
+{
+  "source": "3e0a86002e09e04d090d6733ab07068f9116ca4c",
+  "tests": {
+    "digital": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "analog_bold": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "analog_scale": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "date": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "world": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "wx_nothing_temp": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "wx_nothing_sun": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "quotes": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_battery": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_battery_mini": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_battery2": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_date_time": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_date_time2": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_digital4": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_digital3": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_gradient_clock": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_analog2_clock": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_future_clock": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_analog3": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_analog_seconds_clock": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_analog5": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_analog5_transparent": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_orbit_clock": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_mini_calendar": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_clean_info": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_ios_battery": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_digital2": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_nothing_date_time3": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_interstellar_endurance": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_interstellar_endurance_analog": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "kwgt_interstellar_endurance_analog_2": {
+      "gallery_add": "Native prompt captured, cancelled for isolated host sweep",
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "media_m3_expanded": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "media_m3_output": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "media_mini": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "media_minimal": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "media_minimal2": {
+      "native_host": "Inflated actual AppWidgetHost, style and resize captures pending pixel review"
+    },
+    "media_minimal3": {}
+  },
+  "failures": [
+    {
+      "provider": "ClockWidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Native pin confirmation not reached; inspect explanation"
+    },
+    {
+      "provider": "AnalogBoldWidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Native pin confirmation not reached; inspect explanation"
+    },
+    {
+      "provider": "AnalogScaleWidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Native pin confirmation not reached; inspect explanation"
+    },
+    {
+      "provider": "NothingTempWidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Individual gallery item not found"
+    },
+    {
+      "provider": "NothingSunInfoWidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Individual gallery item not found"
+    },
+    {
+      "provider": "KwgtDateTimeWidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Native pin confirmation not reached; inspect explanation"
+    },
+    {
+      "provider": "KwgtDateTime2WidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Native pin confirmation not reached; inspect explanation"
+    },
+    {
+      "provider": "KwgtDigital4WidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Native pin confirmation not reached; inspect explanation"
+    },
+    {
+      "provider": "KwgtDigital3WidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Native pin confirmation not reached; inspect explanation"
+    },
+    {
+      "provider": "KwgtGradientClockWidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Native pin confirmation not reached; inspect explanation"
+    },
+    {
+      "provider": "KwgtDigital2WidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Native pin confirmation not reached; inspect explanation"
+    },
+    {
+      "provider": "KwgtDateTime3WidgetProvider",
+      "stage": "gallery_add",
+      "cause": "Native pin confirmation not reached; inspect explanation"
+    },
+    {
+      "provider": "Material3ExpandedMediaProvider",
+      "stage": "gallery_add",
+      "cause": "UI target missing Open Media player,"
+    },
+    {
+      "provider": "Material3MediaOutputProvider",
+      "stage": "gallery_add",
+      "cause": "UI target missing Open Media player,"
+    },
+    {
+      "provider": "MiniMediaPlayerProvider",
+      "stage": "gallery_add",
+      "cause": "UI target missing Open Media player,"
+    },
+    {
+      "provider": "MinimalMediaPlayerProvider",
+      "stage": "gallery_add",
+      "cause": "UI target missing Open Media player,"
+    },
+    {
+      "provider": "MinimalMediaPlayer2Provider",
+      "stage": "gallery_add",
+      "cause": "UI target missing Open Media player,"
+    },
+    {
+      "provider": "MinimalMediaPlayer3Provider",
+      "stage": "gallery_add",
+      "cause": "UI target missing Open Media player,"
+    }
+  ],
+  "limits": [
+    "Native standalone AppWidgetHost, not final Pixel launcher placement acceptance for every provider.",
+    "Gallery Add is checked independently; native confirmation is captured then cancelled.",
+    "No source repair during this sweep.",
+    "Media and weather permission-on/live fixture checks remain separately identified."
+  ],
+  "sha256": "44ebb889f250e19886e08b9a0c23bff8457132def8f62baf1eebfd2230945769"
+}
