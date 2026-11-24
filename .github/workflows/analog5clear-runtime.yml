@@ -107,10 +107,10 @@ jobs:
             raise RuntimeError('Category did not open '+name)
            category('Clock');cap('02-clock-first')
            for variant in range(12):
-            if find(tree(),'Add KWGT Analog5Clear',True) is not None:break
+            if find(tree(),'Add KWGT Analog5 Clear',True) is not None:break
             click(wait_target('Next'))
-           wait_target('Add KWGT Analog5Clear');cap('03-analog5clear-preview')
-           click(wait_target('Add KWGT Analog5Clear'));cap('04-native-analog5clear');click(native(tree()));time.sleep(1);report['tests']['native_category_analog5clear']='confirmed'
+           wait_target('Add KWGT Analog5 Clear');cap('03-analog5clear-preview')
+           click(wait_target('Add KWGT Analog5 Clear'));cap('04-native-analog5clear');click(native(tree()));time.sleep(1);report['tests']['native_category_analog5clear']='confirmed'
            r=locate('kwgt_analog5clear_clock','home-analog5clear-before');n=find(r,'kwgt_analog5clear_clock');bounds=list(map(int,re.findall(r'\d+',n.get('bounds',''))));report['clock_bounds']=bounds
            adb('shell','am','kill',PKG);ps=adb('shell','ps','-A').decode();(OUT/'postkill-processes.txt').write_text(ps)
            if PKG in ps:raise RuntimeError('Application process remains after kill')
