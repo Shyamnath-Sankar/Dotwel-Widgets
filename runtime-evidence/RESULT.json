@@ -1,0 +1,40 @@
+{
+  "version": "0.1.8",
+  "tests": {
+    "weather_data": "Recorded genuine Oslo cache from45351330432, replay only, not current network success",
+    "pin_temp": "Native confirmation accepted",
+    "pin_sun": "Native confirmation accepted",
+    "killed": "process absent"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "c751c88d3684ea03a32411a490b99cd104c71eaaf92784e708690527041b4dd5",
+  "weather_temp_nodes": [
+    {
+      "text": "",
+      "content-desc": "Oslo, Tue, Nov 24, Cached 08:56 \u00b7 STALE",
+      "resource-id": "com.dotwelwidgets.dotwellabs:id/weather_temp_bitmap",
+      "package": "com.dotwelwidgets.dotwellabs",
+      "clickable": "false",
+      "bounds": "[88,252][498,798]"
+    }
+  ],
+  "weather_sun_nodes": [
+    {
+      "text": "",
+      "content-desc": "Oslo, Tue, Nov 24, Cached 08:56 \u00b7 STALE",
+      "resource-id": "com.dotwelwidgets.dotwellabs:id/weather_sun_bitmap",
+      "package": "com.dotwelwidgets.dotwellabs",
+      "clickable": "false",
+      "bounds": "[582,252][992,798]"
+    }
+  ],
+  "temp_bounds": [
+    88,
+    252,
+    498,
+    798
+  ],
+  "error": "HOME view missing ios_battery"
+}
