@@ -87,6 +87,17 @@
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/weather_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="#1B1E24"
+                android:minHeight="48dp"
+                android:text="@string/weather_header_off"
+                android:textColor="@color/widget_ink"
+                android:textSize="13sp" />
+
             <TextView
                 android:id="@+id/gallery_label"
                 android:layout_width="match_parent"

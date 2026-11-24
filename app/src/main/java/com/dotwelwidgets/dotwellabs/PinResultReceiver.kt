@@ -47,6 +47,8 @@ class PinResultReceiver : BroadcastReceiver() {
             PIN_KIND_KWGT_ANALOG_5_CLEAR -> R.string.pin_kwgt_analog5clear_confirmed
             PIN_KIND_KWGT_MINI_CALENDAR -> R.string.pin_kwgt_mini_calendar_confirmed
             PIN_KIND_KWGT_CLEAN_INFO -> R.string.pin_kwgt_clean_info_confirmed
+            PIN_KIND_WEATHER_TEMP -> R.string.pin_weather_temp_confirmed
+            PIN_KIND_WEATHER_SUN -> R.string.pin_weather_sun_confirmed
             else -> R.string.pin_widget_confirmed
         }
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
@@ -81,5 +83,7 @@ class PinResultReceiver : BroadcastReceiver() {
         const val PIN_KIND_KWGT_ANALOG_5_CLEAR = "kwgt_analog_5_clear"
         const val PIN_KIND_KWGT_MINI_CALENDAR = "kwgt_mini_calendar"
         const val PIN_KIND_KWGT_CLEAN_INFO = "kwgt_clean_info"
+        const val PIN_KIND_WEATHER_TEMP = "weather_temp"
+        const val PIN_KIND_WEATHER_SUN = "weather_sun"
     }
 }

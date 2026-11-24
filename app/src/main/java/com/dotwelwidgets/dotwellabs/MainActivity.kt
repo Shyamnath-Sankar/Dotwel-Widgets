@@ -38,6 +38,10 @@ import android.widget.ScrollView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import com.dotwelwidgets.dotwellabs.weather.WeatherCache
+import com.dotwelwidgets.dotwellabs.weather.WeatherController
+import com.dotwelwidgets.dotwellabs.weather.WeatherDisplay
+import com.dotwelwidgets.dotwellabs.weather.WeatherSettings
 import java.util.UUID
 
 class MainActivity : Activity() {
@@ -97,6 +101,9 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.about_button).setOnClickListener {
             showAboutDialog()
         }
+        findViewById<Button>(R.id.weather_button).setOnClickListener {
+            showWeatherSettingsDialog()
+        }
         findViewById<TextView>(R.id.nav_widgets).setOnClickListener {
             findViewById<ScrollView>(R.id.settings_root).smoothScrollTo(0, 0)
         }
@@ -107,6 +114,12 @@ class MainActivity : Activity() {
             showAboutDialog()
         }
         updateClockStateUi()
+        updateWeatherUi()
+        if (intent.getBooleanExtra(EXTRA_OPEN_WEATHER, false)) {
+            findViewById<View>(R.id.settings_root).post {
+                showWeatherSettingsDialog()
+            }
+        }
         findViewById<View>(R.id.settings_root).post(initialRender)
     }
 
@@ -144,10 +157,20 @@ class MainActivity : Activity() {
         refreshTilePreviews()
         handler.post(tick)
         WidgetUpdater.updateAll(this)
+        updateWeatherUi()
+        maybeAutoRefreshWeather()
         val waiting = pendingEntryAfterAccess
         if (waiting != null && MinuteTickScheduler.hasExactAccess(this)) {
             pendingEntryAfterAccess = null
             requestPin(waiting)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_OPEN_WEATHER, false)) {
+            showWeatherSettingsDialog()
         }
     }
 
@@ -526,8 +549,13 @@ class MainActivity : Activity() {
             nameView.text = entry.name
             sizeView.text = providerSizeText(entry)
             modeView.text = WidgetModeLabels.label(this, entry)
-            descView.text = getString(entry.descriptionRes) + "\n\n" +
-                getString(R.string.sheet_hint)
+            val weatherNote = if (entry.group == WidgetGroup.WEATHER) {
+                "\n\n" + weatherStatusSummary()
+            } else {
+                ""
+            }
+            descView.text = getString(entry.descriptionRes) + weatherNote +
+                "\n\n" + getString(R.string.sheet_hint)
             add.text = getString(R.string.sheet_add_widget)
             add.contentDescription = getString(
                 R.string.sheet_add_widget_format,
@@ -570,6 +598,11 @@ class MainActivity : Activity() {
                 R.string.sheet_preview_description_format,
                 entry.name,
             )
+            previewFrame.setOnClickListener {
+                if (entry.group == WidgetGroup.WEATHER) {
+                    showWeatherSettingsDialog()
+                }
+            }
             previewFrame.post {
                 WidgetPreviewBinder.bind(this, previewFrame, entry, WidgetPrefs.style(this))
             }
@@ -709,6 +742,15 @@ class MainActivity : Activity() {
                 }
             }
             CardAction.WORLD_ZONES -> showWorldDialog(entry)
+            CardAction.WEATHER -> {
+                if (WeatherSettings.isEnabled(this) &&
+                    WeatherSettings.location(this) != null
+                ) {
+                    requestPin(entry)
+                } else {
+                    showWeatherSettingsDialog { requestPin(entry) }
+                }
+            }
             CardAction.NONE -> requestPin(entry)
         }
     }
@@ -871,6 +913,56 @@ class MainActivity : Activity() {
             .show()
     }
 
+    private fun showWeatherSettingsDialog(afterConfigured: (() -> Unit)? = null) {
+        WeatherSettingsDialog(this, afterConfigured).show()
+    }
+
+    private fun weatherStatusSummary(): String {
+        if (!WeatherSettings.isEnabled(this)) {
+            return getString(R.string.weather_preview_hint)
+        }
+        val location = WeatherSettings.location(this)
+            ?: return getString(R.string.weather_status_no_city)
+        val snapshot = WeatherCache.load(this)
+            ?: return getString(R.string.weather_status_no_cache, location.name)
+        val stale = WeatherDisplay.isStale(snapshot, System.currentTimeMillis())
+        return getString(
+            R.string.weather_status_updated,
+            WeatherDisplay.locationLine(location),
+            WeatherDisplay.fetchedTime(snapshot),
+            if (stale) getString(R.string.weather_status_stale_suffix) else "",
+        )
+    }
+
+    private fun updateWeatherUi() {
+        val button = findViewById<Button>(R.id.weather_button) ?: return
+        button.text = getString(
+            if (WeatherSettings.isEnabled(this)) {
+                R.string.weather_header_on
+            } else {
+                R.string.weather_header_off
+            },
+        )
+    }
+
+    private fun maybeAutoRefreshWeather() {
+        if (!WeatherSettings.isEnabled(this)) return
+        if (WeatherSettings.location(this) == null) return
+        val now = System.currentTimeMillis()
+        val cached = WeatherCache.load(this)
+        val stale = cached == null || WeatherDisplay.isStale(cached, now)
+        if (!stale) return
+        val lastAttempt = WeatherSettings.lastAutoAttempt(this)
+        if (lastAttempt > 0L && now - lastAttempt < 60L * 60L * 1000L) return
+        WeatherSettings.markAutoAttempt(this, now)
+        WeatherController.fetch(this, auto = true) {
+            if (isFinishing || isDestroyed) return@fetch
+            WidgetUpdater.updateWeatherProviders(this)
+            refreshTilePreviews()
+            updateWeatherUi()
+        }
+    }
+
     private fun showStyleDialog() {
         val styles = WidgetStyle.entries
         val labels = arrayOf(
@@ -969,8 +1061,12 @@ class MainActivity : Activity() {
         val entry: CatalogEntry?,
     )
 
-    private companion object {
+    companion object {
         const val EXTRA_DEBUG_FORCE_PIN_UNSUPPORTED =
             "com.dotwelwidgets.dotwellabs.extra.DEBUG_FORCE_PIN_UNSUPPORTED"
+        const val ACTION_OPEN_WEATHER =
+            "com.dotwelwidgets.dotwellabs.action.OPEN_WEATHER"
+        const val EXTRA_OPEN_WEATHER =
+            "com.dotwelwidgets.dotwellabs.extra.OPEN_WEATHER"
     }
 }

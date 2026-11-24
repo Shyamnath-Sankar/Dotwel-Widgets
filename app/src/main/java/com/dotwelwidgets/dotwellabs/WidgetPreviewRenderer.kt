@@ -174,6 +174,9 @@ object WidgetPreviewRenderer {
                 BatteryState.level(context),
                 includeBackground = true,
             )
+            PreviewKind.WX_TEMP,
+            PreviewKind.WX_SUN,
+            -> null
             PreviewKind.PLACEHOLDER -> placeholder(context, entry, size.width, size.height, style)
         }
     }

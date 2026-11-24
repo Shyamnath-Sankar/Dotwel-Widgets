@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextClock
 import android.widget.TextView
+import com.dotwelwidgets.dotwellabs.weather.WeatherRenderState
 import java.util.Calendar
 import java.util.Locale
 import kotlin.math.min
@@ -39,6 +40,12 @@ object WidgetPreviewBinder {
             R.string.sheet_preview_description_format,
             entry.name,
         )
+        if (entry.previewKind == PreviewKind.WX_TEMP ||
+            entry.previewKind == PreviewKind.WX_SUN
+        ) {
+            bindWeather(context, container, entry, style)
+            return
+        }
         if (entry.previewKind == PreviewKind.KWGT_ANALOG_2) {
             bindNativeAnalog2(context, container, style)
             return
@@ -73,6 +80,55 @@ object WidgetPreviewBinder {
         val height = container.height.takeIf { it > 0 } ?: dp(context, 180)
         val bitmap = try {
             WidgetPreviewRenderer.render(context, entry, width, height, style)
+        } catch (_: OutOfMemoryError) {
+            null
+        } catch (_: RuntimeException) {
+            null
+        }
+        if (bitmap != null) {
+            container.addView(
+                ImageView(context).apply {
+                    setImageBitmap(bitmap)
+                    scaleType = ImageView.ScaleType.FIT_CENTER
+                    contentDescription = context.getString(
+                        R.string.sheet_preview_description_format,
+                        entry.name,
+                    )
+                },
+                matchParams(),
+            )
+        } else {
+            bindNativeFallback(context, container, entry, style, failed = true)
+        }
+    }
+
+    private fun bindWeather(
+        context: Context,
+        container: FrameLayout,
+        entry: CatalogEntry,
+        style: WidgetStyle,
+    ) {
+        val width = container.width.takeIf { it > 0 } ?: dp(context, 220)
+        val height = container.height.takeIf { it > 0 } ?: dp(context, 180)
+        val state = WeatherRenderState.from(context)
+        val bitmap = try {
+            when (entry.previewKind) {
+                PreviewKind.WX_TEMP -> NothingTempRenderer.render(
+                    context,
+                    width,
+                    height,
+                    style,
+                    state,
+                )
+                PreviewKind.WX_SUN -> NothingSunInfoRenderer.render(
+                    context,
+                    width,
+                    height,
+                    style,
+                    state,
+                )
+                else -> null
+            }
         } catch (_: OutOfMemoryError) {
             null
         } catch (_: RuntimeException) {

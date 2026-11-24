@@ -45,6 +45,8 @@ enum class PreviewKind {
     KWGT_ANALOG_5_CLEAR,
     KWGT_MINI_CALENDAR,
     KWGT_CLEAN_INFO,
+    WX_TEMP,
+    WX_SUN,
     PLACEHOLDER,
 }
 
@@ -52,6 +54,7 @@ enum class CardAction {
     NONE,
     CLOCK_ACCESS,
     WORLD_ZONES,
+    WEATHER,
 }
 
 data class CatalogEntry(
@@ -190,6 +193,32 @@ object WidgetCatalog {
             id = "wx_w1rain",
             name = "Weather 1x1 Rain Chance",
             upstream = "NtWxW1rain · NtWxData/NtWxDraw/NtWxFetch",
+        ),
+        CatalogEntry(
+            id = "wx_nothing_temp",
+            name = "Nothing Temp",
+            group = WidgetGroup.WEATHER,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Temp · Open-Meteo forecast · optional manual city",
+            descriptionRes = R.string.catalog_nothing_temp_desc,
+            detailRes = R.string.ledger_ready_weather,
+            previewKind = PreviewKind.WX_TEMP,
+            providerClass = NothingTempWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_WEATHER_TEMP,
+            action = CardAction.WEATHER,
+        ),
+        CatalogEntry(
+            id = "wx_nothing_sun",
+            name = "Nothing Sun Info",
+            group = WidgetGroup.WEATHER,
+            state = ImportState.READY,
+            upstream = "KWGT Nothing_Sun_Info · Open-Meteo sunrise/sunset · optional manual city",
+            descriptionRes = R.string.catalog_nothing_sun_desc,
+            detailRes = R.string.ledger_ready_weather,
+            previewKind = PreviewKind.WX_SUN,
+            providerClass = NothingSunInfoWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_WEATHER_SUN,
+            action = CardAction.WEATHER,
         ),
         CatalogEntry(
             id = "photo_circle",
@@ -590,6 +619,8 @@ enum class WidgetCategory(
         "weather",
         R.string.category_weather,
         listOf(
+            "wx_nothing_temp",
+            "wx_nothing_sun",
             "wx_circle",
             "wx_square",
             "wx_rect",
@@ -675,6 +706,8 @@ object WidgetModeLabels {
             PreviewKind.KWGT_ANALOG_5_CLEAR -> R.string.mode_kwgt_analog5clear
             PreviewKind.KWGT_MINI_CALENDAR -> R.string.mode_kwgt_mini_calendar
             PreviewKind.KWGT_CLEAN_INFO -> R.string.mode_kwgt_clean_info
+            PreviewKind.WX_TEMP -> R.string.mode_weather_temp
+            PreviewKind.WX_SUN -> R.string.mode_weather_sun
             PreviewKind.PLACEHOLDER -> entry.state.labelRes
         }
     }

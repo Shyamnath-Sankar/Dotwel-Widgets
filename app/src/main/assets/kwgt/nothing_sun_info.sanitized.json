@@ -1,0 +1,352 @@
+{
+  "preset_info": {
+    "archive": null,
+    "author": "Om Gupta",
+    "description": "",
+    "features": "",
+    "pflags": 0,
+    "height": 542,
+    "locked": false,
+    "release": 377435216,
+    "title": "NothingSunInfo",
+    "version": 13,
+    "width": 415,
+    "xscreens": 0,
+    "yscreens": 0
+  },
+  "preset_root": {
+    "internal_type": "RootLayerModule",
+    "globals_list": {
+      "side": {
+        "index": 5,
+        "type": "NUMBER",
+        "title": "side",
+        "min": 0,
+        "max": 720,
+        "toggles": 10,
+        "global_formula": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$"
+      },
+      "bg": {
+        "index": 6,
+        "type": "COLOR",
+        "title": "bg",
+        "toggles": 10,
+        "global_formula": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "fg": {
+        "index": 7,
+        "type": "COLOR",
+        "title": "fg",
+        "toggles": 10,
+        "global_formula": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "primary": {
+        "index": 8,
+        "type": "COLOR",
+        "title": "primary",
+        "value": "#FFD71921"
+      },
+      "accent": {
+        "index": 9,
+        "type": "COLOR",
+        "title": "accent",
+        "toggles": 10,
+        "global_formula": "$ce(gv(fg), alpha, 20)$"
+      },
+      "cond": {
+        "index": 10,
+        "type": "NUMBER",
+        "title": "cond",
+        "global_formula": "$ai(isday)$",
+        "value": 1.0,
+        "min": 0,
+        "max": 1,
+        "toggles": 10
+      }
+    },
+    "viewgroup_items": [
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Bg",
+        "internal_toggles": {
+          "shape_width": 100,
+          "shape_height": 100,
+          "paint_color": 100,
+          "shape_corners": 10
+        },
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "h",
+          "paint_color": "bg"
+        },
+        "shape_corners": 58,
+        "internal_formulas": {
+          "shape_corners": "$gv(side)/5$"
+        },
+        "paint_color": "#FF1B1B1D"
+      },
+      {
+        "internal_type": "StackLayerModule",
+        "internal_title": "Info",
+        "config_margin": 16.0,
+        "internal_toggles": {
+          "position_offset_x": 0,
+          "config_margin": 10
+        },
+        "internal_formulas": {
+          "position_offset_x": "$gv(side)/8.5$ ",
+          "config_margin": "$gv(side)/(277/16)$"
+        },
+        "internal_globals": {
+          "position_offset_x": "side"
+        },
+        "viewgroup_items": [
+          {
+            "internal_type": "TextModule",
+            "text_expression": "$if(gv(cond)=1,SUNSET,SUNRISE)$",
+            "text_size": 32.0,
+            "internal_toggles": {
+              "paint_color": 100,
+              "text_size": 10
+            },
+            "internal_globals": {
+              "paint_color": "fg"
+            },
+            "internal_formulas": {
+              "text_size": "$gv(side)/(277/18)$"
+            }
+          },
+          {
+            "internal_type": "StackLayerModule",
+            "internal_toggles": {
+              "config_margin": 10
+            },
+            "internal_formulas": {
+              "config_margin": "$gv(side)/(277/16)$"
+            },
+            "config_stacking": "VERTICAL_CENTER",
+            "config_margin": 16.0,
+            "viewgroup_items": [
+              {
+                "internal_type": "OverlapLayerModule",
+                "viewgroup_items": [
+                  {
+                    "internal_type": "ShapeModule",
+                    "internal_title": "Arc",
+                    "internal_toggles": {
+                      "paint_color": 100,
+                      "shape_width": 10
+                    },
+                    "internal_formulas": {
+                      "shape_width": "$gv(side)/(277/260)$"
+                    },
+                    "internal_globals": {
+                      "paint_color": "accent"
+                    },
+                    "shape_type": "ARC",
+                    "shape_width": 120.0,
+                    "shape_height": 1.0,
+                    "shape_angle": 180.0,
+                    "position_anchor": "BOTTOM"
+                  },
+                  {
+                    "internal_type": "ShapeModule",
+                    "internal_title": "Arc",
+                    "internal_toggles": {
+                      "paint_color": 100,
+                      "shape_width": 10
+                    },
+                    "internal_formulas": {
+                      "shape_width": "$gv(side)/(277/200)$"
+                    },
+                    "internal_globals": {
+                      "paint_color": "primary"
+                    },
+                    "shape_type": "ARC",
+                    "shape_width": 120.0,
+                    "shape_height": 1.0,
+                    "shape_angle": 180.0,
+                    "position_anchor": "BOTTOM"
+                  },
+                  {
+                    "internal_type": "ShapeModule",
+                    "internal_toggles": {
+                      "shape_width": 10,
+                      "shape_height": 0,
+                      "paint_color": 100
+                    },
+                    "internal_formulas": {
+                      "shape_width": "$gv(side)/1.3$",
+                      "shape_height": "$gv(side)/(277/60)$"
+                    },
+                    "internal_globals": {
+                      "paint_color": "primary"
+                    },
+                    "shape_type": "RECT",
+                    "position_anchor": "BOTTOM",
+                    "shape_height": 1.0
+                  },
+                  {
+                    "internal_type": "OverlapLayerModule",
+                    "internal_title": "Arrow",
+                    "internal_toggles": {
+                      "position_padding_top": 10
+                    },
+                    "internal_formulas": {
+                      "position_padding_top": "$gv(side)/(277/22)$"
+                    },
+                    "position_padding_top": 20.0,
+                    "viewgroup_items": [
+                      {
+                        "internal_type": "OverlapLayerModule",
+                        "viewgroup_items": [
+                          {
+                            "internal_type": "ShapeModule",
+                            "internal_toggles": {
+                              "paint_color": 100,
+                              "shape_width": 0,
+                              "shape_height": 10
+                            },
+                            "internal_globals": {
+                              "paint_color": "primary"
+                            },
+                            "shape_type": "RECT",
+                            "shape_width": 1.0,
+                            "shape_height": 36.0,
+                            "internal_formulas": {
+                              "shape_width": "$gv(side)/(277)$",
+                              "shape_height": "$gv(side)/(277/36)$"
+                            }
+                          },
+                          {
+                            "internal_type": "OverlapLayerModule",
+                            "internal_toggles": {
+                              "position_anchor": 10
+                            },
+                            "internal_formulas": {
+                              "position_anchor": "$if(gv(cond)=1, Bottom, Top)$"
+                            },
+                            "position_anchor": "TOP",
+                            "viewgroup_items": [
+                              {
+                                "internal_type": "ShapeModule",
+                                "internal_title": "Clip",
+                                "internal_toggles": {
+                                  "position_anchor": 10,
+                                  "shape_width": 10,
+                                  "shape_height": 10
+                                },
+                                "internal_formulas": {
+                                  "position_anchor": "$if(gv(cond)=1, Bottom, Top)$",
+                                  "shape_width": "$gv(side)/(277/26)$",
+                                  "shape_height": "$gv(side)/(277/8)$"
+                                },
+                                "shape_type": "RECT",
+                                "shape_width": 26.0,
+                                "shape_height": 8.0,
+                                "fx_mask": "CLIP_NEXT",
+                                "position_anchor": "TOP"
+                              },
+                              {
+                                "internal_type": "ShapeModule",
+                                "shape_width": 14.0,
+                                "shape_rotate_mode": "MANUAL",
+                                "shape_rotate_offset": 45.0,
+                                "paint_style": "STROKE",
+                                "internal_toggles": {
+                                  "paint_stroke": 0,
+                                  "shape_width": 10,
+                                  "paint_color": 100
+                                },
+                                "internal_formulas": {
+                                  "paint_stroke": "$gv(side)/(277)$",
+                                  "shape_width": "$gv(side)/(277/14)$"
+                                },
+                                "internal_globals": {
+                                  "paint_color": "primary"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "internal_type": "ShapeModule",
+                "internal_toggles": {
+                  "shape_width": 10,
+                  "shape_height": 0,
+                  "paint_color": 100
+                },
+                "internal_formulas": {
+                  "shape_width": "$gv(side)/1.6$",
+                  "shape_height": "$gv(side)/(277/60)$"
+                },
+                "internal_globals": {
+                  "paint_color": "accent"
+                },
+                "shape_type": "RECT",
+                "position_anchor": "BOTTOM",
+                "shape_height": 1.0
+              },
+              {
+                "internal_type": "ShapeModule",
+                "internal_toggles": {
+                  "shape_width": 10,
+                  "shape_height": 0,
+                  "paint_color": 100
+                },
+                "internal_formulas": {
+                  "shape_width": "$gv(side)/2$",
+                  "shape_height": "$gv(side)/(277/60)$"
+                },
+                "internal_globals": {
+                  "paint_color": "accent"
+                },
+                "shape_type": "RECT",
+                "position_anchor": "BOTTOM",
+                "shape_height": 1.0
+              },
+              {
+                "internal_type": "ShapeModule",
+                "internal_toggles": {
+                  "shape_width": 10,
+                  "shape_height": 0,
+                  "paint_color": 100
+                },
+                "internal_formulas": {
+                  "shape_width": "$gv(side)/3$",
+                  "shape_height": "$gv(side)/(277/60)$"
+                },
+                "internal_globals": {
+                  "paint_color": "accent"
+                },
+                "shape_type": "RECT",
+                "position_anchor": "BOTTOM",
+                "shape_height": 1.0
+              }
+            ]
+          },
+          {
+            "internal_type": "TextModule",
+            "text_expression": "$df(\"hh:mma\", ai(if(gv(cond)=1,sunset,sunrise)))$",
+            "text_size": 32.0,
+            "internal_toggles": {
+              "paint_color": 100,
+              "text_size": 10
+            },
+            "internal_globals": {
+              "paint_color": "fg"
+            },
+            "internal_formulas": {
+              "text_size": "$gv(side)/(277/26)$"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

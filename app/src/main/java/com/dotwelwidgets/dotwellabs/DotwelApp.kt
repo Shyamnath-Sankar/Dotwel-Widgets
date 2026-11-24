@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
+import com.dotwelwidgets.dotwellabs.weather.WeatherCache
 
 /**
  * Process-lifetime battery listener and startup re-arm.
@@ -46,6 +47,7 @@ class DotwelApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        WeatherCache.attach(this)
         BatteryRefreshScheduler.schedule(this)
         val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

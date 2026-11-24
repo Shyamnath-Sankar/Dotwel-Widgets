@@ -1,0 +1,123 @@
+{
+  "preset_info": {
+    "archive": null,
+    "author": "Om Gupta",
+    "description": "",
+    "features": "WEATHER FORECAST",
+    "pflags": 0,
+    "height": 542,
+    "locked": false,
+    "release": 377435216,
+    "title": "NothingTemp",
+    "version": 13,
+    "width": 415,
+    "xscreens": 0,
+    "yscreens": 0
+  },
+  "preset_root": {
+    "internal_type": "RootLayerModule",
+    "globals_list": {
+      "side": {
+        "index": 5,
+        "type": "NUMBER",
+        "title": "side",
+        "min": 0,
+        "max": 720,
+        "toggles": 10,
+        "global_formula": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$"
+      },
+      "bg": {
+        "index": 6,
+        "type": "COLOR",
+        "title": "bg",
+        "toggles": 10,
+        "global_formula": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "fg": {
+        "index": 7,
+        "type": "COLOR",
+        "title": "fg",
+        "toggles": 10,
+        "global_formula": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "primary": {
+        "index": 8,
+        "type": "COLOR",
+        "title": "primary",
+        "value": "#FFD71921"
+      }
+    },
+    "config_scale_value": 157.74908,
+    "viewgroup_items": [
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Bg",
+        "internal_toggles": {
+          "shape_width": 100,
+          "shape_height": 100,
+          "paint_color": 100,
+          "shape_corners": 10
+        },
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "h",
+          "paint_color": "bg"
+        },
+        "shape_corners": 58,
+        "internal_formulas": {
+          "shape_corners": "$gv(side)/9$"
+        },
+        "paint_color": "#FF1B1B1D",
+        "shape_type": "EXAGON"
+      },
+      {
+        "internal_type": "StackLayerModule",
+        "internal_title": "Info",
+        "config_margin": 14.0,
+        "internal_toggles": {
+          "position_offset_x": 0
+        },
+        "internal_formulas": {
+          "position_offset_x": "$gv(side)/8.5$ "
+        },
+        "internal_globals": {
+          "position_offset_x": "side"
+        },
+        "config_stacking": "VERTICAL_CENTER",
+        "viewgroup_items": [
+          {
+            "internal_type": "TextModule",
+            "text_expression": "$wf(min, 0)$\u00b0$wi(tempu)$",
+            "text_size": 32.0,
+            "internal_toggles": {
+              "paint_color": 100,
+              "text_size": 10
+            },
+            "internal_globals": {
+              "paint_color": "fg"
+            },
+            "internal_formulas": {
+              "text_size": "$gv(side)/3.5$"
+            },
+            "text_align": "CENTER"
+          },
+          {
+            "internal_type": "TextModule",
+            "text_expression": "H : $wf(min, 0)$\u00b0   L : $wf(max, 0)$\u00b0",
+            "text_size": 32.0,
+            "internal_toggles": {
+              "paint_color": 100,
+              "text_size": 10
+            },
+            "internal_globals": {
+              "paint_color": "fg"
+            },
+            "internal_formulas": {
+              "text_size": "$gv(side)/10$"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

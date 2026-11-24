@@ -30,6 +30,8 @@ object WidgetUpdater {
         KwgtAnalog5TransparentWidgetProvider::class.java,
         KwgtMiniCalendarWidgetProvider::class.java,
         KwgtCleanInfoWidgetProvider::class.java,
+        NothingTempWidgetProvider::class.java,
+        NothingSunInfoWidgetProvider::class.java,
     )
 
     fun updateAll(context: Context) {
@@ -39,6 +41,12 @@ object WidgetUpdater {
         }
         MinuteTickScheduler.schedule(context)
         BatteryRefreshScheduler.schedule(context)
+    }
+
+    fun updateWeatherProviders(context: Context) {
+        val manager = AppWidgetManager.getInstance(context)
+        updateProvider(context, manager, NothingTempWidgetProvider::class.java)
+        updateProvider(context, manager, NothingSunInfoWidgetProvider::class.java)
     }
 
     fun updateBatteryProviders(context: Context) {

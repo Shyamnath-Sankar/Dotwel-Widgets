@@ -50,7 +50,7 @@ data class WeatherSnapshot(
         get() = System.currentTimeMillis() - fetchedAtEpochMillis > staleAfterMillis
 
     companion object {
-        const val DEFAULT_STALE_AFTER_MILLIS = 30 * 60 * 1000L
+        const val DEFAULT_STALE_AFTER_MILLIS = 60 * 60 * 1000L
     }
 }
 
