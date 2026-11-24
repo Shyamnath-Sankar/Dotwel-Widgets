@@ -1,0 +1,88 @@
+name: Finish optional weather native integration
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: c6e287522f9aa1a59cd3d569102980626874cc8c
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/weather-finish-${GITHUB_RUN_ID}"
+      - name: Apply reference-led widget browser and renderer polish
+        timeout-minutes: 11
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          cat > /tmp/widget-task.txt <<'TASK'
+          Finish partial24 actual-source weather candidate from c6e287522f9aa1a59cd3d569102980626874cc8c, not restart. Accepted22parent mustremainintact. Build failed AAPT because unescaped apostrophes in strings weather_explain city possessive and widget_weather_temp_description today possessive. Fix Android resource apostrophe escaping. Then compile/unit/lint and repair all actual failures, do not suppress tests/lint. Previous coding10mintimeout left large implementation; inspect actual diff/source and finish within8min. Existing24not runtimeverified. Prior taskfull requirements preserved in workflowweather-source.yml and actual code, not authority. Scope only finishweather Temp+SunInfo, no new providers/launcher/production/visibility/history/assets/fonts/paid. No permission beyondINTERNET normal, GPS/backgroundpolling prohibited.
+          
+          Critical independent source review to repair before build: WeatherController.search lacks Context/enabled checks, and WeatherSettingsDialog.useSelectedCity re-enables weather unconditionally even after disable with old city results. Guard search and result-selection on enabled, never re-enable implicitly, clear results ondisable, cancel/ignore outstanding searches and fetches. Disable MUSTdelete selectedcity/cache per promise, not only togglefalse; delete all clearsunit preference too. WeatherSettings+cache mutation and fetch shouldCommit check/cache write need common synchronizedstate lock or atomic generation transaction to prevent race where disable clears then in-flight cache saves. All checks and cache commit under same lock, disable/location/unit transitions bump generation/clear cache inside same lock so cached data never restores after revoke. Guard worker BEFORE both forecast and optionalairrequest as well as beforecommit so no newrequest starts afterrevocation. Search queuedtasks check enabled+generation too. Bound threadsfutures tracking remove finishedfutures ratherthanmemoryleak. Do not hold lock across network. Errorstrings no URLscoordinates/raw exception detail visible/logged. Storelastfailure separatelyperselectedcity and surface onwidget cached/error label not silentlyfresh; stale label mustage based clock not only redraw, canuseTextClock timestamporclearlystatedcachedat no liveclaim. Providercacheonly on nativecallbacks. WeatherDisplay already usesrealforecastlow/HmaxLmin/cityzone/nextsolar. Check polar/null/nonfinite nofake0. Airquery unusedbythese2providers remove unlessfutureexistingneed actuallyused to avoidextra disclosure/cost. Exclude location/cache fromcloudbackup/device transfer. Workbeforetests, verify no overlooked missing registration/MainActivity/gallery/native image tags. Unit/instrumenttests forconsentdisable/searchselection/cacheclear/inflightguard/unknown/stale/unit/date/polar. Don't claim accepted/ready/nativeverified, buildonly24pendingnative.
+          TASK
+          timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          rm -f checkpoints/dotwel-widgets-polish-debug.apk checkpoints/POLISH-SHA256SUMS
+          pkill -f '[K]otlinCompileDaemon' || true
+          bash ./gradlew --stop || true
+          rm -rf app/build/kotlin
+          bash ./gradlew assembleDebug testDebugUnitTest -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
