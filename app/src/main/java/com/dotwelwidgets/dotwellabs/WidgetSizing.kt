@@ -82,6 +82,9 @@ object WidgetSizing {
         }
     }
 
+    fun currentHostSize(context: Context, options: Bundle): SizeF =
+        legacyHostSize(context, options)
+
     private fun legacyHostSize(context: Context, options: Bundle): SizeF {
         val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
         val maxWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 0)

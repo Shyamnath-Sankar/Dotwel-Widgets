@@ -1,10 +1,14 @@
 package com.dotwelwidgets.dotwellabs
 
 import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.provider.AlarmClock
+import android.util.TypedValue
 import android.widget.RemoteViews
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Separate native provider for KWGT Nothing_Digital_Clock ("KWGT Orbit Clock").
@@ -32,13 +36,43 @@ import android.widget.RemoteViews
  * `#A6FFFFFF` outer circle with a dark inner disc and white ink; transparent
  * keeps the white inner disc and orbits without a filled outer card. The hour
  * dot stays the source red `#D71921` in every style.
+ *
+ * The central time is re-bound on every update. RemoteViews can otherwise keep
+ * the previous layout's text colour when the same view id is reused across a
+ * style change, which made translucent time dark on the dark inner disc. The
+ * size and 3/-4 offsets are also re-bound from the actual host size using the
+ * source 46/277 proportion, because AnalogClock only downscales its intrinsic
+ * 277 dial while a fixed sp size would drift out of the inner disc on resize.
  */
 class KwgtOrbitClockWidgetProvider : BaseWidgetProvider() {
     override val layoutRes: Int = R.layout.widget_kwgt_orbit_black
     override val tapAction: String = AlarmClock.ACTION_SHOW_ALARMS
 
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
-        val views = RemoteViews(context.packageName, layoutFor(WidgetPrefs.style(context)))
+        val style = WidgetPrefs.style(context)
+        val views = RemoteViews(context.packageName, layoutFor(style))
+        val options = AppWidgetManager.getInstance(context).getAppWidgetOptions(appWidgetId)
+        val host = WidgetSizing.currentHostSize(context, options)
+        val metrics = timeMetrics(
+            hostWidthDp = host.width,
+            hostHeightDp = host.height,
+            density = context.resources.displayMetrics.density,
+        )
+        views.setTextColor(R.id.kwgt_orbit_time, timeInk(style))
+        views.setTextViewTextSize(
+            R.id.kwgt_orbit_time,
+            TypedValue.COMPLEX_UNIT_PX,
+            metrics.textSizePx,
+        )
+        views.setViewPadding(
+            R.id.kwgt_orbit_time,
+            metrics.padLeft,
+            metrics.padTop,
+            metrics.padRight,
+            metrics.padBottom,
+        )
+        views.setCharSequence(R.id.kwgt_orbit_time, "setFormat12Hour", FORMAT_12)
+        views.setCharSequence(R.id.kwgt_orbit_time, "setFormat24Hour", FORMAT_24)
         val pendingIntent = PendingIntent.getActivity(
             context,
             appWidgetId,
@@ -51,6 +85,51 @@ class KwgtOrbitClockWidgetProvider : BaseWidgetProvider() {
     }
 
     companion object {
+        private const val FORMAT_12 = "hh:mm"
+        private const val FORMAT_24 = "HH:mm"
+        private const val SOURCE_CANVAS = 277f
+        private const val SOURCE_TIME_SIZE = 46f
+        private const val SOURCE_OFFSET_X = 3f
+        private const val SOURCE_OFFSET_Y = 4f
+
+        internal data class TimeMetrics(
+            val textSizePx: Float,
+            val offsetXPx: Float,
+            val offsetYPx: Float,
+            val padLeft: Int,
+            val padTop: Int,
+            val padRight: Int,
+            val padBottom: Int,
+        )
+
+        internal fun timeInk(style: WidgetStyle): Int = when (style) {
+            WidgetStyle.TRANSLUCENT -> 0xFFFFFFFF.toInt()
+            WidgetStyle.BLACK, WidgetStyle.TRANSPARENT -> 0xFF1B1B1D.toInt()
+        }
+
+        internal fun timeMetrics(
+            hostWidthDp: Float,
+            hostHeightDp: Float,
+            density: Float,
+        ): TimeMetrics {
+            val contentWidthDp = (hostWidthDp - WidgetSizing.CONTENT_INSET_DP * 2f)
+                .coerceAtLeast(1f)
+            val contentHeightDp = (hostHeightDp - WidgetSizing.CONTENT_INSET_DP * 2f)
+                .coerceAtLeast(1f)
+            val sidePx = min(contentWidthDp, contentHeightDp) * density
+            val offsetX = sidePx * SOURCE_OFFSET_X / SOURCE_CANVAS
+            val offsetY = -sidePx * SOURCE_OFFSET_Y / SOURCE_CANVAS
+            return TimeMetrics(
+                textSizePx = sidePx * SOURCE_TIME_SIZE / SOURCE_CANVAS,
+                offsetXPx = offsetX,
+                offsetYPx = offsetY,
+                padLeft = (offsetX * 2f).roundToInt().coerceAtLeast(0),
+                padTop = (offsetY * 2f).roundToInt().coerceAtLeast(0),
+                padRight = (-offsetX * 2f).roundToInt().coerceAtLeast(0),
+                padBottom = (-offsetY * 2f).roundToInt().coerceAtLeast(0),
+            )
+        }
+
         fun layoutFor(style: WidgetStyle): Int = when (style) {
             WidgetStyle.BLACK -> R.layout.widget_kwgt_orbit_black
             WidgetStyle.TRANSLUCENT -> R.layout.widget_kwgt_orbit_translucent

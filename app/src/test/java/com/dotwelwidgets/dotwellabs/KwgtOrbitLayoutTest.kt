@@ -80,10 +80,97 @@ class KwgtOrbitLayoutTest {
             assertEquals("HH:mm", text.getAttribute("android:format24Hour"))
             assertEquals("sans-serif", text.getAttribute("android:fontFamily"))
             assertEquals(case.textColor, text.getAttribute("android:textColor"))
-            assertEquals("26sp", text.getAttribute("android:textSize"))
-            assertEquals("1.7dp", text.getAttribute("android:translationX"))
-            assertEquals("-2.2dp", text.getAttribute("android:translationY"))
+            assertFalse(
+                "${case.style} must not pin a fixed preview text size",
+                text.hasAttribute("android:textSize"),
+            )
+            assertFalse(
+                "${case.style} must not pin fixed preview offsets",
+                text.hasAttribute("android:translationX"),
+            )
+            assertFalse(
+                "${case.style} must not pin fixed preview offsets",
+                text.hasAttribute("android:translationY"),
+            )
         }
+    }
+
+    @Test
+    fun translucentTimeInkIsWhiteAndOtherStylesKeepTheDarkSourceInk() {
+        assertEquals(
+            0xFFFFFFFF.toInt(),
+            KwgtOrbitClockWidgetProvider.timeInk(WidgetStyle.TRANSLUCENT),
+        )
+        assertEquals(
+            0xFF1B1B1D.toInt(),
+            KwgtOrbitClockWidgetProvider.timeInk(WidgetStyle.BLACK),
+        )
+        assertEquals(
+            0xFF1B1B1D.toInt(),
+            KwgtOrbitClockWidgetProvider.timeInk(WidgetStyle.TRANSPARENT),
+        )
+    }
+
+    @Test
+    fun timeMetricsUseTheSource46Over277SizeAnd3Minus4Offsets() {
+        val metrics = KwgtOrbitClockWidgetProvider.timeMetrics(
+            hostWidthDp = 110f,
+            hostHeightDp = 110f,
+            density = 3f,
+        )
+        val sidePx = (110f - WidgetSizing.CONTENT_INSET_DP * 2f) * 3f
+
+        assertEquals(sidePx * 46f / 277f, metrics.textSizePx, 0.01f)
+        assertEquals(sidePx * 3f / 277f, metrics.offsetXPx, 0.01f)
+        assertEquals(-sidePx * 4f / 277f, metrics.offsetYPx, 0.01f)
+        assertTrue(
+            "live time must stay inside the 164/277 inner disc",
+            metrics.textSizePx < sidePx * 164f / 277f,
+        )
+        assertEquals(
+            metrics.offsetXPx,
+            (metrics.padLeft - metrics.padRight) / 2f,
+            0.51f,
+        )
+        assertEquals(
+            metrics.offsetYPx,
+            (metrics.padTop - metrics.padBottom) / 2f,
+            0.51f,
+        )
+    }
+
+    @Test
+    fun nonSquareHostsScaleFromTheShortSideWithoutDistortingTheCircle() {
+        val square = KwgtOrbitClockWidgetProvider.timeMetrics(110f, 110f, 2f)
+        val wide = KwgtOrbitClockWidgetProvider.timeMetrics(200f, 110f, 2f)
+        val tall = KwgtOrbitClockWidgetProvider.timeMetrics(110f, 200f, 2f)
+
+        assertEquals(square.textSizePx, wide.textSizePx, 0.01f)
+        assertEquals(square.textSizePx, tall.textSizePx, 0.01f)
+        assertEquals(square.offsetXPx, wide.offsetXPx, 0.01f)
+        assertEquals(square.offsetYPx, wide.offsetYPx, 0.01f)
+        assertEquals(square.offsetXPx, tall.offsetXPx, 0.01f)
+        assertEquals(square.offsetYPx, tall.offsetYPx, 0.01f)
+    }
+
+    @Test
+    fun providerReappliesStyleInkSizeOffsetsAndFormatsOnEveryUpdate() {
+        val source = listOf(
+            File(
+                "src/main/java/com/dotwelwidgets/dotwellabs/" +
+                    "KwgtOrbitClockWidgetProvider.kt",
+            ),
+            File(
+                "app/src/main/java/com/dotwelwidgets/dotwellabs/" +
+                    "KwgtOrbitClockWidgetProvider.kt",
+            ),
+        ).first { it.isFile }.readText()
+
+        assertTrue(source.contains("views.setTextColor(R.id.kwgt_orbit_time"))
+        assertTrue(source.contains("views.setTextViewTextSize("))
+        assertTrue(source.contains("views.setViewPadding("))
+        assertTrue(source.contains("setFormat12Hour"))
+        assertTrue(source.contains("setFormat24Hour"))
     }
 
     @Test

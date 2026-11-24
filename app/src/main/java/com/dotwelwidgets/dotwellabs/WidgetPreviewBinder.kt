@@ -272,10 +272,21 @@ object WidgetPreviewBinder {
         style: WidgetStyle,
     ) {
         val layout = KwgtOrbitClockWidgetProvider.layoutFor(style)
-        container.addView(
-            LayoutInflater.from(context).inflate(layout, container, false),
-            matchParams(),
+        val view = LayoutInflater.from(context).inflate(layout, container, false)
+        val density = context.resources.displayMetrics.density
+        val width = container.width.takeIf { it > 0 } ?: dp(context, 220)
+        val height = container.height.takeIf { it > 0 } ?: dp(context, 180)
+        val metrics = KwgtOrbitClockWidgetProvider.timeMetrics(
+            hostWidthDp = width / density,
+            hostHeightDp = height / density,
+            density = density,
         )
+        view.findViewById<TextClock>(R.id.kwgt_orbit_time)?.let { clock ->
+            clock.setTextSize(TypedValue.COMPLEX_UNIT_PX, metrics.textSizePx)
+            clock.translationX = metrics.offsetXPx
+            clock.translationY = metrics.offsetYPx
+        }
+        container.addView(view, matchParams())
     }
 
     private fun bindNativeFallback(

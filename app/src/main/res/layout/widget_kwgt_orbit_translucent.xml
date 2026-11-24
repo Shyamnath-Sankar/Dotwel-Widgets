@@ -24,9 +24,6 @@
         android:format12Hour="hh:mm"
         android:format24Hour="HH:mm"
         android:includeFontPadding="false"
-        android:textColor="#FFFFFFFF"
-        android:textSize="26sp"
-        android:translationX="1.7dp"
-        android:translationY="-2.2dp" />
+        android:textColor="#FFFFFFFF" />
 
 </FrameLayout>
