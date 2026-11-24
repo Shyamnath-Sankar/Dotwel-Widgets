@@ -88,7 +88,7 @@ jobs:
             elif any(n.get('package','')=='com.google.android.apps.nexuslauncher' for n in r.iter('node')):break
             time.sleep(3)
            else:raise RuntimeError('Launcher readiness failed before app install')
-           (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
+           (OUT/'am-help.txt').write_bytes(adb('shell','am','help',check=False))
            apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
            if report['sha256']!='32865216424e0f759150102ef14d41b2cb3e2f7aa383746d10dcebf8889cdf1c':raise RuntimeError('Final APK hash mismatch')
            adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
@@ -127,7 +127,7 @@ jobs:
            click(wait_target('Add KWGT Analog3'));cap('pre31-native-analog3');click(native(tree()));time.sleep(1)
            locate('kwgt_analog3_clock','pre31-home-analog3');report['tests']['existing_provider_pin']='confirmed'
 
-          except Exception as e:report['error']=str(e);cap('99-fatal')
+          except Exception as e:report['error']=repr(e);cap('99-fatal')
           finally:
            (OUT/'RESULT.json').write_text(json.dumps(report,indent=2));(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','3500',check=False));print(json.dumps(report,indent=2))
           if 'error' in report or any(isinstance(v,dict) and 'error' in v for v in report['tests'].values()):raise SystemExit(1)
