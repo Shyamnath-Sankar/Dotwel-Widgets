@@ -6,6 +6,56 @@
 - No launcher repository, visibility, workflow, signing key, permission,
   dependency or provider set was changed in this run.
 
+## 26th provider build repair (Orbit native preview)
+
+- Candidate branch `agent/orbit-finish-45378636903`, source commit
+  `57152a06a60678ea761c46f1ffd7ff34a6db801f` plus the compile repair below.
+  This remains the existing debug checkpoint; no version bump, provider addition
+  beyond the already-source Orbit entry, permission, service, dependency,
+  launcher change or workflow edit was made.
+- Root cause of the failed build: `WidgetPreviewRenderer.render()` switches on
+  `PreviewKind` without an `else`, and the newly added `KWGT_ORBIT` enum value
+  had no branch. The repair is the single native-preview branch
+  `PreviewKind.KWGT_ORBIT -> null`, matching Analog2/Future/Analog3/Seconds/
+  Analog5/Clear: Orbit is inflated from its native RemoteViews layout by
+  `WidgetPreviewBinder`, not rendered as a bitmap. A full recompile confirmed no
+  other missing exhaustive `when` branch; lint suppressions were not added and
+  no test assertion was weakened.
+- Orbit source review found the implementation already uses the actual
+  `Nothing_Digital_Clock` relationships: 277 outer circle, 164 inner disc,
+  205/245 orbits at 0.5 stroke, 12-diameter hour/minute dots at radii 102/122.5,
+  hour red `#D71921`, minute white/dark per style, and 277 viewport vectors.
+  The central time is a live platform `TextClock` (`hh:mm`/`HH:mm`), and the
+  platform `AnalogClock` rotates the dot hand vectors; no baked or fake time is
+  used. The source Time module has no `text_expression`; the sanitized JSON,
+  ledger and attribution record this as a preview-led `hh:mm` repair based on the
+  embedded 02:11 preview, not as a literal source expression. The stored
+  `CLOCK_SECOND` formula values carry inactive toggle 0 and remain unused, so no
+  seconds hand or API 31 gate was added.
+- The three Orbit layouts keep the native clock and TextClock centered in the
+  actual host frame (`match_parent` clock with `center` gravity, `wrap_content`
+  live text); no fixed preview-only host size or bitmap is used. Runtime
+  non-square host scaling, resize, style switching and dot movement remain
+  unverified here. Gallery copy is unchanged and at most 45 words.
+- iOS Battery pin path was rechecked without changing the battery widget:
+  catalog `kwgt_ios_battery` has `IosBatteryWidgetProvider` and
+  `PIN_KIND_KWGT_IOS_BATTERY`; the manifest registers `.IosBatteryWidgetProvider`
+  with `@xml/ios_battery_widget_info`, and `widget_ios_battery.xml` keeps
+  `@+id/widget_ios_battery_bitmap`. `PinResultReceiver` is registered and maps
+  the catalog pin kind to its confirmation. The later isolated run that showed a
+  native pin prompt but no HOME widget is not evidence of an app-side receiver
+  mismatch because the launcher owns placement after the prompt; no battery code
+  was mutated without a proven app defect.
+- Verification in this run:
+  `./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug` finished
+  `BUILD SUCCESSFUL`. Unit/layout tests: 122, 0 skipped, 0 failures, 0 errors.
+  Lint: 0 errors, 313 warnings, no added suppressions. Debug APK:
+  `app/build/outputs/apk/debug/app-debug.apk`, sha256
+  `40bedfe0da0d6a116098ad08845bd000ac35284a437bc816fc4d9a4380323aa8`.
+  This is build-verification only; it is not a runtime pass, screenshot,
+  completion or Play acceptance claim. The source is 26 providers / 20 of 40
+  presets pending native runtime verification.
+
 ## iOS Battery fit and gallery copy correction (25 providers)
 
 - `IosBatteryRenderer` now normalises to the visible Komponent card basis 290
