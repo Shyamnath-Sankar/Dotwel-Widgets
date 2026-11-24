@@ -56,7 +56,7 @@ class KwgtAnalog5TransparentLayoutTest {
             val paths = vector.getElementsByTagName("path").elements()
             assertEquals("$dial must not add a filled dial card", 2, paths.size)
             paths.forEach { path ->
-                assertEquals("$dial CLEAR hole fill type", "evenOdd", path.getAttribute("android:fillType"))
+                assertEquals("$dial CLEAR hole fill type", "", path.getAttribute("android:fillType"))
                 assertFalse(
                     "$dial must not paint a transparent background card",
                     path.getAttribute("android:fillColor") == "#00000000",
@@ -100,61 +100,20 @@ class KwgtAnalog5TransparentLayoutTest {
     }
 
     @Test
-    fun clearOverlaysAreRealEvenOddHolesNotBackgroundFills() {
-        cases.forEach { (_, dial, _) ->
-            val minutePath = dialPath(dial, 0)
-            val hourPath = dialPath(dial, 1)
-            val minuteSubpaths = minutePath.split("M").drop(1)
-            val hourSubpaths = hourPath.split("M").drop(1)
-            assertEquals("minute ticks plus first CLEAR", 61, minuteSubpaths.size)
-            assertEquals("hour ticks plus last CLEAR", 13, hourSubpaths.size)
-
-            assertTrue(
-                "$dial minute path must cut the first CLEAR square",
-                minutePath.contains("18.0652") &&
-                    minutePath.contains("258.9348") &&
-                    minutePath.contains("42.6154"),
-            )
-            assertTrue(
-                "$dial hour path must cut the last CLEAR square",
-                hourPath.contains("31.9615") &&
-                    hourPath.contains("245.0385") &&
-                    hourPath.contains("39.5714"),
-            )
-            assertTrue(
-                "$dial must express CLEAR as a hole, not an opaque overlay",
-                minutePath.contains("M60.6806,18.0652") &&
-                    hourPath.contains("M71.5330,31.9615"),
-            )
-        }
-    }
-
-    @Test
-    fun clipAndClearCornersMatchTheActualTransparentSource() {
+    fun clearMasksIntersectTicksRatherThanPaintXorHoles() {
         cases.forEach { (_, dial, _) ->
             val vector = parse("drawable", "$dial.xml").documentElement
             val clips = vector.getElementsByTagName("clip-path").elements()
-            assertEquals("$dial clip paths", 2, clips.size)
-            clips.forEach { clip ->
-                val data = clip.getAttribute("android:pathData")
-                assertTrue(
-                    "$dial outer clip width 277/1.08 and corner 277/5",
-                    data.contains("10.2593") &&
-                        data.contains("266.7407") &&
-                        data.contains("55.4000") &&
-                        !data.contains("46.1667"),
-                )
-            }
-            val minute = dialPath(dial, 0)
-            val hour = dialPath(dial, 1)
-            assertTrue(
-                "$dial first CLEAR corner 277/6.5",
-                minute.contains("42.6154") && !minute.contains("40.7353"),
-            )
-            assertTrue(
-                "$dial last CLEAR corner 277/7",
-                hour.contains("39.5714"),
-            )
+            assertEquals(4, clips.size)
+            val inverse = clips.filter { it.getAttribute("android:fillType") == "evenOdd" }
+            assertEquals(2, inverse.size)
+            assertTrue(inverse[0].getAttribute("android:pathData").contains("42.6154"))
+            assertTrue(inverse[1].getAttribute("android:pathData").contains("39.5714"))
+            inverse.forEach { assertTrue(it.getAttribute("android:pathData").startsWith("M-100,-100")) }
+            val paths = vector.getElementsByTagName("path").elements()
+            assertEquals(60, tickSubpaths(paths[0].getAttribute("android:pathData")).size)
+            assertEquals(12, tickSubpaths(paths[1].getAttribute("android:pathData")).size)
+            paths.forEach { assertFalse(it.getAttribute("android:pathData").contains("A")) }
         }
     }
 
@@ -233,7 +192,7 @@ class KwgtAnalog5TransparentLayoutTest {
 
     private fun dialPath(dial: String, groupIndex: Int): String {
         val vector = parse("drawable", "$dial.xml").documentElement
-        val group = vector.getElementsByTagName("group").item(groupIndex) as Element
+        val group = vector.childElementsRecursively().filter { it.tagName == "group" && it.parentNode == vector }[groupIndex]
         return (group.getElementsByTagName("path").item(0) as Element)
             .getAttribute("android:pathData")
     }
