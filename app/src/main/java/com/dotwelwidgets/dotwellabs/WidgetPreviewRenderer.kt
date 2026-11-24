@@ -254,11 +254,30 @@ object WidgetPreviewRenderer {
                     },
                 )
             }
+            PreviewKind.NT_PHOTO -> NtPhotoRenderer.render(context, -1, size.width, size.height,
+                entry.id == "photo_circle", style)
+            PreviewKind.NT_AWAY -> NtAwayRenderer.render(context,size.width,size.height,style)
+            PreviewKind.NT_WX -> NtWxRenderer.render(context,
+                ntWxKind(entry.id), size.width, size.height, style, WeatherRenderState.from(context),
+                0, DotwelWeatherIcons)
             PreviewKind.WX_TEMP,
             PreviewKind.WX_SUN,
             -> null
             PreviewKind.PLACEHOLDER -> placeholder(context, entry, size.width, size.height, style)
         }
+    }
+
+    private fun ntWxKind(id: String): NtWxRenderer.Kind = when (id) {
+        "wx_circle" -> NtWxRenderer.Kind.CIRCLE
+        "wx_square" -> NtWxRenderer.Kind.SQUARE
+        "wx_rect" -> NtWxRenderer.Kind.RECT
+        "wx_combo" -> NtWxRenderer.Kind.COMBO
+        "wx_sunset" -> NtWxRenderer.Kind.SUNSET
+        "wx_air" -> NtWxRenderer.Kind.AIR
+        "wx_w1temp" -> NtWxRenderer.Kind.W1_TEMP
+        "wx_w1status" -> NtWxRenderer.Kind.W1_STATUS
+        "wx_w1rain" -> NtWxRenderer.Kind.W1_RAIN
+        else -> error("Unknown NtWx preview $id")
     }
 
     private fun interstellar(

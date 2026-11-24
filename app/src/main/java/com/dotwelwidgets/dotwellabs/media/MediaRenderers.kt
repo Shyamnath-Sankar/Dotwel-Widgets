@@ -55,7 +55,10 @@ object MediaRenderers {
         val safeHeight = height.coerceAtLeast(2)
         val bitmap = Bitmap.createBitmap(safeWidth, safeHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        val palette = MediaDraw.palette(style)
+        val palette = if(kind==MediaWidgetKind.M3_EXPANDED || kind==MediaWidgetKind.M3_OUTPUT) {
+            // These two source cards deliberately darken cover art in every style.
+            MediaDraw.palette(WidgetStyle.BLACK)
+        } else MediaDraw.palette(style)
         val scale = min(
             safeWidth / kind.designWidth,
             safeHeight / kind.designHeight,
@@ -84,10 +87,10 @@ object MediaRenderers {
         return bitmap
     }
 
-    private fun card(canvas: Canvas, palette: MediaPalette, radius: Float = DEFAULT_CORNER) {
+    private fun card(canvas: Canvas, palette: MediaPalette, width: Float, height: Float, radius: Float = DEFAULT_CORNER) {
         MediaDraw.background(
             canvas,
-            RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat()),
+            RectF(0f, 0f, width, height),
             radius,
             palette.background,
         )
@@ -118,7 +121,7 @@ object MediaRenderers {
             centerY,
             playSize,
             snapshot.isPlaying,
-            palette.primary,
+            if(snapshot.canPlayPause) palette.primary else palette.muted,
         )
         MediaDraw.drawSkip(
             canvas,
@@ -138,8 +141,8 @@ object MediaRenderers {
     }
 
     private fun drawM3Expanded(canvas: Canvas, palette: MediaPalette, snapshot: MediaSnapshot) {
-        val w = canvas.width.toFloat()
-        val h = canvas.height.toFloat()
+        val w = MediaWidgetKind.M3_EXPANDED.designWidth
+        val h = MediaWidgetKind.M3_EXPANDED.designHeight
         MediaDraw.cover(canvas, snapshot.albumArt, RectF(0f, 0f, w, h), DEFAULT_CORNER, palette.accent)
         canvas.drawRect(
             0f,
@@ -176,8 +179,8 @@ object MediaRenderers {
     }
 
     private fun drawM3Output(canvas: Canvas, palette: MediaPalette, snapshot: MediaSnapshot) {
-        val w = canvas.width.toFloat()
-        val h = canvas.height.toFloat()
+        val w = MediaWidgetKind.M3_OUTPUT.designWidth
+        val h = MediaWidgetKind.M3_OUTPUT.designHeight
         MediaDraw.cover(canvas, snapshot.albumArt, RectF(0f, 0f, w, h), DEFAULT_CORNER, palette.accent)
         canvas.drawRect(0f, 0f, w, h, MediaDraw.fill(0xCC121316.toInt()))
         val title = MediaDraw.text(palette.ink, 42f, bold = true)
@@ -216,9 +219,9 @@ object MediaRenderers {
     }
 
     private fun drawMini(canvas: Canvas, palette: MediaPalette, snapshot: MediaSnapshot) {
-        val w = canvas.width.toFloat()
-        val h = canvas.height.toFloat()
-        card(canvas, palette, radius = 40f)
+        val w = MediaWidgetKind.MINI.designWidth
+        val h = MediaWidgetKind.MINI.designHeight
+        card(canvas, palette, w, h, radius = 40f)
         MediaDraw.cover(
             canvas,
             snapshot.albumArt,
@@ -259,7 +262,7 @@ object MediaRenderers {
             palette.accent,
         )
         MediaDraw.drawSkip(canvas, 40f, h - 40f, 34f, true, palette.ink, snapshot.canSkipPrevious)
-        MediaDraw.drawPlayPause(canvas, 96f, h - 40f, 52f, snapshot.isPlaying, palette.primary)
+        MediaDraw.drawPlayPause(canvas, 96f, h - 40f, 52f, snapshot.isPlaying, if(snapshot.canPlayPause) palette.primary else palette.muted)
         MediaDraw.drawSkip(canvas, 152f, h - 40f, 34f, false, palette.ink, snapshot.canSkipNext)
     }
 
@@ -269,9 +272,9 @@ object MediaRenderers {
         snapshot: MediaSnapshot,
         variant: Int,
     ) {
-        val w = canvas.width.toFloat()
-        val h = canvas.height.toFloat()
-        card(canvas, palette, radius = 32f)
+        val w = MediaWidgetKind.MINIMAL.designWidth
+        val h = MediaWidgetKind.MINIMAL.designHeight
+        card(canvas, palette, w, h, radius = 32f)
         if (variant == 2) {
             canvas.drawRect(0f, 0f, 10f, h, MediaDraw.fill(palette.primary))
         } else if (variant == 3) {
@@ -331,9 +334,9 @@ object MediaRenderers {
         weather: WeatherRenderState?,
         batteryLevel: Int,
     ) {
-        val w = canvas.width.toFloat()
-        val h = canvas.height.toFloat()
-        card(canvas, palette, radius = 48f)
+        val w = MediaWidgetKind.NOTHING_MASTER.designWidth
+        val h = MediaWidgetKind.NOTHING_MASTER.designHeight
+        card(canvas, palette, w, h, radius = 48f)
         val side = min(w, h)
         val big = MediaDraw.text(palette.primary, side / 6f, bold = true)
         MediaDraw.drawText(canvas, big, "$batteryLevel", w / 2f, side * 0.18f, w - 40f, Paint.Align.CENTER)
@@ -413,7 +416,7 @@ object MediaRenderers {
         MediaDraw.drawText(
             canvas,
             MediaDraw.text(palette.muted, side / 22f),
-            snapshot.artist ?: "Enable notification access to show media",
+            snapshot.artist ?: if (!snapshot.accessGranted) "Tap to enable media access" else "Play music in your player",
             56f,
             h * 0.79f,
             w - 112f,
@@ -443,9 +446,9 @@ object MediaRenderers {
     }
 
     private fun drawNothingPlayer(canvas: Canvas, palette: MediaPalette, snapshot: MediaSnapshot) {
-        val w = canvas.width.toFloat()
-        val h = canvas.height.toFloat()
-        card(canvas, palette, radius = 40f)
+        val w = MediaWidgetKind.NOTHING_PLAYER.designWidth
+        val h = MediaWidgetKind.NOTHING_PLAYER.designHeight
+        card(canvas, palette, w, h, radius = 40f)
         val cardRect = RectF(w * 0.12f, h * 0.14f, w * 0.88f, h * 0.86f)
         MediaDraw.background(canvas, cardRect, 24f, palette.accent)
         MediaDraw.drawText(
@@ -500,9 +503,9 @@ object MediaRenderers {
     }
 
     private fun drawNothingPlayer2(canvas: Canvas, palette: MediaPalette, snapshot: MediaSnapshot) {
-        val w = canvas.width.toFloat()
-        val h = canvas.height.toFloat()
-        card(canvas, palette, radius = h / 4f)
+        val w = MediaWidgetKind.NOTHING_PLAYER_2.designWidth
+        val h = MediaWidgetKind.NOTHING_PLAYER_2.designHeight
+        card(canvas, palette, w, h, radius = h / 4f)
         MediaDraw.background(
             canvas,
             RectF(18f, 18f, w * 0.72f, h - 18f),
@@ -536,13 +539,13 @@ object MediaRenderers {
         )
         val centerX = w * 0.86f
         canvas.drawCircle(centerX, h / 2f, h / 2.5f, MediaDraw.fill(palette.accent))
-        MediaDraw.drawPlayPause(canvas, centerX, h / 2f, 42f, snapshot.isPlaying, palette.primary)
+        MediaDraw.drawPlayPause(canvas, centerX, h / 2f, 42f, snapshot.isPlaying, if(snapshot.canPlayPause) palette.primary else palette.muted)
     }
 
     private fun drawNothingPlayer3(canvas: Canvas, palette: MediaPalette, snapshot: MediaSnapshot) {
-        val w = canvas.width.toFloat()
-        val h = canvas.height.toFloat()
-        card(canvas, palette, radius = 56f)
+        val w = MediaWidgetKind.NOTHING_PLAYER_3.designWidth
+        val h = MediaWidgetKind.NOTHING_PLAYER_3.designHeight
+        card(canvas, palette, w, h, radius = 56f)
         val side = w
         val panel = RectF(side * 0.10f, side * 0.18f, side * 0.90f, h - side * 0.18f)
         MediaDraw.background(canvas, panel, side / 5f, palette.accent)
@@ -567,7 +570,7 @@ object MediaRenderers {
         val barCenter = w * 0.30f
         MediaDraw.drawText(
             canvas,
-            MediaDraw.text(palette.muted, side / 18f),
+            MediaDraw.text(if(snapshot.canAdjustVolume) palette.muted else palette.accent, side / 18f),
             "+",
             barCenter - side / 6f,
             h * 0.42f,
@@ -577,13 +580,13 @@ object MediaRenderers {
         MediaDraw.drawProgress(
             canvas,
             RectF(barCenter - side / 10f, h * 0.41f, barCenter + side / 10f, h * 0.41f + 6f),
-            fraction(snapshot),
+            snapshot.volumeFraction ?: 0f,
             palette.ink,
             palette.accent,
         )
         MediaDraw.drawText(
             canvas,
-            MediaDraw.text(palette.muted, side / 18f),
+            MediaDraw.text(if(snapshot.canAdjustVolume) palette.muted else palette.accent, side / 18f),
             "-",
             barCenter + side / 6f,
             h * 0.42f,
@@ -618,9 +621,9 @@ object MediaRenderers {
     }
 
     private fun drawUniversal(canvas: Canvas, palette: MediaPalette, snapshot: MediaSnapshot) {
-        val w = canvas.width.toFloat()
-        val h = canvas.height.toFloat()
-        card(canvas, palette, radius = 36f)
+        val w = MediaWidgetKind.UNIVERSAL.designWidth
+        val h = MediaWidgetKind.UNIVERSAL.designHeight
+        card(canvas, palette, w, h, radius = 36f)
         MediaDraw.cover(
             canvas,
             snapshot.albumArt,
@@ -674,9 +677,9 @@ object MediaRenderers {
     }
 
     private fun drawNotification(canvas: Canvas, palette: MediaPalette, snapshot: MediaSnapshot) {
-        val w = canvas.width.toFloat()
-        val h = canvas.height.toFloat()
-        card(canvas, palette, radius = 36f)
+        val w = MediaWidgetKind.NOTIFICATION.designWidth
+        val h = MediaWidgetKind.NOTIFICATION.designHeight
+        card(canvas, palette, w, h, radius = 36f)
         val notification = snapshot.notification
         if (snapshot.title == null && notification == null) {
             MediaDraw.drawText(

@@ -149,7 +149,10 @@ object WeatherRepository {
                 return WeatherResult.Failure(WeatherResult.Reason.CANCELLED, cached)
             }
             val snapshot = parseSnapshot(location, unit, forecast, now)
-            val airQuality = fetchAirQuality(location, transport, snapshot)
+            if (!shouldCommit()) {
+                return WeatherResult.Failure(WeatherResult.Reason.CANCELLED)
+            }
+            val airQuality = fetchAirQuality(location, transport)
             val withAir = snapshot.copy(airQuality = airQuality)
             if (context != null) {
                 synchronized(WeatherSettings.STATE_LOCK) {
@@ -190,7 +193,6 @@ object WeatherRepository {
     private fun fetchAirQuality(
         location: GeoLocation,
         transport: WeatherTransport,
-        snapshot: WeatherSnapshot,
     ): WeatherAirQuality? = runCatching {
         val url = buildString {
             append(AIR_QUALITY_URL)
@@ -205,9 +207,10 @@ object WeatherRepository {
     internal fun parseAirQuality(body: String): WeatherAirQuality? {
         val root = JSONObject(body)
         val current = root.optJSONObject("current") ?: return null
-        if (!current.has("us_aqi")) return null
-        val value = current.optInt("us_aqi", -1)
-        if (value < 0) return null
+        if (!current.has("us_aqi") || current.isNull("us_aqi")) return null
+        val rawValue = current.optDouble("us_aqi", Double.NaN)
+        if (!rawValue.isFinite() || rawValue < 0 || rawValue > Int.MAX_VALUE) return null
+        val value = rawValue.toInt()
         val zone = runCatching {
             ZoneId.of(root.optString("timezone").ifBlank { "UTC" })
         }.getOrDefault(ZoneOffset.UTC)

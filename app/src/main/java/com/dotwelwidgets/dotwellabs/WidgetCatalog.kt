@@ -65,6 +65,9 @@ enum class PreviewKind {
     MEDIA_PLAYER_3,
     MEDIA_UNIVERSAL,
     MEDIA_NOTIFICATION,
+    NT_PHOTO,
+    NT_AWAY,
+    NT_WX,
     WX_TEMP,
     WX_SUN,
     PLACEHOLDER,
@@ -164,11 +167,13 @@ object WidgetCatalog {
             id = "away",
             name = "Away Time",
             group = WidgetGroup.TIME,
-            state = ImportState.PENDING,
+            state = ImportState.READY,
             upstream = "NtAway.build · screen-interactive sampling",
             descriptionRes = R.string.catalog_away_desc,
-            detailRes = R.string.ledger_pending_away,
-            previewKind = PreviewKind.PLACEHOLDER,
+            detailRes = R.string.ledger_ready_away,
+            previewKind = PreviewKind.NT_AWAY,
+            providerClass = NtAwayWidgetProvider::class.java,
+            pinKind = "away",
         ),
         weather(
             id = "wx_circle",
@@ -245,21 +250,25 @@ object WidgetCatalog {
             id = "photo_circle",
             name = "Photo (Circle)",
             group = WidgetGroup.MEDIA,
-            state = ImportState.PENDING,
+            state = ImportState.READY,
             upstream = "NtPhotoCircle · NtPhoto.render/config",
             descriptionRes = R.string.catalog_photo_circle_desc,
-            detailRes = R.string.ledger_pending_photo,
-            previewKind = PreviewKind.PLACEHOLDER,
+            detailRes = R.string.ledger_ready_photo,
+            previewKind = PreviewKind.NT_PHOTO,
+            providerClass = NtPhotoCircleProvider::class.java,
+            pinKind = "photo_circle",
         ),
         CatalogEntry(
             id = "photo_rect",
             name = "Photo (Rectangle)",
             group = WidgetGroup.MEDIA,
-            state = ImportState.PENDING,
+            state = ImportState.READY,
             upstream = "NtPhotoRect · NtPhoto.render/config",
             descriptionRes = R.string.catalog_photo_rect_desc,
-            detailRes = R.string.ledger_pending_photo,
-            previewKind = PreviewKind.PLACEHOLDER,
+            detailRes = R.string.ledger_ready_photo,
+            previewKind = PreviewKind.NT_PHOTO,
+            providerClass = NtPhotoRectProvider::class.java,
+            pinKind = "photo_rect",
         ),
         CatalogEntry(
             id = "quotes",
@@ -599,18 +608,10 @@ object WidgetCatalog {
             id = "kwgt_interstellar_endurance_analog_2",
             name = "KWGT Endurance Analog 2",
             group = WidgetGroup.KWGT,
-            state = if (analogSecondsSupported) {
-                ImportState.READY
-            } else {
-                ImportState.UNAVAILABLE
-            },
-            upstream = "KWGT Interstellar_Endurance_Analog_2 · source shapes / stepped hour hand",
+            state = ImportState.READY,
+            upstream = "KWGT Interstellar_Endurance_Analog_2 · source shapes / native smooth hour hand",
             descriptionRes = R.string.catalog_interstellar_analog2_desc,
-            detailRes = if (analogSecondsSupported) {
-                R.string.ledger_ready_interstellar
-            } else {
-                R.string.ledger_unavailable_pre31
-            },
+            detailRes = R.string.ledger_ready_interstellar,
             previewKind = PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG_2,
             providerClass = KwgtInterstellarEnduranceAnalog2Provider::class.java,
             pinKind = PinResultReceiver.PIN_KIND_KWGT_INTERSTELLAR_ANALOG_2,
@@ -854,17 +855,23 @@ object WidgetCatalog {
         ),
     )
 
-    private fun weather(id: String, name: String, upstream: String): CatalogEntry =
-        CatalogEntry(
-            id = id,
-            name = name,
-            group = WidgetGroup.WEATHER,
-            state = ImportState.PENDING,
-            upstream = upstream,
-            descriptionRes = R.string.catalog_weather_desc,
-            detailRes = R.string.ledger_pending_weather,
-            previewKind = PreviewKind.PLACEHOLDER,
-        )
+    private fun weather(id: String, name: String, upstream: String): CatalogEntry {
+        val provider = when (id) {
+            "wx_circle" -> NtWxCircleProvider::class.java
+            "wx_square" -> NtWxSquareProvider::class.java
+            "wx_rect" -> NtWxRectProvider::class.java
+            "wx_combo" -> NtWxComboProvider::class.java
+            "wx_sunset" -> NtWxSunsetProvider::class.java
+            "wx_air" -> NtWxAirProvider::class.java
+            "wx_w1temp" -> NtWxW1TempProvider::class.java
+            "wx_w1status" -> NtWxW1StatusProvider::class.java
+            "wx_w1rain" -> NtWxW1RainProvider::class.java
+            else -> error("Unknown weather source $id")
+        }
+        return CatalogEntry(id, name, WidgetGroup.WEATHER, ImportState.READY, upstream,
+            R.string.catalog_weather_desc, R.string.ledger_ready_weather, PreviewKind.NT_WX,
+            provider, id, CardAction.WEATHER)
+    }
 
     fun entryById(id: String): CatalogEntry? = entries.firstOrNull { it.id == id }
 
@@ -979,7 +986,7 @@ enum class WidgetCategory(
     LIVE(
         "live",
         R.string.category_live,
-        listOf("compass", "snake"),
+        listOf("away", "compass", "snake"),
     ),
     MEDIA_PLAYER(
         "media_player",
@@ -1074,6 +1081,9 @@ object WidgetModeLabels {
             -> R.string.mode_media_live
             PreviewKind.MEDIA_MASTER -> R.string.mode_media_master
             PreviewKind.MEDIA_NOTIFICATION -> R.string.mode_media_notification
+            PreviewKind.NT_PHOTO -> R.string.mode_photo_local
+            PreviewKind.NT_AWAY -> R.string.mode_away_sampled
+            PreviewKind.NT_WX -> R.string.mode_weather_temp
             PreviewKind.WX_TEMP -> R.string.mode_weather_temp
             PreviewKind.WX_SUN -> R.string.mode_weather_sun
             PreviewKind.PLACEHOLDER -> entry.state.labelRes

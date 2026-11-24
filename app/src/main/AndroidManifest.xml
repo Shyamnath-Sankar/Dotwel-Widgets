@@ -700,6 +700,85 @@
             android:name=".PinResultReceiver"
             android:exported="false" />
 
+        <receiver android:name=".NtWxCircleProvider" android:exported="true" android:label="@string/widget_ntwx_circle">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_circle_info" />
+        </receiver>
+        <receiver android:name=".NtWxSquareProvider" android:exported="true" android:label="@string/widget_ntwx_square">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_square_info" />
+        </receiver>
+        <receiver android:name=".NtWxRectProvider" android:exported="true" android:label="@string/widget_ntwx_rect">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_rect_info" />
+        </receiver>
+        <receiver android:name=".NtWxComboProvider" android:exported="true" android:label="@string/widget_ntwx_combo">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_combo_info" />
+        </receiver>
+        <receiver android:name=".NtWxSunsetProvider" android:exported="true" android:label="@string/widget_ntwx_sunset">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_sunset_info" />
+        </receiver>
+        <receiver android:name=".NtWxAirProvider" android:exported="true" android:label="@string/widget_ntwx_air">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_air_info" />
+        </receiver>
+        <receiver android:name=".NtWxW1TempProvider" android:exported="true" android:label="@string/widget_ntwx_w1temp">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_w1temp_info" />
+        </receiver>
+        <receiver android:name=".NtWxW1StatusProvider" android:exported="true" android:label="@string/widget_ntwx_w1status">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_w1status_info" />
+        </receiver>
+        <receiver android:name=".NtWxW1RainProvider" android:exported="true" android:label="@string/widget_ntwx_w1rain">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_w1rain_info" />
+        </receiver>
+        <activity android:name=".NtPhotoConfigActivity" android:exported="false" />
+        <receiver android:name=".NtPhotoCircleProvider" android:exported="true" android:label="@string/widget_photo_circle">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/photo_circle_info" />
+        </receiver>
+        <receiver android:name=".NtPhotoRectProvider" android:exported="true" android:label="@string/widget_photo_rect">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/photo_rect_info" />
+        </receiver>
+        <receiver android:name=".NtAwayWidgetProvider" android:exported="true" android:label="@string/widget_away">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/away_info" />
+        </receiver>
     </application>
 
 </manifest>

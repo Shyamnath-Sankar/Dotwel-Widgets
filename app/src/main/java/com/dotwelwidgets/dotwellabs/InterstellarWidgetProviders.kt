@@ -1,121 +1,59 @@
 package com.dotwelwidgets.dotwellabs
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.AlarmClock
-import android.view.View
 import android.widget.RemoteViews
 
 /**
- * Shared native provider for the three Interstellar Endurance source presets.
- * The shape art is compiled from sanitized source JSON and redrawn by the
- * shared minute scheduler. Seconds-driven source layers are sampled at each
- * update; the port never claims live seconds and gates the catalog entry to
- * Android 12+ where the supported RemoteViews path is available.
+ * Shared native provider for the three MIT AumGupta Interstellar Endurance
+ * source presets. Geometry is compiled offline from the original Kustom JSON by
+ * tools/compile_endurance.py into generated 277dp raster layers with true
+ * CLEAR subtraction; no upstream bitmap artwork is used.
+ *
+ * The platform [android.widget.AnalogClock] rotates the source layer drawables:
+ * variants 1/2 use a transparent seconds clock for the source CLOCK_SECOND
+ * spacecraft plus a separate transparent hour/minute clock, preserving source
+ * z-order (seconds below hour/minute). Variant 3 bakes the source static DEG180
+ * spacecraft into the dial and uses native hour/minute hands. Android rotates
+ * those hands itself, so true OS time survives process death without a polling
+ * service. Seconds variants are gated to API 31 where RemoteViews supports the
+ * `hand_second` drawable; variant 3 works on the app's supported API 26+.
  */
 abstract class BaseInterstellarWidgetProvider : BaseWidgetProvider() {
     override val layoutRes: Int = R.layout.widget_interstellar
     override val tapAction: String = AlarmClock.ACTION_SHOW_ALARMS
     protected abstract val variant: InterstellarShapeCompiler.Variant
-
-    override fun onUpdate(
-        context: Context,
-        appWidgetManager: android.appwidget.AppWidgetManager,
-        appWidgetIds: IntArray,
-    ) {
-        super.onUpdate(context, appWidgetManager, appWidgetIds)
-        MinuteTickScheduler.schedule(context)
-    }
-
-    override fun onAppWidgetOptionsChanged(
-        context: Context,
-        appWidgetManager: android.appwidget.AppWidgetManager,
-        appWidgetId: Int,
-        newOptions: android.os.Bundle,
-    ) {
-        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        MinuteTickScheduler.schedule(context)
-    }
-
-    override fun onEnabled(context: Context) {
-        super.onEnabled(context)
-        MinuteTickScheduler.schedule(context)
-    }
-
-    override fun onDisabled(context: Context) {
-        super.onDisabled(context)
-        MinuteTickScheduler.schedule(context)
-    }
-
-    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        super.onDeleted(context, appWidgetIds)
-        MinuteTickScheduler.schedule(context)
-    }
-
-    override fun onReceive(context: Context, intent: Intent) {
-        when (intent.action) {
-            MinuteTickScheduler.ACTION_TICK,
-            Intent.ACTION_TIME_CHANGED,
-            Intent.ACTION_TIMEZONE_CHANGED,
-            Intent.ACTION_DATE_CHANGED,
-            Intent.ACTION_BOOT_COMPLETED,
-            -> {
-                refreshWidgets(context)
-                MinuteTickScheduler.schedule(context)
-                return
-            }
-        }
-        super.onReceive(context, intent)
-    }
+    protected open val needsSecondsLayer: Boolean = true
 
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            val views = baseViews(context, appWidgetId)
-            views.setViewVisibility(R.id.widget_interstellar_bitmap, View.GONE)
-            views.setViewVisibility(R.id.widget_message, View.VISIBLE)
-            views.setTextColor(
-                R.id.widget_message,
-                UpstreamNtDraw.muted(context, WidgetPrefs.style(context)),
-            )
+        val style = WidgetPrefs.style(context)
+        val views = RemoteViews(
+            context.packageName,
+            InterstellarShapeCompiler.layoutFor(variant, style),
+        )
+        views.setInt(R.id.widget_root, "setBackgroundResource", style.backgroundRes)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            appWidgetId,
+            Intent(AlarmClock.ACTION_SHOW_ALARMS)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
+        if (needsSecondsLayer && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             views.setTextViewText(
                 R.id.widget_message,
                 context.getString(R.string.interstellar_pre31),
             )
-            return views
-        }
-        val style = WidgetPrefs.style(context)
-        return buildBitmapViews(
-            context,
-            appWidgetId,
-            R.id.widget_interstellar_bitmap,
-            R.id.widget_message,
-            render = { widthPx, heightPx ->
-                InterstellarShapeCompiler.render(
-                    context,
-                    variant,
-                    widthPx,
-                    heightPx,
-                    style,
-                )
-            },
-        ) { views, usedBitmap ->
-            views.setInt(
-                R.id.widget_root,
-                "setBackgroundResource",
-                if (usedBitmap) R.drawable.bg_widget_none else style.backgroundRes,
+            views.setTextColor(
+                R.id.widget_message,
+                UpstreamNtDraw.muted(context, style),
             )
-            if (!usedBitmap) {
-                views.setTextViewText(
-                    R.id.widget_message,
-                    context.getString(R.string.interstellar_unavailable),
-                )
-                views.setTextColor(
-                    R.id.widget_message,
-                    UpstreamNtDraw.muted(context, style),
-                )
-            }
         }
+        return views
     }
 }
 
@@ -132,4 +70,5 @@ class KwgtInterstellarEnduranceAnalogProvider : BaseInterstellarWidgetProvider()
 class KwgtInterstellarEnduranceAnalog2Provider : BaseInterstellarWidgetProvider() {
     override val variant: InterstellarShapeCompiler.Variant =
         InterstellarShapeCompiler.Variant.ANALOG_2
+    override val needsSecondsLayer: Boolean = false
 }

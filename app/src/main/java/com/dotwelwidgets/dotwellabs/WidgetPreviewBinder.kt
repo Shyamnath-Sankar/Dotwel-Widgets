@@ -46,6 +46,15 @@ object WidgetPreviewBinder {
             bindWeather(context, container, entry, style)
             return
         }
+        if (entry.previewKind in setOf(PreviewKind.INTERSTELLAR_ENDURANCE,PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG,PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG_2)) {
+            val variant=when(entry.previewKind) {
+                PreviewKind.INTERSTELLAR_ENDURANCE -> InterstellarShapeCompiler.Variant.ENDURANCE
+                PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG -> InterstellarShapeCompiler.Variant.ANALOG
+                else -> InterstellarShapeCompiler.Variant.ANALOG_2
+            }
+            container.addView(LayoutInflater.from(context).inflate(InterstellarShapeCompiler.layoutFor(variant,style),container,false),matchParams())
+            return
+        }
         if (entry.previewKind == PreviewKind.KWGT_ANALOG_2) {
             bindNativeAnalog2(context, container, style)
             return

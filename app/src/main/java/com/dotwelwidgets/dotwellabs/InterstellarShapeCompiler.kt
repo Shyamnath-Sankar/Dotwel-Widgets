@@ -35,6 +35,24 @@ object InterstellarShapeCompiler {
         ANALOG_2("kwgt/interstellar_endurance_analog_2.sanitized.json"),
     }
 
+    fun layoutFor(variant: Variant, style: WidgetStyle): Int = when (variant) {
+        Variant.ENDURANCE -> when (style) {
+            WidgetStyle.BLACK -> R.layout.widget_interstellar_endurance_black
+            WidgetStyle.TRANSLUCENT -> R.layout.widget_interstellar_endurance_translucent
+            WidgetStyle.TRANSPARENT -> R.layout.widget_interstellar_endurance_transparent
+        }
+        Variant.ANALOG -> when (style) {
+            WidgetStyle.BLACK -> R.layout.widget_interstellar_analog_black
+            WidgetStyle.TRANSLUCENT -> R.layout.widget_interstellar_analog_translucent
+            WidgetStyle.TRANSPARENT -> R.layout.widget_interstellar_analog_transparent
+        }
+        Variant.ANALOG_2 -> when (style) {
+            WidgetStyle.BLACK -> R.layout.widget_interstellar_analog2_black
+            WidgetStyle.TRANSLUCENT -> R.layout.widget_interstellar_analog2_translucent
+            WidgetStyle.TRANSPARENT -> R.layout.widget_interstellar_analog2_transparent
+        }
+    }
+
     enum class Stacking {
         VERTICAL_CENTER,
         HORIZONTAL_CENTER,
@@ -146,7 +164,6 @@ object InterstellarShapeCompiler {
     ): android.graphics.Bitmap {
         val safeWidth = width.coerceAtLeast(2)
         val safeHeight = height.coerceAtLeast(2)
-        val compiled = compile(context, variant)
         val bitmap = android.graphics.Bitmap.createBitmap(
             safeWidth,
             safeHeight,
@@ -160,21 +177,89 @@ object InterstellarShapeCompiler {
                 Paint(Paint.ANTI_ALIAS_FLAG).apply { color = palette.background },
             )
         }
-        val scale = min(
-            safeWidth / compiled.width,
-            safeHeight / compiled.height,
-        ).coerceAtLeast(0.01f)
-        val offsetX = (safeWidth - compiled.width * scale) / 2f
-        val offsetY = (safeHeight - compiled.height * scale) / 2f
+        val scale = min(safeWidth / 277f, safeHeight / 277f).coerceAtLeast(0.01f)
+        val offsetX = (safeWidth - 277f * scale) / 2f
+        val offsetY = (safeHeight - 277f * scale) / 2f
         canvas.save()
         canvas.translate(offsetX, offsetY)
         canvas.scale(scale, scale)
-        val side = min(compiled.width, compiled.height)
-        val time = TimeState.from(now)
-        val bounds = RectF(0f, 0f, compiled.width, compiled.height)
-        compiled.nodes.forEach { drawNode(canvas, it, bounds, side, palette, time) }
+        val second = now.get(Calendar.SECOND).toFloat()
+        val minute = now.get(Calendar.MINUTE).toFloat()
+        val hour = now.get(Calendar.HOUR).toFloat() + minute / 60f
+        fun drawLayer(res: Int, degrees: Float) {
+            val layer = android.graphics.BitmapFactory.decodeResource(context.resources, res)
+                ?: return
+            val saved = canvas.save()
+            canvas.rotate(degrees, 138.5f, 138.5f)
+            canvas.drawBitmap(
+                layer,
+                null,
+                RectF(0f, 0f, 277f, 277f),
+                Paint(Paint.ANTI_ALIAS_FLAG).apply { isFilterBitmap = true },
+            )
+            canvas.restoreToCount(saved)
+            layer.recycle()
+        }
+        when (variant) {
+            Variant.ENDURANCE -> drawLayer(layerRes(variant, "seconds", style), second * 6f)
+            Variant.ANALOG -> {
+                drawLayer(layerRes(variant, "seconds", style), second * 6f)
+                drawLayer(layerRes(variant, "hour", style), hour * 30f)
+                drawLayer(layerRes(variant, "minute", style), minute * 6f)
+            }
+            Variant.ANALOG_2 -> {
+                drawLayer(layerRes(variant, "dial", style), 0f)
+                drawLayer(layerRes(variant, "hour", style), hour * 30f)
+                drawLayer(layerRes(variant, "minute", style), minute * 6f)
+            }
+        }
         canvas.restore()
         return bitmap
+    }
+
+    private fun layerRes(variant: Variant, layer: String, style: WidgetStyle): Int {
+        val s = style.name.lowercase()
+        return when (variant) {
+            Variant.ENDURANCE -> when (s) {
+                "black" -> R.drawable.interstellar_endurance_seconds_black
+                "translucent" -> R.drawable.interstellar_endurance_seconds_translucent
+                else -> R.drawable.interstellar_endurance_seconds_transparent
+            }
+            Variant.ANALOG -> when (layer) {
+                "seconds" -> when (s) {
+                    "black" -> R.drawable.interstellar_analog_seconds_black
+                    "translucent" -> R.drawable.interstellar_analog_seconds_translucent
+                    else -> R.drawable.interstellar_analog_seconds_transparent
+                }
+                "hour" -> when (s) {
+                    "black" -> R.drawable.interstellar_analog_hour_black
+                    "translucent" -> R.drawable.interstellar_analog_hour_translucent
+                    else -> R.drawable.interstellar_analog_hour_transparent
+                }
+                else -> when (s) {
+                    "black" -> R.drawable.interstellar_analog_minute_black
+                    "translucent" -> R.drawable.interstellar_analog_minute_translucent
+                    else -> R.drawable.interstellar_analog_minute_transparent
+                }
+            }
+            Variant.ANALOG_2 -> when (layer) {
+                "dial" -> when (s) {
+                    "black" -> R.drawable.interstellar_analog2_dial_black
+                    "translucent" -> R.drawable.interstellar_analog2_dial_translucent
+                    else -> R.drawable.interstellar_analog2_dial_transparent
+                }
+                "hour" -> when (s) {
+                    "black" -> R.drawable.interstellar_analog2_hour_black
+                    "translucent" -> R.drawable.interstellar_analog2_hour_translucent
+                    else -> R.drawable.interstellar_analog2_hour_transparent
+                }
+                else -> when (s) {
+                    "black" -> R.drawable.interstellar_analog2_minute_black
+                    "translucent" -> R.drawable.interstellar_analog2_minute_translucent
+                    else -> R.drawable.interstellar_analog2_minute_transparent
+                }
+            }
+        }
     }
 
     private data class TimeState(

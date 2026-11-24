@@ -6,8 +6,9 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.text.format.DateUtils
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
-import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -66,7 +67,7 @@ object KwgtDigital2Renderer {
     ) {
         val backgroundLeft: Float get() = (width - side) / 2f
         val backgroundRight: Float get() = (width + side) / 2f
-        val textRight: Float get() = width - rightInset
+        val textRight: Float get() = backgroundRight - rightInset
     }
 
     fun palette(style: WidgetStyle): Palette {
@@ -110,6 +111,7 @@ object KwgtDigital2Renderer {
         style: WidgetStyle,
         now: Long = System.currentTimeMillis(),
         includeBackground: Boolean = true,
+        includeShiftedMinutes: Boolean = true,
     ): Bitmap {
         val safeWidth = width.coerceAtLeast(2)
         val safeHeight = height.coerceAtLeast(2)
@@ -130,6 +132,7 @@ object KwgtDigital2Renderer {
                 Paint(Paint.ANTI_ALIAS_FLAG).apply { color = palette.background },
             )
         }
+        if (!includeShiftedMinutes) return bitmap
         val previous = relativeLabel(context, now, -DateUtils.MINUTE_IN_MILLIS)
         val next = relativeLabel(context, now, DateUtils.MINUTE_IN_MILLIS)
         val prevPaint = textPaint(palette.accent, layout.smallTextSize, Paint.Align.RIGHT)
@@ -151,14 +154,13 @@ object KwgtDigital2Renderer {
     }
 
     fun relativeLabel(context: Context, now: Long, offsetMillis: Long): String {
-        val target = now + offsetMillis
-        return DateUtils.getRelativeTimeSpanString(
-            target,
-            now,
-            DateUtils.MINUTE_IN_MILLIS,
-            DateUtils.FORMAT_ABBREV_RELATIVE,
-        ).toString().uppercase(Locale.getDefault())
+        // Kustom df(mm, r1m/a1m) formats the minute at the shifted instant.
+        // It is not a natural-language relative duration.
+        return minuteAtOffset(now, offsetMillis)
     }
+
+    internal fun minuteAtOffset(now: Long, offsetMillis: Long): String =
+        SimpleDateFormat("mm", Locale.ROOT).format(Date(now + offsetMillis))
 
     private fun textPaint(color: Int, size: Float, align: Paint.Align): Paint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -174,6 +176,4 @@ object KwgtDigital2Renderer {
         return (alpha shl 24) or (color and 0x00FFFFFF)
     }
 
-    @Suppress("unused")
-    private fun maxSize(a: Float, b: Float): Float = max(a, b)
 }

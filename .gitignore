@@ -1,9 +1,6 @@
 .gradle/
-build/
+**/build/
 local.properties
-.idea/
 *.iml
-captures/
-.externalNativeBuild/
-.cxx/
-w/
+.idea/
+__pycache__/

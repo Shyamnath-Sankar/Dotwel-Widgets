@@ -30,6 +30,8 @@ data class MediaSnapshot(
     val canSkipNext: Boolean,
     val capturedAtMillis: Long,
     val notification: MediaNotification?,
+    val volumeFraction: Float? = null,
+    val canAdjustVolume: Boolean = false,
 ) {
     val hasMetadata: Boolean
         get() = !title.isNullOrBlank() || !artist.isNullOrBlank()

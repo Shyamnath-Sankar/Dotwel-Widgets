@@ -82,7 +82,7 @@ abstract class BaseMediaWidgetProvider : BaseWidgetProvider() {
                     (snapshot.notification != null || snapshot.hasPlayback)
             else -> snapshot.accessGranted && snapshot.hasPlayback
         }
-        if (!hasContent) {
+        if (!hasContent && mediaKind != MediaWidgetKind.NOTHING_MASTER) {
             return emptyViews(context, appWidgetId, snapshot)
         }
         val weather = if (mediaKind == MediaWidgetKind.NOTHING_MASTER) {
@@ -90,7 +90,7 @@ abstract class BaseMediaWidgetProvider : BaseWidgetProvider() {
         } else {
             null
         }
-        return buildBitmapViews(
+        return buildTargetBitmapViews(
             context,
             appWidgetId,
             R.id.widget_media_bitmap,
@@ -106,9 +106,37 @@ abstract class BaseMediaWidgetProvider : BaseWidgetProvider() {
                     weather,
                 )
             },
-        ) { views, usedBitmap ->
+        ) { views, usedBitmap, target ->
             bindLive(views, context, appWidgetId, snapshot, usedBitmap)
+            bindGeometry(views, context, target)
         }
+    }
+
+    private fun bindGeometry(views: RemoteViews, context: Context, target: WidgetSizing.Target) {
+        if (android.os.Build.VERSION.SDK_INT < 31) {
+            // Pre31 RemoteViews cannot position arbitrary bitmap-aligned hit targets.
+            // Do not leave invisible controls in the wrong place; root still opens player.
+            views.setViewVisibility(R.id.media_overlay, View.GONE)
+            views.setViewVisibility(R.id.media_clear, View.GONE)
+            return
+        }
+        val width = (target.hostSize.width - 16f).coerceAtLeast(1f)
+        val height = (target.hostSize.height - 16f).coerceAtLeast(1f)
+        val controls = com.dotwelwidgets.dotwellabs.media.MediaTouchGeometry.design(mediaKind)
+        fun place(id: Int, box: com.dotwelwidgets.dotwellabs.media.MediaTouchGeometry.Box?) {
+            if (box == null) { views.setViewVisibility(id, View.GONE); return }
+            val b = com.dotwelwidgets.dotwellabs.media.MediaTouchGeometry.map(box, mediaKind, width, height)
+            views.setViewLayoutWidth(id, (b.right-b.left).coerceAtLeast(1f), android.util.TypedValue.COMPLEX_UNIT_DIP)
+            views.setViewLayoutHeight(id, (b.bottom-b.top).coerceAtLeast(1f), android.util.TypedValue.COMPLEX_UNIT_DIP)
+            views.setViewLayoutMargin(id, RemoteViews.MARGIN_LEFT, b.left, android.util.TypedValue.COMPLEX_UNIT_DIP)
+            views.setViewLayoutMargin(id, RemoteViews.MARGIN_TOP, b.top, android.util.TypedValue.COMPLEX_UNIT_DIP)
+        }
+        place(R.id.media_previous, controls.previous)
+        place(R.id.media_play_pause, controls.play)
+        place(R.id.media_next, controls.next)
+        place(R.id.media_clear, controls.clear)
+        place(R.id.media_volume_up, controls.volumeUp)
+        place(R.id.media_volume_down, controls.volumeDown)
     }
 
     private fun bindLive(
@@ -190,6 +218,10 @@ abstract class BaseMediaWidgetProvider : BaseWidgetProvider() {
         appWidgetId: Int,
         snapshot: MediaSnapshot,
     ) {
+        MediaSessionRepository.sessionActivity(context)?.let { pending ->
+            views.setOnClickPendingIntent(R.id.widget_root, pending)
+            return
+        }
         val playerIntent = MediaSessionRepository.playerIntent(context)
         val intent = playerIntent ?: Intent(context, MainActivity::class.java)
             .putExtra(MainActivity.EXTRA_SHOW_MEDIA_ACCESS, true)
@@ -235,6 +267,8 @@ abstract class BaseMediaWidgetProvider : BaseWidgetProvider() {
             MediaTransportAction.NEXT,
             snapshot.canSkipNext,
         )
+        bindTransportButton(views,context,appWidgetId,R.id.media_volume_up,MediaTransportAction.VOLUME_UP,snapshot.canAdjustVolume)
+        bindTransportButton(views,context,appWidgetId,R.id.media_volume_down,MediaTransportAction.VOLUME_DOWN,snapshot.canAdjustVolume)
         views.setViewVisibility(
             R.id.media_clear,
             if (mediaKind == MediaWidgetKind.NOTIFICATION) View.VISIBLE else View.GONE,

@@ -10,6 +10,8 @@ import android.media.session.MediaController
 import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
 import android.os.SystemClock
+import android.os.Handler
+import android.os.Looper
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -31,6 +33,7 @@ class MediaNotificationService : NotificationListenerService() {
     }
 
     override fun onDestroy() {
+        MediaSessionRepository.onAccessChanged(applicationContext, false)
         if (instance === this) instance = null
         super.onDestroy()
     }
@@ -76,12 +79,82 @@ object MediaSessionRepository {
         val postedAtMillis: Long,
     )
 
+    private var sessionManager: MediaSessionManager? = null
+    private var sessionListener: MediaSessionManager.OnActiveSessionsChangedListener? = null
+    private val controllerCallbacks = mutableMapOf<MediaController, MediaController.Callback>()
+    private val callbackHandler = Handler(Looper.getMainLooper())
+
+    @Synchronized
     fun onAccessChanged(context: Context, granted: Boolean) {
-        if (!granted) cachedNotification = null
-        WidgetUpdater.updateMediaProviders(context)
+        val app = context.applicationContext
+        tearDownCallbacks()
+        if (!granted || !MediaAccess.isGranted(app)) {
+            cachedNotification = null
+        } else {
+            val manager = app.getSystemService(MediaSessionManager::class.java)
+            val component = ComponentName(app, MediaNotificationService::class.java)
+            val listener = MediaSessionManager.OnActiveSessionsChangedListener { controllers ->
+                bindControllers(app, controllers.orEmpty())
+                WidgetUpdater.updateMediaProviders(app)
+            }
+            try {
+                manager?.addOnActiveSessionsChangedListener(listener, component, callbackHandler)
+                sessionManager = manager
+                sessionListener = listener
+                bindControllers(app, manager?.getActiveSessions(component).orEmpty())
+            } catch (_: SecurityException) {
+                tearDownCallbacks()
+                cachedNotification = null
+            }
+        }
+        WidgetUpdater.updateMediaProviders(app)
+    }
+
+    @Synchronized
+    private fun bindControllers(context: Context, controllers: List<MediaController>) {
+        controllerCallbacks.forEach { (controller, callback) ->
+            runCatching { controller.unregisterCallback(callback) }
+        }
+        controllerCallbacks.clear()
+        if (!MediaAccess.isGranted(context)) {
+            cachedNotification = null
+            return
+        }
+        controllers.forEach { controller ->
+            val callback = object : MediaController.Callback() {
+                override fun onMetadataChanged(metadata: MediaMetadata?) {
+                    WidgetUpdater.updateMediaProviders(context)
+                }
+                override fun onPlaybackStateChanged(state: PlaybackState?) {
+                    WidgetUpdater.updateMediaProviders(context)
+                }
+                override fun onAudioInfoChanged(info: MediaController.PlaybackInfo) {
+                    WidgetUpdater.updateMediaProviders(context)
+                }
+                override fun onSessionDestroyed() {
+                    onAccessChanged(context, MediaAccess.isGranted(context))
+                }
+            }
+            runCatching { controller.registerCallback(callback, callbackHandler) }
+                .onSuccess { controllerCallbacks[controller] = callback }
+        }
+    }
+
+    @Synchronized
+    private fun tearDownCallbacks() {
+        sessionListener?.let { listener ->
+            runCatching { sessionManager?.removeOnActiveSessionsChangedListener(listener) }
+        }
+        sessionListener = null
+        sessionManager = null
+        controllerCallbacks.forEach { (controller, callback) ->
+            runCatching { controller.unregisterCallback(callback) }
+        }
+        controllerCallbacks.clear()
     }
 
     fun onNotificationPosted(context: Context, sbn: StatusBarNotification) {
+        if (!MediaAccess.isGranted(context)) { cachedNotification=null;return }
         if (sbn.packageName == context.packageName) return
         val notification = sbn.notification ?: return
         val extras = notification.extras ?: return
@@ -185,17 +258,21 @@ object MediaSessionRepository {
             playbackState = state,
             positionMillis = position,
             durationMillis = duration.coerceAtLeast(0L),
-            canPlayPause = actions and (
-                PlaybackState.ACTION_PLAY_PAUSE or
-                    PlaybackState.ACTION_PLAY or
-                    PlaybackState.ACTION_PAUSE
-                ) != 0L,
+            canPlayPause = supportsTransport(state, actions, MediaTransportAction.PLAY_PAUSE),
             canSkipPrevious = actions and PlaybackState.ACTION_SKIP_TO_PREVIOUS != 0L,
             canSkipNext = actions and PlaybackState.ACTION_SKIP_TO_NEXT != 0L,
             capturedAtMillis = nowMillis,
             notification = notification,
+            volumeFraction = controller.playbackInfo?.let { info ->
+                if(info.maxVolume>0) info.currentVolume.toFloat()/info.maxVolume else null
+            },
+            canAdjustVolume = controller.playbackInfo?.volumeControl != null &&
+                controller.playbackInfo?.volumeControl != android.media.VolumeProvider.VOLUME_CONTROL_FIXED,
         )
     }
+
+    fun sessionActivity(context: Context): android.app.PendingIntent? =
+        runCatching { bestController(context)?.sessionActivity }.getOrNull()
 
     fun playerIntent(context: Context): Intent? {
         val controller = bestController(context) ?: return null
@@ -206,22 +283,41 @@ object MediaSessionRepository {
 
     fun perform(context: Context, action: MediaTransportAction): Boolean {
         val controller = bestController(context) ?: return false
+        if (action == MediaTransportAction.VOLUME_UP || action == MediaTransportAction.VOLUME_DOWN) {
+            val info=controller.playbackInfo ?: return false
+            if(info.volumeControl==android.media.VolumeProvider.VOLUME_CONTROL_FIXED) return false
+            return runCatching {
+                controller.adjustVolume(if(action==MediaTransportAction.VOLUME_UP) android.media.AudioManager.ADJUST_RAISE else android.media.AudioManager.ADJUST_LOWER,0)
+            }.isSuccess.also { if(it) WidgetUpdater.updateMediaProviders(context) }
+        }
+        val state = controller.playbackState ?: return false
+        if (!supportsTransport(state.state, state.actions, action)) return false
         val controls = controller.transportControls ?: return false
         val ok = runCatching {
             when (action) {
                 MediaTransportAction.PLAY_PAUSE -> {
-                    if (controller.playbackState?.state == PlaybackState.STATE_PLAYING) {
-                        controls.pause()
-                    } else {
-                        controls.play()
-                    }
+                    if (state.state == PlaybackState.STATE_PLAYING) controls.pause()
+                    else controls.play()
                 }
                 MediaTransportAction.PREVIOUS -> controls.skipToPrevious()
                 MediaTransportAction.NEXT -> controls.skipToNext()
+                MediaTransportAction.VOLUME_UP, MediaTransportAction.VOLUME_DOWN -> Unit
             }
         }.isSuccess
         if (ok) WidgetUpdater.updateMediaProviders(context)
         return ok
+    }
+
+    internal fun supportsTransport(state: Int, actions: Long, action: MediaTransportAction): Boolean {
+        val bit = when (action) {
+            MediaTransportAction.PLAY_PAUSE -> if (state == PlaybackState.STATE_PLAYING) {
+                PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE
+            } else PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PLAY_PAUSE
+            MediaTransportAction.PREVIOUS -> PlaybackState.ACTION_SKIP_TO_PREVIOUS
+            MediaTransportAction.NEXT -> PlaybackState.ACTION_SKIP_TO_NEXT
+            MediaTransportAction.VOLUME_UP, MediaTransportAction.VOLUME_DOWN -> return false
+        }
+        return actions and bit != 0L
     }
 
     private fun bestController(context: Context): MediaController? {
@@ -276,6 +372,8 @@ enum class MediaTransportAction {
     PLAY_PAUSE,
     PREVIOUS,
     NEXT,
+    VOLUME_UP,
+    VOLUME_DOWN,
 }
 
 class MediaActionReceiver : BroadcastReceiver() {

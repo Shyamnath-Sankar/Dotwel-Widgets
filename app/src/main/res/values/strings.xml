@@ -289,8 +289,8 @@
     <string name="catalog_photo_circle_desc">NtPhotoCircle is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_photo_rect_desc">NtPhotoRect is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_away_desc">NtAway screen-interactive sampling needs a durable background observation path before it can be honest.</string>
-    <string name="catalog_compass_desc">NtCompass depends on sensor-driven live updates; the permitted service policy is still under review.</string>
-    <string name="catalog_snake_desc">NtSnake depends on a live game service; the permitted service policy is still under review.</string>
+    <string name="catalog_compass_desc">Optional: the source compass needs a live sensor service. Not included in this service-free build; enabling a live service needs your OK.</string>
+    <string name="catalog_snake_desc">Optional: the source game needs a live service. Not included in this service-free build; enabling a live service needs your OK.</string>
     <string name="catalog_weather_desc">Additional NtWx weather variants are not enabled yet. The two actual-source Open-Meteo widgets are Nothing Temp and Sun Info, both optional and off by default.</string>
     <string name="catalog_nothing_temp_desc">Today\'s forecast low plus the day\'s high and low for a city you choose manually. Weather is off by default; widget updates read only the private cache, with no GPS.</string>
     <string name="catalog_nothing_sun_desc">The next sunrise or sunset for a city you choose manually, from cached data. Weather is off by default; polar or unknown data shows Unavailable, with no GPS.</string>
@@ -308,8 +308,8 @@
     <string name="ledger_pending_photo">Provider not added: picker/config lifecycle not yet implemented.</string>
     <string name="ledger_pending_away">Provider not added: background sampling policy and configuration incomplete.</string>
     <string name="ledger_pending_weather">Provider not added: widget UI import pending. Data layer only.</string>
-    <string name="ledger_blocked_compass">Blocked: sensor live-update/service policy not grounded in this run.</string>
-    <string name="ledger_blocked_snake">Blocked: game service/update policy not grounded in this run.</string>
+    <string name="ledger_blocked_compass">Optional, needs your OK for a live sensor service.</string>
+    <string name="ledger_blocked_snake">Optional, needs your OK for a live game service.</string>
     <string name="ledger_unavailable_oem">Unavailable: OEM code/assets lack redistribution grant.</string>
 
     <string name="category_clocks">Clocks</string>
@@ -441,9 +441,9 @@
     <string name="media_close">Close</string>
     <string name="media_refresh">Refresh media widgets</string>
     <string name="category_media_player">Media &amp; notifications</string>
-    <string name="mode_media_live">Live media session</string>
+    <string name="mode_media_live">Live session · sampled progress</string>
     <string name="mode_media_notification">Live notification</string>
-    <string name="mode_media_master">Battery, date, cached weather &amp; live media</string>
+    <string name="mode_media_master">Battery, date, cached weather · sampled media</string>
     <string name="catalog_m3_expanded_desc">A rounded media card with album art, title, artist, progress and transport controls. Requires notification access you enable yourself; shows an honest empty state when declined.</string>
     <string name="catalog_m3_output_desc">A media card that also shows the active player or output app where the system provides it. Requires notification access you enable yourself; no fabricated output device.</string>
     <string name="catalog_mini_media_desc">A compact card with cover art, title, artist and playback controls. Requires notification access you enable yourself and a genuine active media session.</string>
@@ -495,10 +495,10 @@
 
     <string name="catalog_kwgt_digital2_desc">A right-aligned Nothing-style minute stack: previous relative minute, live time and next relative minute on a rounded panel. Uses a live TextClock; relative labels refresh on updates.</string>
     <string name="catalog_kwgt_date_time3_desc">A right-aligned date and time card with AM/PM and an optional manual-city current weather line including US AQI. Weather is off by default and cache-only.</string>
-    <string name="catalog_interstellar_endurance_desc">The source Interstellar Endurance shape spacecraft with tunnels, modules, airlocks and docking hub. Shape art is compiled from sanitized source data; seconds layers are sampled, not claimed live.</string>
-    <string name="catalog_interstellar_analog_desc">The source Endurance analog variant with hour and minute hands plus the shape spacecraft. Requires Android 12+ for the supported RemoteViews path; no third-party art is bundled.</string>
-    <string name="catalog_interstellar_analog2_desc">The source Endurance analog 2 variant with stepped hour and minute hands plus the shape spacecraft. Requires Android 12+; seconds layers are sampled, not claimed live.</string>
-    <string name="ledger_ready_interstellar">Native provider compiled from sanitized source shapes. Build-only verification here; seconds are sampled per update and native runtime sweep is pending.</string>
+    <string name="catalog_interstellar_endurance_desc">Experimental, still rough: spacecraft details differ from the source preview. Source spacecraft geometry with an Android-owned seconds hand. Android 12+ is required. No copied bitmap artwork.</string>
+    <string name="catalog_interstellar_analog_desc">Experimental, still rough: spacecraft details differ from the source preview. The source Endurance analog variant with hour and minute hands plus the shape spacecraft. Requires Android 12+ for the supported RemoteViews path; no third-party art is bundled.</string>
+    <string name="catalog_interstellar_analog2_desc">Experimental, still rough: spacecraft details differ from the source preview. Source static spacecraft dial with Android-owned hour and minute hands. Android 8+ supported. Android uses a smooth hour hand rather than the source stepped-hour behavior.</string>
+    <string name="ledger_ready_interstellar">Experimental, still rough: spacecraft details differ from the source preview. Native clock layers compiled from source geometry. Still rough: central spacecraft geometry differs from the source preview. Native verification is pending.</string>
     <string name="ledger_ready_media">Native provider with live session data only after you enable notification access. Build-only verification here; native runtime sweep pending.</string>
     <string name="kwgt_digital2_preview_description">Nothing Digital2 minute stack preview</string>
     <string name="kwgt_date_time3_preview_description">Nothing Date Time 3 preview</string>
@@ -512,7 +512,7 @@
     <string name="pin_kwgt_interstellar_analog2_confirmed">Interstellar Endurance Analog 2 added to your home screen.</string>
     <string name="mode_kwgt_digital2">Live time + relative minutes</string>
     <string name="mode_kwgt_date_time3">Live time + optional cached weather</string>
-    <string name="mode_interstellar">Source shapes · sampled seconds</string>
+    <string name="mode_interstellar">Source shapes · native clock hands</string>
     <string name="mode_media_player">Live session · opt-in access</string>
 
     <string name="widget_kwgt_digital2_label">Dotwel KWGT Digital2 Minutes</string>
@@ -526,4 +526,22 @@
     <string name="catalog_nothing_cpu_desc">Unavailable. The source needs whole-device CPU and RAM counters that Android does not expose to ordinary widgets. The app does not fabricate usage percentages.</string>
     <string name="ledger_blocked_interstellar_bitmap">Blocked on third-party bitmap rights. Exact source assets are recorded in the ledger; no image is bundled.</string>
     <string name="ledger_unavailable_cpu">Unavailable: Android 26+ does not expose whole-device CPU time counters to this app. No substitute percentages are shown.</string>
+    <string name="widget_ntwx_circle">Dotwel Weather Circle</string>
+    <string name="widget_ntwx_square">Dotwel Weather Square</string>
+    <string name="widget_ntwx_rect">Dotwel Weather Forecast</string>
+    <string name="widget_ntwx_combo">Dotwel Weather Combo</string>
+    <string name="widget_ntwx_sunset">Dotwel Weather Sunrise/Sunset</string>
+    <string name="widget_ntwx_air">Dotwel Weather Air Quality</string>
+    <string name="widget_ntwx_w1temp">Dotwel Weather Temperature</string>
+    <string name="widget_ntwx_w1status">Dotwel Weather Condition</string>
+    <string name="widget_ntwx_w1rain">Dotwel Weather Rain Chance</string>
+    <string name="widget_photo_circle">Dotwel Photo Circle</string>
+    <string name="widget_photo_rect">Dotwel Photo Rectangle</string>
+    <string name="widget_away">Dotwel Away Time</string>
+    <string name="ledger_ready_photo">Source crop and mask. Choose an image separately for each placed widget using the system picker. The app stores a private local copy, deleted when that widget is removed. No upload or broad photo access.</string>
+    <string name="ledger_ready_away">Source screen-interactive sampling, not usage history. Estimates can miss screen changes when Android delays the app or the process is stopped. No usage permission or polling service.</string>
+    <string name="mode_photo_local">Local image · tap placed widget to choose</string>
+    <string name="mode_away_sampled">Sampled estimate · tap to cycle</string>
+    <string name="media_volume_up">Raise media volume</string>
+    <string name="media_volume_down">Lower media volume</string>
 </resources>

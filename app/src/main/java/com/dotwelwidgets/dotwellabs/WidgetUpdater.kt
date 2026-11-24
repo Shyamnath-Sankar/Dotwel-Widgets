@@ -32,6 +32,18 @@ object WidgetUpdater {
         KwgtMiniCalendarWidgetProvider::class.java,
         KwgtCleanInfoWidgetProvider::class.java,
         IosBatteryWidgetProvider::class.java,
+        NtAwayWidgetProvider::class.java,
+        NtPhotoCircleProvider::class.java,
+        NtPhotoRectProvider::class.java,
+        NtWxCircleProvider::class.java,
+        NtWxSquareProvider::class.java,
+        NtWxRectProvider::class.java,
+        NtWxComboProvider::class.java,
+        NtWxSunsetProvider::class.java,
+        NtWxAirProvider::class.java,
+        NtWxW1TempProvider::class.java,
+        NtWxW1StatusProvider::class.java,
+        NtWxW1RainProvider::class.java,
         NothingTempWidgetProvider::class.java,
         NothingSunInfoWidgetProvider::class.java,
         KwgtDigital2WidgetProvider::class.java,
@@ -64,6 +76,15 @@ object WidgetUpdater {
 
     fun updateWeatherProviders(context: Context) {
         val manager = AppWidgetManager.getInstance(context)
+        updateProvider(context, manager, NtWxCircleProvider::class.java)
+        updateProvider(context, manager, NtWxSquareProvider::class.java)
+        updateProvider(context, manager, NtWxRectProvider::class.java)
+        updateProvider(context, manager, NtWxComboProvider::class.java)
+        updateProvider(context, manager, NtWxSunsetProvider::class.java)
+        updateProvider(context, manager, NtWxAirProvider::class.java)
+        updateProvider(context, manager, NtWxW1TempProvider::class.java)
+        updateProvider(context, manager, NtWxW1StatusProvider::class.java)
+        updateProvider(context, manager, NtWxW1RainProvider::class.java)
         updateProvider(context, manager, NothingTempWidgetProvider::class.java)
         updateProvider(context, manager, NothingSunInfoWidgetProvider::class.java)
         updateProvider(context, manager, NothingMasterWidgetProvider::class.java)

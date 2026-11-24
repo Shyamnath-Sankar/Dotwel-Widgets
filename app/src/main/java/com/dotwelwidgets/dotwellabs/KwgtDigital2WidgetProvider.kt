@@ -15,7 +15,7 @@ import android.widget.RemoteViews
  * TextClock repaired from the preview/source intent; the surrounding relative
  * labels are redrawn by [MinuteTickScheduler] when the optional exact-alarm
  * access is present. Without it the central clock stays live and the relative
- * labels keep the last update instead of pretending to tick.
+ * labels are hidden instead of displaying stale minutes.
  */
 class KwgtDigital2WidgetProvider : BaseWidgetProvider() {
     override val layoutRes: Int = R.layout.widget_kwgt_digital2
@@ -85,10 +85,14 @@ class KwgtDigital2WidgetProvider : BaseWidgetProvider() {
                     heightPx,
                     style,
                     includeBackground = true,
+                    includeShiftedMinutes = MinuteTickScheduler.hasExactAccess(context),
                 )
             },
             decorateTarget = { views, _, target ->
-                val layout = KwgtDigital2Renderer.layout(target.widthPx, target.heightPx)
+                val contentWidth=(target.hostSize.width-WidgetSizing.CONTENT_INSET_DP*2).coerceAtLeast(1f)
+                val contentHeight=(target.hostSize.height-WidgetSizing.CONTENT_INSET_DP*2).coerceAtLeast(1f)
+                val side=minOf(contentWidth,contentHeight)
+                val density=context.resources.displayMetrics.density
                 val palette = KwgtDigital2Renderer.palette(style)
                 views.setViewVisibility(R.id.kwgt_digital2_clock, View.VISIBLE)
                 views.setInt(
@@ -100,13 +104,13 @@ class KwgtDigital2WidgetProvider : BaseWidgetProvider() {
                 views.setTextViewTextSize(
                     R.id.kwgt_digital2_clock,
                     android.util.TypedValue.COMPLEX_UNIT_PX,
-                    layout.centerTextSize,
+                    side*density/3.5f,
                 )
                 views.setViewPadding(
                     R.id.kwgt_digital2_clock,
                     0,
                     0,
-                    layout.rightInset.toInt(),
+                    (((contentWidth-side)/2f+side/8.5f)*density).toInt(),
                     0,
                 )
                 views.setCharSequence(
