@@ -1,0 +1,9 @@
+{
+  "version": "0.1.8",
+  "tests": {},
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "744113378d5bf9bd4b4ff2f58bbe957d1269a9591ecf02665d2cebf41c9f92fa",
+  "error": "Missing weather_button"
+}
