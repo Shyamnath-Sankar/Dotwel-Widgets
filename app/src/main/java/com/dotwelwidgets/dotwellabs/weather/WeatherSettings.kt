@@ -18,6 +18,15 @@ object WeatherSettings {
     private const val KEY_LOCATION = "weather_location"
     private const val KEY_UNIT = "weather_unit"
     private const val KEY_LAST_AUTO = "weather_last_auto_attempt"
+    private const val KEY_FAILURE_LOCATION = "weather_failure_location"
+    private const val KEY_FAILURE_REASON = "weather_failure_reason"
+    private const val KEY_FAILURE_AT = "weather_failure_at"
+
+    /**
+     * Shared transaction lock for consent, selected city, unit, generation and
+     * cache commit/clear. No network I/O may run while this lock is held.
+     */
+    internal val STATE_LOCK = Any()
 
     private fun prefs(context: Context): SharedPreferences =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -46,6 +55,44 @@ object WeatherSettings {
 
     fun setUnit(context: Context, unit: TemperatureUnit) {
         prefs(context).edit().putString(KEY_UNIT, unit.name).apply()
+    }
+
+    fun clearUnit(context: Context) {
+        prefs(context).edit().remove(KEY_UNIT).apply()
+    }
+
+    fun recordFailure(
+        context: Context,
+        location: GeoLocation,
+        reason: WeatherResult.Reason,
+        atMillis: Long,
+    ) {
+        prefs(context).edit()
+            .putString(KEY_FAILURE_LOCATION, encodeLocation(location))
+            .putString(KEY_FAILURE_REASON, reason.name)
+            .putLong(KEY_FAILURE_AT, atMillis)
+            .apply()
+    }
+
+    fun clearFailure(context: Context) {
+        prefs(context).edit()
+            .remove(KEY_FAILURE_LOCATION)
+            .remove(KEY_FAILURE_REASON)
+            .remove(KEY_FAILURE_AT)
+            .apply()
+    }
+
+    fun lastFailure(context: Context): WeatherFailure? {
+        val selected = location(context) ?: return null
+        val prefs = prefs(context)
+        val failedLocation = decodeLocation(prefs.getString(KEY_FAILURE_LOCATION, null))
+        if (failedLocation != selected) return null
+        val reason = runCatching {
+            WeatherResult.Reason.valueOf(prefs.getString(KEY_FAILURE_REASON, null) ?: "")
+        }.getOrNull() ?: return null
+        val at = prefs.getLong(KEY_FAILURE_AT, 0L)
+        if (at <= 0L) return null
+        return WeatherFailure(failedLocation, reason, at)
     }
 
     fun lastAutoAttempt(context: Context): Long =

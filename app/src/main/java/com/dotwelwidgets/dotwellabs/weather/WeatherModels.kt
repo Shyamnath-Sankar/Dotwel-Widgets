@@ -59,7 +59,6 @@ sealed class WeatherResult {
     data class Failure(
         val reason: Reason,
         val cached: WeatherSnapshot? = null,
-        val detail: String? = null,
     ) : WeatherResult()
 
     enum class Reason {
@@ -67,5 +66,78 @@ sealed class WeatherResult {
         HTTP,
         PARSE,
         NO_LOCATION,
+        CANCELLED,
     }
+}
+
+/**
+ * Last failed refresh for one manually selected city. It is deliberately kept
+ * apart from the forecast cache so a cached widget can state that its last
+ * refresh failed instead of presenting old data as freshly updated.
+ */
+data class WeatherFailure(
+    val location: GeoLocation,
+    val reason: WeatherResult.Reason,
+    val atMillis: Long,
+)
+
+/**
+ * Pure deletion plan so a disable and a full delete cannot silently drift apart:
+ * disable always removes city, cache and failure; full delete also removes unit.
+ */
+data class WeatherClearPlan(
+    val clearLocation: Boolean,
+    val clearCache: Boolean,
+    val clearFailure: Boolean,
+    val clearUnit: Boolean,
+) {
+    companion object {
+        fun disable(clearUnit: Boolean = false) = WeatherClearPlan(
+            clearLocation = true,
+            clearCache = true,
+            clearFailure = true,
+            clearUnit = clearUnit,
+        )
+
+        fun selectCity() = WeatherClearPlan(
+            clearLocation = false,
+            clearCache = true,
+            clearFailure = true,
+            clearUnit = false,
+        )
+
+        fun changeUnit() = WeatherClearPlan(
+            clearLocation = false,
+            clearCache = true,
+            clearFailure = true,
+            clearUnit = false,
+        )
+    }
+}
+
+/**
+ * Pure consent/commit guard. A request token is valid only while weather is
+ * enabled, the selected city and unit still match, and no disable/location/unit
+ * transaction has bumped the generation.
+ */
+data class WeatherAccessPolicy(
+    val enabled: Boolean,
+    val location: GeoLocation?,
+    val unit: TemperatureUnit,
+    val generation: Int,
+) {
+    fun maySearch(): Boolean = enabled
+
+    fun mayFetch(): Boolean = enabled && location != null
+
+    fun maySelectCity(): Boolean = enabled
+
+    fun mayCommit(
+        token: Int,
+        committedLocation: GeoLocation,
+        committedUnit: TemperatureUnit,
+    ): Boolean = enabled &&
+        generation == token &&
+        location == committedLocation &&
+        unit == committedUnit
 }

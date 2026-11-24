@@ -353,7 +353,7 @@
     <string name="weather_header_off">Weather · Off</string>
     <string name="weather_header_on">Weather · On</string>
     <string name="weather_dialog_title">Weather settings</string>
-    <string name="weather_explain">Weather is optional and off by default. Nothing is requested until you enable weather and press Search or Refresh.\n\nWhen you search, Open-Meteo receives the city text you typed. When you choose a result and refresh, it receives that city's coordinates plus your network IP address. There is no GPS, device-location or background-location access, no telemetry and no automatic startup lookup. This app uses Open-Meteo as a personal, noncommercial service and shows attribution. Forecasts are cached privately and are not uploaded.\n\nOpen-Meteo terms: https://open-meteo.com/en/terms\nOpen-Meteo site: https://open-meteo.com/</string>
+    <string name="weather_explain">Weather is optional and off by default. Nothing is requested until you enable weather and press Search or Refresh.\n\nWhen you search, Open-Meteo receives the city text you typed. When you choose a result and refresh, it receives that city\'s coordinates plus your network IP address. There is no GPS, device-location or background-location access, no telemetry and no automatic startup lookup. This app uses Open-Meteo as a personal, noncommercial service and shows attribution. Forecasts are cached privately and are not uploaded.\n\nOpen-Meteo terms: https://open-meteo.com/en/terms\nOpen-Meteo site: https://open-meteo.com/</string>
     <string name="weather_attribution">Weather data by Open-Meteo (CC BY 4.0). Personal, noncommercial use. https://open-meteo.com/ · Terms: https://open-meteo.com/en/terms</string>
     <string name="weather_enable_label">Enable weather (network requests only after this)</string>
     <string name="weather_city_label">City search</string>
@@ -378,6 +378,7 @@
     <string name="weather_status_stale_suffix"> · STALE</string>
     <string name="weather_status_failed">Refresh failed (%1$s). No new data was saved.</string>
     <string name="weather_status_failed_cached">Refresh failed (%1$s). Showing cached data: %2$s</string>
+    <string name="weather_status_refresh_failed_suffix"> · refresh failed</string>
     <string name="weather_status_enabled">Weather is on. Choose a city to start.</string>
     <string name="weather_delete_confirm_title">Delete weather data?</string>
     <string name="weather_delete_confirm_message">This removes the selected city, unit cache and all cached forecast data from this device. Weather will be turned off. Nothing is uploaded.</string>
@@ -387,11 +388,12 @@
     <string name="weather_widget_setup">Choose a city · Tap to set up</string>
     <string name="weather_widget_no_cache">No cached weather · Tap to refresh</string>
     <string name="weather_widget_unavailable">Weather unavailable</string>
+    <string name="weather_widget_refresh_failed">Weather refresh failed · Tap to retry</string>
     <string name="weather_solar_unavailable">Unavailable</string>
     <string name="weather_temp_preview_description">Nothing Temp weather widget preview</string>
     <string name="weather_sun_preview_description">Nothing Sun Info weather widget preview</string>
     <string name="widget_weather_temp_label">Dotwel Nothing Temp</string>
-    <string name="widget_weather_temp_description">Optional Open-Meteo weather. Shows today's forecast low, high and low for a manually chosen city. Off by default; widget updates read the private cache and never use the network. No location or GPS permission.</string>
+    <string name="widget_weather_temp_description">Optional Open-Meteo weather. Shows today\'s forecast low plus the day\'s high and low for a manually chosen city. Off by default; widget updates read the private cache and never use the network. No location or GPS permission.</string>
     <string name="widget_weather_sun_label">Dotwel Nothing Sun Info</string>
     <string name="widget_weather_sun_description">Optional Open-Meteo sunrise and sunset. Shows the next solar event for a manually chosen city, calculated from cached sunrise and sunset instants. Off by default; widget updates read the private cache and never use the network. No location or GPS permission.</string>
     <string name="mode_weather_temp">Cached forecast · optional network</string>

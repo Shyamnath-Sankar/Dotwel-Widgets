@@ -926,11 +926,17 @@ class MainActivity : Activity() {
         val snapshot = WeatherCache.load(this)
             ?: return getString(R.string.weather_status_no_cache, location.name)
         val stale = WeatherDisplay.isStale(snapshot, System.currentTimeMillis())
+        val failed = WeatherSettings.lastFailure(this) != null
         return getString(
             R.string.weather_status_updated,
             WeatherDisplay.locationLine(location),
             WeatherDisplay.fetchedTime(snapshot),
-            if (stale) getString(R.string.weather_status_stale_suffix) else "",
+            buildString {
+                if (stale) append(getString(R.string.weather_status_stale_suffix))
+                if (failed) {
+                    append(getString(R.string.weather_status_refresh_failed_suffix))
+                }
+            },
         )
     }
 

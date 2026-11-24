@@ -84,6 +84,8 @@ abstract class BaseWeatherWidgetProvider : BaseWidgetProvider() {
     private fun fallbackText(context: Context, state: WeatherRenderState): String = when {
         !state.enabled -> context.getString(R.string.weather_widget_off)
         !state.hasLocation -> context.getString(R.string.weather_widget_setup)
+        state.snapshot == null && state.failure != null ->
+            context.getString(R.string.weather_widget_refresh_failed)
         state.snapshot == null -> context.getString(R.string.weather_widget_no_cache)
         else -> context.getString(R.string.weather_widget_unavailable)
     }
@@ -107,7 +109,7 @@ abstract class BaseWeatherWidgetProvider : BaseWidgetProvider() {
             append(", ")
             append(
                 com.dotwelwidgets.dotwellabs.weather.WeatherDisplay
-                    .statusLine(snapshot, state.now),
+                    .statusLine(snapshot, state.now, state.failure),
             )
         }
     }

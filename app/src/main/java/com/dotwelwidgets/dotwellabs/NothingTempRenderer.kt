@@ -86,7 +86,7 @@ object NothingTempRenderer {
             else -> "Forecast unavailable"
         }
         val updatedLine = if (snapshot != null) {
-            WeatherDisplay.statusLine(snapshot, state.now)
+            WeatherDisplay.statusLine(snapshot, state.now, state.failure)
         } else {
             WeatherDisplay.setupMessage(state)
         }

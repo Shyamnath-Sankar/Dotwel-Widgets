@@ -24,6 +24,7 @@ data class WeatherRenderState(
     val enabled: Boolean,
     val hasLocation: Boolean,
     val now: Long,
+    val failure: WeatherFailure? = null,
 ) {
     companion object {
         fun from(context: Context, now: Long = System.currentTimeMillis()): WeatherRenderState {
@@ -39,6 +40,11 @@ data class WeatherRenderState(
                 enabled = enabled,
                 hasLocation = location != null,
                 now = now,
+                failure = if (enabled && location != null) {
+                    WeatherSettings.lastFailure(context)
+                } else {
+                    null
+                },
             )
         }
     }
@@ -128,9 +134,14 @@ object WeatherDisplay {
             Instant.ofEpochMilli(event.epochMillis).atZone(zone(location)),
         )
 
-    fun statusLine(snapshot: WeatherSnapshot, now: Long): String {
+    fun statusLine(
+        snapshot: WeatherSnapshot,
+        now: Long,
+        failure: WeatherFailure? = null,
+    ): String {
         val stale = if (isStale(snapshot, now)) " \u00B7 STALE" else ""
-        return "Updated ${fetchedTime(snapshot)}$stale"
+        val failed = if (failure != null) " \u00B7 REFRESH FAILED" else ""
+        return "Cached ${fetchedTime(snapshot)}$stale$failed"
     }
 
     fun locationLine(location: GeoLocation): String = buildString {
@@ -142,6 +153,7 @@ object WeatherDisplay {
     fun setupMessage(state: WeatherRenderState): String = when {
         !state.enabled -> "Weather is off \u00B7 Tap to set up"
         !state.hasLocation -> "Choose a city \u00B7 Tap to set up"
+        state.snapshot == null && state.failure != null -> "Refresh failed \u00B7 Tap to retry"
         state.snapshot == null -> "No cached weather \u00B7 Tap to refresh"
         else -> "Weather unavailable"
     }

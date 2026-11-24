@@ -81,7 +81,7 @@ object NothingSunInfoRenderer {
             buildString {
                 append(WeatherDisplay.locationLine(it.location))
                 append(" \u00B7 ")
-                append(WeatherDisplay.statusLine(it, state.now))
+                append(WeatherDisplay.statusLine(it, state.now, state.failure))
             }
         } ?: WeatherDisplay.setupMessage(state)
 

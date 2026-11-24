@@ -72,7 +72,6 @@ object HttpWeatherTransport : WeatherTransport {
 
 object WeatherRepository {
     private const val FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
-    private const val AIR_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
     private const val GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
     private const val MAX_QUERY_LENGTH = 120
 
@@ -122,7 +121,9 @@ object WeatherRepository {
         if (!location.latitude.isFinite() || !location.longitude.isFinite()) {
             return WeatherResult.Failure(WeatherResult.Reason.NO_LOCATION)
         }
-        val cached = context?.let { WeatherCache.load(it) }
+        val cached = context?.let {
+            synchronized(WeatherSettings.STATE_LOCK) { WeatherCache.load(it) }
+        }
         val unitParam = if (unit == TemperatureUnit.FAHRENHEIT) {
             "&temperature_unit=fahrenheit"
         } else {
@@ -138,23 +139,26 @@ object WeatherRepository {
             append("&timezone=auto&forecast_days=7")
             append(unitParam)
         }
-        val airUrl = buildString {
-            append(AIR_URL)
-            append("?latitude=").append(location.latitude)
-            append("&longitude=").append(location.longitude)
-            append("&current=us_aqi")
-        }
         return try {
+            if (!shouldCommit()) {
+                return WeatherResult.Failure(WeatherResult.Reason.CANCELLED, cached)
+            }
             val forecast = transport.get(forecastUrl)
-            val air = runCatching { transport.get(airUrl) }.getOrNull()
-            val snapshot = parseSnapshot(location, unit, forecast, air, now)
-            if (context != null &&
-                shouldCommit() &&
-                WeatherSettings.isEnabled(context) &&
-                WeatherSettings.location(context) == location &&
-                WeatherSettings.unit(context) == unit
-            ) {
-                WeatherCache.save(context, forecast, air, location, unit, now)
+            if (!shouldCommit()) {
+                return WeatherResult.Failure(WeatherResult.Reason.CANCELLED, cached)
+            }
+            val snapshot = parseSnapshot(location, unit, forecast, now)
+            if (context != null) {
+                synchronized(WeatherSettings.STATE_LOCK) {
+                    if (shouldCommit() &&
+                        WeatherSettings.isEnabled(context) &&
+                        WeatherSettings.location(context) == location &&
+                        WeatherSettings.unit(context) == unit
+                    ) {
+                        WeatherCache.save(context, forecast, location, unit, now)
+                        WeatherSettings.clearFailure(context)
+                    }
+                }
             }
             WeatherResult.Success(snapshot)
         } catch (error: Exception) {
@@ -163,7 +167,7 @@ object WeatherRepository {
                 is org.json.JSONException -> WeatherResult.Reason.PARSE
                 else -> WeatherResult.Reason.HTTP
             }
-            WeatherResult.Failure(reason, cached, error.message)
+            WeatherResult.Failure(reason, cached)
         }
     }
 
@@ -173,7 +177,6 @@ object WeatherRepository {
         location: GeoLocation,
         unit: TemperatureUnit,
         forecastBody: String,
-        airBody: String?,
         fetchedAt: Long,
     ): WeatherSnapshot {
         val root = JSONObject(forecastBody)
@@ -220,25 +223,14 @@ object WeatherRepository {
             isDay = current.optInt("is_day", 1) == 1,
             observedAtEpochMillis = parseLocal(current.optString("time"), zone) ?: fetchedAt,
         )
-        val air = airBody?.let { parseAir(it, zone) }
         return WeatherSnapshot(
             location = location,
             unit = unit,
             current = currentSnapshot,
             forecast = days,
-            airQuality = air,
+            airQuality = null,
             fetchedAtEpochMillis = fetchedAt,
         )
-    }
-
-    private fun parseAir(body: String, zone: ZoneId): WeatherAirQuality? = try {
-        val current = JSONObject(body).optJSONObject("current") ?: return null
-        WeatherAirQuality(
-            usAqi = if (current.has("us_aqi")) current.optInt("us_aqi") else null,
-            observedAtEpochMillis = parseLocal(current.optString("time"), zone),
-        )
-    } catch (_: Exception) {
-        null
     }
 
     private fun precipitationByDate(hourly: JSONObject?): Map<String, Int> {
@@ -265,7 +257,6 @@ object WeatherRepository {
 
 internal object WeatherCache {
     private const val KEY_FORECAST = "cache_forecast_json"
-    private const val KEY_AIR = "cache_air_json"
     private const val KEY_LOCATION = "cache_location"
     private const val KEY_UNIT = "cache_unit"
     private const val KEY_FETCHED_AT = "cache_fetched_at"
@@ -279,7 +270,6 @@ internal object WeatherCache {
     fun save(
         context: Context,
         forecast: String,
-        air: String?,
         location: GeoLocation,
         unit: TemperatureUnit,
         fetchedAt: Long,
@@ -290,7 +280,6 @@ internal object WeatherCache {
         )
         prefs.edit()
             .putString(KEY_FORECAST, forecast)
-            .putString(KEY_AIR, air)
             .putString(KEY_LOCATION, WeatherSettings.encodeLocation(location))
             .putString(KEY_UNIT, unit.name)
             .putLong(KEY_FETCHED_AT, fetchedAt)
@@ -322,7 +311,6 @@ internal object WeatherCache {
                 cachedLocation,
                 cachedUnit,
                 forecast,
-                prefs.getString(KEY_AIR, null),
                 fetchedAt,
             )
         }.getOrNull()
@@ -332,7 +320,6 @@ internal object WeatherCache {
         context.getSharedPreferences(WeatherSettings.PREFS, Context.MODE_PRIVATE)
             .edit()
             .remove(KEY_FORECAST)
-            .remove(KEY_AIR)
             .remove(KEY_LOCATION)
             .remove(KEY_UNIT)
             .remove(KEY_FETCHED_AT)

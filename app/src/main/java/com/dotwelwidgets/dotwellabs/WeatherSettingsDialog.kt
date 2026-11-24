@@ -183,9 +183,14 @@ class WeatherSettingsDialog(
 
     private fun onEnabledChanged(enabled: Boolean) {
         if (enabled == WeatherSettings.isEnabled(activity)) return
-        WeatherSettings.setEnabled(activity, enabled)
-        WeatherController.invalidate()
-        if (!enabled) WeatherController.cancelPending()
+        if (enabled) {
+            WeatherController.enable(activity)
+        } else {
+            WeatherController.disable(activity)
+            searchResults = emptyList()
+            selectedResult = -1
+            buildResults()
+        }
         WidgetUpdater.updateWeatherProviders(activity)
         refreshUi()
         updateStatus(
@@ -196,6 +201,10 @@ class WeatherSettingsDialog(
     }
 
     private fun search() {
+        if (!WeatherSettings.isEnabled(activity)) {
+            updateStatus(activity.getString(R.string.weather_status_off))
+            return
+        }
         val query = cityInput.text?.toString()?.trim().orEmpty()
         if (query.isBlank()) {
             updateStatus(activity.getString(R.string.weather_city_hint))
@@ -203,20 +212,22 @@ class WeatherSettingsDialog(
         }
         searchButton.isEnabled = false
         updateStatus(activity.getString(R.string.weather_searching))
-        WeatherController.search(query) { locations, error ->
+        WeatherController.search(activity, query) { locations ->
             if (destroyed) return@search
-            searchButton.isEnabled = WeatherSettings.isEnabled(activity)
-            if (locations == null || locations.isEmpty()) {
+            val enabled = WeatherSettings.isEnabled(activity)
+            searchButton.isEnabled = enabled
+            if (!enabled) {
                 searchResults = emptyList()
                 selectedResult = -1
                 buildResults()
-                updateStatus(
-                    if (error != null) {
-                        activity.getString(R.string.weather_no_results) + " " + error
-                    } else {
-                        activity.getString(R.string.weather_no_results)
-                    },
-                )
+                updateStatus(activity.getString(R.string.weather_status_off))
+                return@search
+            }
+            if (locations.isNullOrEmpty()) {
+                searchResults = emptyList()
+                selectedResult = -1
+                buildResults()
+                updateStatus(activity.getString(R.string.weather_no_results))
             } else {
                 searchResults = locations
                 selectedResult = if (locations.size == 1) 0 else -1
@@ -256,16 +267,19 @@ class WeatherSettingsDialog(
     }
 
     private fun useSelectedCity() {
+        if (!WeatherSettings.isEnabled(activity)) {
+            updateStatus(activity.getString(R.string.weather_status_off))
+            return
+        }
         val location = searchResults.getOrNull(selectedResult)
         if (location == null) {
             updateStatus(activity.getString(R.string.weather_select_city_first))
             return
         }
-        WeatherSettings.setEnabled(activity, true)
-        WeatherSettings.setLocation(activity, location)
-        WeatherCache.clear(activity)
-        WeatherController.invalidate()
-        WeatherController.cancelPending()
+        if (!WeatherController.selectCity(activity, location)) {
+            updateStatus(activity.getString(R.string.weather_status_off))
+            return
+        }
         WidgetUpdater.updateWeatherProviders(activity)
         refreshUi()
         val callback = onConfigured
@@ -280,10 +294,7 @@ class WeatherSettingsDialog(
 
     private fun onUnitChanged(unit: TemperatureUnit) {
         if (unit == WeatherSettings.unit(activity)) return
-        WeatherSettings.setUnit(activity, unit)
-        WeatherCache.clear(activity)
-        WeatherController.invalidate()
-        WeatherController.cancelPending()
+        WeatherController.changeUnit(activity, unit)
         WidgetUpdater.updateWeatherProviders(activity)
         refreshUi()
         if (WeatherSettings.isEnabled(activity) &&
@@ -347,11 +358,7 @@ class WeatherSettingsDialog(
     }
 
     private fun deleteAll() {
-        WeatherSettings.setEnabled(activity, false)
-        WeatherSettings.clearLocation(activity)
-        WeatherCache.clear(activity)
-        WeatherController.invalidate()
-        WeatherController.cancelPending()
+        WeatherController.disable(activity, clearUnit = true)
         WidgetUpdater.updateWeatherProviders(activity)
         searchResults = emptyList()
         selectedResult = -1
@@ -392,11 +399,17 @@ class WeatherSettingsDialog(
         val snapshot = WeatherCache.load(activity)
             ?: return activity.getString(R.string.weather_status_no_cache, location.name)
         val stale = WeatherDisplay.isStale(snapshot, System.currentTimeMillis())
+        val failed = WeatherSettings.lastFailure(activity) != null
         return activity.getString(
             R.string.weather_status_updated,
             WeatherDisplay.locationLine(location),
             WeatherDisplay.fetchedTime(snapshot),
-            if (stale) activity.getString(R.string.weather_status_stale_suffix) else "",
+            buildString {
+                if (stale) append(activity.getString(R.string.weather_status_stale_suffix))
+                if (failed) {
+                    append(activity.getString(R.string.weather_status_refresh_failed_suffix))
+                }
+            },
         )
     }
 
