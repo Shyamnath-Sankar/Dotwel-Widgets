@@ -1,0 +1,89 @@
+name: Correct iOS Battery component sizing and gallery copy
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 89a9bf290e7488439af564963b7aff36d6b9d6e6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/ios-fit-${GITHUB_RUN_ID}"
+      - name: Apply reference-led widget browser and renderer polish
+        timeout-minutes: 11
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/AumGupta/KWGT-Widgets/96ca27be4cbff35efec5a86c64dd39fd065c958f/widgets/iOS_Battery_Widget.kwgt -o /tmp/ios-battery.kwgt
+          mkdir -p /tmp/ios-battery-preset && unzip -oq /tmp/ios-battery.kwgt -d /tmp/ios-battery-preset
+          cat > /tmp/widget-task.txt <<'TASK'
+          Correct existing25candidate without addingproviders. Actualnative45362639090 showed iOSBattery largeemptycard undersizedring/text. IosBatteryRenderer SOURCE_SHORT_SIDE416 wrongly uses preset_info fullpreviewcanvas width instead of Komponent globals bgwidth/bgheight290. Source screenshot ringapprox37percentwidth and percentage~large bottomthird. ActualpresetBgwidthactivehostmin, components92ring+32padding/290design. Also investigate actualraster/host mismatch: native ringlooks~20percentcard not32percent and percentage~18px vs expected60px, so basisalone maynotfix. ProviderbuildBitmapViews renderreceives downsampledrasterdimensions, keep drawingconsistentraster, neveractualhostcoords or secondscaling. Inspect BaseWidgetProvider/WidgetSizing and viewlayout actualimage centerInside; compare imageintrinsic and allottedbounds. Correct scalingrootcause, not onlyconstant. Change normalizedcomponentbasis to290, not416, derivepreserving min(hostwidth,height)/290uniformscale ring/text/padding69corners. Need account source screenshot visiblecardratio; previewfullcanvas hastransparentmargins. Do not blindlyfit to screen416. Keepring92,stroke10,padding32,text92,left32,bottom16relativecomponent290. Roundedarccaps source screenshotround use ROUND if actualpreset styledefault confirms; inspect sanitizedsource. Fontplatformsans. Chargingwhiteglyphmustclear. Existingactualdata threshold14red15orange24orange25green liveworks; no otherbehaviorchange. Tests sizingexpectations updated tocorrectsourcecomponent notweakeningchecks. Existing24 and weather code untouched except productcopy.
+          Gallery UX actualnative screenshot shows enormousdeveloperparagraphs not premium. Shorten only user-facing catalog descriptions for ALL25providers to <=45words each, naturaluseful features+importantlimits; retain technicalsourceformulas/license/provenance/adaptations in docs unchanged. WeatherTemp: dailyforecastlowandhigh forchosenmanualcity, cachedtime and optionalweather, tapsettings; Sun: nextsunriseorsunsetcachedcitytime, unknown/polartruth. Battery: realpercentage/ring/charging,tapbatterysettings,boundedbackgroundrefresh Dozecandelay. Other clocks clearlysecondssupportAndroid12+whereapplies. NO inventedcapabilities. Keeptitle/category/Add actions unchanged. Widgetdescription likewiseconcise. Weather disclosuretruth: enabledappresume may refreshhourly; existingstatement noautomaticstartuplookup misleading. Makeoffdefaultandnonebeforeconsentclear, citymanualnoGPS, enabledappresumecanrefreshcachedforecastatmosthourly, no backgroundnetworkpolling. Appresumeautomaticfetchonlyifselectedcityandconsent exists. Verify code before wording. No newpermission/service/networkfeature/dependency/provider/launcher/production/historyvisibility/paid. SourceAPKprivatecandidateonlynotaccepted. Buildunitlint no suppressions, finish8min, saveevenontimeout. Updateledgertruth25pendingnative; don't claimcomplete.
+          TASK
+          timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          rm -f checkpoints/dotwel-widgets-polish-debug.apk checkpoints/POLISH-SHA256SUMS
+          pkill -f '[K]otlinCompileDaemon' || true
+          bash ./gradlew --stop || true
+          rm -rf app/build/kotlin
+          bash ./gradlew assembleDebug testDebugUnitTest -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
