@@ -1,0 +1,12 @@
+{
+  "version": "0.1.8",
+  "tests": {
+    "pre31_catalog": "excluded from ready-only category, no Add offered",
+    "pre31_provider": "absent from appwidget registry",
+    "existing_provider_pin": "confirmed"
+  },
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "32865216424e0f759150102ef14d41b2cb3e2f7aa383746d10dcebf8889cdf1c"
+}

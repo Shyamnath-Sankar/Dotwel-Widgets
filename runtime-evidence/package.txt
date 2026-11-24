@@ -1,0 +1,452 @@
+Activity Resolver Table:
+  Non-Data Actions:
+      android.intent.action.MAIN:
+        2f81c40 com.dotwelwidgets.dotwellabs/.MainActivity filter 5bfb779
+          Action: "android.intent.action.MAIN"
+          Category: "android.intent.category.LAUNCHER"
+
+Receiver Resolver Table:
+  Non-Data Actions:
+      android.intent.action.BATTERY_CHANGED:
+        48d416e com.dotwelwidgets.dotwellabs/.KwgtBattery2WidgetProvider filter 328900f
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.BATTERY_CHANGED"
+          Action: "android.intent.action.POWER_CONNECTED"
+          Action: "android.intent.action.POWER_DISCONNECTED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        b8d3db8 com.dotwelwidgets.dotwellabs/.KwgtCleanInfoWidgetProvider filter 8418791
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+          Action: "android.intent.action.BATTERY_CHANGED"
+      android.intent.action.POWER_DISCONNECTED:
+        48d416e com.dotwelwidgets.dotwellabs/.KwgtBattery2WidgetProvider filter 328900f
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.BATTERY_CHANGED"
+          Action: "android.intent.action.POWER_CONNECTED"
+          Action: "android.intent.action.POWER_DISCONNECTED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+      android.intent.action.TIMEZONE_CHANGED:
+        d1e2cbe com.dotwelwidgets.dotwellabs/.ClockWidgetProvider filter 6f211f
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        862bc6c com.dotwelwidgets.dotwellabs/.DateWidgetProvider filter efb5235
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        ec4189c com.dotwelwidgets.dotwellabs/.KwgtDateTimeWidgetProvider filter da632a5
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        3d0067a com.dotwelwidgets.dotwellabs/.KwgtDateTime2WidgetProvider filter de81e2b
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        5482288 com.dotwelwidgets.dotwellabs/.KwgtDigital4WidgetProvider filter 76c5421
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        d481046 com.dotwelwidgets.dotwellabs/.KwgtDigital3WidgetProvider filter 8c87207
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        880df34 com.dotwelwidgets.dotwellabs/.KwgtGradientClockWidgetProvider filter 919115d
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        de4ead2 com.dotwelwidgets.dotwellabs/.KwgtAnalog3WidgetProvider filter a7027a3
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        8e6baa0 com.dotwelwidgets.dotwellabs/.KwgtAnalogSecondsWidgetProvider filter eda6659
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        2e21e com.dotwelwidgets.dotwellabs/.KwgtAnalog5WidgetProvider filter 3539aff
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        40ce0cc com.dotwelwidgets.dotwellabs/.KwgtAnalog5TransparentWidgetProvider filter fc20f15
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        577022a com.dotwelwidgets.dotwellabs/.KwgtMiniCalendarWidgetProvider filter cd0e81b
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        b8d3db8 com.dotwelwidgets.dotwellabs/.KwgtCleanInfoWidgetProvider filter 8418791
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+          Action: "android.intent.action.BATTERY_CHANGED"
+      android.intent.action.TIME_SET:
+        d1e2cbe com.dotwelwidgets.dotwellabs/.ClockWidgetProvider filter 6f211f
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        862bc6c com.dotwelwidgets.dotwellabs/.DateWidgetProvider filter efb5235
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        ec4189c com.dotwelwidgets.dotwellabs/.KwgtDateTimeWidgetProvider filter da632a5
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        3d0067a com.dotwelwidgets.dotwellabs/.KwgtDateTime2WidgetProvider filter de81e2b
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        5482288 com.dotwelwidgets.dotwellabs/.KwgtDigital4WidgetProvider filter 76c5421
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        d481046 com.dotwelwidgets.dotwellabs/.KwgtDigital3WidgetProvider filter 8c87207
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        880df34 com.dotwelwidgets.dotwellabs/.KwgtGradientClockWidgetProvider filter 919115d
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        de4ead2 com.dotwelwidgets.dotwellabs/.KwgtAnalog3WidgetProvider filter a7027a3
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        8e6baa0 com.dotwelwidgets.dotwellabs/.KwgtAnalogSecondsWidgetProvider filter eda6659
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        2e21e com.dotwelwidgets.dotwellabs/.KwgtAnalog5WidgetProvider filter 3539aff
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        40ce0cc com.dotwelwidgets.dotwellabs/.KwgtAnalog5TransparentWidgetProvider filter fc20f15
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        577022a com.dotwelwidgets.dotwellabs/.KwgtMiniCalendarWidgetProvider filter cd0e81b
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        b8d3db8 com.dotwelwidgets.dotwellabs/.KwgtCleanInfoWidgetProvider filter 8418791
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+          Action: "android.intent.action.BATTERY_CHANGED"
+      android.intent.action.BOOT_COMPLETED:
+        48d416e com.dotwelwidgets.dotwellabs/.KwgtBattery2WidgetProvider filter 328900f
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.BATTERY_CHANGED"
+          Action: "android.intent.action.POWER_CONNECTED"
+          Action: "android.intent.action.POWER_DISCONNECTED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        5482288 com.dotwelwidgets.dotwellabs/.KwgtDigital4WidgetProvider filter 76c5421
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        d481046 com.dotwelwidgets.dotwellabs/.KwgtDigital3WidgetProvider filter 8c87207
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        880df34 com.dotwelwidgets.dotwellabs/.KwgtGradientClockWidgetProvider filter 919115d
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        577022a com.dotwelwidgets.dotwellabs/.KwgtMiniCalendarWidgetProvider filter cd0e81b
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        b8d3db8 com.dotwelwidgets.dotwellabs/.KwgtCleanInfoWidgetProvider filter 8418791
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+          Action: "android.intent.action.BATTERY_CHANGED"
+      android.intent.action.DATE_CHANGED:
+        d1e2cbe com.dotwelwidgets.dotwellabs/.ClockWidgetProvider filter 6f211f
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        862bc6c com.dotwelwidgets.dotwellabs/.DateWidgetProvider filter efb5235
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        ec4189c com.dotwelwidgets.dotwellabs/.KwgtDateTimeWidgetProvider filter da632a5
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        3d0067a com.dotwelwidgets.dotwellabs/.KwgtDateTime2WidgetProvider filter de81e2b
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        5482288 com.dotwelwidgets.dotwellabs/.KwgtDigital4WidgetProvider filter 76c5421
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        d481046 com.dotwelwidgets.dotwellabs/.KwgtDigital3WidgetProvider filter 8c87207
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        880df34 com.dotwelwidgets.dotwellabs/.KwgtGradientClockWidgetProvider filter 919115d
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        577022a com.dotwelwidgets.dotwellabs/.KwgtMiniCalendarWidgetProvider filter cd0e81b
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        b8d3db8 com.dotwelwidgets.dotwellabs/.KwgtCleanInfoWidgetProvider filter 8418791
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+          Action: "android.intent.action.BATTERY_CHANGED"
+      android.intent.action.POWER_CONNECTED:
+        48d416e com.dotwelwidgets.dotwellabs/.KwgtBattery2WidgetProvider filter 328900f
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.BATTERY_CHANGED"
+          Action: "android.intent.action.POWER_CONNECTED"
+          Action: "android.intent.action.POWER_DISCONNECTED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+      android.appwidget.action.APPWIDGET_UPDATE:
+        d1e2cbe com.dotwelwidgets.dotwellabs/.ClockWidgetProvider filter 6f211f
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        862bc6c com.dotwelwidgets.dotwellabs/.DateWidgetProvider filter efb5235
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        e0c56ca com.dotwelwidgets.dotwellabs/.AnalogBoldWidgetProvider filter 7eeb03b
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+        2f53358 com.dotwelwidgets.dotwellabs/.AnalogScaleWidgetProvider filter 61bdcb1
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+        9011596 com.dotwelwidgets.dotwellabs/.WorldWidgetProvider filter 20e1517
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+        1362d04 com.dotwelwidgets.dotwellabs/.QuotesWidgetProvider filter ae092ed
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+        eb0f522 com.dotwelwidgets.dotwellabs/.BatteryWidgetProvider filter 654ebb3
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+        16b1570 com.dotwelwidgets.dotwellabs/.BatteryMiniWidgetProvider filter fc070e9
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+        48d416e com.dotwelwidgets.dotwellabs/.KwgtBattery2WidgetProvider filter 328900f
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.BATTERY_CHANGED"
+          Action: "android.intent.action.POWER_CONNECTED"
+          Action: "android.intent.action.POWER_DISCONNECTED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        ec4189c com.dotwelwidgets.dotwellabs/.KwgtDateTimeWidgetProvider filter da632a5
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        3d0067a com.dotwelwidgets.dotwellabs/.KwgtDateTime2WidgetProvider filter de81e2b
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+        5482288 com.dotwelwidgets.dotwellabs/.KwgtDigital4WidgetProvider filter 76c5421
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        d481046 com.dotwelwidgets.dotwellabs/.KwgtDigital3WidgetProvider filter 8c87207
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        880df34 com.dotwelwidgets.dotwellabs/.KwgtGradientClockWidgetProvider filter 919115d
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        de4ead2 com.dotwelwidgets.dotwellabs/.KwgtAnalog3WidgetProvider filter a7027a3
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        8e6baa0 com.dotwelwidgets.dotwellabs/.KwgtAnalogSecondsWidgetProvider filter eda6659
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        2e21e com.dotwelwidgets.dotwellabs/.KwgtAnalog5WidgetProvider filter 3539aff
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        40ce0cc com.dotwelwidgets.dotwellabs/.KwgtAnalog5TransparentWidgetProvider filter fc20f15
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+        577022a com.dotwelwidgets.dotwellabs/.KwgtMiniCalendarWidgetProvider filter cd0e81b
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+        b8d3db8 com.dotwelwidgets.dotwellabs/.KwgtCleanInfoWidgetProvider filter 8418791
+          Action: "android.appwidget.action.APPWIDGET_UPDATE"
+          Action: "android.intent.action.TIME_SET"
+          Action: "android.intent.action.TIMEZONE_CHANGED"
+          Action: "android.intent.action.DATE_CHANGED"
+          Action: "android.intent.action.BOOT_COMPLETED"
+          Action: "android.intent.action.BATTERY_CHANGED"
+
+Key Set Manager:
+  [com.dotwelwidgets.dotwellabs]
+      Signing KeySets: 35
+
+Packages:
+  Package [com.dotwelwidgets.dotwellabs] (cea3e0c):
+    userId=10167
+    pkg=Package{6a920d5 com.dotwelwidgets.dotwellabs}
+    codePath=/data/app/~~6Y8qVhWawPR_qPSPAcvAKQ==/com.dotwelwidgets.dotwellabs-uRS8CGCi1K905yF68VKpfg==
+    resourcePath=/data/app/~~6Y8qVhWawPR_qPSPAcvAKQ==/com.dotwelwidgets.dotwellabs-uRS8CGCi1K905yF68VKpfg==
+    legacyNativeLibraryDir=/data/app/~~6Y8qVhWawPR_qPSPAcvAKQ==/com.dotwelwidgets.dotwellabs-uRS8CGCi1K905yF68VKpfg==/lib
+    primaryCpuAbi=null
+    secondaryCpuAbi=null
+    versionCode=9 minSdk=26 targetSdk=36
+    versionName=0.1.8
+    splits=[base]
+    apkSigningVersion=2
+    applicationInfo=ApplicationInfo{6a920d5 com.dotwelwidgets.dotwellabs}
+    flags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    privateFlags=[ PRIVATE_FLAG_ACTIVITIES_RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION ALLOW_AUDIO_PLAYBACK_CAPTURE PRIVATE_FLAG_ALLOW_NATIVE_HEAP_POINTER_TAGGING ]
+    forceQueryable=false
+    queriesPackages=[]
+    dataDir=/data/user/0/com.dotwelwidgets.dotwellabs
+    supportsScreens=[small, medium, large, xlarge, resizeable, anyDensity]
+    timeStamp=2026-11-24 03:13:04
+    firstInstallTime=2026-11-24 03:13:09
+    lastUpdateTime=2026-11-24 03:13:09
+    signatures=PackageSignatures{7c210ea version:2, signatures:[d5cc3e3f], past signatures:[]}
+    installPermissionsFixed=true
+    pkgFlags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    requested permissions:
+      android.permission.SCHEDULE_EXACT_ALARM
+    User 0: ceDataInode=131960 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 instant=false virtual=false
+    overlay paths:
+      /product/overlay/EmulationPixel4/EmulationPixel4Overlay.apk
+      runtime permissions:
+
+Queries:
+  system apps queryable: false
+  queries via package name:
+  queries via intent:
+  queryable via interaction:
+    User 0:
+      [com.android.providers.settings,com.android.inputdevices,android,com.android.keychain,com.android.emulator.multidisplay,com.android.location.fused,com.android.wallpaperbackup,com.android.localtransport,com.android.server.telecom,com.android.dynsystem,com.android.settings]:
+        com.dotwelwidgets.dotwellabs
+      com.google.android.inputmethod.latin:
+        com.dotwelwidgets.dotwellabs
+
+Package Changes:
+  Sequence number=362
+  User 0:
+    seq=0, package=com.google.android.permissioncontroller
+    seq=1, package=com.android.systemui
+    seq=4, package=com.google.android.cellbroadcastreceiver
+    seq=7, package=com.google.android.inputmethod.latin
+    seq=8, package=com.google.android.sdksetup
+    seq=16, package=com.google.android.apps.youtube.music
+    seq=25, package=com.google.android.partnersetup
+    seq=163, package=com.android.settings
+    seq=200, package=com.google.android.gsf
+    seq=209, package=com.google.android.apps.docs
+    seq=239, package=com.google.android.apps.messaging
+    seq=272, package=com.google.android.calendar
+    seq=273, package=com.android.camera2
+    seq=275, package=com.android.nfc
+    seq=276, package=com.android.stk
+    seq=282, package=com.android.traceur
+    seq=283, package=com.dotwelwidgets.dotwellabs
+    seq=312, package=com.google.android.googlequicksearchbox
+    seq=315, package=com.google.android.apps.photos
+    seq=318, package=com.google.android.apps.wellbeing
+    seq=332, package=com.google.android.apps.maps
+    seq=333, package=com.android.vending
+    seq=334, package=com.google.android.youtube
+    seq=337, package=com.google.android.projection.gearhead
+    seq=338, package=com.google.android.setupwizard
+    seq=351, package=com.google.android.videos
+    seq=358, package=com.google.android.gms
+    seq=361, package=com.google.android.gm
+
+
+Dexopt state:
+  [com.dotwelwidgets.dotwellabs]
+    path: /data/app/~~6Y8qVhWawPR_qPSPAcvAKQ==/com.dotwelwidgets.dotwellabs-uRS8CGCi1K905yF68VKpfg==/base.apk
+      x86_64: [status=run-from-apk] [reason=unknown]
+
+
+Compiler stats:
+  [com.dotwelwidgets.dotwellabs]
+    (No recorded stats)
+
+APEX session state:
+
+Active APEX packages:
+
+
+Inactive APEX packages:
+
+
+Factory APEX packages:
+
+

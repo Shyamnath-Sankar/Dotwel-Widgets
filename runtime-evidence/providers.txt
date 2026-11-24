@@ -1,0 +1,69 @@
+Providers:
+  [0] provider ProviderId{user:0, app:10131, cmp:ComponentInfo{com.android.chrome/com.google.android.apps.chrome.appwidget.bookmarks.BookmarkThumbnailWidgetProvider}}
+    min=(46081x38401)   minResize=(16385x12289) updatePeriodMillis=86400000 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f0e0045 initialKeyguardLayout=#0 zombie=false
+  [1] provider ProviderId{user:0, app:10131, cmp:ComponentInfo{com.android.chrome/org.chromium.chrome.browser.searchwidget.SearchWidgetProvider}}
+    min=(64001x12289)   minResize=(64001x12289) updatePeriodMillis=86400000 resizeMode=1 widgetCategory=5 autoAdvanceViewId=-1 initialLayout=#7f0e01b3 initialKeyguardLayout=#0 zombie=false
+  [2] provider ProviderId{user:0, app:10143, cmp:ComponentInfo{com.google.android.apps.docs/com.google.android.apps.docs.widget.CakemixAppWidgetProvider}}
+    min=(75265x15361)   minResize=(75265x15361) updatePeriodMillis=0 resizeMode=1 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f0e0049 initialKeyguardLayout=#0 zombie=false
+  [3] provider ProviderId{user:0, app:10139, cmp:ComponentInfo{com.google.android.apps.youtube.music/com.google.android.apps.youtube.music.player.widget.MusicWidgetProvider}}
+    min=(64001x10241)   minResize=(64001x10241) updatePeriodMillis=1800000 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f0e0038 initialKeyguardLayout=#0 zombie=false
+  [4] provider ProviderId{user:0, app:10144, cmp:ComponentInfo{com.google.android.calendar/com.android.calendar.widget.CalendarAppWidgetProvider}}
+    min=(28161x46081)   minResize=(28161x28161) updatePeriodMillis=0 resizeMode=3 widgetCategory=3 autoAdvanceViewId=-1 initialLayout=#7f0e0194 initialKeyguardLayout=#0 zombie=false
+  [5] provider ProviderId{user:0, app:10144, cmp:ComponentInfo{com.google.android.calendar/com.google.android.calendar.widgetmonth.MonthViewWidgetProvider}}
+    min=(64001x81921)   minResize=(64001x64001) updatePeriodMillis=0 resizeMode=3 widgetCategory=3 autoAdvanceViewId=-1 initialLayout=#7f0e01b2 initialKeyguardLayout=#0 zombie=false
+  [6] provider ProviderId{user:0, app:10130, cmp:ComponentInfo{com.google.android.deskclock/com.android.alarmclock.AnalogAppWidgetProvider}}
+    min=(28161x28161)   minResize=(12801x12801) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050033 initialKeyguardLayout=#0 zombie=false
+  [7] provider ProviderId{user:0, app:10130, cmp:ComponentInfo{com.google.android.deskclock/com.android.alarmclock.DigitalAppWidgetProvider}}
+    min=(51969x29953)   minResize=(33281x12801) updatePeriodMillis=0 resizeMode=3 widgetCategory=3 autoAdvanceViewId=-1 initialLayout=#7f05005b initialKeyguardLayout=#0 zombie=false
+  [8] provider ProviderId{user:0, app:10133, cmp:ComponentInfo{com.google.android.gm/com.google.android.gm.widget.GmailWidgetProvider}}
+    min=(46081x46081)   minResize=(46081x28161) updatePeriodMillis=0 resizeMode=3 widgetCategory=3 autoAdvanceViewId=-1 initialLayout=#7f0e0293 initialKeyguardLayout=#0 zombie=false
+  [9] provider ProviderId{user:0, app:10123, cmp:ComponentInfo{com.google.android.googlequicksearchbox/com.google.android.googlequicksearchbox.SearchWidgetProvider}}
+    min=(71681x10241)   minResize=(20481x10241) updatePeriodMillis=86400000 resizeMode=1 widgetCategory=5 autoAdvanceViewId=-1 initialLayout=#7f0e0755 initialKeyguardLayout=#0 zombie=false
+  [10] provider ProviderId{user:0, app:10123, cmp:ComponentInfo{com.google.android.googlequicksearchbox/com.google.android.apps.gsa.staticplugins.searchwidget.GoogleSearchWidgetProvider}}
+    min=(71681x10241)   minResize=(20481x10241) updatePeriodMillis=86400000 resizeMode=1 widgetCategory=5 autoAdvanceViewId=-1 initialLayout=#7f0e0755 initialKeyguardLayout=#0 zombie=false
+  [11] provider ProviderId{user:0, app:10123, cmp:ComponentInfo{com.google.android.googlequicksearchbox/com.google.android.apps.gsa.staticplugins.smartspace.widget.SmartspaceWidgetProvider}}
+    min=(80385x12801)   minResize=(80385x12801) updatePeriodMillis=7200000 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f0e07ac initialKeyguardLayout=#0 zombie=false
+  [12] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.ClockWidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050005 initialKeyguardLayout=#0 zombie=false
+  [13] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.DateWidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=1800000 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050006 initialKeyguardLayout=#0 zombie=false
+  [14] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.AnalogBoldWidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050003 initialKeyguardLayout=#0 zombie=false
+  [15] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.AnalogScaleWidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050003 initialKeyguardLayout=#0 zombie=false
+  [16] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.WorldWidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f05001c initialKeyguardLayout=#0 zombie=false
+  [17] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.QuotesWidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=1800000 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f05001b initialKeyguardLayout=#0 zombie=false
+  [18] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.BatteryWidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=1800000 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050004 initialKeyguardLayout=#0 zombie=false
+  [19] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.BatteryMiniWidgetProvider}}
+    min=(28161x17921)   minResize=(17921x17921) updatePeriodMillis=1800000 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050004 initialKeyguardLayout=#0 zombie=false
+  [20] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtBattery2WidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=1800000 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050013 initialKeyguardLayout=#0 zombie=false
+  [21] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtDateTimeWidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050015 initialKeyguardLayout=#0 zombie=false
+  [22] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtDateTime2WidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050016 initialKeyguardLayout=#0 zombie=false
+  [23] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtDigital4WidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050018 initialKeyguardLayout=#0 zombie=false
+  [24] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtDigital3WidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050017 initialKeyguardLayout=#0 zombie=false
+  [25] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtGradientClockWidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050019 initialKeyguardLayout=#0 zombie=false
+  [26] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtAnalog3WidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050007 initialKeyguardLayout=#0 zombie=false
+  [27] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtAnalog5WidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f05000a initialKeyguardLayout=#0 zombie=false
+  [28] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtAnalog5TransparentWidgetProvider}}
+    min=(28161x28161)   minResize=(17921x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f05000d initialKeyguardLayout=#0 zombie=false
+  [29] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtMiniCalendarWidgetProvider}}
+    min=(64001x10241)   minResize=(40961x10241) updatePeriodMillis=1800000 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f05001a initialKeyguardLayout=#0 zombie=false
+  [30] provider ProviderId{user:0, app:10167, cmp:ComponentInfo{com.dotwelwidgets.dotwellabs/com.dotwelwidgets.dotwellabs.KwgtCleanInfoWidgetProvider}}
+    min=(64001x28161)   minResize=(46081x17921) updatePeriodMillis=0 resizeMode=3 widgetCategory=1 autoAdvanceViewId=-1 initialLayout=#7f050014 initialKeyguardLayout=#0 zombie=false
+ 
+Widgets:
+ 
+Hosts:
+ 
+Grants:
