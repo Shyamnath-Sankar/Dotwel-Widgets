@@ -1,0 +1,179 @@
+name: Analog2 native seconds and actual sizing
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-runtime
+  cancel-in-progress: false
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 5fb6fa3cef668fde4a0f3502510aefc4ceefb808
+      - name: Enable emulator acceleration
+        run: sudo chmod 666 /dev/kvm
+      - name: Prepare bounded evidence script
+        run: |
+          python3 -m pip install --break-system-packages Pillow
+          cat > /tmp/widget-runtime-smoke.py <<'PYCODE'
+          import subprocess as sp,pathlib,time,re,xml.etree.ElementTree as ET,json,hashlib
+          OUT=pathlib.Path('runtime-evidence');OUT.mkdir(exist_ok=True);PKG='com.dotwelwidgets.dotwellabs';report={'version':'0.1.8','tests':{},'limits':['Pixel emulator only; pixels need review; not full collection complete.']}
+          def adb(*a,check=True):
+           r=sp.run(['adb',*a],capture_output=True,timeout=35)
+           if check and r.returncode:raise RuntimeError(r.stderr.decode(errors='replace'))
+           return r.stdout
+          def tree():
+           adb('shell','uiautomator','dump','/sdcard/window.xml',check=False)
+           try:return ET.fromstring(adb('exec-out','cat','/sdcard/window.xml',check=False))
+           except:return ET.Element('empty')
+          def cap(name):
+           r=tree();time.sleep(.5);(OUT/(name+'.png')).write_bytes(adb('exec-out','screencap','-p'));(OUT/(name+'.xml')).write_bytes(ET.tostring(r));return r
+          def find(r,s,exact=False):
+           return next((n for n in r.iter('node') if any((s.lower()==n.get(k,'').lower() if exact else s.lower() in n.get(k,'').lower()) for k in ('text','content-desc','resource-id'))),None)
+          def wait_target(s,exact=True):
+           for attempt in range(6):
+            n=find(tree(),s,exact)
+            if n is not None:return n
+            time.sleep(.6)
+           raise RuntimeError('UI target not ready: '+s)
+          def click(n):
+           if n is None:raise RuntimeError('Missing UI target')
+           b=list(map(int,re.findall(r'\d+',n.get('bounds',''))));adb('shell','input','tap',str((b[0]+b[2])//2),str((b[1]+b[3])//2));time.sleep(.7)
+          def home():adb('shell','input','keyevent','3');time.sleep(1)
+          def start():adb('shell','am','start','-W','-n',PKG+'/.MainActivity');time.sleep(1)
+          def scroll():adb('shell','input','swipe',str(w//2),str(h*8//10),str(w//2),str(h*3//10),'350')
+          def button(label):
+           start()
+           # Reset scroll through activity recreation, without force-stop or alarm cancellation.
+           adb('shell','am','force-stop',PKG);start()
+           for i in range(12):
+            r=tree();n=find(r,label,True)
+            if n is not None:return n
+            if not any(n.get('package','')==PKG for n in r.iter('node')):raise RuntimeError('App left foreground while locating '+label)
+            scroll()
+           raise RuntimeError('Gallery control missing '+label)
+          def native(r):
+           for label in ('Add to home screen','Add automatically','Add widget','Add'):
+            n=find(r,label,True)
+            if n is not None and n.get('clickable')=='true':return n
+           return None
+          def locate(needle,name):
+           home()
+           for i,d in enumerate((0,1,1,1,1,-1,-1,-1,-1)):
+            if d:adb('shell','input','swipe',str(w*(8 if d==1 else 2)//10),str(h//2),str(w*(2 if d==1 else 8)//10),str(h//2),'350');time.sleep(.6)
+            r=tree()
+            if find(r,needle) is not None:return cap(name)
+           raise RuntimeError('HOME view missing '+needle)
+          def pin(label,name,plain=None):
+           click(button(label));r=tree()
+           if plain:click(wait_target(plain));r=tree()
+           if label=='Add World Clock':click(find(r,'Save and add',True));r=tree()
+           cap('native-'+name);n=native(r)
+           if n is None:raise RuntimeError('Native prompt missing '+label)
+           click(n);time.sleep(1);report['tests']['pin_'+name]='Native confirmation accepted'
+          def test(name,fn):
+           try:
+            print('START '+name,flush=True);fn();report['tests'].setdefault(name,'passed');(OUT/'RESULT.json').write_text(json.dumps(report,indent=2));print('DONE '+name,flush=True)
+           except Exception as e:
+            report['tests'][name]={'error':str(e)};cap('failure-'+name);raise
+          try:
+           w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','input','keyevent','82');home();cap('00-preinstall-host');(OUT/'preinstall-logcat.txt').write_bytes(adb('logcat','-d','-t','2000',check=False));(OUT/'preinstall-processes.txt').write_bytes(adb('shell','ps','-A',check=False))
+           for i in range(4):
+            r=tree();n=find(r,'android:id/aerr_close')
+            if n is not None:click(n);home()
+            elif any(n.get('package','')=='com.google.android.apps.nexuslauncher' for n in r.iter('node')):break
+            time.sleep(3)
+           else:raise RuntimeError('Launcher readiness failed before app install')
+           (OUT/'am-help.txt').write_bytes(adb('shell','am','help'))
+           apk=pathlib.Path('checkpoints/dotwel-widgets-polish-debug.apk');report['sha256']=hashlib.sha256(apk.read_bytes()).hexdigest()
+           if report['sha256']!='6b7516be32b20adfe9d8929da7718f65e33b3297b53812c227c214708352c4ce':raise RuntimeError('Final APK hash mismatch')
+           adb('install','-r',str(apk));w,h=list(map(int,re.findall(r'\d+',adb('shell','wm','size').decode())))[-2:];adb('shell','settings','put','system','time_12_24','24');start();cap('01-gallery-top')
+           def category(name):
+            for retry in range(3):
+             adb('shell','am','force-stop',PKG);start();wait_target('Open '+name+',',False)
+             for attempt in range(12):
+              r=tree();n=find(r,'Open '+name+',')
+              if n is not None:
+               prior=n.get('bounds');time.sleep(.5);n=find(tree(),'Open '+name+',')
+               if n is None or n.get('bounds')!=prior:continue
+               click(n)
+               try:wait_target('Close category');return
+               except RuntimeError:break
+              scroll()
+            raise RuntimeError('Category did not open '+name)
+           category('Clock');cap('02-clock-first')
+           for variant in range(12):
+            if find(tree(),'Add KWGT Analog2',True) is not None:break
+            click(wait_target('Next'))
+           wait_target('Add KWGT Analog2');cap('03-analog2-preview')
+           click(wait_target('Add KWGT Analog2'));cap('04-native-analog2');click(native(tree()));time.sleep(1);report['tests']['native_category_analog2']='confirmed'
+           r=locate('kwgt_analog2_clock','home-analog2-before');n=find(r,'kwgt_analog2_clock');bounds=list(map(int,re.findall(r'\d+',n.get('bounds',''))));report['clock_bounds']=bounds
+           adb('shell','am','kill',PKG);ps=adb('shell','ps','-A').decode();(OUT/'postkill-processes.txt').write_text(ps)
+           if PKG in ps:raise RuntimeError('Application process remains after kill')
+           report['tests']['app_process_killed']='verified absent'
+           before=adb('shell','date').decode();time.sleep(8)
+           r=locate('kwgt_analog2_clock','home-analog2-after');after=adb('shell','date').decode();report['live_time']={'before':before,'after':after}
+           from PIL import Image,ImageChops,ImageStat
+           box=tuple(bounds);im1=Image.open(OUT/'home-analog2-before.png').convert('RGB').crop(box);im2=Image.open(OUT/'home-analog2-after.png').convert('RGB').crop(box);im1.save(OUT/'hand-before.png');im2.save(OUT/'hand-after.png');diff=ImageChops.difference(im1,im2);diff.save(OUT/'hand-diff.png');mean=sum(ImageStat.Stat(diff).mean);report['hand_pixel_difference']=mean
+           if mean<.03:raise RuntimeError('Native hands did not change after minute and app kill')
+           report['tests']['live_hands_after_kill']='cropped hand pixels changed across native minute; requires visual audit'
+           report['alarm_access']=adb('shell','appops','get',PKG,'SCHEDULE_EXACT_ALARM',check=False).decode()
+           click(find(r,'kwgt_analog2_clock'));time.sleep(2);cap('tap-result-clock');focus=adb('shell','dumpsys','activity','activities').decode(errors='replace');(OUT/'tap-clock-activity.txt').write_text(focus)
+           if 'com.google.android.deskclock' not in focus:raise RuntimeError('Clock app did not open')
+           report['tests']['tap_clock']='destination activity recorded; pixels require review'
+           needle='kwgt_analog2_clock'
+           def native_bounds(name):
+            r=locate(needle,name);n=find(r,needle);return list(map(int,re.findall(r'\d+',n.get('bounds',''))))
+           initial=native_bounds('size-default');report['size_bounds']={'default':initial}
+           def resize(axis,amount,name):
+            home();b=native_bounds(name+'-before');x,y=(b[0]+b[2])//2,(b[1]+b[3])//2
+            adb('shell','input','swipe',str(x),str(y),str(x),str(y),'1500');cap(name+'-handles')
+            # Launcher frame extends about 22 physical pixels outside the widget's view bounds.
+            if axis=='width':x1,y1,x2,y2=b[2]+22,y,b[2]+22+amount,y
+            else:x1,y1,x2,y2=x,b[3]+28,x,b[3]+28+amount
+            adb('shell','input','swipe',str(x1),str(y1),str(x2),str(y2),'900');time.sleep(1);adb('shell','input','tap',str(w-30),str(h-250));time.sleep(1)
+            after=native_bounds(name+'-after');report['size_bounds'][name]=after
+            old=b[2]-b[0] if axis=='width' else b[3]-b[1];new=after[2]-after[0] if axis=='width' else after[3]-after[1]
+            if (amount>0 and new<=old+80) or (amount<0 and new>=old-80):raise RuntimeError('Actual '+axis+' did not change: '+str((b,after)))
+            report['tests'][name]='actual launcher bounds changed; pixels need review'
+            (OUT/(name+'-appwidget.txt')).write_bytes(adb('shell','dumpsys','appwidget'))
+           resize('width',250,'size-wide')
+           resize('height',320,'size-large')
+           resize('width',-250,'size-narrow')
+           resize('height',-320,'size-restored')
+           adb('shell','am','kill',PKG);native_bounds('size-final-after-kill')
+           (OUT/'appwidget-dump.txt').write_bytes(adb('shell','dumpsys','appwidget'))
+          
+          except Exception as e:report['error']=str(e);cap('99-fatal')
+          finally:
+           (OUT/'RESULT.json').write_text(json.dumps(report,indent=2));(OUT/'logcat.txt').write_bytes(adb('logcat','-d','-t','3500',check=False));print(json.dumps(report,indent=2))
+          if 'error' in report or any(isinstance(v,dict) and 'error' in v for v in report['tests'].values()):raise SystemExit(1)
+          PYCODE
+      - name: Install and inspect widgets on Android 15
+        timeout-minutes: 20
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          emulator-boot-timeout: 300
+          disable-animations: true
+          script: timeout 1000s python3 -u /tmp/widget-runtime-smoke.py
+      - name: Preserve actual runtime captures even after a failed check
+        if: always()
+        run: |
+          set -eu
+          test -d runtime-evidence || { echo 'Emulator never produced runtime evidence'; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          branch="checkpoint/runtime-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git add -f runtime-evidence
+          git commit -m 'test: preserve actual emulator screenshots and behavior evidence'
+          git push origin "$branch"
+          printf 'Evidence branch: %s\nScreenshots require human inspection before any pass claim.\n' "$branch" >> "$GITHUB_STEP_SUMMARY"
