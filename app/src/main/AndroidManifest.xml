@@ -233,6 +233,21 @@
         </receiver>
 
         <receiver
+            android:name=".KwgtFutureWidgetProvider"
+            android:enabled="@bool/kwgt_analog_seconds_available"
+            android:exported="true"
+            android:label="@string/widget_kwgt_future_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_future_widget_info" />
+        </receiver>
+
+        <receiver
             android:name=".KwgtAnalog3WidgetProvider"
             android:exported="true"
             android:label="@string/widget_kwgt_analog3_label">

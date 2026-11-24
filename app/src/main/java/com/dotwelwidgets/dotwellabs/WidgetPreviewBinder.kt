@@ -43,6 +43,10 @@ object WidgetPreviewBinder {
             bindNativeAnalog2(context, container, style)
             return
         }
+        if (entry.previewKind == PreviewKind.KWGT_FUTURE) {
+            bindNativeFuture(context, container, style)
+            return
+        }
         if (entry.previewKind == PreviewKind.KWGT_ANALOG_3) {
             bindNativeAnalog3(context, container, style)
             return
@@ -110,6 +114,31 @@ object WidgetPreviewBinder {
             return
         }
         val layout = KwgtAnalog2WidgetProvider.layoutFor(style)
+        container.addView(
+            LayoutInflater.from(context).inflate(layout, container, false),
+            matchParams(),
+        )
+    }
+
+    private fun bindNativeFuture(
+        context: Context,
+        container: FrameLayout,
+        style: WidgetStyle,
+    ) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
+            container.addView(
+                TextView(context).apply {
+                    text = context.getString(R.string.ledger_unavailable_pre31)
+                    setTextColor(UpstreamNtDraw.muted(context, style))
+                    gravity = Gravity.CENTER
+                    textSize = 12f
+                    setPadding(dp(context, 10), dp(context, 10), dp(context, 10), dp(context, 10))
+                },
+                matchParams(),
+            )
+            return
+        }
+        val layout = KwgtFutureWidgetProvider.layoutFor(style)
         container.addView(
             LayoutInflater.from(context).inflate(layout, container, false),
             matchParams(),

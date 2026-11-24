@@ -1,0 +1,171 @@
+{
+  "provenance": {
+    "source": "https://github.com/AumGupta/KWGT-Widgets",
+    "file": "widgets/Nothing_Future_Clock.kwgt!preset.json",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": "Author email, launch-app tap intent, font payloads and raster assets were removed. Layer geometry, shape formulas, colour formulas and toggle states are retained."
+  },
+  "preset_info": {
+    "author": "Om Gupta",
+    "title": "NothingFutureClock",
+    "version": 13,
+    "width": 916,
+    "height": 542
+  },
+  "globals": {
+    "w": {
+      "type": "NUMBER",
+      "title": "w",
+      "toggles": 10,
+      "global_formula": "$si(rwidth)$"
+    },
+    "h": {
+      "type": "NUMBER",
+      "title": "h",
+      "toggles": 10,
+      "global_formula": "$si(rheight)/1.5$"
+    },
+    "bg": {
+      "type": "COLOR",
+      "title": "bg",
+      "toggles": 10,
+      "global_formula": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$"
+    },
+    "fg": {
+      "type": "COLOR",
+      "title": "Fg",
+      "toggles": 10,
+      "global_formula": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$"
+    },
+    "min": { "type": "COLOR", "title": "min", "value": "#FFCBCBCB" },
+    "hr": { "type": "COLOR", "title": "hr", "value": "#FFD71921" },
+    "sec": { "type": "COLOR", "title": "sec", "value": "#FF6C696E" }
+  },
+  "actual_source_check": {
+    "canvas": "916 x 542",
+    "band": "w = host width, h = host height / 1.5; the band is a RECT of width w, height h, corners 58 in the 916 x 361 reference",
+    "disc_diameter": "every disc ShapeModule uses shape_width $gv(h)/2$ with the source band height h, so diameter = h / 2 = host height / 3",
+    "all_offsets": "the root StackLayerModule and all three inner StackLayerModule layers use config_rotate_offset 180.0 on their OverlapLayerModule"
+  },
+  "background": {
+    "internal_type": "ShapeModule",
+    "internal_title": "Bg",
+    "shape_type": "RECT",
+    "internal_toggles": { "shape_width": 100, "shape_height": 100, "paint_color": 100 },
+    "internal_globals": { "shape_width": "w", "shape_height": "h", "paint_color": "bg" },
+    "shape_corners": 58,
+    "native_port": "916 x 361 rounded band vector, corners 58, filled with the style surface; the band occupies host width and host height / 1.5"
+  },
+  "stack": {
+    "internal_type": "StackLayerModule",
+    "config_stacking": "HORIZONTAL_CENTER",
+    "config_margin": 18.0,
+    "position_offset_y": -8.0,
+    "columns": [
+      {
+        "internal_title": "Hour",
+        "config_stacking": "VERTICAL_CENTER",
+        "config_margin": -12.0,
+        "hand": {
+          "internal_type": "OverlapLayerModule",
+          "internal_title": "Hour Hand",
+          "config_rotate_mode": "CLOCK_HOUR_SMOOTH",
+          "config_rotate_offset": 180.0,
+          "shape_type": "CIRCLE",
+          "shape_width": 100.0,
+          "internal_formulas": { "shape_width": "$gv(h)/2$ " },
+          "internal_toggles": { "shape_width": 10, "fx_gradient_color": 100 },
+          "paint_color": "#FF000000",
+          "fx_gradient": "SWEEP",
+          "fx_gradient_color": "#FFD71921",
+          "internal_globals": { "fx_gradient_color": "hr" },
+          "native_port": "one native AnalogClock hour hand: a BLACK filled circle diameter h/2 with a SWEEP gradient to the hr global #FFD71921, rotated by CLOCK_HOUR_SMOOTH plus the source 180 degree offset"
+        },
+        "label": {
+          "internal_type": "TextModule",
+          "text_expression": "$df(hh)$ hr",
+          "text_size": 24.0,
+          "text_align": "CENTER",
+          "internal_toggles": { "paint_color": 100 },
+          "internal_globals": { "paint_color": "fg" },
+          "native_port": "live TextClock hh' hr' in both format slots"
+        }
+      },
+      {
+        "internal_title": "Minute",
+        "config_stacking": "VERTICAL_CENTER",
+        "config_margin": -12.0,
+        "hand": {
+          "internal_type": "OverlapLayerModule",
+          "internal_title": "Min Hand",
+          "config_rotate_mode": "CLOCK_MINUTE",
+          "config_rotate_offset": 180.0,
+          "shape_type": "CIRCLE",
+          "shape_width": 100.0,
+          "internal_formulas": { "shape_width": "$gv(h)/2$ " },
+          "internal_toggles": { "shape_width": 10, "paint_color": 0, "fx_gradient_color": 100 },
+          "paint_color": "#FF000000",
+          "fx_gradient": "SWEEP",
+          "fx_gradient_color": "#FFD71921",
+          "internal_globals": { "paint_color": "bg", "fx_gradient_color": "min" },
+          "native_port": "one native AnalogClock minute hand: the paint_color toggle is 0, so the actual circle paint stays BLACK rather than bg; SWEEP to the min global #FFCBCBCB, rotated by CLOCK_MINUTE plus the source 180 degree offset"
+        },
+        "label": {
+          "internal_type": "TextModule",
+          "text_expression": "$df(mm)$ min",
+          "text_size": 24.0,
+          "text_align": "CENTER",
+          "internal_toggles": { "paint_color": 100 },
+          "internal_globals": { "paint_color": "fg" },
+          "native_port": "live TextClock mm' min' in both format slots"
+        }
+      },
+      {
+        "internal_title": "Seconds",
+        "config_stacking": "VERTICAL_CENTER",
+        "config_margin": -12.0,
+        "hand": {
+          "internal_type": "OverlapLayerModule",
+          "internal_title": "Sec Hand",
+          "config_rotate_mode": "CLOCK_MINUTE",
+          "config_rotate_mode_formula": "CLOCK_SECOND",
+          "config_rotate_offset": 180.0,
+          "internal_toggles": { "config_rotate_mode": 10, "shape_width": 10, "paint_color": 0, "fx_gradient_color": 100 },
+          "internal_formulas": { "config_rotate_mode": "CLOCK_SECOND", "shape_width": "$gv(h)/2$ " },
+          "shape_type": "CIRCLE",
+          "shape_width": 100.0,
+          "paint_color": "#FF000000",
+          "fx_gradient": "SWEEP",
+          "fx_gradient_color": "#FFD71921",
+          "internal_globals": { "paint_color": "bg", "fx_gradient_color": "sec" },
+          "native_port": "one native AnalogClock second hand: the active CLOCK_SECOND formula was not frozen or omitted; paint_color toggle 0 keeps the actual circle BLACK, SWEEP to the sec global #FF6C696E, rotated by the native second angle plus the source 180 degree offset"
+        },
+        "label": {
+          "internal_type": "TextModule",
+          "text_expression": "$df(ss)$ sec",
+          "text_size": 24.0,
+          "text_align": "CENTER",
+          "internal_toggles": { "paint_color": 100 },
+          "internal_globals": { "paint_color": "fg" },
+          "native_port": "live TextClock ss' sec' in both format slots"
+        }
+      }
+    ]
+  },
+  "native_port": {
+    "provider": "KwgtFutureWidgetProvider",
+    "clock": "three android.widget.AnalogClock views, one per disc; each wires only its own hand and uses the same 277 x 277 transparent vector for the dial and the two unused hands",
+    "equal_intrinsic": "every Future drawable is 277 x 277, so the platform clock never applies a different intrinsic scale to one layer",
+    "gradient": "Android sweep shaders start at 3 o'clock and turn clockwise, the same direction as the native AnalogClock canvas rotation; the vector group 180 degree rotation applies the source config_rotate_offset exactly",
+    "api_gate": "android:hand_second only in layout-v31; the receiver is disabled below API 31 by kwgt_analog_seconds_available and the catalog marks the entry unavailable",
+    "tap": "source launch-app intent removed; the native provider uses ACTION_SHOW_ALARMS"
+  },
+  "uncertainties": {
+    "font": "The author font is not bundled; the labels use the Android platform sans-serif family, and no source font payload or raster asset is included.",
+    "wallpaper_colour": "RemoteViews cannot safely sample the wallpaper, so the three Dotwel styles use fixed documented surfaces instead of the bg/fg darkmode formula at runtime.",
+    "label_gap": "The source stacks the text directly after each disc with a -12 margin. The native layout uses equal vertical thirds for the band spacer, disc and label so the label cannot overrun the host; this is a documented responsive adaptation.",
+    "non_square_host": "The AnalogClock uses its 277 intrinsic size and only downscales when the host is smaller. The middle third bounds each disc so the native diameter never exceeds the source h/2 and never overruns the host; pixel parity on every launcher is not verified in this runner."
+  }
+}

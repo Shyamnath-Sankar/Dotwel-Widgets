@@ -52,6 +52,7 @@
     <string name="mode_kwgt_gradient_live">Live gradient clock</string>
     <string name="mode_kwgt_analog3">Live native analog clock</string>
     <string name="mode_kwgt_analog2">Live seconds • Android 12+</string>
+    <string name="mode_kwgt_future">Live native clock • Android 12+</string>
     <string name="mode_kwgt_analog_seconds">Live seconds • Android 12+</string>
     <string name="mode_kwgt_analog5">Live native analog clock · tick ring</string>
     <string name="mode_kwgt_analog5clear">Live native analog clock · clear tick cut-outs</string>
@@ -119,6 +120,7 @@
     <string name="kwgt_mini_calendar_fallback">KWGT Mini Calendar · five-day date snapshot</string>
     <string name="kwgt_analog3_content_description">KWGT Analog3 analog clock</string>
     <string name="kwgt_analog2_content_description">KWGT Analog2 analog clock</string>
+    <string name="kwgt_future_content_description">KWGT Future Clock analog clock</string>
     <string name="kwgt_analog_seconds_content_description">KWGT Analog Seconds analog clock</string>
     <string name="kwgt_analog5_content_description">KWGT Analog5 analog clock</string>
     <string name="kwgt_analog5clear_content_description">KWGT Analog5 Clear analog clock</string>
@@ -183,6 +185,7 @@
     <string name="pin_kwgt_gradient_confirmed">KWGT Gradient Clock added to your home screen.</string>
     <string name="pin_kwgt_analog3_confirmed">KWGT Analog3 added to your home screen.</string>
     <string name="pin_kwgt_analog2_confirmed">KWGT Analog2 added to your home screen.</string>
+    <string name="pin_kwgt_future_confirmed">KWGT Future Clock added to your home screen.</string>
     <string name="pin_kwgt_analog_seconds_confirmed">KWGT Analog Seconds added to your home screen.</string>
     <string name="pin_kwgt_analog5_confirmed">KWGT Analog5 added to your home screen.</string>
     <string name="pin_kwgt_analog5clear_confirmed">KWGT Analog5 Clear added to your home screen.</string>
@@ -225,6 +228,7 @@
     <string name="widget_kwgt_gradient_label">Dotwel KWGT Gradient Clock</string>
     <string name="widget_kwgt_analog3_label">Dotwel KWGT Analog3</string>
     <string name="widget_kwgt_analog2_label">Dotwel KWGT Analog2</string>
+    <string name="widget_kwgt_future_label">Dotwel KWGT Future Clock</string>
     <string name="widget_kwgt_analog5_label">Dotwel KWGT Analog5</string>
     <string name="widget_kwgt_analog5_description">A Nothing-style analog clock from the KWGT Nothing_Analog_5 preset: a 277 rounded square dial with clipped 60 minute and 12 hour tick rings, two rounded inner overlays, a red filled hour pill and a foreground minute pill. The platform AnalogClock rotates the hands itself, so no minute alarm, battery-style refresh, permission or bitmap time is used. Black shows a #1B1B1D dial with white ticks, translucent shows a white #A6 dial with dark ticks, and transparent shows no filled dial but keeps the ticks and hands.</string>
     <string name="widget_kwgt_analog5clear_label">Dotwel KWGT Analog5 Clear</string>
@@ -240,6 +244,7 @@
     <string name="widget_kwgt_analog_seconds_description">Analog clock with a red seconds dot. Android 12 or newer. Seconds follow your device settings.</string>
     <string name="widget_kwgt_analog3_description">A Nothing-style analog clock from the KWGT Nothing_Analog_3 preset: a filled 277 dial with two hollow rounded capsule hands and no seconds layer. The platform AnalogClock rotates the hands itself, so no minute alarm, battery-style refresh, permission or bitmap time is used. Black shows a #1B1B1D dial with white hands, translucent shows a white #A6 dial with dark hands, and transparent shows no dial with white hands.</string>
     <string name="widget_kwgt_analog2_description">A Nothing-style analog clock with a red seconds hand. Android 12 or newer. Seconds follow your device settings.</string>
+    <string name="widget_kwgt_future_description">Three sweeping gradient discs from the KWGT Nothing_Future_Clock preset: hour, minute and second, each on its own native Android clock hand with live hh hr, mm min and ss sec labels. The discs use the source h/2 diameter inside the source band. Android 12 or newer for the seconds disc; seconds follow your device settings.</string>
     <string name="widget_kwgt_mini_calendar_description">A five-day Nothing-style date strip from the KWGT Nothing_Mini_Calender preset: weekday above two-digit day, with today highlighted and marked by a red dot. Date only; refreshes on date, time-zone, boot, resize and periodic system updates without Alarms &amp; reminders access.</string>
     <string name="widget_kwgt_clean_info_description">A wide Nothing-style card from the KWGT Clean_Time_Date_Info preset: live weekday and uppercase month/day at the bottom-left, an oversized semi-transparent h:mm ghost time, and a top-left battery body with the real system percentage. Time, weekday and date are live system TextClocks; the battery is a bounded best-effort snapshot refreshed on the battery broadcast while the process is alive and otherwise about every 15 minutes by an inexact, deferrable alarm. No Alarms &amp; reminders access is needed.</string>
 
@@ -258,6 +263,7 @@
     <string name="catalog_kwgt_gradient_desc">KWGT Nothing_Digital converted to a separate native gradient-clock provider: rounded side/5 square, three right-edge primary gradient circles at side/1.1, side/1.4 and side/2 with source offsets and widths, centred 12-hour hh at side/3 and ink mm on a side/6 red minute chip. Dotwel dot glyphs replace ndot-47.ttf; the rotated source gradients are mapped to horizontal fades.</string>
     <string name="catalog_kwgt_analog3_desc" formatted="false">KWGT Nothing_Analog_3 converted to a separate native provider: a 277 square with a filled 138.5-radius dial and two hollow rounded capsule hands (width 20, stroke 2, radius 10) using the author heights 277/2.475 and 277/3.3765 and their exact centred-Y formulas. The platform AnalogClock rotates the hands automatically, so there is no seconds layer, no bitmap time, no minute alarm and no extra permission. Black uses #1B1B1D with white hands, translucent #A6FFFFFF with dark hands, transparent no dial with white hands.</string>
     <string name="catalog_kwgt_analog2_desc" formatted="false">A clean analog clock with a red seconds hand, adapted from Nothing_Analog_2. Choose a dark, pale or transparent face. Requires Android 12 or newer. Seconds follow your device settings.</string>
+    <string name="catalog_kwgt_future_desc" formatted="false">Three sweeping gradient discs show the hour, minute and second from Nothing_Future_Clock, each using its native clock hand with live labels. Android 12 or newer; seconds follow your device settings.</string>
     <string name="catalog_kwgt_analog_seconds_desc" formatted="false">A clean analog clock with a red seconds dot, adapted from Nothing_Analog_. Choose a dark, pale or transparent face. Requires Android 12 or newer. Seconds follow your device settings.</string>
     <string name="catalog_kwgt_analog5_desc" formatted="false">KWGT Nothing_Analog_5 converted to a separate native provider: a 277 rounded square, a clipped 60-tick minute ring (4 x 277/5), a 12-tick hour ring (6 x 277/4), two rounded background overlays, and filled pill hands (hour 277/13.19 x 277/4.134 in #D71921, minute 277/25.18 x 277/2.77 in foreground). The platform AnalogClock rotates the hands automatically, so there is no seconds layer, no bitmap time, no minute alarm and no extra permission. Black uses #1B1B1D with white ticks, translucent #A6FFFFFF with dark ticks, transparent no filled dial with retained ticks and hands.</string>
     <string name="catalog_kwgt_analog5clear_desc" formatted="false">KWGT Nothing_Analog_5_Transparent converted to its own native provider. It keeps the author 60 minute ticks (width 4, height 277/5) on the 1.05x ring, the 12 hour ticks (width 6, height 277/4) on the 277 ring, the 277/1.08 outer clip with 277/5 corners, and two rounded CLEAR overlays (277/1.15 at 277/6.5 corners, then 277/1.3 at 277/7). The CLEAR shapes are real transparent cut-outs in the static vectors rather than a filled background. No filled dial card is drawn; ticks and the minute hand use white on black/transparent styles and dark #1B1B1D on translucent as a manual wallpaper-contrast choice. The platform AnalogClock rotates the red hour pill and minute hand without a bitmap timer or new permission.</string>
@@ -277,6 +283,7 @@
     <string name="ledger_ready">Included in this debug build. Runtime not verified here.</string>
     <string name="ledger_ready_analog_seconds">Live native clock • Android 12+</string>
     <string name="ledger_ready_analog2">Live native clock • Android 12+</string>
+    <string name="ledger_ready_future">Live native clock • Android 12+</string>
     <string name="ledger_unavailable_pre31">Requires Android 12 or newer for the seconds dot.</string>
     <string name="ledger_ready_kwgt">Native provider included; battery level comes from the system. Runtime not verified here.</string>
     <string name="ledger_ready_kwgt_date">Native date-only provider included; no calendar permission. Runtime not verified here.</string>

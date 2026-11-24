@@ -23,6 +23,7 @@ object WidgetUpdater {
         KwgtDigital3WidgetProvider::class.java,
         KwgtGradientClockWidgetProvider::class.java,
         KwgtAnalog2WidgetProvider::class.java,
+        KwgtFutureWidgetProvider::class.java,
         KwgtAnalog3WidgetProvider::class.java,
         KwgtAnalogSecondsWidgetProvider::class.java,
         KwgtAnalog5WidgetProvider::class.java,
