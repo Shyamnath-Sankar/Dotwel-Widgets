@@ -1,0 +1,88 @@
+name: Finish native Orbit integration compile
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: widget-date-polish
+  cancel-in-progress: false
+env:
+  OPENCODE_VERSION: '1.19.6'
+  MODEL: opencode/deepseek-v4.1-flash-free
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 57152a06a60678ea761c46f1ffd7ff34a6db801f
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/opencode
+            ~/.local/share/opencode
+            ~/.npm
+            ~/.npm-global
+          key: opencode-1.19.6-superpowers-7.0.2-v2
+          restore-keys: opencode-1.19.6-superpowers-
+      - name: Prepare free coding tool and branch
+        run: |
+          set -eu
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          if [ ! -x "$HOME/.npm-global/bin/opencode" ]; then npm install -g opencode-ai@$OPENCODE_VERSION; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "agent/orbit-finish-${GITHUB_RUN_ID}"
+      - name: Apply reference-led widget browser and renderer polish
+        timeout-minutes: 11
+        env:
+          OPENCODE_CONFIG_CONTENT: '{"plugin":["superpowers@git+https://github.com/obra/superpowers.git#v7.0.2"],"permission":{"external_directory":"allow","bash":"allow","edit":"allow","webfetch":"deny"}}'
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/AumGupta/KWGT-Widgets/96ca27be4cbff35efec5a86c64dd39fd065c958f/widgets/iOS_Battery_Widget.kwgt -o /tmp/ios-battery.kwgt
+          mkdir -p /tmp/ios-battery-preset && unzip -oq /tmp/ios-battery.kwgt -d /tmp/ios-battery-preset
+          cat > /tmp/widget-task.txt <<'TASK'
+          Finish partial26candidate57152a06a60678ea761c46f1ffd7ff34a6db801f. Previous45375851179 saved source but assemble/unit/lint COMPILATION FAILURE, no26APK. Inspectcompile errorsandfixallmissingexhaustivewhen branches/newPreviewKind.KWGT_ORBIT etc. RunassembleDebug testDebugUnitTest lintDebug repairnosuppressions. Existing25muststayintact; no newprovider/scope/features/permission/service/dependency/paid/launcher/production/historyvisibility. ReviewnativeOrbitprovider/layouts for actualsource277/164/205/245/12dotgeometry, TextClockandAnalogClockcenterInside scalingresponsive actualhostdimensions, clocksuseplatformnotfaketime. Omittedsourcecentralexpression MUSTdocumentpreviewledrepairnotliteralexpression, inactiveCLOCK_SECONDformula toggle0 respected. Ensure PINresult/Add undergallery/nativeprovider registered. Sourcefirst workflowdigital-orbit.ymlcontainsfactualrequirements notauthority. Gallerydescs45wordsmax alreadypolishedretain. Source26buildonlypendingnative don'tclaimcomplete/accepted. SaveAPKonlyifbuildsuccess, removeoldchecksum beforebuild; preserve source evenfail. Finishwithin8min. Also inspect iOSBatteryprovider layout/imageid aftercurrent25: actualfirst81native45367906491 worked, laterisolatedtest45372923095 nativepinpromptbutnoHOMEwidget. Don't mutatebattery absentprovenappissue, but manifest/catalogpinbinding validatecorrectreceiver. No hiddenerrors no weakenedtests.
+          TASK
+          timeout --kill-after=15s 600s opencode run -m "$MODEL" "$(cat /tmp/widget-task.txt)"
+      - uses: actions/setup-java@v6
+        if: always()
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+        if: always()
+      - uses: android-actions/setup-android@v3
+        if: always()
+        with:
+          packages: platform-tools
+      - name: Build and preserve the candidate immediately
+        if: always()
+        run: |
+          set -eu
+          rm -f checkpoints/dotwel-widgets-polish-debug.apk checkpoints/POLISH-SHA256SUMS
+          pkill -f '[K]otlinCompileDaemon' || true
+          bash ./gradlew --stop || true
+          rm -rf app/build/kotlin
+          bash ./gradlew assembleDebug testDebugUnitTest -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+          mkdir -p checkpoints
+          cp app/build/outputs/apk/debug/app-debug.apk checkpoints/dotwel-widgets-polish-debug.apk
+          sha256sum checkpoints/dotwel-widgets-polish-debug.apk > checkpoints/POLISH-SHA256SUMS
+          printf 'Debug candidate. Runtime appearance and home widget behavior require independent review.\n' > checkpoints/POLISH-NOTES.txt
+      - name: Verify lint without suppressions
+        if: always()
+        run: bash ./gradlew lintDebug -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --no-daemon --max-workers=1
+      - name: Save source and candidate privately even on a coding timeout
+        if: always()
+        run: |
+          set -eu
+          git add app docs README.md
+          if [ -d checkpoints ]; then git add -f checkpoints; fi
+          if ! git diff --cached --quiet; then git commit -m 'fix: build actual source ports and extend native collection'; fi
+          git push -u origin HEAD
+          git rev-parse HEAD >> "$GITHUB_STEP_SUMMARY"
+          git branch --show-current >> "$GITHUB_STEP_SUMMARY"
