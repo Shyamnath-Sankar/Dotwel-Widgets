@@ -1,0 +1,9 @@
+{
+  "version": "0.1.8",
+  "tests": {},
+  "limits": [
+    "Pixel emulator only; pixels need review; not full collection complete."
+  ],
+  "sha256": "7e30f70ba0ae2f67a11086c0f986df42f3efb677d7712ab8ada4952108463861",
+  "error": "Diagnostic stop before native Add; inspect Future at category9"
+}
