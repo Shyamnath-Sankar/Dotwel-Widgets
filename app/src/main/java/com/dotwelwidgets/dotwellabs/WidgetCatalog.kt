@@ -38,6 +38,7 @@ enum class PreviewKind {
     KWGT_DIGITAL_4,
     KWGT_GRADIENT_CLOCK,
     KWGT_ANALOG_2,
+    KWGT_FUTURE,
     KWGT_ANALOG_3,
     KWGT_ANALOG_SECONDS,
     KWGT_ANALOG_5,
@@ -345,6 +346,27 @@ object WidgetCatalog {
             action = CardAction.NONE,
         ),
         CatalogEntry(
+            id = "kwgt_future_clock",
+            name = "KWGT Future Clock",
+            group = WidgetGroup.KWGT,
+            state = if (analogSecondsSupported) {
+                ImportState.READY
+            } else {
+                ImportState.UNAVAILABLE
+            },
+            upstream = "KWGT Nothing_Future_Clock · three sweep discs / hour / minute / second",
+            descriptionRes = R.string.catalog_kwgt_future_desc,
+            detailRes = if (analogSecondsSupported) {
+                R.string.ledger_ready_future
+            } else {
+                R.string.ledger_unavailable_pre31
+            },
+            previewKind = PreviewKind.KWGT_FUTURE,
+            providerClass = KwgtFutureWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_KWGT_FUTURE,
+            action = CardAction.NONE,
+        ),
+        CatalogEntry(
             id = "kwgt_nothing_analog3",
             name = "KWGT Analog3",
             group = WidgetGroup.KWGT,
@@ -532,6 +554,7 @@ enum class WidgetCategory(
             "kwgt_nothing_digital3",
             "kwgt_gradient_clock",
             "kwgt_analog2_clock",
+            "kwgt_future_clock",
             "kwgt_nothing_analog3",
             "kwgt_analog_seconds_clock",
             "kwgt_nothing_analog5",
@@ -645,6 +668,7 @@ object WidgetModeLabels {
                 R.string.mode_kwgt_gradient_live
             }
             PreviewKind.KWGT_ANALOG_2 -> R.string.mode_kwgt_analog2
+            PreviewKind.KWGT_FUTURE -> R.string.mode_kwgt_future
             PreviewKind.KWGT_ANALOG_3 -> R.string.mode_kwgt_analog3
             PreviewKind.KWGT_ANALOG_SECONDS -> R.string.mode_kwgt_analog_seconds
             PreviewKind.KWGT_ANALOG_5 -> R.string.mode_kwgt_analog5
