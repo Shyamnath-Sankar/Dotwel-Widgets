@@ -31,6 +31,7 @@ class BatteryRefreshSchedulerTest {
                 BatteryMiniWidgetProvider::class.java,
                 KwgtBattery2WidgetProvider::class.java,
                 KwgtCleanInfoWidgetProvider::class.java,
+                IosBatteryWidgetProvider::class.java,
             ),
             BatteryRefreshScheduler.providers,
         )

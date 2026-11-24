@@ -42,6 +42,7 @@
     <string name="mode_battery">Live battery</string>
     <string name="mode_battery_mini">Live battery rings</string>
     <string name="mode_battery2">Best-effort level, charging &amp; honest estimate</string>
+    <string name="mode_ios_battery">Real level, charging icon &amp; bounded refresh</string>
     <string name="mode_kwgt_datetime_styled">Styled date &amp; time</string>
     <string name="mode_kwgt_datetime_live">Live date &amp; time</string>
     <string name="mode_kwgt_split_styled">Styled split clock</string>
@@ -126,6 +127,11 @@
     <string name="kwgt_analog5clear_content_description">KWGT Analog5 Clear analog clock</string>
     <string name="kwgt_clean_info_preview_description">Rendered KWGT Clean Info card preview</string>
     <string name="kwgt_battery2_preview_description">Rendered KWGT Battery2 segmented battery preview</string>
+    <string name="ios_battery_preview_description">Rendered iOS battery ring preview</string>
+    <string name="ios_battery_content_description">iOS Battery, %1$d percent</string>
+    <string name="ios_battery_content_description_charging">iOS Battery, %1$d percent, charging</string>
+    <string name="ios_battery_fallback">Battery %1$d%%</string>
+    <string name="ios_battery_fallback_charging">Battery %1$d%% · charging</string>
     <string name="battery_fallback_format">Battery %1$d%%</string>
     <string name="battery_content_description">Battery %1$d percent</string>
     <string name="battery_mini_content_description">Battery %1$d percent, mini ring gauge</string>
@@ -178,6 +184,7 @@
     <string name="pin_battery_confirmed">Battery added to your home screen.</string>
     <string name="pin_battery_mini_confirmed">Battery Mini added to your home screen.</string>
     <string name="pin_kwgt_battery2_confirmed">KWGT Battery2 added to your home screen.</string>
+    <string name="pin_kwgt_ios_battery_confirmed">KWGT iOS Battery added to your home screen.</string>
     <string name="pin_kwgt_datetime_confirmed">KWGT Date Time added to your home screen.</string>
     <string name="pin_kwgt_datetime2_confirmed">KWGT Date Time 2 added to your home screen.</string>
     <string name="pin_kwgt_digital4_confirmed">KWGT Split Clock added to your home screen.</string>
@@ -220,6 +227,8 @@
     <string name="widget_battery_mini_label">Dotwel Battery Mini</string>
     <string name="widget_battery_mini_description">The KWGT Nothing_Battery_Mini concentric-ring gauge. The level comes from the system battery state; no text layer or added permission.</string>
     <string name="widget_kwgt_battery2_label">Dotwel KWGT Battery2</string>
+    <string name="widget_ios_battery_label">Dotwel KWGT iOS Battery</string>
+    <string name="widget_ios_battery_description">The KWGT iOS_Battery_Widget layout: a light grey rounded card, a green/orange/red level ring with a battery icon, and the real system percentage. The charging icon comes from the real charging state; no fixed level is shown. The percentage is a bounded best-effort snapshot: about every 15 minutes with delivery flex while the app process is alive, otherwise via an inexact non-wakeup alarm that Android may defer. Use the app Refresh action for an immediate read; no Alarms &amp; reminders access is needed.</string>
     <string name="widget_kwgt_battery2_description">The KWGT Nothing_Battery2 layout: rounded surface, BATTERY label, outlined 16-segment battery with clip and nub, real level and percentage. While charging it shows the system charging-time estimate; otherwise it says the estimate is unavailable instead of inventing hours or minutes. The percentage is a bounded best-effort snapshot: about every 15 minutes with delivery flex while the app process is alive, otherwise via an inexact non-wakeup alarm that Android may defer. Use the app Refresh action for an immediate read; no Alarms &amp; reminders access is needed.</string>
     <string name="widget_kwgt_datetime_label">Dotwel KWGT Date Time</string>
     <string name="widget_kwgt_datetime2_label">Dotwel KWGT Date Time 2</string>
@@ -270,6 +279,7 @@
     <string name="catalog_kwgt_date_time2_desc">KWGT Nothing_Date_Time2 converted to a native provider: upper-left weekday over a huge red day number and lower-right hour and minute discs with contrasting radial notches beside live hh and mm. Uses the author side/5 discs, smooth hour and minute rotations and serif platform fonts in place of NType82.</string>
     <string name="catalog_kwgt_mini_calendar_desc">KWGT Nothing_Mini_Calender converted to a separate date-only provider: a horizontal five-day strip of uppercase weekdays over two-digit days at offsets -2 through +2, with scaled source margins, a widgetWidth/5 rounded today highlight and the author red dot. Dotwel dot glyphs replace ndot-47.ttf; no calendar permission or minute access is used.</string>
     <string name="catalog_kwgt_clean_info_desc" formatted="false">KWGT Clean_Time_Date_Info converted to a separate native wide-card provider: rounded 38 corners, dark #16161D / light #E4E4FF surfaces, bottom-left weekday and uppercase month/day stack at left/bottom 28, an oversized 196 h:mm ghost at 19% ink, and a top-left 59x28 battery body with 10.5x16 nub and real system percentage. The malformed source fg conditional is repaired to dark white / light black, ProductSans is replaced by platform sans-serif, and geometry is fitted to the host instead of the cropped source preview. No Alarms &amp; reminders access is needed.</string>
+    <string name="catalog_kwgt_ios_battery_desc" formatted="false">KWGT iOS_Battery_Widget converted to a separate native provider: a #B75B5B5B rounded card with 69 corners, a 92 level ring with a 10 #343434 track and 32 top/left padding, and the real percentage at 92 with 32 left / 16 bottom padding. ProductSans is replaced by platform sans-serif. The ring is green #3ABD54 at 25 percent and above, orange #FA9F1B below 25, and red #ED1B24 below 15; the centred icon is the source standard, low-battery alert or charging glyph from the real charging state. The stale media/cover gradient formula is inactive and not rendered. The percentage is a bounded best-effort snapshot refreshed by the existing inexact ~15 min battery window and manual Refresh, not a live push. No media, notification, service or Alarms &amp; reminders access is used.</string>
     <string name="catalog_photo_circle_desc">NtPhotoCircle is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_photo_rect_desc">NtPhotoRect is not enabled yet: the system-photo-picker configuration flow is not wired in this staged import.</string>
     <string name="catalog_away_desc">NtAway screen-interactive sampling needs a durable background observation path before it can be honest.</string>

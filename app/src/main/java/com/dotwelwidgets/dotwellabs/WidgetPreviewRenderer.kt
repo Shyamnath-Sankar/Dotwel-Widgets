@@ -174,6 +174,18 @@ object WidgetPreviewRenderer {
                 BatteryState.level(context),
                 includeBackground = true,
             )
+            PreviewKind.KWGT_IOS_BATTERY -> {
+                val snapshot = Battery2State.snapshot(context)
+                IosBatteryRenderer.render(
+                    context,
+                    size.width,
+                    size.height,
+                    style,
+                    snapshot.level,
+                    snapshot.charging,
+                    includeBackground = true,
+                )
+            }
             PreviewKind.WX_TEMP,
             PreviewKind.WX_SUN,
             -> null

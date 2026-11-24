@@ -30,6 +30,7 @@ object WidgetUpdater {
         KwgtAnalog5TransparentWidgetProvider::class.java,
         KwgtMiniCalendarWidgetProvider::class.java,
         KwgtCleanInfoWidgetProvider::class.java,
+        IosBatteryWidgetProvider::class.java,
         NothingTempWidgetProvider::class.java,
         NothingSunInfoWidgetProvider::class.java,
     )
