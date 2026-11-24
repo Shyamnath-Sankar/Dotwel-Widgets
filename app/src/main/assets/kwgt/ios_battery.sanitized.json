@@ -18,7 +18,7 @@
       "actual source is a battery widget; the Niagara/media config_visible formula has toggle 0 and is inactive, so there is no media or album dependency",
       "the ShapeModule fx_gradient_bitmap formula references cover art but no gradient mode is selected and the embedded preview is flat; it is omitted from rendering and no album/cover is retrieved",
       "ProductSans is replaced by the Android platform sans-serif family",
-      "the 69 corner radius, 92 ring/circle size, 10 stroke width, 32 padding and 92 percentage size are retained and scaled uniformly from the 416px source short side"
+      "the preset_info 416x542 canvas is the full preview with transparent margins; the Komponent bgwidth/bgheight value 290 is the actual visible card basis, so the 69 corner radius, 92 ring/circle size, 10 stroke width, 32 padding and 92 percentage size are normalised to the 290 component card"
     ]
   },
   "preset_info": {

@@ -2,9 +2,37 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/analog2-45315994221`, based on the verified Analog3 branch.
+- Branch: `agent/ios-fit-45365430996`.
 - No launcher repository, visibility, workflow, signing key, permission,
-  dependency or existing provider rendering was changed in this run.
+  dependency or provider set was changed in this run.
+
+## iOS Battery fit and gallery copy correction (25 providers)
+
+- `IosBatteryRenderer` now normalises to the visible Komponent card basis 290
+  (`bgwidth`/`bgheight`), not the 416 preview canvas that includes transparent
+  margins. The ring 92, stroke 10, padding 32, percentage 92 with left 32 /
+  bottom 16 and corners 69 stay in those source relationships. Each bitmap uses
+  one uniform `min(rasterWidth, rasterHeight) / 290` scale from the raster
+  dimensions it actually received; no host coordinate or second scale is mixed
+  in. The ring uses ROUND caps to match the source preview; the sanitized preset
+  has no serialised cap toggle.
+- The renderer still uses original programmatic battery vectors, platform
+  sans-serif and the existing real level/charging path. The charging glyph is
+  white and drawn last, above the background and ring. No provider, permission,
+  service, network feature, dependency or battery-threshold behaviour changed;
+  the 14/15/24/25 red/orange/green thresholds remain as before.
+- The gallery/system widget descriptions for all 25 real providers were
+  shortened to plain user-facing copy (catalog entries are at most 45 words).
+  Technical formulas, provenance and adaptations remain in the sanitized JSON,
+  `docs/ATTRIBUTION.md`, this file and the ledger, not in the gallery cards.
+- Weather disclosure now states the verified lifecycle: off by default, nothing
+  requested before consent, manual city with no GPS, and after consent plus a
+  selected city an app resume may refresh a stale cache at most hourly with no
+  background polling. `maybeAutoRefreshWeather()` checks enabled and location
+  before any request; widget updates read only the cache.
+- Ledger truth: 19 of 40 presets and 25 registered providers, pending native
+  runtime verification. This checkpoint does **not** claim a runtime pass,
+  screenshots or completion.
 
 ## KWGT Nothing_Analog_2 native port
 

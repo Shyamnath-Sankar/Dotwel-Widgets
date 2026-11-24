@@ -88,11 +88,41 @@ class IosBatteryRendererTest {
     }
 
     @Test
+    fun layoutUsesTheVisible290ComponentCardNotThe416PreviewCanvas() {
+        assertEquals(290f, IosBatteryRenderer.SOURCE_COMPONENT_SIDE, EPS)
+        val layout = IosBatteryRenderer.layout(290f, 290f)
+        assertEquals(1f, layout.scale, EPS)
+        assertEquals(92f, layout.ring.width, EPS)
+        assertEquals(92f, layout.ring.height, EPS)
+        assertEquals(32f, layout.ring.left, EPS)
+        assertEquals(32f, layout.ring.top, EPS)
+        assertEquals(10f, layout.ringStroke, EPS)
+        assertEquals(92f, layout.textSize, EPS)
+        assertEquals(32f, layout.textLeft, EPS)
+        assertEquals(16f, layout.textBottom, EPS)
+        assertEquals(69f, layout.backgroundCorner, EPS)
+        assertEquals(92f / 290f, layout.ring.width / layout.side, EPS)
+        assertEquals(92f / 290f, layout.textSize / layout.side, EPS)
+    }
+
+    @Test
+    fun drawingUsesTheReceivedRasterSizeWithoutASecondScale() {
+        val small = IosBatteryRenderer.layout(145f, 145f)
+        val large = IosBatteryRenderer.layout(290f, 290f)
+        assertEquals(0.5f, small.scale, EPS)
+        assertEquals(1f, large.scale, EPS)
+        assertEquals(46f, small.ring.width, EPS)
+        assertEquals(92f, large.ring.width, EPS)
+        assertEquals(46f, small.textSize, EPS)
+        assertEquals(92f, large.textSize, EPS)
+    }
+
+    @Test
     fun layoutRetainsSourceGeometryAndStaysContainedOnTargetSizes() {
         sizes.forEach { (width, height) ->
             val layout = IosBatteryRenderer.layout(width, height)
             val side = min(width, height)
-            val scale = side / IosBatteryRenderer.SOURCE_SHORT_SIDE
+            val scale = side / IosBatteryRenderer.SOURCE_COMPONENT_SIDE
             val label = "${width}x$height"
 
             assertEquals("$label side", side, layout.side, EPS)

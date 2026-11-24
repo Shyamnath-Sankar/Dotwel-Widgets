@@ -46,37 +46,42 @@ without a prohibited capability or unresolved third-party rights.
 | 27 | `Nothing_Digital3` | **implemented** | Native `KwgtDigital3WidgetProvider`; 4x4 minute-lit dot matrix with red hh/mm, uppercase aa and source thresholds; live TextClock fallback without exact-alarm access; runtime unverified. |
 | 28 | `Nothing_Digital4` | **implemented** | Native `KwgtDigital4WidgetProvider`; red hh / centre divider / ink mm split; live text fallback without exact-alarm access; runtime unverified. |
 | 29 | `Nothing_Digital_Clock` | pending | Digital layer conversion queued. |
-| 30 | `Nothing_Future_Clock` | pending | Layer conversion queued. |
+| 30 | `Nothing_Future_Clock` | **implemented** | Native `KwgtFutureWidgetProvider`; three sweeping gradient discs for hour, minute and second with platform-clock rotation and live labels. Android 12+ for the seconds disc; runtime unverified. |
 | 31 | `Nothing_Master_Widget` | dependency | Combines media/notification data with weather; media access is prohibited. |
 | 32 | `Nothing_Media_Player` | dependency | Media/notification access is prohibited for this app. |
 | 33 | `Nothing_Media_Player2` | dependency | Media/notification access is prohibited for this app. |
 | 34 | `Nothing_Media_Player3` | dependency | Media/notification access is prohibited for this app. |
 | 35 | `Nothing_Mini_Calender` | **implemented** | Native `KwgtMiniCalendarWidgetProvider`; five-day date-only strip, no calendar or exact-alarm permission; runtime unverified. |
-| 36 | `Nothing_Sun_Info` | pending | Depends on the pending Open-Meteo location/weather path. |
-| 37 | `Nothing_Temp` | pending | Depends on the pending Open-Meteo location/weather path. |
+| 36 | `Nothing_Sun_Info` | **implemented** | Native `NothingSunInfoWidgetProvider`; next cached sunrise/sunset for a manually chosen city, optional Open-Meteo opt-in, polar or unknown data shows Unavailable. Runtime unverified. |
+| 37 | `Nothing_Temp` | **implemented** | Native `NothingTempWidgetProvider`; today's forecast low and day high/low for a manually chosen city from cached data, optional Open-Meteo opt-in, no matching day shows `--`. Runtime unverified. |
 | 38 | `Universal_Media_Player` | dependency | Media/notification access is prohibited for this app. |
-| 39 | `iOS_Battery_Widget` | dependency | Uses a KomponentModule plus launcher media globals and a separately licensed icon font. |
+| 39 | `iOS_Battery_Widget` | **implemented** | Native `IosBatteryWidgetProvider`; real level and charging state, 92 ring / 10 stroke / 32 padding / 69 corners normalised to the visible 290 Komponent card (not the 416 preview canvas), platform sans-serif and original battery vectors. The stale media/cover formula is inactive. Bounded Doze-deferrable battery refresh; runtime unverified. |
 | 40 | `material_notification_widget` | dependency | Notification access is prohibited for this app. |
 
 ## Implemented in this checkpoint
 
-Fifteen of the 40 presets now have native providers: `Clean_Time_Date_Info`,
-`Nothing_Analog_`, `Nothing_Analog_2`, `Nothing_Analog_3`, `Nothing_Analog_5`, `Nothing_Analog_5_Transparent`,
-`Nothing_Battery`, `Nothing_Battery2`,
-`Nothing_Battery_Mini`, `Nothing_Date_Time`, `Nothing_Date_Time2`,
-`Nothing_Digital`, `Nothing_Digital3`, `Nothing_Digital4` and
-`Nothing_Mini_Calender`. All 21 registered providers are build-verified only and
-remain runtime-unverified in this checkpoint. The sanitized transcriptions are
-under `app/src/main/assets/kwgt/`, including
-`clean_time_date_info.sanitized.json`, `nothing_analog2.sanitized.json`,
-`nothing_analog3.sanitized.json`,
-`nothing_analog_seconds.sanitized.json`,
-`nothing_analog5.sanitized.json`, `nothing_analog5_transparent.sanitized.json`, `nothing_battery.sanitized.json`, `nothing_battery2.sanitized.json`,
-`nothing_battery_mini.sanitized.json`,
+Nineteen of the 40 presets now have native providers: `Clean_Time_Date_Info`,
+`iOS_Battery_Widget`, `Nothing_Analog_`, `Nothing_Analog_2`,
+`Nothing_Analog_3`, `Nothing_Analog_5`, `Nothing_Analog_5_Transparent`,
+`Nothing_Battery`, `Nothing_Battery2`, `Nothing_Battery_Mini`,
+`Nothing_Date_Time`, `Nothing_Date_Time2`, `Nothing_Digital`,
+`Nothing_Digital3`, `Nothing_Digital4`, `Nothing_Future_Clock`,
+`Nothing_Mini_Calender`, `Nothing_Sun_Info` and `Nothing_Temp`. The app also
+ships six upstream-derived native providers (digital, bold analog, scale analog,
+date, world and quotes), for 25 registered providers in total. All 25 are
+build-verified only and remain runtime-unverified in this checkpoint; this is
+not a claim of completion or runtime acceptance. The sanitized transcriptions
+are under `app/src/main/assets/kwgt/`, including
+`clean_time_date_info.sanitized.json`, `ios_battery.sanitized.json`,
+`nothing_analog2.sanitized.json`, `nothing_analog3.sanitized.json`,
+`nothing_analog_seconds.sanitized.json`, `nothing_analog5.sanitized.json`,
+`nothing_analog5_transparent.sanitized.json`, `nothing_battery.sanitized.json`,
+`nothing_battery2.sanitized.json`, `nothing_battery_mini.sanitized.json`,
 `nothing_date_time.sanitized.json`, `nothing_date_time2.sanitized.json`,
 `nothing_digital.sanitized.json`, `nothing_digital3.sanitized.json`,
-`nothing_digital4.sanitized.json`, and
-`nothing_mini_calender.sanitized.json`.
+`nothing_digital4.sanitized.json`, `nothing_future_clock.sanitized.json`,
+`nothing_mini_calender.sanitized.json`, `nothing_sun_info.sanitized.json` and
+`nothing_temp.sanitized.json`.
 
 Clean_Time_Date_Info keeps these author relationships:
 
@@ -293,11 +298,14 @@ renders, not separate widgets. They are neither copied nor counted in the 40.
 
 ## Weather note
 
-Weather-related presets above remain pending. The partial Open-Meteo domain and
-transport source in `weather/` is not registered as a provider and is isolated
-from the current widget set. Personal, noncommercial use is within Open-Meteo
-terms with attribution; any separate commercial launcher use must be reviewed
-before shipping.
+`Nothing_Temp` and `Nothing_Sun_Info` are implemented optional Open-Meteo
+providers. Weather is off by default and nothing is requested before consent;
+the city is chosen manually with no GPS or device-location access. After consent
+and a selected city, opening or resuming the app may refresh a stale cached
+forecast at most once an hour; there is no background network polling. Widget
+updates read only the private cache. The other weather variants remain pending.
+Personal, noncommercial use is within Open-Meteo terms with attribution; any
+separate commercial launcher use must be reviewed before shipping.
 
 Analog2 overlay uses centerInside to match native AnalogClock downscale-only intrinsic size behavior, including large host cells.
 

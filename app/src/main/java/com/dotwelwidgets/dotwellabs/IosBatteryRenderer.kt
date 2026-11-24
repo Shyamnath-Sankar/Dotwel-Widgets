@@ -31,11 +31,18 @@ import kotlin.math.min
  *
  * The Komponent `config_visible` formula is inactive (toggle 0), so the stale
  * Niagara/media formula has no effect and this widget has no media dependency.
- * Everything is scaled uniformly from the 416px source short side so 2x2, 2x3
- * and 4x2 hosts keep their aspect ratio and stay inside the host bounds.
+ *
+ * Scaling basis: the preset_info canvas is 416x542, but that is the full preview
+ * canvas with transparent margins. The actual Komponent design card is the
+ * `bgwidth`/`bgheight` global value 290, and the ShapeModule width formula uses
+ * `min(bgwidth, bgheight)`. The ring, padding, percentage and corners are
+ * therefore normalised to the 290 component card, not the 416 preview canvas.
+ * Each bitmap is drawn from its own received raster width/height with one
+ * uniform `min(width, height) / 290` scale, so the provider never mixes host
+ * coordinates with the raster or applies a second scale.
  */
 object IosBatteryRenderer {
-    const val SOURCE_SHORT_SIDE = 416f
+    const val SOURCE_COMPONENT_SIDE = 290f
 
     const val BACKGROUND_CORNER = 69f
     const val RING_PADDING = 32f
@@ -124,7 +131,7 @@ object IosBatteryRenderer {
         val width = widthPx.coerceAtLeast(1f)
         val height = heightPx.coerceAtLeast(1f)
         val side = min(width, height)
-        val scale = side / SOURCE_SHORT_SIDE
+        val scale = side / SOURCE_COMPONENT_SIDE
 
         val ringPadding = RING_PADDING * scale
         val ringSize = RING_SIZE * scale
@@ -213,7 +220,9 @@ object IosBatteryRenderer {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.style = Paint.Style.STROKE
             strokeWidth = layout.ringStroke
-            strokeCap = Paint.Cap.BUTT
+            // The sanitized ProgressModule has no cap toggle, but the actual
+            // source preview shows rounded stroke ends, so keep ROUND.
+            strokeCap = Paint.Cap.ROUND
         }
         paint.color = TRACK
         canvas.drawArc(arc, 0f, 360f, false, paint)
