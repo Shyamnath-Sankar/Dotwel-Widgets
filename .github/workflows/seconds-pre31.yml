@@ -108,13 +108,15 @@ jobs:
            category('Clock');cap('02-clock-first')
            for variant in range(12):
             if find(tree(),'KWGT Analog Seconds',True) is not None:break
-            click(wait_target('Next'))
+            nxt=find(tree(),'Next',True)
+            if nxt is None:break
+            click(nxt)
            # The category still shows an unavailable entry, but cannot offer Add below API31.
            cap('pre31-seconds-unavailable')
            r=tree()
            if find(r,'Add KWGT Analog Seconds',True) is not None:raise RuntimeError('Unsupported seconds Add offered onAPI30')
-           if find(r,'Requires Android 12 or newer for the seconds dot.',True) is None:raise RuntimeError('Missing clear API restriction')
-           report['tests']['pre31_catalog']='unavailable, no Add offered'
+           if find(r,'KWGT Analog Seconds',True) is not None:raise RuntimeError('Unsupported entry appears in ready-only category')
+           report['tests']['pre31_catalog']='excluded from ready-only category, no Add offered'
            packages=adb('shell','dumpsys','package',PKG).decode(errors='replace');(OUT/'package.txt').write_text(packages)
            providers=adb('shell','dumpsys','appwidget').decode(errors='replace');(OUT/'providers.txt').write_text(providers)
            if 'KwgtAnalogSecondsWidgetProvider' in providers:raise RuntimeError('Unsupported provider appears in launcher registry')
