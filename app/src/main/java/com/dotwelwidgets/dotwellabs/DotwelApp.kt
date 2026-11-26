@@ -47,6 +47,14 @@ class DotwelApp : Application() {
         }
     }
 
+    private val bluetoothBatteryReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (BluetoothHeadphonesState.updateFromBroadcast(context, intent)) {
+                WidgetUpdater.updateHeadphonesProviders(context)
+            }
+        }
+    }
+
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             WidgetUpdater.updateConnectivityProviders(this@DotwelApp)
@@ -69,14 +77,23 @@ class DotwelApp : Application() {
         WeatherCache.attach(this)
         BatteryRefreshScheduler.schedule(this)
         val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        val bluetoothFilter = IntentFilter(
+            BluetoothHeadphonesState.ACTION_BATTERY_LEVEL_CHANGED,
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(
                 batteryChangedReceiver,
                 filter,
                 Context.RECEIVER_NOT_EXPORTED,
             )
+            registerReceiver(
+                bluetoothBatteryReceiver,
+                bluetoothFilter,
+                Context.RECEIVER_NOT_EXPORTED,
+            )
         } else {
             registerReceiver(batteryChangedReceiver, filter)
+            registerReceiver(bluetoothBatteryReceiver, bluetoothFilter)
         }
         try {
             getSystemService(ConnectivityManager::class.java)

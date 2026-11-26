@@ -63,6 +63,8 @@ class PinResultReceiver : BroadcastReceiver() {
             PIN_KIND_WIFI_STATUS -> R.string.pin_wifi_status_confirmed
             PIN_KIND_CELLULAR_STATUS -> R.string.pin_cellular_status_confirmed
             PIN_KIND_BATTERY_STATUS -> R.string.pin_battery_status_confirmed
+            PIN_KIND_BT_HEADPHONES_WIDE -> R.string.pin_bt_headphones_wide_confirmed
+            PIN_KIND_BT_HEADPHONES_SQUARE -> R.string.pin_bt_headphones_square_confirmed
             PIN_KIND_MEDIA_EXPANDED -> R.string.pin_media_expanded_confirmed
             PIN_KIND_MEDIA_OUTPUT -> R.string.pin_media_output_confirmed
             PIN_KIND_MEDIA_MINI -> R.string.pin_media_mini_confirmed
@@ -122,6 +124,8 @@ class PinResultReceiver : BroadcastReceiver() {
         const val PIN_KIND_WIFI_STATUS = "wifi_status"
         const val PIN_KIND_CELLULAR_STATUS = "cellular_status"
         const val PIN_KIND_BATTERY_STATUS = "battery_status"
+        const val PIN_KIND_BT_HEADPHONES_WIDE = "bt_headphones_wide"
+        const val PIN_KIND_BT_HEADPHONES_SQUARE = "bt_headphones_square"
         const val PIN_KIND_MEDIA_EXPANDED = "media_expanded"
         const val PIN_KIND_MEDIA_OUTPUT = "media_output"
         const val PIN_KIND_MEDIA_MINI = "media_mini"

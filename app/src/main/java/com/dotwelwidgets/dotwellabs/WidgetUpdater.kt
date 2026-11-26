@@ -51,6 +51,11 @@ object WidgetUpdater {
         MaterialNotificationWidgetProvider::class.java,
     )
 
+    private val headphonesProviders = listOf(
+        BluetoothHeadphonesWideWidgetProvider::class.java,
+        BluetoothHeadphonesSquareWidgetProvider::class.java,
+    )
+
     private val mediaHandler = Handler(Looper.getMainLooper())
     private val mediaThrottle = MediaUpdateThrottle(MEDIA_UPDATE_INTERVAL_MILLIS)
     private val mediaScheduleLock = Any()
@@ -69,6 +74,8 @@ object WidgetUpdater {
         WifiStatusWidgetProvider::class.java,
         CellularStatusWidgetProvider::class.java,
         BatteryStatusWidgetProvider::class.java,
+        BluetoothHeadphonesWideWidgetProvider::class.java,
+        BluetoothHeadphonesSquareWidgetProvider::class.java,
         BatteryWidgetProvider::class.java,
         BatteryMiniWidgetProvider::class.java,
         KwgtBattery2WidgetProvider::class.java,
@@ -183,6 +190,13 @@ object WidgetUpdater {
         val manager = AppWidgetManager.getInstance(context)
         updateProvider(context, manager, WifiStatusWidgetProvider::class.java)
         updateProvider(context, manager, CellularStatusWidgetProvider::class.java)
+    }
+
+    fun updateHeadphonesProviders(context: Context) {
+        val manager = AppWidgetManager.getInstance(context)
+        headphonesProviders.forEach { provider ->
+            updateProvider(context, manager, provider)
+        }
     }
 
     private fun updateProvider(

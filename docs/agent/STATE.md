@@ -2,11 +2,59 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/add-bluetooth-and-wi-fi-status`.
-- Latest run added two native connectivity status providers to the existing
-  catalog (55 -> 57 registered providers). No launcher repository, visibility,
-  workflow, signing key, applicationId, SDK level, dependency or version was
-  changed.
+- Branch: `agent/match-reference-control-tile-u`.
+- Latest run restyled the Bluetooth and Wi-Fi tiles into circular control tiles,
+  added cellular and battery circular tiles, and added 2x1 and 2x2 Bluetooth
+  headphone battery cards (57 -> 61 registered providers). No launcher
+  repository, visibility, workflow, signing key, applicationId, SDK level,
+  dependency or version was changed.
+
+## Circular status tiles and headphone battery cards (61-provider branch)
+
+- Phase: match the reference control-tile UX with four 1x1 circular status
+  tiles and add two Bluetooth headphone battery cards through the existing
+  RemoteViews `BaseWidgetProvider` path. No service, polling loop, wake lock,
+  WorkManager/AlarmManager beyond the existing bounded battery window, new
+  dependency, proprietary font or bundled artwork.
+- Status tiles: `bt_status` and `wifi_status` now render a red/off-white circle
+  with an original programmatic glyph and dot-matrix ON/OFF/DATA text, then
+  `cellular_status` and `battery_status` reuse the same renderer. Tapping opens
+  Bluetooth settings, the Internet panel, or power usage where supported.
+  `ACCESS_NETWORK_STATE` is the only new permission; no phone, location or
+  READ_PHONE_STATE access. The battery tile joins the existing bounded
+  `BatteryRefreshScheduler` scope.
+- Headphones: `bt_headphones_wide` (2x1) and `bt_headphones_square` (2x2) draw a
+  white/translucent card, original earbuds glyph, device name, dot-matrix
+  percentage and level bar. `BluetoothDevice.getBatteryLevel()` and
+  `ACTION_BATTERY_LEVEL_CHANGED` are hidden platform APIs, so they are accessed
+  by reflection/string action and fail closed. A hidden `getBatteryUsageHint`
+  fallback runs only on a short-lived, throttled background thread and never
+  blocks rendering. Both entries reuse the existing optional
+  `BLUETOOTH_CONNECT` opt-in dialog and open Bluetooth settings.
+- Connectivity refresh: `DotwelApp` keeps a process-lifetime
+  `registerDefaultNetworkCallback` for Wi-Fi/cellular updates and a hidden
+  Bluetooth battery-level receiver that updates a small in-memory cache.
+  Manifest receivers cover appwidget update, Bluetooth ACL/profile changes and
+  the hidden battery action. No instant background update is claimed.
+- Catalog, previews, mode labels, pin kinds, updater lists, manifest, layouts,
+  `CatalogManifestConsistencyTest` (61) and `RemoteViewsLayoutSafetyTest` are
+  wired. The original programmatic glyphs replace any font or bitmap asset.
+- Verified in this run:
+  `./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug`
+  -> `BUILD SUCCESSFUL`; 164 unit tests, 0 failures, 0 errors, 0 skipped; lint
+  0 errors, 447 warnings (no new warnings in the new status/headphone files).
+  Debug APK sha256
+  `eda2a7b9a4f4fabd7b7ff1e2fb8831b1009a268df7f5b12655eb9bfc0bf4f1f1`.
+- Not verified here: this runner has no emulator or device. Launcher placement,
+  resize, style switching, real cellular/Wi-Fi/Bluetooth state changes,
+  permission grant/deny, hidden headphone-battery values and tap destinations
+  are not runtime-verified and are not claimed. No screenshot or Play-ready
+  claim.
+- Next: place all four status tiles and both headphone cards on a real launcher;
+  check black/translucent/transparent, 1x1/2x1/2x2 resize, permission
+  grant/deny, headphone connect/disconnect/battery changes and tap panels;
+  capture screenshots and the APK checksum.
+- Blockers: none in code; runtime verification pending.
 
 ## Widget resource profiling and hotspot fixes
 

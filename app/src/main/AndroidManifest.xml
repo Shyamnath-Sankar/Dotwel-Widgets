@@ -736,6 +736,40 @@
                 android:resource="@xml/battery_status_widget_info" />
         </receiver>
 
+        <receiver
+            android:name=".BluetoothHeadphonesWideWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_bt_headphones_wide_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+                <action android:name="android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.device.action.BATTERY_LEVEL_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/bt_headphones_wide_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".BluetoothHeadphonesSquareWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_bt_headphones_square_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+                <action android:name="android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.device.action.BATTERY_LEVEL_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/bt_headphones_square_widget_info" />
+        </receiver>
+
         <service
             android:name=".media.MediaNotificationService"
             android:exported="true"

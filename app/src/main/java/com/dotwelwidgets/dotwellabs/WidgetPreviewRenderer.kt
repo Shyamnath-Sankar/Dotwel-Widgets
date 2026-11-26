@@ -111,6 +111,16 @@ object WidgetPreviewRenderer {
                 style,
                 BatteryStatusState.read(context),
             )
+            PreviewKind.BT_HEADPHONES_WIDE,
+            PreviewKind.BT_HEADPHONES_SQUARE,
+            -> BluetoothHeadphonesRenderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                BluetoothHeadphonesState.read(context),
+                entry.previewKind == PreviewKind.BT_HEADPHONES_SQUARE,
+            )
             PreviewKind.KWGT_BATTERY -> KwgtBatteryRenderer.render(
                 context,
                 size.width,
