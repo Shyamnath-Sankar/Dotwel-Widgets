@@ -33,13 +33,67 @@ class InterstellarNativeWiringTest {
     }
 
     @Test
-    fun secondsVariantsUseApi31HandSecondAndPreserveZOrder() {
-        val endurance = parse("src/main/res/layout-v31/widget_interstellar_endurance_black.xml")
-        assertEquals(1, endurance.getElementsByTagName("AnalogClock").length)
-        assertTrue((endurance.getElementsByTagName("AnalogClock").item(0) as Element)
-            .getAttribute("android:hand_second")
-            .contains("interstellar_endurance_seconds_black"))
+    fun enduranceVariantRendersHourMinuteAndSecondsHandsInAllStyles() {
+        for (style in listOf("black", "translucent", "transparent")) {
+            val endurance = parse("src/main/res/layout-v31/widget_interstellar_endurance_$style.xml")
+            val clocks = endurance.getElementsByTagName("AnalogClock")
+            assertEquals(style, 2, clocks.length)
+            val seconds = clocks.item(0) as Element
+            val hands = clocks.item(1) as Element
+            assertTrue(
+                style,
+                seconds.getAttribute("android:hand_second")
+                    .contains("interstellar_endurance_seconds_$style"),
+            )
+            assertTrue(
+                style,
+                hands.getAttribute("android:hand_hour")
+                    .contains("interstellar_analog_hour_$style"),
+            )
+            assertTrue(
+                style,
+                hands.getAttribute("android:hand_minute")
+                    .contains("interstellar_analog_minute_$style"),
+            )
+            assertTrue(
+                "$style seconds clock must sit below the hour/minute clock",
+                seconds.getAttribute("android:id") != hands.getAttribute("android:id"),
+            )
+        }
+    }
 
+    @Test
+    fun endurancePreviewReusesAnalogHourAndMinuteLayers() {
+        val endurance = InterstellarShapeCompiler.Variant.ENDURANCE
+        val styles = listOf(
+            WidgetStyle.BLACK to Triple(
+                R.drawable.interstellar_endurance_seconds_black,
+                R.drawable.interstellar_analog_hour_black,
+                R.drawable.interstellar_analog_minute_black,
+            ),
+            WidgetStyle.TRANSLUCENT to Triple(
+                R.drawable.interstellar_endurance_seconds_translucent,
+                R.drawable.interstellar_analog_hour_translucent,
+                R.drawable.interstellar_analog_minute_translucent,
+            ),
+            WidgetStyle.TRANSPARENT to Triple(
+                R.drawable.interstellar_endurance_seconds_transparent,
+                R.drawable.interstellar_analog_hour_transparent,
+                R.drawable.interstellar_analog_minute_transparent,
+            ),
+        )
+        styles.forEach { (style, ids) ->
+            assertEquals(style.name, ids.first,
+                InterstellarShapeCompiler.layerRes(endurance, "seconds", style))
+            assertEquals(style.name, ids.second,
+                InterstellarShapeCompiler.layerRes(endurance, "hour", style))
+            assertEquals(style.name, ids.third,
+                InterstellarShapeCompiler.layerRes(endurance, "minute", style))
+        }
+    }
+
+    @Test
+    fun secondsVariantsUseApi31HandSecondAndPreserveZOrder() {
         val analog = parse("src/main/res/layout-v31/widget_interstellar_analog_black.xml")
         val clocks = analog.getElementsByTagName("AnalogClock")
         assertEquals(2, clocks.length)

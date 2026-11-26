@@ -201,7 +201,11 @@ object InterstellarShapeCompiler {
             layer.recycle()
         }
         when (variant) {
-            Variant.ENDURANCE -> drawLayer(layerRes(variant, "seconds", style), second * 6f)
+            Variant.ENDURANCE -> {
+                drawLayer(layerRes(variant, "seconds", style), second * 6f)
+                drawLayer(layerRes(variant, "hour", style), hour * 30f)
+                drawLayer(layerRes(variant, "minute", style), minute * 6f)
+            }
             Variant.ANALOG -> {
                 drawLayer(layerRes(variant, "seconds", style), second * 6f)
                 drawLayer(layerRes(variant, "hour", style), hour * 30f)
@@ -217,13 +221,16 @@ object InterstellarShapeCompiler {
         return bitmap
     }
 
-    private fun layerRes(variant: Variant, layer: String, style: WidgetStyle): Int {
+    internal fun layerRes(variant: Variant, layer: String, style: WidgetStyle): Int {
         val s = style.name.lowercase()
         return when (variant) {
-            Variant.ENDURANCE -> when (s) {
-                "black" -> R.drawable.interstellar_endurance_seconds_black
-                "translucent" -> R.drawable.interstellar_endurance_seconds_translucent
-                else -> R.drawable.interstellar_endurance_seconds_transparent
+            Variant.ENDURANCE -> when (layer) {
+                "seconds" -> when (s) {
+                    "black" -> R.drawable.interstellar_endurance_seconds_black
+                    "translucent" -> R.drawable.interstellar_endurance_seconds_translucent
+                    else -> R.drawable.interstellar_endurance_seconds_transparent
+                }
+                else -> layerRes(Variant.ANALOG, layer, style)
             }
             Variant.ANALOG -> when (layer) {
                 "seconds" -> when (s) {

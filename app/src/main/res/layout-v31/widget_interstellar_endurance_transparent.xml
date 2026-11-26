@@ -14,4 +14,13 @@
         android:hand_hour="@drawable/interstellar_blank"
         android:hand_minute="@drawable/interstellar_blank"
         android:hand_second="@drawable/interstellar_endurance_seconds_transparent" />
+    <AnalogClock
+        android:id="@+id/interstellar_clock_endurance_hands"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:contentDescription="@string/interstellar_preview_description"
+        android:dial="@drawable/interstellar_blank"
+        android:hand_hour="@drawable/interstellar_analog_hour_transparent"
+        android:hand_minute="@drawable/interstellar_analog_minute_transparent" />
 </FrameLayout>
