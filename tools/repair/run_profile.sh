@@ -5,7 +5,14 @@
 set -u
 PKG=com.dotwelwidgets.dotwellabs
 OUT=runtime-evidence
-OUTER_TIMEOUT=${PROFILE_OUTER_TIMEOUT_SECONDS:-1350}
+WRAPPER_START=$(date +%s)
+# The workflow wraps this script in `timeout 1250s`. Stay 90 s inside that
+# ceiling and stop Python 60 s before this shell timeout so it can write partial
+# results instead of being killed.
+OUTER_TIMEOUT=${PROFILE_OUTER_TIMEOUT_SECONDS:-1160}
+TEARDOWN_RESERVE=${PROFILE_TEARDOWN_RESERVE_SECONDS:-60}
+PROFILE_SWEEP_DEADLINE_EPOCH=$((WRAPPER_START + OUTER_TIMEOUT - TEARDOWN_RESERVE))
+export PROFILE_SWEEP_DEADLINE_EPOCH
 mkdir -p "$OUT/profile"
 
 adb wait-for-device
@@ -31,7 +38,7 @@ adb shell cmd notification allow_listener "$PKG/.media.MediaNotificationService"
 adb shell am start -W -n "$PKG/.RepairHostActivity" >/dev/null 2>&1 || true
 sleep 1
 
-timeout "${OUTER_TIMEOUT}s" python3 tools/repair/profile_sweep.py
+timeout --kill-after=15s "${OUTER_TIMEOUT}s" python3 tools/repair/profile_sweep.py
 status=$?
 printf '%s\n' \
   "Synthetic media/weather fixtures and isolated AppWidgetHost only; human pixel review and launcher placement remain required." \
