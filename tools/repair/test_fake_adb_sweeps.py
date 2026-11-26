@@ -36,11 +36,32 @@ FAKE_ADB = textwrap.dedent(
     def out(text):
         sys.stdout.write(text)
 
-    if scenario == "gallery":
+    crash = pathlib.Path(str(state) + ".crash")
+    closed = pathlib.Path(str(state) + ".crash-closed")
+
+    if scenario in ("gallery", "gallery-crash"):
         if args[:3] == ["shell", "wm", "size"]:
             out("Physical size: 1080x2340\\n")
         elif "instrument" in args:
-            out('<hierarchy><node text="Home"/></hierarchy>\\n')
+            if (scenario == "gallery-crash" and crash.exists()
+                    and not closed.exists()):
+                out('<hierarchy>'
+                    '<node resource-id="android:id/aerr_close" text="Close app" '
+                    'bounds="[100,100][300,200]"/>'
+                    '<node text="Dotwel Widgets keeps stopping"/>'
+                    '</hierarchy>\\n')
+            else:
+                out('<hierarchy><node text="CATEGORIES"/>'
+                    '<node content-desc="Open Clock, 3 ready" '
+                    'bounds="[100,300][900,500]"/></hierarchy>\\n')
+        elif args[:2] == ["shell", "input"] and "tap" in args:
+            if scenario == "gallery-crash":
+                if crash.exists() and not closed.exists():
+                    closed.write_text("closed")
+                else:
+                    crash.write_text("crashed")
+                    if closed.exists():
+                        closed.unlink()
         elif "screencap" in args:
             out("PNG")
         elif "dumpsys" in args and "appwidget" in args:
@@ -67,7 +88,10 @@ FAKE_ADB = textwrap.dedent(
             out("1234\\n")
     elif "dumpsys" in args and "meminfo" in args:
         if os.environ.get("FAKE_NO_MEMINFO") != "1" and state.exists():
-            out("TOTAL PSS: 12345\\n")
+            if os.environ.get("FAKE_MEMINFO_COMMA") == "1":
+                out("TOTAL PSS:   18,732\\n")
+            else:
+                out("TOTAL PSS: 12345\\n")
         else:
             out("No process found\\n")
     elif "dumpsys" in args and "cpuinfo" in args:
@@ -147,6 +171,24 @@ class FakeAdbSweepsTest(unittest.TestCase):
             for entry in entries
         ))
 
+    def test_gallery_dismisses_crash_dialog_and_marks_crashed_entry(self):
+        write_catalog(self.root)
+        result = self.run_script(GALLERY, {
+            "FAKE_SCENARIO": "gallery-crash",
+            "GALLERY_SWEEP_OPEN_TIMEOUT_SECONDS": "0.5",
+            "GALLERY_SWEEP_ENTRY_RESERVE_SECONDS": "5",
+        })
+        self.assertEqual(result.returncode, 0, result.stderr)
+        entries = self.result("runtime-evidence/gallery/RESULT.json")
+        self.assertEqual(len(entries), 3)
+        self.assertTrue(all(
+            entry.get("gallery_add") == "app crashed" for entry in entries
+        ), entries)
+        self.assertTrue(
+            (self.root / "state.crash-closed").exists(),
+            "the crash dialog close button must be tapped",
+        )
+
     def test_profile_resolves_uid_and_uses_it_for_batterystats(self):
         result = self.run_script(PROFILE, {
             "FAKE_SCENARIO": "profile",
@@ -159,6 +201,30 @@ class FakeAdbSweepsTest(unittest.TestCase):
         self.assertEqual(data["baseline"]["battery"]["uid"], 10234)
         self.assertEqual(
             data["baseline"]["app"]["totalPssKb"], 12345)
+
+    def test_profile_parses_comma_grouped_meminfo(self):
+        result = self.run_script(PROFILE, {
+            "FAKE_SCENARIO": "profile",
+            "FAKE_MEMINFO_COMMA": "1",
+            "PROFILE_SETTLE_SECONDS": "0",
+            "PROFILE_SWEEP_DEADLINE_EPOCH": str(int(time.time()) + 2),
+        })
+        self.assertEqual(result.returncode, 0, result.stderr)
+        data = self.result("runtime-evidence/profile/RESULT.json")
+        self.assertEqual(data["baseline"]["app"]["totalPssKb"], 18732)
+
+    def test_profile_saves_raw_meminfo_when_parsing_fails(self):
+        result = self.run_script(PROFILE, {
+            "FAKE_SCENARIO": "profile",
+            "FAKE_NO_MEMINFO": "1",
+            "PROFILE_SETTLE_SECONDS": "0",
+            "PROFILE_SWEEP_DEADLINE_EPOCH": str(int(time.time()) + 5),
+        })
+        self.assertEqual(result.returncode, 0, result.stderr)
+        raw = (self.root / "runtime-evidence" / "profile" / "raw"
+               / "baseline-meminfo.txt")
+        self.assertTrue(raw.exists(), "failed meminfo must leave a raw dump")
+        self.assertIn("No process found", raw.read_text())
 
     def test_profile_exits_nonzero_when_baseline_has_no_evidence(self):
         result = self.run_script(PROFILE, {

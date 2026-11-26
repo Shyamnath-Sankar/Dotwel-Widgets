@@ -50,8 +50,24 @@ abstract class BaseWeatherWidgetProvider : BaseWidgetProvider() {
                 if (usedBitmap) bitmapViewId else fallbackViewId,
                 contentDescription(context, state),
             )
+            decorateWeatherViews(views, context, appWidgetId, usedBitmap)
         }
     }
+
+    /**
+     * Per-variant hook for subclasses that need extra RemoteViews calls.
+     *
+     * [buildBitmapViews] can return a combined `RemoteViews(Map<SizeF, RemoteViews>)`
+     * on API 31+ when the host supplies exact sizes. That combined object cannot be
+     * modified afterwards, so this hook is invoked for every per-size view before
+     * it enters the size map.
+     */
+    protected open fun decorateWeatherViews(
+        views: RemoteViews,
+        context: Context,
+        appWidgetId: Int,
+        usedBitmap: Boolean,
+    ) = Unit
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {

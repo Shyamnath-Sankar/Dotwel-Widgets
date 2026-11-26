@@ -21,13 +21,18 @@ abstract class BaseNtWxWidgetProvider : BaseWeatherWidgetProvider() {
 
     override fun buildViews(context:Context,appWidgetId:Int):RemoteViews {
         renderingPage=context.getSharedPreferences(PREFS,Context.MODE_PRIVATE).getInt("pg_$appWidgetId",0)
-        val views=super.buildViews(context,appWidgetId)
+        return super.buildViews(context,appWidgetId)
+    }
+
+    // Configure each size variant before buildBitmapViews combines them. On API
+    // 31+ super.buildViews can return a combined RemoteViews that throws if it is
+    // modified after construction.
+    override fun decorateWeatherViews(views:RemoteViews,context:Context,appWidgetId:Int,usedBitmap:Boolean) {
         if(kind.pages>1 && WeatherRenderState.from(context).snapshot!=null) {
             val intent=Intent(context,this::class.java).setAction(NEXT).putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,appWidgetId)
             views.setOnClickPendingIntent(R.id.widget_root,PendingIntent.getBroadcast(context,appWidgetId,intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
         }
-        return views
     }
 
     override fun onReceive(context:Context,intent:Intent) {
