@@ -57,6 +57,10 @@
 - Verified here (no emulator):
   - `python3 -m py_compile tools/repair/*.py` passes;
   - `python3 tools/repair/test_sweep_helpers.py` -> 18 tests, 0 failures;
+  - `python3 tools/repair/test_fake_adb_sweeps.py` -> 3 tests, 0 failures:
+    the gallery deadline marks every entry exhausted and exits 0, profile
+    resolves uid 10234 and uses it for batterystats, and a no-uid/no-meminfo
+    baseline exits 1;
   - `bash -n` and `shellcheck tools/repair/run_*.sh` pass;
   - fake-adb gallery run with a 2s deadline: all entries marked
     `not attempted - budget exhausted`, `RESULT.json` written, exit 0;

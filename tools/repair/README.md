@@ -33,5 +33,6 @@ Local tests and fixtures do not settle Endurance source fidelity. That remains r
   and uses the resolved uid for `dumpsys batterystats --uid`. It exits non-zero
   only when the baseline has neither a uid nor process-memory evidence.
 - Emulator-free checks: `python3 tools/repair/test_sweep_helpers.py`,
+  `python3 tools/repair/test_fake_adb_sweeps.py`,
   `python3 -m py_compile tools/repair/*.py`, and
   `shellcheck tools/repair/run_*.sh`.
