@@ -1,5 +1,83 @@
 # Build and verification state
 
+## Current harness repair: gallery relaunch + profile uid
+
+- Phase: repair harness only. Branch `agent/fix-gallery-sweep-relaunch-fl`,
+  rebased onto `4fd2943` (the source tip the workflows check out as
+  `agent/consolidated-repair-45440491695`). No app source, manifest, catalog,
+  test, applicationId, SDK level or workflow YAML was changed.
+- Root cause (gallery, run 45881551905): the sweep loaded 57 ready entries but
+  wrote only 48. Entries 33-48 failed `Gallery did not load` after the
+  `32-wx_circle` native pin, and the outer wrapper killed the step at 22m15s.
+  The budget clock started when `gallery_sweep.py` started, after the two
+  instrumentation sweeps, while the workflow's `timeout 1250s` starts at
+  `run_emulator.sh`. `seek_category()` and `tree()` also had no per-step budget
+  check, so one bad entry could spend up to 30s per `am instrument` call and
+  consume the remaining wall clock before the between-entry check ran.
+- Root cause (profile, run 45881605267): `start_host(None)` raised before the
+  widget loop, so the fallback `finally` baseline was captured with no app
+  process. `dumpsys package` uid parsing and `dumpsys meminfo` had no retries,
+  leaving `uid: null`, `widgets: []` and an empty battery excerpt.
+- Gallery fixes in `tools/repair/gallery_sweep.py`:
+  - an absolute `GALLERY_SWEEP_DEADLINE_EPOCH` (exported by `run_emulator.sh`)
+    is combined with the elapsed budget, so a late start still exits before the
+    1250s wrapper;
+  - the default budget is parsed from the ready catalog/`WidgetCatalog.kt`
+    (75s + 16s/widget, capped at 1160s), not hardcoded to 57 or 61;
+  - every adb/tree/scroll/page wait is budget-aware and raises
+    `BudgetExhausted`; the main loop marks the current and remaining entries
+    `not attempted - budget exhausted`, persists `RESULT.json`, and exits 0;
+  - after a native pin the next entry uses a hard recovery: HOME, force-stop,
+    `am start -W MainActivity`, then a monkey launcher intent, polling the real
+    gallery marker for up to 60s;
+  - three consecutive failures trigger one activity-stack reset
+    (`am kill` + HOME + force-stop + relaunch) and the sweep continues;
+  - entries are processed in chunks of 10 with a hard recovery at each chunk
+    boundary, so one unrecoverable stretch cannot consume the whole run.
+- Profile fixes in `tools/repair/profile_sweep.py`:
+  - uid resolution now tries `cmd package list packages -U`, then
+    `pm list packages -U`, then `dumpsys package <pkg>` `userId`;
+  - `MainActivity`/monkey is started and polled until the process appears
+    before the baseline meminfo; uid is re-resolved after startup;
+  - `dumpsys meminfo` retries with backoff, and `dumpsys batterystats --uid`
+    always uses the resolved uid;
+  - an absolute `PROFILE_SWEEP_DEADLINE_EPOCH` bounds the run, partial results
+    are written on exhaustion, and the script exits 1 only when the baseline has
+    neither uid nor process-memory evidence.
+- Budget/wrapper math:
+  - `tools/repair/run_profile.sh` now uses a 1160s shell timeout (1250 - 90s),
+    stops Python 60s earlier via the absolute deadline, and still writes
+    `LIMITS.txt`;
+  - `tools/repair/run_emulator.sh` exports a gallery deadline of
+    `start + 1250 - 90` and caps the two pre-gallery instrumentation sweeps so
+    at least 300s remains for the Add/pin sweep.
+  - The workflow YAML `timeout 1250s` wrapper is unchanged.
+- Added `tools/repair/sweep_common.py` (budget/deadline, uid parsing, dynamic
+  catalog count) and `tools/repair/test_sweep_helpers.py`.
+- Verified here (no emulator):
+  - `python3 -m py_compile tools/repair/*.py` passes;
+  - `python3 tools/repair/test_sweep_helpers.py` -> 18 tests, 0 failures;
+  - `bash -n` and `shellcheck tools/repair/run_*.sh` pass;
+  - fake-adb gallery run with a 2s deadline: all entries marked
+    `not attempted - budget exhausted`, `RESULT.json` written, exit 0;
+  - fake-adb gallery run with no gallery marker: hard recovery issued
+    force-stop/am start/monkey, the third failure issued `am kill`, the tail was
+    budget-exhausted, exit 0;
+  - fake-adb profile run: uid `10234`, baseline PSS `12345`, all 9
+    representatives measured, exit 0; a no-uid/no-meminfo run exited 1; a 3s
+    deadline run kept the measured baseline and marked the rest exhausted,
+    exit 0;
+  - default budget math: 61 widgets -> 1051s, current 57 -> 987s, both below
+    the 1160s ceiling.
+- Not verified here: no emulator or device is attached, so the real
+  post-`wx_circle` gallery recovery, the 61-entry sweep, real uid/meminfo
+  readings and the workflow step duration are **not** runtime-verified. No APK
+  was built or changed in this run, and no screenshot or Play claim is made.
+- Next: run the consolidated repair/profile workflows and confirm entries after
+  `wx_circle` reach the gallery again, `RESULT.json` contains a uid and widget
+  rows, and each step exits before the 1250s wrapper.
+- Blockers: none in the harness; emulator re-verification pending.
+
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
 - Branch: `agent/add-bluetooth-and-wi-fi-status`.
