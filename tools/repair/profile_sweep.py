@@ -15,15 +15,27 @@ import subprocess as sp
 import time
 import xml.etree.ElementTree as ET
 
+from sweep_common import (
+    BudgetExhausted,
+    SweepBudget,
+    compute_graceful_budget,
+    parse_package_uid,
+    widget_catalog_ready_count,
+)
+
 P = "com.dotwelwidgets.dotwellabs"
 HOST_PACKAGE = os.environ.get("PROFILE_HOST_PACKAGE", P)
 OUT = pathlib.Path(os.environ.get("PROFILE_OUTPUT_DIR", "runtime-evidence/profile"))
 RAW = OUT / "raw"
-BUDGET = float(os.environ.get("PROFILE_SWEEP_BUDGET_SECONDS", "900"))
 SETTLE = float(os.environ.get("PROFILE_SETTLE_SECONDS", "10"))
 WIDGET_WIDTH = int(os.environ.get("PROFILE_WIDGET_WIDTH", "320"))
 WIDGET_HEIGHT = int(os.environ.get("PROFILE_WIDGET_HEIGHT", "260"))
-START = time.monotonic()
+OUTER_WRAPPER_SECONDS = float(os.environ.get("PROFILE_OUTER_TIMEOUT_SECONDS", "1250"))
+TEARDOWN_MARGIN = float(os.environ.get("PROFILE_SWEEP_TEARDOWN_RESERVE_SECONDS", "90"))
+PER_ENTRY_SECONDS = float(os.environ.get("PROFILE_SWEEP_PER_ENTRY_SECONDS", "14"))
+OVERHEAD_SECONDS = float(os.environ.get("PROFILE_SWEEP_OVERHEAD_SECONDS", "90"))
+budget = None
+UID = None
 
 REPRESENTATIVE = [
     {"id": "digital", "name": "Digital Clock",
@@ -50,11 +62,18 @@ REPRESENTATIVE = [
 
 
 def remaining():
-    return BUDGET - (time.monotonic() - START)
+    return budget.remaining() if budget is not None else float("inf")
 
 
 def adb(*args, check=True, timeout=60):
-    result = sp.run(["adb", *args], capture_output=True, timeout=timeout)
+    limit = budget.timeout(timeout) if budget is not None else timeout
+    try:
+        result = sp.run(["adb", *args], capture_output=True, timeout=limit)
+    except sp.TimeoutExpired as error:
+        if remaining() <= 1:
+            raise BudgetExhausted("adb timed out at the sweep budget: "
+                                  + " ".join(args)) from error
+        raise RuntimeError("adb timed out: " + " ".join(args)) from error
     if check and result.returncode:
         raise RuntimeError(result.stderr.decode(errors="replace").strip())
     return result.stdout
@@ -90,6 +109,8 @@ def wait_for_host(timeout=8.0):
             if any("RepairHostActivity" in node_text(n) or "id=" in node_text(n)
                    for n in last.iter("node")):
                 return last
+        except BudgetExhausted:
+            raise
         except Exception:
             last = None
         if time.time() >= end:
@@ -116,7 +137,13 @@ def start_host(provider, style=0):
     ]
     if provider:
         args += ["--es", "provider", provider]
-    adb(*args, timeout=30)
+    try:
+        adb(*args, timeout=30)
+    except BudgetExhausted:
+        raise
+    except Exception as error:
+        print(f"host start failed: {error}", flush=True)
+        return None
     return wait_for_host()
 
 
@@ -126,6 +153,8 @@ def start_fixture(activity, extra=None):
         args += extra
     try:
         adb(*args, timeout=30)
+    except BudgetExhausted:
+        raise
     except Exception as error:
         print(f"fixture {activity}: {error}", flush=True)
         return False
@@ -134,8 +163,8 @@ def start_fixture(activity, extra=None):
 
 def ensure_media_fixture():
     start_fixture("RepairMediaActivity")
-    end = time.time() + 8.0
-    while time.time() < end and remaining() > 5:
+    end = time.time() + max(0.0, min(8.0, remaining() - 5))
+    while time.time() < end:
         try:
             events = adb_text(
                 "exec-out", "run-as", P, "cat", "no_backup/repair-media-events.txt",
@@ -143,6 +172,8 @@ def ensure_media_fixture():
             )
             if "state:" in events:
                 return True
+        except BudgetExhausted:
+            raise
         except Exception:
             pass
         time.sleep(0.5)
@@ -162,15 +193,77 @@ def total_pss_kb(text):
     return None
 
 
-def meminfo(package):
-    text = adb_text("shell", "dumpsys", "meminfo", package, check=False)
-    return {"package": package, "totalPssKb": total_pss_kb(text)}
+def meminfo(package, retries=4):
+    delay = 0.5
+    for attempt in range(max(1, retries)):
+        text = adb_text("shell", "dumpsys", "meminfo", package, check=False)
+        pss = total_pss_kb(text)
+        if pss is not None:
+            return {"package": package, "totalPssKb": pss}
+        if attempt + 1 >= retries or remaining() <= delay + 1:
+            break
+        time.sleep(delay)
+        delay = min(delay * 2, 4.0)
+    return {"package": package, "totalPssKb": None}
 
 
 def package_uid():
-    text = adb_text("shell", "dumpsys", "package", P, check=False)
-    match = re.search(r"userId=(\d+)", text)
-    return int(match.group(1)) if match else None
+    probes = (
+        ("shell", "cmd", "package", "list", "packages", "-U"),
+        ("shell", "pm", "list", "packages", "-U"),
+        ("shell", "dumpsys", "package", P),
+    )
+    for probe in probes:
+        try:
+            text = adb_text(*probe, check=False)
+        except BudgetExhausted:
+            raise
+        except Exception:
+            continue
+        uid = parse_package_uid(text, P)
+        if uid is not None:
+            return uid
+    return None
+
+
+def process_running():
+    try:
+        if adb_text("shell", "pidof", P, check=False).strip():
+            return True
+    except BudgetExhausted:
+        raise
+    except Exception:
+        pass
+    return meminfo(P, retries=1).get("totalPssKb") is not None
+
+
+def ensure_app_process(timeout=45.0):
+    if process_running():
+        return True
+    for launcher in (
+        ("shell", "am", "start", "-W", "-n", f"{P}/.MainActivity"),
+        ("shell", "monkey", "-p", P, "-c",
+         "android.intent.category.LAUNCHER", "1"),
+    ):
+        try:
+            adb(*launcher, check=False, timeout=30)
+        except BudgetExhausted:
+            raise
+        except Exception as error:
+            print(f"app launch failed: {error}", flush=True)
+        end = time.time() + max(0.0, min(timeout, remaining() - 2))
+        while time.time() < end:
+            if process_running():
+                return True
+            time.sleep(0.5)
+    return False
+
+
+def ensure_uid():
+    global UID
+    if UID is None:
+        UID = package_uid()
+    return UID
 
 
 def cpu_percent(text, package):
@@ -216,6 +309,7 @@ def battery_stats(uid):
 
 
 def snapshot(label):
+    uid = ensure_uid()
     cpu = cpu_snapshot()
     return {
         "label": label,
@@ -224,7 +318,7 @@ def snapshot(label):
         "host": meminfo(HOST_PACKAGE),
         "cpu": cpu,
         "wakeLocks": wake_locks(),
-        "battery": battery_stats(UID),
+        "battery": battery_stats(uid),
     }
 
 
@@ -253,6 +347,8 @@ def trigger_tick(provider, widget_id):
                 timeout=30,
             )
             return "APPWIDGET_UPDATE"
+        except BudgetExhausted:
+            raise
         except Exception as error:
             print(f"tick broadcast failed: {error}", flush=True)
     start_host(provider)
@@ -268,7 +364,7 @@ def summarize(results):
         "",
         f"- Package: `{P}`",
         f"- Fixture host process: `{HOST_PACKAGE}`",
-        f"- Budget: {int(BUDGET)} s",
+        f"- Budget: {int(budget.budget_seconds) if budget and budget.budget_seconds else 0} s",
         f"- Settle after placement: {int(SETTLE)} s",
         "",
         "| Widget | App PSS kB | dApp | Host PSS kB | dHost | CPU % | Wake locks | Tick growth app/host kB | Status |",
@@ -308,14 +404,38 @@ def summarize(results):
     return "\n".join(lines)
 
 
+def item_for(entry):
+    return {
+        "id": entry["id"],
+        "name": entry["name"],
+        "provider": entry["provider"],
+        "category": entry["category"],
+    }
+
+
+def persist(results):
+    (OUT / "RESULT.json").write_text(json.dumps(results, indent=2))
+    (OUT / "SUMMARY.md").write_text(summarize(results))
+
+
 def main():
+    global budget, UID
     OUT.mkdir(parents=True, exist_ok=True)
     RAW.mkdir(parents=True, exist_ok=True)
-    global UID
+    catalog_count = widget_catalog_ready_count()
+    default_budget = compute_graceful_budget(
+        catalog_count, per_entry=PER_ENTRY_SECONDS, overhead=OVERHEAD_SECONDS,
+        outer=OUTER_WRAPPER_SECONDS, margin=TEARDOWN_MARGIN)
+    budget = SweepBudget(
+        budget_seconds=float(os.environ.get("PROFILE_SWEEP_BUDGET_SECONDS",
+                                            default_budget)),
+        deadline_epoch=(float(os.environ["PROFILE_SWEEP_DEADLINE_EPOCH"])
+                        if os.environ.get("PROFILE_SWEEP_DEADLINE_EPOCH") else None),
+    )
     results = {
         "package": P,
         "hostPackage": HOST_PACKAGE,
-        "budgetSeconds": BUDGET,
+        "budgetSeconds": budget.budget_seconds,
         "settleSeconds": SETTLE,
         "startedAtMillis": int(time.time() * 1000),
         "baseline": None,
@@ -325,19 +445,17 @@ def main():
         UID = package_uid()
         results["uid"] = UID
         adb("shell", "am", "force-stop", P, check=False)
-        start_host(None)
+        results["processStarted"] = ensure_app_process()
+        if UID is None:
+            UID = package_uid()
+            results["uid"] = UID
         baseline = snapshot("baseline")
         save_raw("baseline", baseline)
         results["baseline"] = baseline
         base_app = baseline["app"]["totalPssKb"]
         base_host = baseline["host"]["totalPssKb"]
-        for entry in REPRESENTATIVE:
-            item = {
-                "id": entry["id"],
-                "name": entry["name"],
-                "provider": entry["provider"],
-                "category": entry["category"],
-            }
+        for index, entry in enumerate(REPRESENTATIVE):
+            item = item_for(entry)
             results["widgets"].append(item)
             if remaining() < SETTLE + 25:
                 item["status"] = "not attempted - budget exhausted"
@@ -350,6 +468,7 @@ def main():
                     item["weatherFixture"] = start_fixture("RepairWeatherActivity")
                     time.sleep(1.0)
                 root = start_host(entry["provider"])
+                item["hostStarted"] = root is not None
                 item["widgetId"] = placed_widget_id(root)
                 time.sleep(max(0.0, min(SETTLE, remaining() - 20)))
                 settled = snapshot(entry["id"] + "-settled")
@@ -374,32 +493,61 @@ def main():
                 )
                 item["status"] = "measured"
                 print(f"{entry['id']}: measured", flush=True)
+            except BudgetExhausted as error:
+                item["status"] = "not attempted - budget exhausted"
+                item["error"] = str(error)
+                for rest in REPRESENTATIVE[index + 1:]:
+                    skipped = item_for(rest)
+                    skipped["status"] = "not attempted - budget exhausted"
+                    results["widgets"].append(skipped)
+                print(f"{entry['id']}: budget exhausted", flush=True)
+                break
             except Exception as error:
                 item["status"] = "error"
                 item["error"] = str(error)
                 print(f"{entry['id']}: {error}", flush=True)
             finally:
-                (OUT / "RESULT.json").write_text(json.dumps(results, indent=2))
-                (OUT / "SUMMARY.md").write_text(summarize(results))
+                persist(results)
+    except BudgetExhausted as error:
+        results["budgetExhausted"] = str(error)
+    except Exception as error:
+        results["baselineError"] = str(error)
     finally:
         if results.get("baseline") is None:
             try:
                 results["baseline"] = snapshot("baseline")
+            except BudgetExhausted as error:
+                results["baselineError"] = str(error)
             except Exception as error:
                 results["baselineError"] = str(error)
+        results["uid"] = UID
         results["finishedAtMillis"] = int(time.time() * 1000)
         results["limits"] = (
             "Isolated fixture AppWidgetHost measurements only; not a launcher "
             "placement, performance pass or Play claim. Synthetic media/weather "
             "fixtures are labelled where used."
         )
-        (OUT / "RESULT.json").write_text(json.dumps(results, indent=2))
-        (OUT / "SUMMARY.md").write_text(summarize(results))
+        persist(results)
         print(json.dumps(results, indent=2))
+
+    baseline = results.get("baseline") or {}
+    app_pss = (baseline.get("app") or {}).get("totalPssKb")
+    host_pss = (baseline.get("host") or {}).get("totalPssKb")
+    baseline_evidence = (
+        results.get("uid") is not None
+        or app_pss is not None
+        or host_pss is not None
+    )
+    measured = any(
+        item.get("appTotalPssKb") is not None
+        or (item.get("settled") or {}).get("app", {}).get("totalPssKb") is not None
+        for item in results.get("widgets", [])
+    )
+    if not baseline_evidence and not measured:
+        print("baseline failed: no uid or process memory evidence", flush=True)
+        return 1
     return 0
 
-
-UID = None
 
 if __name__ == "__main__":
     raise SystemExit(main())
