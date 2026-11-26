@@ -1,0 +1,925 @@
+{
+  "package": "com.dotwelwidgets.dotwellabs",
+  "hostPackage": "com.dotwelwidgets.dotwellabs",
+  "budgetSeconds": 944.0,
+  "settleSeconds": 10.0,
+  "startedAtMillis": 1795725481179,
+  "baseline": {
+    "label": "baseline",
+    "atMillis": 1795725573214,
+    "app": {
+      "package": "com.dotwelwidgets.dotwellabs",
+      "totalPssKb": null
+    },
+    "host": {
+      "package": "com.dotwelwidgets.dotwellabs",
+      "totalPssKb": null
+    },
+    "cpu": {
+      "appPercent": null,
+      "top": [
+        "Load: 9.61 / 5.4 / 2.08",
+        "CPU usage from 10069ms to 4779ms ago (2026-11-26 20:39:23.017 to 2026-11-26 20:39:28.307):",
+        "  6.5% 1538/com.google.android.googlequicksearchbox:search: 4.4% user + 2% kernel / faults: 10887 minor 1503 major",
+        "  4.5% 552/system_server: 2.4% user + 2% kernel / faults: 1895 minor 17 major",
+        "  3.9% 1205/com.google.android.gms.persistent: 3.4% user + 0.5% kernel / faults: 6765 minor",
+        "  1.1% 27/kworker/1:0-virtio_vsock: 0% user + 1.1% kernel",
+        "  1.1% 134/kworker/1:2-virtio_vsock: 0% user + 1.1% kernel",
+        "  1.1% 481/logcat: 0% user + 1.1% kernel",
+        "  0.1% 1085/com.android.settings: 0% user + 0% kernel / faults: 799 minor 19 major",
+        "  0.7% 26/ksoftirqd/1: 0% user + 0.7% kernel",
+        "  0.1% 4068/com.google.android.settings.intelligence: 0% user + 0% kernel / faults: 940 minor 11 major",
+        "  0.2% 141/logd: 0.1% user + 0% kernel / faults: 30 minor",
+        "  0.5% 380/android.hardware.sensors-service.multihal: 0% user + 0.5% kernel",
+        "  0.5% 434/adbd: 0.1% user + 0.3% kernel / faults: 14525 minor",
+        "  0.1% 75/kworker/1:2H-kverityd: 0% user + 0.1% kernel",
+        "  0.1% 348/dhcpclient: 0% user + 0.1% kernel",
+        "  0.1% 354/netd: 0% user + 0% kernel / faults: 130 minor 40 major",
+        "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel"
+      ]
+    },
+    "wakeLocks": {
+      "count": 2,
+      "held": [
+        "PARTIAL_WAKE_LOCK                 '*telephony-radio*' ACQ=-57s676ms (uid=1001 pid=1067 ws=WorkSource{1001 com.android.phone})",
+        "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-24s90ms (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+      ]
+    },
+    "battery": {
+      "uid": null,
+      "excerpt": []
+    }
+  },
+  "widgets": [
+    {
+      "id": "digital",
+      "name": "Digital Clock",
+      "provider": "com.dotwelwidgets.dotwellabs.ClockWidgetProvider",
+      "category": "clock",
+      "hostStarted": false,
+      "widgetId": null,
+      "settled": {
+        "label": "digital-settled",
+        "atMillis": 1795725590430,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 8.13 / 5.22 / 2.06",
+            "CPU usage from 16694ms to 10105ms ago (2026-11-26 20:39:33.609 to 2026-11-26 20:39:40.197):",
+            "  2.5% 552/system_server: 0.3% user + 2.2% kernel / faults: 755 minor 13 major",
+            "  0.4% 27/kworker/1:0-virtio_vsock: 0% user + 0.4% kernel",
+            "  0.4% 380/android.hardware.sensors-service.multihal: 0% user + 0.4% kernel",
+            "  0.1% 11/kworker/u4:1-loop10: 0% user + 0.1% kernel",
+            "  0.3% 434/adbd: 0.1% user + 0.1% kernel / faults: 5046 minor",
+            "  0.1% 138/kworker/0:2-mm_percpu_wq: 0% user + 0.1% kernel",
+            "  0.1% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.1% kernel",
+            "  0% 429/surfaceflinger: 0% user + 0% kernel",
+            "  0% 481/logcat: 0% user + 0% kernel",
+            "  0% 902/com.android.systemui: 0% user + 0% kernel / faults: 128 minor 12 major",
+            "  0% 1004/com.android.networkstack.process: 0% user + 0% kernel / faults: 284 minor",
+            "  0.1% 1503/com.google.android.gms: 0.1% user + 0% kernel / faults: 8 minor 57 major",
+            "  0% 3664/com.google.android.apps.messaging:rcs: 0% user + 0% kernel / faults: 100 minor 2 major",
+            " +0% 5128/dumpsys: 0% user + 0% kernel",
+            "2.6% TOTAL: 0.5% user + 1.9% kernel + 0% iowait + 0% softirq"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-41s298ms (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "appTotalPssKb": null,
+      "hostTotalPssKb": null,
+      "appDeltaKb": null,
+      "hostDeltaKb": null,
+      "tickTrigger": "host restart",
+      "afterTick": {
+        "label": "digital-after-tick",
+        "atMillis": 1795725599633,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 6.33 / 4.97 / 2.02",
+            "CPU usage from 9187ms to 4103ms ago (2026-11-26 20:39:50.318 to 2026-11-26 20:39:55.402):",
+            "  0.7% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.5% kernel",
+            "  0.7% 552/system_server: 0.3% user + 0.3% kernel / faults: 103 minor 6 major",
+            "  0.5% 27/kworker/1:0-virtio_vsock: 0% user + 0.5% kernel",
+            "  0.5% 399/android.hardware.graphics.composer3-service.ranchu: 0.1% user + 0.3% kernel",
+            "  0% 134/kworker/1:2-virtio_vsock: 0% user + 0% kernel",
+            "  0.1% 138/kworker/0:2-mm_percpu_wq: 0% user + 0.1% kernel",
+            "  0.1% 434/adbd: 0% user + 0% kernel / faults: 10941 minor 1 major",
+            "  0% 11/kworker/u4:1-loop10: 0% user + 0% kernel",
+            "  0.1% 429/surfaceflinger: 0% user + 0.1% kernel",
+            "  0% 902/com.android.systemui: 0% user + 0% kernel / faults: 284 minor 1 major",
+            " +0% 5175/dumpsys: 0% user + 0% kernel",
+            "1.4% TOTAL: 0.6% user + 0.7% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-50s513ms (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "tickGrowthAppKb": null,
+      "tickGrowthHostKb": null,
+      "status": "measured"
+    },
+    {
+      "id": "kwgt_interstellar_endurance_analog",
+      "name": "Interstellar Analog",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtInterstellarEnduranceAnalogProvider",
+      "category": "clock",
+      "hostStarted": false,
+      "widgetId": null,
+      "settled": {
+        "label": "kwgt_interstellar_endurance_analog-settled",
+        "atMillis": 1795725616849,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 5.36 / 4.8 / 2.0",
+            "CPU usage from 15662ms to 10094ms ago (2026-11-26 20:40:01.058 to 2026-11-26 20:40:06.627):",
+            "  0.8% 134/kworker/1:2-virtio_vsock: 0% user + 0.8% kernel",
+            "  0.7% 552/system_server: 0.5% user + 0.1% kernel / faults: 65 minor",
+            "  0.5% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+            "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+            "  0% 26/ksoftirqd/1: 0% user + 0% kernel",
+            "  0.1% 429/surfaceflinger: 0% user + 0.1% kernel",
+            "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 4210 minor",
+            " +0% 5225/dumpsys: 0% user + 0% kernel",
+            "1% TOTAL: 0.3% user + 0.6% kernel + 0% iowait"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-1m7s709ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "appTotalPssKb": null,
+      "hostTotalPssKb": null,
+      "appDeltaKb": null,
+      "hostDeltaKb": null,
+      "tickTrigger": "host restart",
+      "afterTick": {
+        "label": "kwgt_interstellar_endurance_analog-after-tick",
+        "atMillis": 1795725626042,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 3.9 / 4.51 / 1.96",
+            "CPU usage from 9179ms to 4103ms ago (2026-11-26 20:40:16.735 to 2026-11-26 20:40:21.811):",
+            "  0.7% 1503/com.google.android.gms: 0.5% user + 0.1% kernel / faults: 420 minor 38 major",
+            "  0.1% 134/kworker/1:2-virtio_vsock: 0% user + 0.1% kernel",
+            "  0.5% 380/android.hardware.sensors-service.multihal: 0% user + 0.5% kernel",
+            "  0.3% 1205/com.google.android.gms.persistent: 0.1% user + 0.1% kernel / faults: 212 minor",
+            "  0% 26/ksoftirqd/1: 0% user + 0% kernel",
+            "  0.1% 138/kworker/0:2-mm_percpu_wq: 0% user + 0.1% kernel",
+            "  0.1% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.1% kernel",
+            "  0.1% 429/surfaceflinger: 0% user + 0.1% kernel",
+            "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 5056 minor",
+            "  0.1% 552/system_server: 0.1% user + 0% kernel / faults: 164 minor 1 major",
+            "  0% 3421/com.google.android.apps.safetyhub: 0% user + 0% kernel / faults: 26 minor 565 major",
+            " +0% 5304/dumpsys: 0% user + 0% kernel",
+            "1.2% TOTAL: 0.6% user + 0.5% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-1m16s899ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "tickGrowthAppKb": null,
+      "tickGrowthHostKb": null,
+      "status": "measured"
+    },
+    {
+      "id": "kwgt_interstellar_endurance",
+      "name": "Interstellar Endurance",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtInterstellarEnduranceProvider",
+      "category": "clock",
+      "hostStarted": false,
+      "widgetId": null,
+      "settled": {
+        "label": "kwgt_interstellar_endurance-settled",
+        "atMillis": 1795725643228,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 3.3 / 4.36 / 1.94",
+            "CPU usage from 15646ms to 10085ms ago (2026-11-26 20:40:27.453 to 2026-11-26 20:40:33.015):",
+            "  1.2% 552/system_server: 0% user + 1.2% kernel / faults: 62 minor",
+            "  0.5% 134/kworker/1:2-virtio_vsock: 0% user + 0.5% kernel",
+            "  0.3% 380/android.hardware.sensors-service.multihal: 0% user + 0.3% kernel",
+            "  0% 138/kworker/0:2-mm_percpu_wq: 0% user + 0% kernel",
+            "  0.1% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.1% kernel",
+            "  0% 429/surfaceflinger: 0% user + 0% kernel",
+            " +0% 5355/dumpsys: 0% user + 0% kernel",
+            "1.1% TOTAL: 0.2% user + 0.9% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-1m34s86ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "appTotalPssKb": null,
+      "hostTotalPssKb": null,
+      "appDeltaKb": null,
+      "hostDeltaKb": null,
+      "tickTrigger": "host restart",
+      "afterTick": {
+        "label": "kwgt_interstellar_endurance-after-tick",
+        "atMillis": 1795725652428,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 2.57 / 4.14 / 1.91",
+            "CPU usage from 9182ms to 4109ms ago (2026-11-26 20:40:43.116 to 2026-11-26 20:40:48.189):",
+            "  0.7% 134/kworker/1:2-virtio_vsock: 0% user + 0.7% kernel",
+            "  0.1% 1538/com.google.android.googlequicksearchbox:search: 0% user + 0% kernel / faults: 362 minor 6737 major",
+            "  0.3% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.1% kernel",
+            "  0.3% 552/system_server: 0.1% user + 0.1% kernel / faults: 95 minor",
+            "  0% 26/ksoftirqd/1: 0% user + 0% kernel",
+            "  0.1% 138/kworker/0:2-mm_percpu_wq: 0% user + 0.1% kernel",
+            "  0.1% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.1% kernel",
+            "  0.1% 429/surfaceflinger: 0% user + 0.1% kernel",
+            "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 5054 minor",
+            "  0% 1067/com.android.phone: 0% user + 0% kernel / faults: 66 minor",
+            " +0% 5404/dumpsys: 0% user + 0% kernel",
+            "1% TOTAL: 0.4% user + 0.5% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-1m43s291ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "tickGrowthAppKb": null,
+      "tickGrowthHostKb": null,
+      "status": "measured"
+    },
+    {
+      "id": "kwgt_nothing_battery",
+      "name": "Battery Gauge",
+      "provider": "com.dotwelwidgets.dotwellabs.BatteryWidgetProvider",
+      "category": "battery",
+      "hostStarted": false,
+      "widgetId": null,
+      "settled": {
+        "label": "kwgt_nothing_battery-settled",
+        "atMillis": 1795725669631,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 2.17 / 4.01 / 1.89",
+            "CPU usage from 15653ms to 10093ms ago (2026-11-26 20:40:53.845 to 2026-11-26 20:40:59.406):",
+            "  0.7% 134/kworker/1:2-virtio_vsock: 0% user + 0.7% kernel",
+            "  0.5% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+            "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+            "  0.3% 552/system_server: 0.3% user + 0% kernel / faults: 67 minor",
+            "  0% 902/com.android.systemui: 0% user + 0% kernel / faults: 302 minor 1 major",
+            "  0% 79/ueventd: 0% user + 0% kernel",
+            "  0.1% 138/kworker/0:2-mm_percpu_wq: 0% user + 0.1% kernel",
+            "  0.1% 429/surfaceflinger: 0% user + 0.1% kernel",
+            "  0% 1004/com.android.networkstack.process: 0% user + 0% kernel / faults: 616 minor",
+            "  0% 1538/com.google.android.googlequicksearchbox:search: 0% user + 0% kernel / faults: 7 minor 997 major",
+            " +0% 5454/dumpsys: 0% user + 0% kernel",
+            "1% TOTAL: 0.4% user + 0.5% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-2m0s494ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "appTotalPssKb": null,
+      "hostTotalPssKb": null,
+      "appDeltaKb": null,
+      "hostDeltaKb": null,
+      "tickTrigger": "host restart",
+      "afterTick": {
+        "label": "kwgt_nothing_battery-after-tick",
+        "atMillis": 1795725678822,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 1.69 / 3.81 / 1.86",
+            "CPU usage from 9164ms to 4093ms ago (2026-11-26 20:41:09.529 to 2026-11-26 20:41:14.600):",
+            "  0.5% 27/kworker/1:0-virtio_vsock: 0% user + 0.5% kernel",
+            "  0.5% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+            "  0.3% 552/system_server: 0.1% user + 0.1% kernel / faults: 43 minor",
+            "  0% 138/kworker/0:2-mm_percpu_wq: 0% user + 0% kernel",
+            "  0% 143/servicemanager: 0% user + 0% kernel",
+            "  0.1% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.1% kernel",
+            "  0.1% 429/surfaceflinger: 0.1% user + 0% kernel",
+            "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 5041 minor",
+            "  0% 1538/com.google.android.googlequicksearchbox:search: 0% user + 0% kernel / faults: 8 minor 162 major",
+            " +0% 5499/dumpsys: 0% user + 0% kernel",
+            "0.7% TOTAL: 0.2% user + 0.4% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-2m9s675ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "tickGrowthAppKb": null,
+      "tickGrowthHostKb": null,
+      "status": "measured"
+    },
+    {
+      "id": "wx_circle",
+      "name": "Weather Circle",
+      "provider": "com.dotwelwidgets.dotwellabs.NtWxCircleProvider",
+      "category": "weather",
+      "weatherFixture": false,
+      "hostStarted": false,
+      "widgetId": null,
+      "settled": {
+        "label": "wx_circle-settled",
+        "atMillis": 1795725697029,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 1.43 / 3.68 / 1.84",
+            "CPU usage from 16668ms to 11110ms ago (2026-11-26 20:41:20.232 to 2026-11-26 20:41:25.790):",
+            "  0.7% 27/kworker/1:0-virtio_vsock: 0% user + 0.7% kernel",
+            "  0.5% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+            "  0.3% 552/system_server: 0.1% user + 0.1% kernel / faults: 40 minor",
+            "  0% 138/kworker/0:2-mm_percpu_wq: 0% user + 0% kernel",
+            "  0.1% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.1% kernel",
+            "  0.1% 429/surfaceflinger: 0% user + 0.1% kernel",
+            "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 4205 minor",
+            "  0% 902/com.android.systemui: 0% user + 0% kernel / faults: 33 minor",
+            "  0% 1067/com.android.phone: 0% user + 0% kernel / faults: 324 minor 3 major",
+            "  0% 1538/com.google.android.googlequicksearchbox:search: 0% user + 0% kernel / faults: 34 minor 1744 major",
+            " +0% 5550/dumpsys: 0% user + 0% kernel",
+            "0.9% TOTAL: 0.2% user + 0.6% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-2m27s882ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "appTotalPssKb": null,
+      "hostTotalPssKb": null,
+      "appDeltaKb": null,
+      "hostDeltaKb": null,
+      "tickTrigger": "host restart",
+      "afterTick": {
+        "label": "wx_circle-after-tick",
+        "atMillis": 1795725706220,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 1.09 / 3.46 / 1.8",
+            "CPU usage from 9178ms to 4104ms ago (2026-11-26 20:41:36.913 to 2026-11-26 20:41:41.986):",
+            "  0.9% 27/kworker/1:0-virtio_vsock: 0% user + 0.9% kernel",
+            "  0.5% 552/system_server: 0.5% user + 0% kernel / faults: 44 minor",
+            "  0.3% 380/android.hardware.sensors-service.multihal: 0% user + 0.3% kernel",
+            "  0% 11/kworker/u4:1-loop10: 0% user + 0% kernel",
+            "  0% 26/ksoftirqd/1: 0% user + 0% kernel",
+            "  0.1% 138/kworker/0:2-mm_percpu_wq: 0% user + 0.1% kernel",
+            "  0.1% 363/android.hardware.audio.service: 0.1% user + 0% kernel",
+            "  0.1% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.1% kernel",
+            "  0.1% 429/surfaceflinger: 0% user + 0.1% kernel",
+            "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 5046 minor",
+            "  0% 1688/wpa_supplicant: 0% user + 0% kernel",
+            "  0% 3436/com.google.android.marvin.talkback: 0% user + 0% kernel / faults: 154 minor 412 major",
+            " +0% 5600/dumpsys: 0% user + 0% kernel",
+            "1.4% TOTAL: 0.6% user + 0.7% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-2m37s75ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "tickGrowthAppKb": null,
+      "tickGrowthHostKb": null,
+      "status": "measured"
+    },
+    {
+      "id": "media_mini",
+      "name": "Mini Media",
+      "provider": "com.dotwelwidgets.dotwellabs.MiniMediaPlayerProvider",
+      "category": "media",
+      "mediaFixture": false,
+      "hostStarted": false,
+      "widgetId": null,
+      "settled": {
+        "label": "media_mini-settled",
+        "atMillis": 1795725731608,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 0.92 / 3.35 / 1.78",
+            "CPU usage from 23849ms to 18287ms ago (2026-11-26 20:41:47.628 to 2026-11-26 20:41:53.190):",
+            "  0.8% 27/kworker/1:0-virtio_vsock: 0% user + 0.8% kernel",
+            "  0.5% 380/android.hardware.sensors-service.multihal: 0.3% user + 0.1% kernel",
+            "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+            "  0.3% 552/system_server: 0% user + 0.3% kernel / faults: 58 minor",
+            "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 4212 minor",
+            " +0% 5650/dumpsys: 0% user + 0% kernel",
+            "1.7% TOTAL: 0.9% user + 0.8% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 1,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-3m2s465ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "appTotalPssKb": null,
+      "hostTotalPssKb": null,
+      "appDeltaKb": null,
+      "hostDeltaKb": null,
+      "tickTrigger": "host restart",
+      "afterTick": {
+        "label": "media_mini-after-tick",
+        "atMillis": 1795725740800,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 0.66 / 3.13 / 1.74",
+            "CPU usage from 9175ms to 4099ms ago (2026-11-26 20:42:11.493 to 2026-11-26 20:42:16.569):",
+            "  1.1% 552/system_server: 0.5% user + 0.5% kernel / faults: 394 minor 1 major",
+            "  0.7% 27/kworker/1:0-virtio_vsock: 0% user + 0.7% kernel",
+            "  0.3% 380/android.hardware.sensors-service.multihal: 0% user + 0.3% kernel",
+            "  0.1% 138/kworker/0:2-mm_percpu_wq: 0% user + 0.1% kernel",
+            "  0.1% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.1% kernel",
+            "  0.1% 481/logcat: 0% user + 0.1% kernel",
+            "  0.1% 2256/com.google.android.gms.unstable: 0.1% user + 0% kernel / faults: 94 minor 42 major",
+            " +0% 5760/dumpsys: 0% user + 0% kernel",
+            "1.4% TOTAL: 0.3% user + 0.9% kernel + 0% softirq"
+          ]
+        },
+        "wakeLocks": {
+          "count": 0,
+          "held": []
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "tickGrowthAppKb": null,
+      "tickGrowthHostKb": null,
+      "status": "measured"
+    },
+    {
+      "id": "photo_circle",
+      "name": "Photo Circle",
+      "provider": "com.dotwelwidgets.dotwellabs.NtPhotoCircleProvider",
+      "category": "photo",
+      "hostStarted": false,
+      "widgetId": null,
+      "settled": {
+        "label": "photo_circle-settled",
+        "atMillis": 1795725757991,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 0.51 / 2.97 / 1.72",
+            "CPU usage from 15653ms to 10091ms ago (2026-11-26 20:42:22.206 to 2026-11-26 20:42:27.768):",
+            "  0.7% 27/kworker/1:0-virtio_vsock: 0% user + 0.7% kernel",
+            "  0.5% 552/system_server: 0.3% user + 0.1% kernel / faults: 87 minor 7 major",
+            "  0.3% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.1% kernel",
+            "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+            "  0% 1538/com.google.android.googlequicksearchbox:search: 0% user + 0% kernel / faults: 35 minor 1637 major",
+            "  0% 26/ksoftirqd/1: 0% user + 0% kernel",
+            "  0.1% 138/kworker/0:2-mm_percpu_wq: 0% user + 0.1% kernel",
+            "  0% 145/psimon: 0% user + 0% kernel",
+            "  0% 2164/com.android.cellbroadcastreceiver: 0% user + 0% kernel / faults: 143 minor 615 major",
+            " +0% 5813/dumpsys: 0% user + 0% kernel",
+            "1% TOTAL: 0.4% user + 0.4% kernel + 0% iowait + 0% softirq"
+          ]
+        },
+        "wakeLocks": {
+          "count": 0,
+          "held": []
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "appTotalPssKb": null,
+      "hostTotalPssKb": null,
+      "appDeltaKb": null,
+      "hostDeltaKb": null,
+      "tickTrigger": "host restart",
+      "afterTick": {
+        "label": "photo_circle-after-tick",
+        "atMillis": 1795725767190,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 0.4 / 2.83 / 1.69",
+            "CPU usage from 9182ms to 4103ms ago (2026-11-26 20:42:37.876 to 2026-11-26 20:42:42.955):",
+            "  0.9% 27/kworker/1:0-virtio_vsock: 0% user + 0.9% kernel",
+            "  0.3% 380/android.hardware.sensors-service.multihal: 0% user + 0.3% kernel",
+            "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+            "  0.3% 434/adbd: 0.1% user + 0.1% kernel / faults: 5046 minor",
+            "  0.3% 552/system_server: 0.3% user + 0% kernel / faults: 78 minor",
+            "  0% 16/rcu_preempt: 0% user + 0% kernel",
+            "  0% 26/ksoftirqd/1: 0% user + 0% kernel",
+            "  0.1% 481/logcat: 0% user + 0.1% kernel",
+            "  0.1% 3664/com.google.android.apps.messaging:rcs: 0% user + 0.1% kernel / faults: 115 minor",
+            " +0% 5858/dumpsys: 0% user + 0% kernel",
+            "0.7% TOTAL: 0.1% user + 0.5% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 0,
+          "held": []
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "tickGrowthAppKb": null,
+      "tickGrowthHostKb": null,
+      "status": "measured"
+    },
+    {
+      "id": "quotes",
+      "name": "Quotes",
+      "provider": "com.dotwelwidgets.dotwellabs.QuotesWidgetProvider",
+      "category": "quotes",
+      "hostStarted": false,
+      "widgetId": null,
+      "settled": {
+        "label": "quotes-settled",
+        "atMillis": 1795725784402,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 0.34 / 2.73 / 1.67",
+            "CPU usage from 15673ms to 10086ms ago (2026-11-26 20:42:48.597 to 2026-11-26 20:42:54.184):",
+            "  0.8% 134/kworker/1:2-virtio_vsock: 0% user + 0.8% kernel",
+            "  0.7% 552/system_server: 0.5% user + 0.1% kernel / faults: 359 minor 15 major",
+            "  0.5% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+            "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+            "  0.3% 434/adbd: 0.1% user + 0.1% kernel / faults: 4202 minor",
+            "  0% 1205/com.google.android.gms.persistent: 0% user + 0% kernel / faults: 131 minor 16 major",
+            "  0% 1503/com.google.android.gms: 0% user + 0% kernel / faults: 65 minor 1304 major",
+            "  0% 10/kworker/u4:0-loop6: 0% user + 0% kernel",
+            "  0% 138/kworker/0:2-mm_percpu_wq: 0% user + 0% kernel",
+            "  0% 353/statsd: 0% user + 0% kernel",
+            "  0.1% 429/surfaceflinger: 0.1% user + 0% kernel",
+            "  0% 481/logcat: 0% user + 0% kernel",
+            "  0% 559/kworker/1:4H-kverityd: 0% user + 0% kernel",
+            "  0% 902/com.android.systemui: 0% user + 0% kernel / faults: 133 minor 4 major",
+            " +0% 5910/dumpsys: 0% user + 0% kernel",
+            "1.5% TOTAL: 0.7% user + 0.8% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 3,
+          "held": [
+            "PARTIAL_WAKE_LOCK                 'CollectionLib-SigCollector' ACQ=-133ms (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})",
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.auth.account.be.legacy.AuthCronService' ACQ=-72ms (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})",
+            "PARTIAL_WAKE_LOCK                 '*gms_scheduler*:internal' ACQ=-25ms (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+          ]
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "appTotalPssKb": null,
+      "hostTotalPssKb": null,
+      "appDeltaKb": null,
+      "hostDeltaKb": null,
+      "tickTrigger": "host restart",
+      "afterTick": {
+        "label": "quotes-after-tick",
+        "atMillis": 1795725793728,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 0.26 / 2.6 / 1.64",
+            "CPU usage from 9310ms to 4234ms ago (2026-11-26 20:43:04.285 to 2026-11-26 20:43:09.361):",
+            "  0.7% 27/kworker/1:0-virtio_vsock: 0% user + 0.7% kernel",
+            "  0.5% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+            "  0.5% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.5% kernel",
+            "  0.5% 552/system_server: 0.3% user + 0.1% kernel / faults: 43 minor",
+            "  0% 363/android.hardware.audio.service: 0% user + 0% kernel",
+            "  0.3% 429/surfaceflinger: 0% user + 0.3% kernel",
+            "  0% 10/kworker/u4:0-loop6: 0% user + 0% kernel",
+            "  0% 348/dhcpclient: 0% user + 0% kernel",
+            "  0% 434/adbd: 0% user + 0% kernel / faults: 10939 minor",
+            "  0% 1067/com.android.phone: 0% user + 0% kernel / faults: 72 minor 3 major",
+            "  0% 2256/com.google.android.gms.unstable: 0% user + 0% kernel / faults: 61 minor 582 major",
+            " +0% 5957/dumpsys: 0% user + 0% kernel",
+            "1% TOTAL: 0.4% user + 0.5% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 0,
+          "held": []
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "tickGrowthAppKb": null,
+      "tickGrowthHostKb": null,
+      "status": "measured"
+    },
+    {
+      "id": "away",
+      "name": "Away Time",
+      "provider": "com.dotwelwidgets.dotwellabs.NtAwayWidgetProvider",
+      "category": "away",
+      "hostStarted": false,
+      "widgetId": null,
+      "settled": {
+        "label": "away-settled",
+        "atMillis": 1795725810932,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 0.81 / 2.64 / 1.67",
+            "CPU usage from 15661ms to 10096ms ago (2026-11-26 20:43:15.139 to 2026-11-26 20:43:20.703):",
+            "  0.7% 552/system_server: 0.5% user + 0.1% kernel / faults: 121 minor",
+            "  0.3% 134/kworker/1:2-virtio_vsock: 0% user + 0.3% kernel",
+            "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0.1% user + 0.1% kernel",
+            "  0% 34/kcompactd0: 0% user + 0% kernel",
+            "  0.1% 380/android.hardware.sensors-service.multihal: 0% user + 0.1% kernel",
+            "  0.1% 429/surfaceflinger: 0% user + 0.1% kernel",
+            "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 4201 minor",
+            "  0% 1067/com.android.phone: 0% user + 0% kernel / faults: 155 minor 8 major",
+            " +0% 6042/dumpsys: 0% user + 0% kernel",
+            "0.8% TOTAL: 0.4% user + 0.3% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 0,
+          "held": []
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "appTotalPssKb": null,
+      "hostTotalPssKb": null,
+      "appDeltaKb": null,
+      "hostDeltaKb": null,
+      "tickTrigger": "host restart",
+      "afterTick": {
+        "label": "away-after-tick",
+        "atMillis": 1795725820137,
+        "app": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "host": {
+          "package": "com.dotwelwidgets.dotwellabs",
+          "totalPssKb": null
+        },
+        "cpu": {
+          "appPercent": null,
+          "top": [
+            "Load: 0.63 / 2.52 / 1.64",
+            "CPU usage from 9188ms to 4110ms ago (2026-11-26 20:43:30.816 to 2026-11-26 20:43:35.895):",
+            "  1.5% 552/system_server: 0.3% user + 1.1% kernel / faults: 65 minor",
+            "  0.3% 134/kworker/1:2-virtio_vsock: 0% user + 0.3% kernel",
+            "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+            "  0% 16/rcu_preempt: 0% user + 0% kernel",
+            "  0% 26/ksoftirqd/1: 0% user + 0% kernel",
+            "  0% 143/servicemanager: 0% user + 0% kernel",
+            "  0.1% 429/surfaceflinger: 0% user + 0.1% kernel / faults: 1 major",
+            "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 5042 minor",
+            "  0% 902/com.android.systemui: 0% user + 0% kernel / faults: 93 minor 1 major",
+            "  0.1% 1004/com.android.networkstack.process: 0% user + 0.1% kernel / faults: 17 minor",
+            "  0% 1503/com.google.android.gms: 0% user + 0% kernel / faults: 9 minor 113 major",
+            " +0% 6086/dumpsys: 0% user + 0% kernel",
+            "1.5% TOTAL: 0.3% user + 1.1% kernel"
+          ]
+        },
+        "wakeLocks": {
+          "count": 0,
+          "held": []
+        },
+        "battery": {
+          "uid": null,
+          "excerpt": []
+        }
+      },
+      "tickGrowthAppKb": null,
+      "tickGrowthHostKb": null,
+      "status": "measured"
+    }
+  ],
+  "uid": null,
+  "processStarted": false,
+  "finishedAtMillis": 1795725827287,
+  "limits": "Isolated fixture AppWidgetHost measurements only; not a launcher placement, performance pass or Play claim. Synthetic media/weather fixtures are labelled where used."
+}

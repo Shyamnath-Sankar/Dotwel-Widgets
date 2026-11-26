@@ -1,0 +1,44 @@
+{
+  "label": "digital-settled",
+  "atMillis": 1795725590430,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 8.13 / 5.22 / 2.06",
+      "CPU usage from 16694ms to 10105ms ago (2026-11-26 20:39:33.609 to 2026-11-26 20:39:40.197):",
+      "  2.5% 552/system_server: 0.3% user + 2.2% kernel / faults: 755 minor 13 major",
+      "  0.4% 27/kworker/1:0-virtio_vsock: 0% user + 0.4% kernel",
+      "  0.4% 380/android.hardware.sensors-service.multihal: 0% user + 0.4% kernel",
+      "  0.1% 11/kworker/u4:1-loop10: 0% user + 0.1% kernel",
+      "  0.3% 434/adbd: 0.1% user + 0.1% kernel / faults: 5046 minor",
+      "  0.1% 138/kworker/0:2-mm_percpu_wq: 0% user + 0.1% kernel",
+      "  0.1% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.1% kernel",
+      "  0% 429/surfaceflinger: 0% user + 0% kernel",
+      "  0% 481/logcat: 0% user + 0% kernel",
+      "  0% 902/com.android.systemui: 0% user + 0% kernel / faults: 128 minor 12 major",
+      "  0% 1004/com.android.networkstack.process: 0% user + 0% kernel / faults: 284 minor",
+      "  0.1% 1503/com.google.android.gms: 0.1% user + 0% kernel / faults: 8 minor 57 major",
+      "  0% 3664/com.google.android.apps.messaging:rcs: 0% user + 0% kernel / faults: 100 minor 2 major",
+      " +0% 5128/dumpsys: 0% user + 0% kernel",
+      "2.6% TOTAL: 0.5% user + 1.9% kernel + 0% iowait + 0% softirq"
+    ]
+  },
+  "wakeLocks": {
+    "count": 1,
+    "held": [
+      "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-41s298ms (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+    ]
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}

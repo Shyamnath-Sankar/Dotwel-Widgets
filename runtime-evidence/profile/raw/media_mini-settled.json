@@ -1,0 +1,36 @@
+{
+  "label": "media_mini-settled",
+  "atMillis": 1795725731608,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 0.92 / 3.35 / 1.78",
+      "CPU usage from 23849ms to 18287ms ago (2026-11-26 20:41:47.628 to 2026-11-26 20:41:53.190):",
+      "  0.8% 27/kworker/1:0-virtio_vsock: 0% user + 0.8% kernel",
+      "  0.5% 380/android.hardware.sensors-service.multihal: 0.3% user + 0.1% kernel",
+      "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+      "  0.3% 552/system_server: 0% user + 0.3% kernel / faults: 58 minor",
+      "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 4212 minor",
+      " +0% 5650/dumpsys: 0% user + 0% kernel",
+      "1.7% TOTAL: 0.9% user + 0.8% kernel"
+    ]
+  },
+  "wakeLocks": {
+    "count": 1,
+    "held": [
+      "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-3m2s465ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+    ]
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}

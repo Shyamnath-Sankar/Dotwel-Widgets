@@ -1,0 +1,47 @@
+{
+  "label": "quotes-settled",
+  "atMillis": 1795725784402,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 0.34 / 2.73 / 1.67",
+      "CPU usage from 15673ms to 10086ms ago (2026-11-26 20:42:48.597 to 2026-11-26 20:42:54.184):",
+      "  0.8% 134/kworker/1:2-virtio_vsock: 0% user + 0.8% kernel",
+      "  0.7% 552/system_server: 0.5% user + 0.1% kernel / faults: 359 minor 15 major",
+      "  0.5% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+      "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+      "  0.3% 434/adbd: 0.1% user + 0.1% kernel / faults: 4202 minor",
+      "  0% 1205/com.google.android.gms.persistent: 0% user + 0% kernel / faults: 131 minor 16 major",
+      "  0% 1503/com.google.android.gms: 0% user + 0% kernel / faults: 65 minor 1304 major",
+      "  0% 10/kworker/u4:0-loop6: 0% user + 0% kernel",
+      "  0% 138/kworker/0:2-mm_percpu_wq: 0% user + 0% kernel",
+      "  0% 353/statsd: 0% user + 0% kernel",
+      "  0.1% 429/surfaceflinger: 0.1% user + 0% kernel",
+      "  0% 481/logcat: 0% user + 0% kernel",
+      "  0% 559/kworker/1:4H-kverityd: 0% user + 0% kernel",
+      "  0% 902/com.android.systemui: 0% user + 0% kernel / faults: 133 minor 4 major",
+      " +0% 5910/dumpsys: 0% user + 0% kernel",
+      "1.5% TOTAL: 0.7% user + 0.8% kernel"
+    ]
+  },
+  "wakeLocks": {
+    "count": 3,
+    "held": [
+      "PARTIAL_WAKE_LOCK                 'CollectionLib-SigCollector' ACQ=-133ms (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})",
+      "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.auth.account.be.legacy.AuthCronService' ACQ=-72ms (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})",
+      "PARTIAL_WAKE_LOCK                 '*gms_scheduler*:internal' ACQ=-25ms (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+    ]
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}

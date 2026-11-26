@@ -1,0 +1,38 @@
+{
+  "label": "kwgt_interstellar_endurance_analog-settled",
+  "atMillis": 1795725616849,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 5.36 / 4.8 / 2.0",
+      "CPU usage from 15662ms to 10094ms ago (2026-11-26 20:40:01.058 to 2026-11-26 20:40:06.627):",
+      "  0.8% 134/kworker/1:2-virtio_vsock: 0% user + 0.8% kernel",
+      "  0.7% 552/system_server: 0.5% user + 0.1% kernel / faults: 65 minor",
+      "  0.5% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+      "  0.3% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+      "  0% 26/ksoftirqd/1: 0% user + 0% kernel",
+      "  0.1% 429/surfaceflinger: 0% user + 0.1% kernel",
+      "  0.1% 434/adbd: 0% user + 0.1% kernel / faults: 4210 minor",
+      " +0% 5225/dumpsys: 0% user + 0% kernel",
+      "1% TOTAL: 0.3% user + 0.6% kernel + 0% iowait"
+    ]
+  },
+  "wakeLocks": {
+    "count": 1,
+    "held": [
+      "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.tapandpay.gcmtask.TapAndPayGcmTaskService' ACQ=-1m7s709ms LONG (uid=10143 pid=1205 ws=WorkSource{10143 com.google.android.gms})"
+    ]
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}

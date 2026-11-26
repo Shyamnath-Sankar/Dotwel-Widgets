@@ -1,0 +1,40 @@
+{
+  "label": "quotes-after-tick",
+  "atMillis": 1795725793728,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 0.26 / 2.6 / 1.64",
+      "CPU usage from 9310ms to 4234ms ago (2026-11-26 20:43:04.285 to 2026-11-26 20:43:09.361):",
+      "  0.7% 27/kworker/1:0-virtio_vsock: 0% user + 0.7% kernel",
+      "  0.5% 380/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+      "  0.5% 399/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.5% kernel",
+      "  0.5% 552/system_server: 0.3% user + 0.1% kernel / faults: 43 minor",
+      "  0% 363/android.hardware.audio.service: 0% user + 0% kernel",
+      "  0.3% 429/surfaceflinger: 0% user + 0.3% kernel",
+      "  0% 10/kworker/u4:0-loop6: 0% user + 0% kernel",
+      "  0% 348/dhcpclient: 0% user + 0% kernel",
+      "  0% 434/adbd: 0% user + 0% kernel / faults: 10939 minor",
+      "  0% 1067/com.android.phone: 0% user + 0% kernel / faults: 72 minor 3 major",
+      "  0% 2256/com.google.android.gms.unstable: 0% user + 0% kernel / faults: 61 minor 582 major",
+      " +0% 5957/dumpsys: 0% user + 0% kernel",
+      "1% TOTAL: 0.4% user + 0.5% kernel"
+    ]
+  },
+  "wakeLocks": {
+    "count": 0,
+    "held": []
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}
