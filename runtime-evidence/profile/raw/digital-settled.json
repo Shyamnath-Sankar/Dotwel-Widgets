@@ -1,0 +1,83 @@
+{
+  "label": "digital-settled",
+  "atMillis": 1795733371611,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": 50506
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": 52172
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 26.99 / 6.68 / 2.23",
+      "CPU usage from 43154ms to 24785ms ago (2026-11-26 22:48:47.895 to 2026-11-26 22:49:06.264):",
+      "  36% 559/system_server: 26% user + 9.8% kernel / faults: 51643 minor 300 major",
+      "  13% 397/android.hardware.graphics.composer3-service.ranchu: 0.1% user + 13% kernel / faults: 3 minor 127 major",
+      "  11% 1197/com.google.android.apps.nexuslauncher: 4.3% user + 7.4% kernel / faults: 41216 minor 81 major",
+      "  10% 913/com.android.systemui: 7.1% user + 2.9% kernel / faults: 17381 minor 300 major",
+      "  9.2% 1230/com.google.android.gms.persistent: 6.9% user + 2.3% kernel / faults: 26800 minor 97 major",
+      "  8.8% 1580/com.google.android.gms: 6.4% user + 2.4% kernel / faults: 39620 minor 172 major",
+      "  8.8% 1383/com.google.android.inputmethod.latin: 7.5% user + 1.2% kernel / faults: 11929 minor 57 major",
+      "  7.8% 1511/com.google.android.googlequicksearchbox:search: 6.4% user + 1.4% kernel / faults: 20211 minor 516 major",
+      "  6.2% 430/surfaceflinger: 0.5% user + 5.6% kernel / faults: 164 minor 150 major",
+      "  4.8% 487/logcat: 0.2% user + 4.6% kernel / faults: 3 minor",
+      "  4.7% 43/kswapd0: 0% user + 4.7% kernel",
+      "  3.7% 1408/com.google.android.as: 3% user + 0.7% kernel / faults: 14314 minor 196 major",
+      "  2.2% 1083/com.android.phone: 1.4% user + 0.8% kernel / faults: 5727 minor 36 major",
+      "  1.6% 1359/com.google.android.apps.wellbeing: 1.4% user + 0.2% kernel / faults: 4955 minor 33 major",
+      "  1.6% 1438/com.google.android.googlequicksearchbox:interactor: 1.4% user + 0.1% kernel / faults: 6745 minor 10 major",
+      "  1.5% 138/logd: 0.4% user + 1.1% kernel / faults: 790 minor 36 major"
+    ]
+  },
+  "wakeLocks": {
+    "count": 8,
+    "held": [
+      "PARTIAL_WAKE_LOCK                 '*telephony-radio*' ACQ=-27s553ms (uid=1001 pid=1083 ws=WorkSource{1001 com.android.phone})",
+      "PARTIAL_WAKE_LOCK                 '*job*/com.google.android.providers.media.module/com.android.providers.media.MediaService' ACQ=-47s871ms (uid=1000 pid=559 ws=WorkSource{10206 com.google.android.providers.media.module})",
+      "PARTIAL_WAKE_LOCK                 'IntentOp:.chimera.container.InitConfigOperation' ACQ=-23s236ms (uid=10143 pid=1580 ws=WorkSource{10143 com.google.android.gms})",
+      "PARTIAL_WAKE_LOCK                 '*gms_scheduler*/com.google.android.gms/.phenotype.service.sync.PhenotypeConfigurator' ACQ=-18s32ms (uid=10143 pid=1230 ws=WorkSource{10143 com.google.android.gms})",
+      "PARTIAL_WAKE_LOCK                 '*job*/com.google.android.settings.intelligence/.modules.appsearchindexing.impl.AppSearchIndexUpdateJobService' ACQ=-6s618ms (uid=1000 pid=559 ws=WorkSource{10140 com.google.android.settings.intelligence})",
+      "PARTIAL_WAKE_LOCK                 'IntentOp:.chimera.container.InitConfigOperation' ACQ=-3s945ms (uid=10143 pid=1580 ws=WorkSource{10143 com.google.android.gms})",
+      "PARTIAL_WAKE_LOCK                 'IntentOp:.chimera.container.InitConfigOperation' ACQ=-3s69ms (uid=10143 pid=1580 ws=WorkSource{10143 com.google.android.gms})",
+      "PARTIAL_WAKE_LOCK                 'IntentOp:.chimera.container.InitConfigOperation' ACQ=-2s728ms (uid=10143 pid=1580 ws=WorkSource{10143 com.google.android.gms})"
+    ]
+  },
+  "battery": {
+    "uid": 10209,
+    "excerpt": [
+      "Unknown option: --uid",
+      "Battery stats (batterystats) dump options:",
+      "  [--checkin] [--proto] [--history] [--history-start] [--charged] [-c]",
+      "  [--daily] [--reset] [--reset-all] [--write] [--new-daily] [--read-daily]",
+      "  [-h] [<package.name>]",
+      "  --checkin: generate output for a checkin report; will write (and clear) the",
+      "             last old completed stats when they had been reset.",
+      "  -c: write the current stats in checkin format.",
+      "  --proto: write the current aggregate stats (without history) in proto format.",
+      "  --history: show only history data.",
+      "  --history-start <num>: show only history data starting at given time offset.",
+      "  --history-create-events <num>: create <num> of battery history events.",
+      "  --charged: only output data since last charged.",
+      "  --daily: only output full daily data.",
+      "  --reset: reset the stats, clearing all current data.",
+      "  --reset-all: reset the stats, clearing all current and past data.",
+      "  --write: force write current collected stats to disk.",
+      "  --new-daily: immediately create and write new daily stats record.",
+      "  --read-daily: read-load last written daily stats.",
+      "  --settings: dump the settings key/values related to batterystats",
+      "  --cpu: dump cpu stats for debugging purpose",
+      "  --wakeups: dump CPU wakeup history and attribution.",
+      "  --power-profile: dump the power profile constants",
+      "  --usage: write battery usage stats. Optional arguments:",
+      "     --proto: output as a binary protobuffer",
+      "     --model power-profile: use the power profile model even if measured energy is available",
+      "  --sample: collect and dump a sample of stats for debugging purpose",
+      "  <package.name>: optional name of package to filter output by.",
+      "  -h: print this help text.",
+      "Battery stats (batterystats) commands:"
+    ]
+  }
+}

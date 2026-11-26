@@ -1,0 +1,1 @@
+Synthetic media/weather fixtures and isolated AppWidgetHost only; human pixel review and launcher placement remain required.
