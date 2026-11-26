@@ -1,0 +1,576 @@
+{
+  "results": [
+    {
+      "id": "digital",
+      "provider": "com.dotwelwidgets.dotwellabs.ClockWidgetProvider",
+      "digital-BLACK-180": "captured; pixel review pending",
+      "digital-BLACK-360": "captured; pixel review pending",
+      "digital-TRANSLUCENT-180": "captured; pixel review pending",
+      "digital-TRANSLUCENT-360": "captured; pixel review pending",
+      "digital-TRANSPARENT-180": "captured; pixel review pending",
+      "digital-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "analog_bold",
+      "provider": "com.dotwelwidgets.dotwellabs.AnalogBoldWidgetProvider",
+      "analog_bold-BLACK-180": "captured; pixel review pending",
+      "analog_bold-BLACK-360": "captured; pixel review pending",
+      "analog_bold-TRANSLUCENT-180": "captured; pixel review pending",
+      "analog_bold-TRANSLUCENT-360": "captured; pixel review pending",
+      "analog_bold-TRANSPARENT-180": "captured; pixel review pending",
+      "analog_bold-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "analog_scale",
+      "provider": "com.dotwelwidgets.dotwellabs.AnalogScaleWidgetProvider",
+      "analog_scale-BLACK-180": "captured; pixel review pending",
+      "analog_scale-BLACK-360": "captured; pixel review pending",
+      "analog_scale-TRANSLUCENT-180": "captured; pixel review pending",
+      "analog_scale-TRANSLUCENT-360": "captured; pixel review pending",
+      "analog_scale-TRANSPARENT-180": "captured; pixel review pending",
+      "analog_scale-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "date",
+      "provider": "com.dotwelwidgets.dotwellabs.DateWidgetProvider",
+      "date-BLACK-180": "captured; pixel review pending",
+      "date-BLACK-360": "captured; pixel review pending",
+      "date-TRANSLUCENT-180": "captured; pixel review pending",
+      "date-TRANSLUCENT-360": "captured; pixel review pending",
+      "date-TRANSPARENT-180": "captured; pixel review pending",
+      "date-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "world",
+      "provider": "com.dotwelwidgets.dotwellabs.WorldWidgetProvider",
+      "world-BLACK-180": "captured; pixel review pending",
+      "world-BLACK-360": "captured; pixel review pending",
+      "world-TRANSLUCENT-180": "captured; pixel review pending",
+      "world-TRANSLUCENT-360": "captured; pixel review pending",
+      "world-TRANSPARENT-180": "captured; pixel review pending",
+      "world-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "away",
+      "provider": "com.dotwelwidgets.dotwellabs.NtAwayWidgetProvider",
+      "away-BLACK-180": "captured; pixel review pending",
+      "away-BLACK-360": "captured; pixel review pending",
+      "away-TRANSLUCENT-180": "captured; pixel review pending",
+      "away-TRANSLUCENT-360": "captured; pixel review pending",
+      "away-TRANSPARENT-180": "captured; pixel review pending",
+      "away-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_circle",
+      "provider": "com.dotwelwidgets.dotwellabs.NtWxCircleProvider",
+      "wx_circle-BLACK-180": "captured; pixel review pending",
+      "wx_circle-BLACK-360": "captured; pixel review pending",
+      "wx_circle-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_circle-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_circle-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_circle-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_square",
+      "provider": "com.dotwelwidgets.dotwellabs.NtWxSquareProvider",
+      "wx_square-BLACK-180": "captured; pixel review pending",
+      "wx_square-BLACK-360": "captured; pixel review pending",
+      "wx_square-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_square-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_square-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_square-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_rect",
+      "provider": "com.dotwelwidgets.dotwellabs.NtWxRectProvider",
+      "wx_rect-BLACK-180": "captured; pixel review pending",
+      "wx_rect-BLACK-360": "captured; pixel review pending",
+      "wx_rect-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_rect-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_rect-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_rect-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_combo",
+      "provider": "com.dotwelwidgets.dotwellabs.NtWxComboProvider",
+      "wx_combo-BLACK-180": "captured; pixel review pending",
+      "wx_combo-BLACK-360": "captured; pixel review pending",
+      "wx_combo-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_combo-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_combo-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_combo-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_sunset",
+      "provider": "com.dotwelwidgets.dotwellabs.NtWxSunsetProvider",
+      "wx_sunset-BLACK-180": "captured; pixel review pending",
+      "wx_sunset-BLACK-360": "captured; pixel review pending",
+      "wx_sunset-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_sunset-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_sunset-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_sunset-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_air",
+      "provider": "com.dotwelwidgets.dotwellabs.NtWxAirProvider",
+      "wx_air-BLACK-180": "captured; pixel review pending",
+      "wx_air-BLACK-360": "captured; pixel review pending",
+      "wx_air-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_air-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_air-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_air-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_w1temp",
+      "provider": "com.dotwelwidgets.dotwellabs.NtWxW1TempProvider",
+      "wx_w1temp-BLACK-180": "captured; pixel review pending",
+      "wx_w1temp-BLACK-360": "captured; pixel review pending",
+      "wx_w1temp-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_w1temp-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_w1temp-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_w1temp-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_w1status",
+      "provider": "com.dotwelwidgets.dotwellabs.NtWxW1StatusProvider",
+      "wx_w1status-BLACK-180": "captured; pixel review pending",
+      "wx_w1status-BLACK-360": "captured; pixel review pending",
+      "wx_w1status-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_w1status-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_w1status-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_w1status-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_w1rain",
+      "provider": "com.dotwelwidgets.dotwellabs.NtWxW1RainProvider",
+      "wx_w1rain-BLACK-180": "captured; pixel review pending",
+      "wx_w1rain-BLACK-360": "captured; pixel review pending",
+      "wx_w1rain-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_w1rain-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_w1rain-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_w1rain-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_nothing_temp",
+      "provider": "com.dotwelwidgets.dotwellabs.NothingTempWidgetProvider",
+      "wx_nothing_temp-BLACK-180": "captured; pixel review pending",
+      "wx_nothing_temp-BLACK-360": "captured; pixel review pending",
+      "wx_nothing_temp-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_nothing_temp-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_nothing_temp-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_nothing_temp-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wx_nothing_sun",
+      "provider": "com.dotwelwidgets.dotwellabs.NothingSunInfoWidgetProvider",
+      "wx_nothing_sun-BLACK-180": "captured; pixel review pending",
+      "wx_nothing_sun-BLACK-360": "captured; pixel review pending",
+      "wx_nothing_sun-TRANSLUCENT-180": "captured; pixel review pending",
+      "wx_nothing_sun-TRANSLUCENT-360": "captured; pixel review pending",
+      "wx_nothing_sun-TRANSPARENT-180": "captured; pixel review pending",
+      "wx_nothing_sun-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "photo_circle",
+      "provider": "com.dotwelwidgets.dotwellabs.NtPhotoCircleProvider",
+      "photo_circle-BLACK-180": "captured; pixel review pending",
+      "photo_circle-BLACK-360": "captured; pixel review pending",
+      "photo_circle-TRANSLUCENT-180": "captured; pixel review pending",
+      "photo_circle-TRANSLUCENT-360": "captured; pixel review pending",
+      "photo_circle-TRANSPARENT-180": "captured; pixel review pending",
+      "photo_circle-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "photo_rect",
+      "provider": "com.dotwelwidgets.dotwellabs.NtPhotoRectProvider",
+      "photo_rect-BLACK-180": "captured; pixel review pending",
+      "photo_rect-BLACK-360": "captured; pixel review pending",
+      "photo_rect-TRANSLUCENT-180": "captured; pixel review pending",
+      "photo_rect-TRANSLUCENT-360": "captured; pixel review pending",
+      "photo_rect-TRANSPARENT-180": "captured; pixel review pending",
+      "photo_rect-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "quotes",
+      "provider": "com.dotwelwidgets.dotwellabs.QuotesWidgetProvider",
+      "quotes-BLACK-180": "captured; pixel review pending",
+      "quotes-BLACK-360": "captured; pixel review pending",
+      "quotes-TRANSLUCENT-180": "captured; pixel review pending",
+      "quotes-TRANSLUCENT-360": "captured; pixel review pending",
+      "quotes-TRANSPARENT-180": "captured; pixel review pending",
+      "quotes-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "bt_status",
+      "provider": "com.dotwelwidgets.dotwellabs.BluetoothStatusWidgetProvider",
+      "bt_status-BLACK-180": "captured; pixel review pending",
+      "bt_status-BLACK-360": "captured; pixel review pending",
+      "bt_status-TRANSLUCENT-180": "captured; pixel review pending",
+      "bt_status-TRANSLUCENT-360": "captured; pixel review pending",
+      "bt_status-TRANSPARENT-180": "captured; pixel review pending",
+      "bt_status-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "wifi_status",
+      "provider": "com.dotwelwidgets.dotwellabs.WifiStatusWidgetProvider",
+      "wifi_status-BLACK-180": "captured; pixel review pending",
+      "wifi_status-BLACK-360": "captured; pixel review pending",
+      "wifi_status-TRANSLUCENT-180": "captured; pixel review pending",
+      "wifi_status-TRANSLUCENT-360": "captured; pixel review pending",
+      "wifi_status-TRANSPARENT-180": "captured; pixel review pending",
+      "wifi_status-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_battery",
+      "provider": "com.dotwelwidgets.dotwellabs.BatteryWidgetProvider",
+      "kwgt_nothing_battery-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_battery-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_battery-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_battery-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_battery-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_battery-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_battery_mini",
+      "provider": "com.dotwelwidgets.dotwellabs.BatteryMiniWidgetProvider",
+      "kwgt_nothing_battery_mini-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_battery_mini-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_battery_mini-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_battery_mini-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_battery_mini-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_battery_mini-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_battery2",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtBattery2WidgetProvider",
+      "kwgt_nothing_battery2-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_battery2-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_battery2-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_battery2-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_battery2-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_battery2-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_date_time",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtDateTimeWidgetProvider",
+      "kwgt_nothing_date_time-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_date_time-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_date_time-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_date_time-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_date_time-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_date_time-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_date_time2",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtDateTime2WidgetProvider",
+      "kwgt_nothing_date_time2-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_date_time2-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_date_time2-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_date_time2-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_date_time2-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_date_time2-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_digital4",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtDigital4WidgetProvider",
+      "kwgt_nothing_digital4-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_digital4-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_digital4-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_digital4-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_digital4-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_digital4-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_digital3",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtDigital3WidgetProvider",
+      "kwgt_nothing_digital3-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_digital3-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_digital3-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_digital3-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_digital3-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_digital3-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_gradient_clock",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtGradientClockWidgetProvider",
+      "kwgt_gradient_clock-BLACK-180": "captured; pixel review pending",
+      "kwgt_gradient_clock-BLACK-360": "captured; pixel review pending",
+      "kwgt_gradient_clock-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_gradient_clock-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_gradient_clock-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_gradient_clock-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_analog2_clock",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtAnalog2WidgetProvider",
+      "kwgt_analog2_clock-BLACK-180": "captured; pixel review pending",
+      "kwgt_analog2_clock-BLACK-360": "captured; pixel review pending",
+      "kwgt_analog2_clock-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_analog2_clock-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_analog2_clock-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_analog2_clock-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_future_clock",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtFutureWidgetProvider",
+      "kwgt_future_clock-BLACK-180": "captured; pixel review pending",
+      "kwgt_future_clock-BLACK-360": "captured; pixel review pending",
+      "kwgt_future_clock-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_future_clock-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_future_clock-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_future_clock-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_analog3",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtAnalog3WidgetProvider",
+      "kwgt_nothing_analog3-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_analog3-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_analog3-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_analog3-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_analog3-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_analog3-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_analog_seconds_clock",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtAnalogSecondsWidgetProvider",
+      "kwgt_analog_seconds_clock-BLACK-180": "captured; pixel review pending",
+      "kwgt_analog_seconds_clock-BLACK-360": "captured; pixel review pending",
+      "kwgt_analog_seconds_clock-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_analog_seconds_clock-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_analog_seconds_clock-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_analog_seconds_clock-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_analog5",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtAnalog5WidgetProvider",
+      "kwgt_nothing_analog5-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_analog5-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_analog5-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_analog5-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_analog5-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_analog5-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_analog5_transparent",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtAnalog5TransparentWidgetProvider",
+      "kwgt_nothing_analog5_transparent-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_analog5_transparent-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_analog5_transparent-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_analog5_transparent-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_analog5_transparent-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_analog5_transparent-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_orbit_clock",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtOrbitClockWidgetProvider",
+      "kwgt_orbit_clock-BLACK-180": "captured; pixel review pending",
+      "kwgt_orbit_clock-BLACK-360": "captured; pixel review pending",
+      "kwgt_orbit_clock-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_orbit_clock-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_orbit_clock-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_orbit_clock-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_mini_calendar",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtMiniCalendarWidgetProvider",
+      "kwgt_mini_calendar-BLACK-180": "captured; pixel review pending",
+      "kwgt_mini_calendar-BLACK-360": "captured; pixel review pending",
+      "kwgt_mini_calendar-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_mini_calendar-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_mini_calendar-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_mini_calendar-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_clean_info",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtCleanInfoWidgetProvider",
+      "kwgt_clean_info-BLACK-180": "captured; pixel review pending",
+      "kwgt_clean_info-BLACK-360": "captured; pixel review pending",
+      "kwgt_clean_info-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_clean_info-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_clean_info-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_clean_info-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_ios_battery",
+      "provider": "com.dotwelwidgets.dotwellabs.IosBatteryWidgetProvider",
+      "kwgt_ios_battery-BLACK-180": "captured; pixel review pending",
+      "kwgt_ios_battery-BLACK-360": "captured; pixel review pending",
+      "kwgt_ios_battery-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_ios_battery-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_ios_battery-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_ios_battery-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_digital2",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtDigital2WidgetProvider",
+      "kwgt_nothing_digital2-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_digital2-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_digital2-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_digital2-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_digital2-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_digital2-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_nothing_date_time3",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtDateTime3WidgetProvider",
+      "kwgt_nothing_date_time3-BLACK-180": "captured; pixel review pending",
+      "kwgt_nothing_date_time3-BLACK-360": "captured; pixel review pending",
+      "kwgt_nothing_date_time3-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_nothing_date_time3-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_nothing_date_time3-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_nothing_date_time3-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_interstellar_endurance",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtInterstellarEnduranceProvider",
+      "kwgt_interstellar_endurance-BLACK-180": "captured; pixel review pending",
+      "kwgt_interstellar_endurance-BLACK-360": "captured; pixel review pending",
+      "kwgt_interstellar_endurance-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_interstellar_endurance-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_interstellar_endurance-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_interstellar_endurance-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_interstellar_endurance_analog",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtInterstellarEnduranceAnalogProvider",
+      "kwgt_interstellar_endurance_analog-BLACK-180": "captured; pixel review pending",
+      "kwgt_interstellar_endurance_analog-BLACK-360": "captured; pixel review pending",
+      "kwgt_interstellar_endurance_analog-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_interstellar_endurance_analog-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_interstellar_endurance_analog-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_interstellar_endurance_analog-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "kwgt_interstellar_endurance_analog_2",
+      "provider": "com.dotwelwidgets.dotwellabs.KwgtInterstellarEnduranceAnalog2Provider",
+      "kwgt_interstellar_endurance_analog_2-BLACK-180": "captured; pixel review pending",
+      "kwgt_interstellar_endurance_analog_2-BLACK-360": "captured; pixel review pending",
+      "kwgt_interstellar_endurance_analog_2-TRANSLUCENT-180": "captured; pixel review pending",
+      "kwgt_interstellar_endurance_analog_2-TRANSLUCENT-360": "captured; pixel review pending",
+      "kwgt_interstellar_endurance_analog_2-TRANSPARENT-180": "captured; pixel review pending",
+      "kwgt_interstellar_endurance_analog_2-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_m3_expanded",
+      "provider": "com.dotwelwidgets.dotwellabs.Material3ExpandedMediaProvider",
+      "media_m3_expanded-BLACK-180": "captured; pixel review pending",
+      "media_m3_expanded-BLACK-360": "captured; pixel review pending",
+      "media_m3_expanded-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_m3_expanded-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_m3_expanded-TRANSPARENT-180": "captured; pixel review pending",
+      "media_m3_expanded-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_m3_output",
+      "provider": "com.dotwelwidgets.dotwellabs.Material3MediaOutputProvider",
+      "media_m3_output-BLACK-180": "captured; pixel review pending",
+      "media_m3_output-BLACK-360": "captured; pixel review pending",
+      "media_m3_output-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_m3_output-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_m3_output-TRANSPARENT-180": "captured; pixel review pending",
+      "media_m3_output-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_mini",
+      "provider": "com.dotwelwidgets.dotwellabs.MiniMediaPlayerProvider",
+      "media_mini-BLACK-180": "captured; pixel review pending",
+      "media_mini-BLACK-360": "captured; pixel review pending",
+      "media_mini-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_mini-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_mini-TRANSPARENT-180": "captured; pixel review pending",
+      "media_mini-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_minimal",
+      "provider": "com.dotwelwidgets.dotwellabs.MinimalMediaPlayerProvider",
+      "media_minimal-BLACK-180": "captured; pixel review pending",
+      "media_minimal-BLACK-360": "captured; pixel review pending",
+      "media_minimal-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_minimal-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_minimal-TRANSPARENT-180": "captured; pixel review pending",
+      "media_minimal-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_minimal2",
+      "provider": "com.dotwelwidgets.dotwellabs.MinimalMediaPlayer2Provider",
+      "media_minimal2-BLACK-180": "captured; pixel review pending",
+      "media_minimal2-BLACK-360": "captured; pixel review pending",
+      "media_minimal2-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_minimal2-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_minimal2-TRANSPARENT-180": "captured; pixel review pending",
+      "media_minimal2-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_minimal3",
+      "provider": "com.dotwelwidgets.dotwellabs.MinimalMediaPlayer3Provider",
+      "media_minimal3-BLACK-180": "captured; pixel review pending",
+      "media_minimal3-BLACK-360": "captured; pixel review pending",
+      "media_minimal3-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_minimal3-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_minimal3-TRANSPARENT-180": "captured; pixel review pending",
+      "media_minimal3-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_master",
+      "provider": "com.dotwelwidgets.dotwellabs.NothingMasterWidgetProvider",
+      "media_master-BLACK-180": "captured; pixel review pending",
+      "media_master-BLACK-360": "captured; pixel review pending",
+      "media_master-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_master-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_master-TRANSPARENT-180": "captured; pixel review pending",
+      "media_master-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_nothing_player",
+      "provider": "com.dotwelwidgets.dotwellabs.NothingMediaPlayerProvider",
+      "media_nothing_player-BLACK-180": "captured; pixel review pending",
+      "media_nothing_player-BLACK-360": "captured; pixel review pending",
+      "media_nothing_player-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_nothing_player-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_nothing_player-TRANSPARENT-180": "captured; pixel review pending",
+      "media_nothing_player-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_nothing_player2",
+      "provider": "com.dotwelwidgets.dotwellabs.NothingMediaPlayer2Provider",
+      "media_nothing_player2-BLACK-180": "captured; pixel review pending",
+      "media_nothing_player2-BLACK-360": "captured; pixel review pending",
+      "media_nothing_player2-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_nothing_player2-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_nothing_player2-TRANSPARENT-180": "captured; pixel review pending",
+      "media_nothing_player2-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_nothing_player3",
+      "provider": "com.dotwelwidgets.dotwellabs.NothingMediaPlayer3Provider",
+      "media_nothing_player3-BLACK-180": "captured; pixel review pending",
+      "media_nothing_player3-BLACK-360": "captured; pixel review pending",
+      "media_nothing_player3-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_nothing_player3-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_nothing_player3-TRANSPARENT-180": "captured; pixel review pending",
+      "media_nothing_player3-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_universal",
+      "provider": "com.dotwelwidgets.dotwellabs.UniversalMediaPlayerProvider",
+      "media_universal-BLACK-180": "captured; pixel review pending",
+      "media_universal-BLACK-360": "captured; pixel review pending",
+      "media_universal-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_universal-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_universal-TRANSPARENT-180": "captured; pixel review pending",
+      "media_universal-TRANSPARENT-360": "captured; pixel review pending"
+    },
+    {
+      "id": "media_notification",
+      "provider": "com.dotwelwidgets.dotwellabs.MaterialNotificationWidgetProvider",
+      "media_notification-BLACK-180": "captured; pixel review pending",
+      "media_notification-BLACK-360": "captured; pixel review pending",
+      "media_notification-TRANSLUCENT-180": "captured; pixel review pending",
+      "media_notification-TRANSLUCENT-360": "captured; pixel review pending",
+      "media_notification-TRANSPARENT-180": "captured; pixel review pending",
+      "media_notification-TRANSPARENT-360": "captured; pixel review pending"
+    }
+  ],
+  "failures": [],
+  "limits": "Isolated Android AppWidgetHost, not Pixel launcher placement. Synthetic media only if enabled separately. Screenshots require inspection."
+}

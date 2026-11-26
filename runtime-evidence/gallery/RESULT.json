@@ -1,0 +1,389 @@
+[
+  {
+    "id": "digital",
+    "name": "Digital Clock",
+    "provider": "com.dotwelwidgets.dotwellabs.ClockWidgetProvider",
+    "category": "Clock",
+    "action": "CLOCK_ACCESS",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "analog_bold",
+    "name": "Analog Bold",
+    "provider": "com.dotwelwidgets.dotwellabs.AnalogBoldWidgetProvider",
+    "category": "Clock",
+    "action": "CLOCK_ACCESS",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "analog_scale",
+    "name": "Analog Scale",
+    "provider": "com.dotwelwidgets.dotwellabs.AnalogScaleWidgetProvider",
+    "category": "Clock",
+    "action": "CLOCK_ACCESS",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "world",
+    "name": "World Clock",
+    "provider": "com.dotwelwidgets.dotwellabs.WorldWidgetProvider",
+    "category": "Clock",
+    "action": "WORLD_ZONES",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_digital4",
+    "name": "KWGT Split Clock",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtDigital4WidgetProvider",
+    "category": "Clock",
+    "action": "CLOCK_ACCESS",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_digital3",
+    "name": "KWGT Digital3 Dot Clock",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtDigital3WidgetProvider",
+    "category": "Clock",
+    "action": "CLOCK_ACCESS",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_gradient_clock",
+    "name": "KWGT Gradient Clock",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtGradientClockWidgetProvider",
+    "category": "Clock",
+    "action": "CLOCK_ACCESS",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_analog2_clock",
+    "name": "KWGT Analog2",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtAnalog2WidgetProvider",
+    "category": "Clock",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_future_clock",
+    "name": "KWGT Future Clock",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtFutureWidgetProvider",
+    "category": "Clock",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_analog3",
+    "name": "KWGT Analog3",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtAnalog3WidgetProvider",
+    "category": "Clock",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_analog_seconds_clock",
+    "name": "KWGT Analog Seconds",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtAnalogSecondsWidgetProvider",
+    "category": "Clock",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_analog5",
+    "name": "KWGT Analog5",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtAnalog5WidgetProvider",
+    "category": "Clock",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_analog5_transparent",
+    "name": "KWGT Analog5 Clear",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtAnalog5TransparentWidgetProvider",
+    "category": "Clock",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_orbit_clock",
+    "name": "KWGT Orbit Clock",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtOrbitClockWidgetProvider",
+    "category": "Clock",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_digital2",
+    "name": "KWGT Digital2 Minutes",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtDigital2WidgetProvider",
+    "category": "Clock",
+    "action": "CLOCK_ACCESS",
+    "gallery_add": "native confirmation reached",
+    "launcher": "pinned; actual pixels and dumpsys require review"
+  },
+  {
+    "id": "kwgt_interstellar_endurance",
+    "name": "KWGT Endurance",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtInterstellarEnduranceProvider",
+    "category": "Clock",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached",
+    "launcher": "pinned; actual pixels and dumpsys require review"
+  },
+  {
+    "id": "kwgt_interstellar_endurance_analog",
+    "name": "KWGT Endurance Analog",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtInterstellarEnduranceAnalogProvider",
+    "category": "Clock",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_interstellar_endurance_analog_2",
+    "name": "KWGT Endurance Analog 2",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtInterstellarEnduranceAnalog2Provider",
+    "category": "Clock",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "date",
+    "name": "Date",
+    "provider": "com.dotwelwidgets.dotwellabs.DateWidgetProvider",
+    "category": "Calendar",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_date_time",
+    "name": "KWGT Date Time",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtDateTimeWidgetProvider",
+    "category": "Calendar",
+    "action": "CLOCK_ACCESS",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_date_time2",
+    "name": "KWGT Date Time 2",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtDateTime2WidgetProvider",
+    "category": "Calendar",
+    "action": "CLOCK_ACCESS",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_mini_calendar",
+    "name": "KWGT Mini Calendar",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtMiniCalendarWidgetProvider",
+    "category": "Calendar",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_clean_info",
+    "name": "KWGT Clean Info",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtCleanInfoWidgetProvider",
+    "category": "Calendar",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_date_time3",
+    "name": "KWGT Date Time 3 Weather",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtDateTime3WidgetProvider",
+    "category": "Calendar",
+    "action": "WEATHER",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_battery",
+    "name": "Battery Gauge",
+    "provider": "com.dotwelwidgets.dotwellabs.BatteryWidgetProvider",
+    "category": "Battery",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_battery_mini",
+    "name": "Battery Mini",
+    "provider": "com.dotwelwidgets.dotwellabs.BatteryMiniWidgetProvider",
+    "category": "Battery",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_nothing_battery2",
+    "name": "KWGT Battery2",
+    "provider": "com.dotwelwidgets.dotwellabs.KwgtBattery2WidgetProvider",
+    "category": "Battery",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "kwgt_ios_battery",
+    "name": "KWGT iOS Battery",
+    "provider": "com.dotwelwidgets.dotwellabs.IosBatteryWidgetProvider",
+    "category": "Battery",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "quotes",
+    "name": "Quotes",
+    "provider": "com.dotwelwidgets.dotwellabs.QuotesWidgetProvider",
+    "category": "Quotes",
+    "action": "NONE",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "wx_nothing_temp",
+    "name": "Nothing Temp",
+    "provider": "com.dotwelwidgets.dotwellabs.NothingTempWidgetProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "wx_nothing_sun",
+    "name": "Nothing Sun Info",
+    "provider": "com.dotwelwidgets.dotwellabs.NothingSunInfoWidgetProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "gallery_add": "native confirmation reached"
+  },
+  {
+    "id": "wx_circle",
+    "name": "Weather Circle",
+    "provider": "com.dotwelwidgets.dotwellabs.NtWxCircleProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "gallery_add": "native confirmation reached",
+    "launcher": "pinned; actual pixels and dumpsys require review"
+  },
+  {
+    "id": "wx_square",
+    "name": "Weather Square",
+    "provider": "com.dotwelwidgets.dotwellabs.NtWxSquareProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "wx_rect",
+    "name": "Weather Forecast",
+    "provider": "com.dotwelwidgets.dotwellabs.NtWxRectProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "wx_combo",
+    "name": "Weather Combo",
+    "provider": "com.dotwelwidgets.dotwellabs.NtWxComboProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "wx_sunset",
+    "name": "Weather Sunrise/Sunset",
+    "provider": "com.dotwelwidgets.dotwellabs.NtWxSunsetProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "wx_air",
+    "name": "Weather Air Quality",
+    "provider": "com.dotwelwidgets.dotwellabs.NtWxAirProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "wx_w1temp",
+    "name": "Weather 1x1 Temperature",
+    "provider": "com.dotwelwidgets.dotwellabs.NtWxW1TempProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "wx_w1status",
+    "name": "Weather 1x1 Condition",
+    "provider": "com.dotwelwidgets.dotwellabs.NtWxW1StatusProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "wx_w1rain",
+    "name": "Weather 1x1 Rain Chance",
+    "provider": "com.dotwelwidgets.dotwellabs.NtWxW1RainProvider",
+    "category": "Weather",
+    "action": "WEATHER",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "photo_circle",
+    "name": "Photo (Circle)",
+    "provider": "com.dotwelwidgets.dotwellabs.NtPhotoCircleProvider",
+    "category": "Photos",
+    "action": "NONE",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "photo_rect",
+    "name": "Photo (Rectangle)",
+    "provider": "com.dotwelwidgets.dotwellabs.NtPhotoRectProvider",
+    "category": "Photos",
+    "action": "NONE",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "bt_status",
+    "name": "Bluetooth Status",
+    "provider": "com.dotwelwidgets.dotwellabs.BluetoothStatusWidgetProvider",
+    "category": "Bluetooth",
+    "action": "BLUETOOTH_ACCESS",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "wifi_status",
+    "name": "Wi-Fi Status",
+    "provider": "com.dotwelwidgets.dotwellabs.WifiStatusWidgetProvider",
+    "category": "Wi-Fi",
+    "action": "NONE",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "away",
+    "name": "Away Time",
+    "provider": "com.dotwelwidgets.dotwellabs.NtAwayWidgetProvider",
+    "category": "Live extras",
+    "action": "NONE",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "media_m3_expanded",
+    "name": "Material3 Media Expanded",
+    "provider": "com.dotwelwidgets.dotwellabs.Material3ExpandedMediaProvider",
+    "category": "Media & notifications",
+    "action": "MEDIA_ACCESS",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "media_m3_output",
+    "name": "Material3 Media Output",
+    "provider": "com.dotwelwidgets.dotwellabs.Material3MediaOutputProvider",
+    "category": "Media & notifications",
+    "action": "MEDIA_ACCESS",
+    "error": "Gallery did not load"
+  },
+  {
+    "id": "media_mini",
+    "name": "Mini Media Player",
+    "provider": "com.dotwelwidgets.dotwellabs.MiniMediaPlayerProvider",
+    "category": "Media & notifications",
+    "action": "MEDIA_ACCESS",
+    "error": "Gallery did not load"
+  }
+]
