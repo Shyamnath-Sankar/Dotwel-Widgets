@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+"""Emulator-free checks for the repair sweep helpers.
+
+Run with: python3 tools/repair/test_sweep_helpers.py
+"""
+
+import pathlib
+import sys
+import unittest
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+
+import sweep_common as sc  # noqa: E402
+
+PACKAGE = "com.dotwelwidgets.dotwellabs"
+
+
+class BudgetMathTest(unittest.TestCase):
+    def test_61_widgets_exits_before_outer_wrapper(self):
+        budget = sc.compute_graceful_budget(
+            61, per_entry=16, overhead=75, outer=1250, margin=90
+        )
+        self.assertLessEqual(budget, 1160)
+        self.assertGreater(budget, 0)
+        self.assertEqual(budget, 1051)
+
+    def test_budget_scales_with_catalog_growth(self):
+        small = sc.compute_graceful_budget(
+            57, per_entry=16, overhead=75, outer=1250, margin=90
+        )
+        large = sc.compute_graceful_budget(
+            65, per_entry=16, overhead=75, outer=1250, margin=90
+        )
+        self.assertGreater(large, small)
+        self.assertLessEqual(large, 1160)
+
+    def test_ceiling_never_exceeds_outer_minus_margin(self):
+        budget = sc.compute_graceful_budget(
+            10000, per_entry=60, overhead=100, outer=1250, margin=90
+        )
+        self.assertEqual(budget, 1160)
+
+
+class CatalogCountTest(unittest.TestCase):
+    def test_reads_current_catalog_dynamically(self):
+        count = sc.widget_catalog_count(".")
+        ready = sc.widget_catalog_ready_count(".")
+        self.assertGreaterEqual(count, 57)
+        self.assertGreaterEqual(ready, 57)
+        self.assertLessEqual(ready, count)
+
+    def test_missing_catalog_is_zero_not_exception(self):
+        self.assertEqual(sc.widget_catalog_count("/nonexistent"), 0)
+        self.assertEqual(sc.widget_catalog_ready_count("/nonexistent"), 0)
+
+
+class UidParsingTest(unittest.TestCase):
+    def test_cmd_package_list_uid(self):
+        text = (
+            "package:com.example.other uid:1000\n"
+            f"package:{PACKAGE} uid:10234\n"
+        )
+        self.assertEqual(sc.parse_uid_from_package_list(text, PACKAGE), 10234)
+
+    def test_pm_list_uid(self):
+        text = f"package:{PACKAGE} uid:10123\r\n"
+        self.assertEqual(sc.parse_uid_from_package_list(text, PACKAGE), 10123)
+
+    def test_package_prefix_is_not_matched(self):
+        text = f"package:{PACKAGE}.debug uid:1111\n"
+        self.assertIsNone(sc.parse_uid_from_package_list(text, PACKAGE))
+
+    def test_dumpsys_user_id(self):
+        text = (
+            "Packages:\n"
+            f"  Package [{PACKAGE}] (abc):\n"
+            "    userId=10234\n"
+        )
+        self.assertEqual(sc.parse_uid_from_dumpsys(text), 10234)
+
+    def test_parse_package_uid_falls_back_to_dumpsys(self):
+        text = f"Package [{PACKAGE}]:\n    userId=10456\n"
+        self.assertEqual(sc.parse_package_uid(text, PACKAGE), 10456)
+
+    def test_empty_input(self):
+        self.assertIsNone(sc.parse_package_uid("", PACKAGE))
+        self.assertIsNone(sc.parse_package_uid(None, PACKAGE))
+
+
+class DeadlineBudgetTest(unittest.TestCase):
+    def test_absolute_deadline_wins_over_elapsed_budget(self):
+        clock = [100.0]
+        budget = sc.SweepBudget(
+            budget_seconds=1000,
+            deadline_epoch=105,
+            monotonic=lambda: clock[0],
+            wall_clock=lambda: clock[0],
+        )
+        self.assertEqual(budget.remaining(), 5)
+        clock[0] = 105
+        with self.assertRaises(sc.BudgetExhausted):
+            budget.ensure(0)
+
+    def test_reserve_raises_before_work(self):
+        clock = [0.0]
+        budget = sc.SweepBudget(
+            budget_seconds=10,
+            monotonic=lambda: clock[0],
+            wall_clock=lambda: clock[0],
+        )
+        clock[0] = 9
+        with self.assertRaises(sc.BudgetExhausted):
+            budget.ensure(2)
+
+    def test_timeout_is_capped_by_remaining(self):
+        clock = [0.0]
+        budget = sc.SweepBudget(
+            budget_seconds=10,
+            monotonic=lambda: clock[0],
+            wall_clock=lambda: clock[0],
+        )
+        clock[0] = 8
+        self.assertEqual(budget.timeout(30), 2)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
