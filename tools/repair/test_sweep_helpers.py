@@ -7,9 +7,11 @@ Run with: python3 tools/repair/test_sweep_helpers.py
 import pathlib
 import sys
 import unittest
+import xml.etree.ElementTree as ET
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
+import gallery_sweep as gs  # noqa: E402
 import sweep_common as sc  # noqa: E402
 
 PACKAGE = "com.dotwelwidgets.dotwellabs"
@@ -121,6 +123,35 @@ class DeadlineBudgetTest(unittest.TestCase):
         )
         clock[0] = 8
         self.assertEqual(budget.timeout(30), 2)
+
+
+class GalleryMarkerTest(unittest.TestCase):
+    def _root(self, xml):
+        return ET.fromstring(xml)
+
+    def test_categories_text_is_a_gallery_marker(self):
+        self.assertTrue(gs.gallery_marker(
+            self._root('<hierarchy><node text="CATEGORIES"/></hierarchy>')))
+
+    def test_ready_category_description_is_a_gallery_marker(self):
+        self.assertTrue(gs.gallery_marker(self._root(
+            '<hierarchy><node content-desc="Open Clock, 18 ready"/>'
+            '</hierarchy>')))
+
+    def test_launcher_home_is_not_a_gallery_marker(self):
+        self.assertFalse(gs.gallery_marker(
+            self._root('<hierarchy><node text="Home"/></hierarchy>')))
+
+    def test_confirmation_ignores_open_category_sheet(self):
+        sheet = self._root(
+            '<hierarchy>'
+            '<node content-desc="Close category"/>'
+            '<node text="Add widget"/>'
+            '</hierarchy>')
+        self.assertIsNone(gs.confirmation(sheet))
+        pin = self._root(
+            '<hierarchy><node text="Add to home screen"/></hierarchy>')
+        self.assertIsNotNone(gs.confirmation(pin))
 
 
 if __name__ == "__main__":
