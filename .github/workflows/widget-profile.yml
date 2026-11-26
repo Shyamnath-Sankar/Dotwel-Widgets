@@ -29,6 +29,9 @@ jobs:
         run: |
           set -eu
           gradle --no-daemon --max-workers=2 -PrepairFixtures assembleDebug assembleDebugAndroidTest
+          cp app/build/outputs/apk/debug/app-debug.apk /tmp/dotwel-fixture.apk
+          cp app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk /tmp/dotwel-test.apk
+          bash tools/repair/build_snapshot.sh
           sudo chmod 666 /dev/kvm
       - name: Bounded Android resource profile sweep
         timeout-minutes: 25
