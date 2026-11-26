@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 import gallery_sweep as gs  # noqa: E402
+import profile_sweep as ps  # noqa: E402
 import sweep_common as sc  # noqa: E402
 
 PACKAGE = "com.dotwelwidgets.dotwellabs"
@@ -87,6 +88,23 @@ class UidParsingTest(unittest.TestCase):
     def test_empty_input(self):
         self.assertIsNone(sc.parse_package_uid("", PACKAGE))
         self.assertIsNone(sc.parse_package_uid(None, PACKAGE))
+
+
+class TotalPssParsingTest(unittest.TestCase):
+    def test_comma_grouped_total_pss(self):
+        self.assertEqual(ps.total_pss_kb("TOTAL PSS:   18,732\n"), 18732)
+
+    def test_plain_total_pss(self):
+        self.assertEqual(ps.total_pss_kb("TOTAL PSS: 12345\n"), 12345)
+
+    def test_total_line_variants(self):
+        self.assertEqual(ps.total_pss_kb("  TOTAL: 9,001 kB\n"), 9001)
+        self.assertEqual(ps.total_pss_kb("  TOTAL 8,500\n"), 8500)
+
+    def test_missing_or_empty_text(self):
+        self.assertIsNone(ps.total_pss_kb("No process found\n"))
+        self.assertIsNone(ps.total_pss_kb(""))
+        self.assertIsNone(ps.total_pss_kb(None))
 
 
 class DeadlineBudgetTest(unittest.TestCase):

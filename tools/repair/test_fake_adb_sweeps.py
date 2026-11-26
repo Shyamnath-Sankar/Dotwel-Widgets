@@ -67,7 +67,10 @@ FAKE_ADB = textwrap.dedent(
             out("1234\\n")
     elif "dumpsys" in args and "meminfo" in args:
         if os.environ.get("FAKE_NO_MEMINFO") != "1" and state.exists():
-            out("TOTAL PSS: 12345\\n")
+            if os.environ.get("FAKE_MEMINFO_COMMA") == "1":
+                out("TOTAL PSS:   18,732\\n")
+            else:
+                out("TOTAL PSS: 12345\\n")
         else:
             out("No process found\\n")
     elif "dumpsys" in args and "cpuinfo" in args:
@@ -159,6 +162,30 @@ class FakeAdbSweepsTest(unittest.TestCase):
         self.assertEqual(data["baseline"]["battery"]["uid"], 10234)
         self.assertEqual(
             data["baseline"]["app"]["totalPssKb"], 12345)
+
+    def test_profile_parses_comma_grouped_meminfo(self):
+        result = self.run_script(PROFILE, {
+            "FAKE_SCENARIO": "profile",
+            "FAKE_MEMINFO_COMMA": "1",
+            "PROFILE_SETTLE_SECONDS": "0",
+            "PROFILE_SWEEP_DEADLINE_EPOCH": str(int(time.time()) + 2),
+        })
+        self.assertEqual(result.returncode, 0, result.stderr)
+        data = self.result("runtime-evidence/profile/RESULT.json")
+        self.assertEqual(data["baseline"]["app"]["totalPssKb"], 18732)
+
+    def test_profile_saves_raw_meminfo_when_parsing_fails(self):
+        result = self.run_script(PROFILE, {
+            "FAKE_SCENARIO": "profile",
+            "FAKE_NO_MEMINFO": "1",
+            "PROFILE_SETTLE_SECONDS": "0",
+            "PROFILE_SWEEP_DEADLINE_EPOCH": str(int(time.time()) + 5),
+        })
+        self.assertEqual(result.returncode, 0, result.stderr)
+        raw = (self.root / "runtime-evidence" / "profile" / "raw"
+               / "baseline-meminfo.txt")
+        self.assertTrue(raw.exists(), "failed meminfo must leave a raw dump")
+        self.assertIn("No process found", raw.read_text())
 
     def test_profile_exits_nonzero_when_baseline_has_no_evidence(self):
         result = self.run_script(PROFILE, {

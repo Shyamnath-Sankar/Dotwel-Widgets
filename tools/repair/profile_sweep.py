@@ -181,20 +181,36 @@ def ensure_media_fixture():
 
 
 def total_pss_kb(text):
+    if not text:
+        return None
+    # `dumpsys meminfo` groups large totals with thousands separators on some
+    # builds ("TOTAL PSS:   18,732"), and older/newer builds differ on whether
+    # the label has a colon or a trailing unit. Strip the separators before int().
     patterns = (
-        r"TOTAL PSS:\s*(\d+)",
-        r"^\s*TOTAL:\s+(\d+)",
-        r"^\s*TOTAL\s+(\d+)",
+        r"TOTAL\s+PSS:?\s*([\d,]+)",
+        r"^\s*TOTAL:?\s+([\d,]+)\s*kB",
+        r"^\s*TOTAL:?\s+([\d,]+)",
     )
     for pattern in patterns:
-        match = re.search(pattern, text, re.MULTILINE)
+        match = re.search(pattern, text, re.MULTILINE | re.IGNORECASE)
         if match:
-            return int(match.group(1))
+            digits = match.group(1).replace(",", "")
+            if digits.isdigit():
+                return int(digits)
     return None
 
 
-def meminfo(package, retries=4):
+def save_meminfo_raw(label, text):
+    if not text:
+        return
+    RAW.mkdir(parents=True, exist_ok=True)
+    lines = text.splitlines()[:40]
+    (RAW / f"{label}-meminfo.txt").write_text("\n".join(lines) + "\n")
+
+
+def meminfo(package, retries=4, label=None):
     delay = 0.5
+    text = ""
     for attempt in range(max(1, retries)):
         text = adb_text("shell", "dumpsys", "meminfo", package, check=False)
         pss = total_pss_kb(text)
@@ -204,6 +220,8 @@ def meminfo(package, retries=4):
             break
         time.sleep(delay)
         delay = min(delay * 2, 4.0)
+    if label:
+        save_meminfo_raw(label, text)
     return {"package": package, "totalPssKb": None}
 
 
@@ -314,8 +332,8 @@ def snapshot(label):
     return {
         "label": label,
         "atMillis": int(time.time() * 1000),
-        "app": meminfo(P),
-        "host": meminfo(HOST_PACKAGE),
+        "app": meminfo(P, label=label),
+        "host": meminfo(HOST_PACKAGE, label=f"{label}-host"),
         "cpu": cpu,
         "wakeLocks": wake_locks(),
         "battery": battery_stats(uid),
