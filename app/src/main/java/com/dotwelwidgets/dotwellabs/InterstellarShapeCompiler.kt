@@ -1,6 +1,8 @@
 package com.dotwelwidgets.dotwellabs
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -11,6 +13,50 @@ import org.json.JSONObject
 import java.util.Calendar
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
+
+/**
+ * Small byte-bounded LRU cache. Used for compiled Interstellar layer bitmaps so
+ * repeated widget updates at the same pixel size reuse the raster instead of
+ * decoding and rescaling every drawable on every pass.
+ */
+internal class BoundedLayerCache<K, V>(
+    private val maxBytes: Long,
+    private val sizeOf: (V) -> Long,
+) {
+    private val entries = object : LinkedHashMap<K, V>(16, 0.75f, true) {}
+
+    @Synchronized
+    fun get(key: K): V? = entries[key]
+
+    /**
+     * Returns true when [value] is retained by the cache. An entry larger than
+     * the whole budget is rejected so the caller can draw and release it.
+     */
+    @Synchronized
+    fun put(key: K, value: V): Boolean {
+        val size = sizeOf(value)
+        if (size > maxBytes) return false
+        entries.remove(key)?.let { bytes -= sizeOf(it) }
+        entries[key] = value
+        bytes += size
+        val iterator = entries.entries.iterator()
+        while (bytes > maxBytes && iterator.hasNext()) {
+            val eldest = iterator.next()
+            iterator.remove()
+            bytes -= sizeOf(eldest.value)
+        }
+        return entries[key] === value
+    }
+
+    @Synchronized
+    fun size(): Int = entries.size
+
+    @Synchronized
+    fun bytes(): Long = bytes
+
+    private var bytes = 0L
+}
 
 /**
  * Reusable compiler/renderer for the sanitized Interstellar Endurance source
@@ -128,7 +174,21 @@ object InterstellarShapeCompiler {
         val accent: Int,
     )
 
+    private const val LAYER_CACHE_BYTES = 8L * 1024L * 1024L
+    private const val MAX_LAYER_RASTER = 1024
+
+    private data class LayerKey(
+        val variant: Variant,
+        val layer: String,
+        val style: WidgetStyle,
+        val width: Int,
+        val height: Int,
+    )
+
     private val cache = HashMap<Variant, Compiled>()
+    private val layerCache = BoundedLayerCache<LayerKey, Bitmap>(LAYER_CACHE_BYTES) {
+        it.allocationByteCount.toLong()
+    }
 
     fun palette(style: WidgetStyle): Palette {
         val background = when (style) {
@@ -143,6 +203,8 @@ object InterstellarShapeCompiler {
         }
         return Palette(background, foreground, 0xFFD71921.toInt())
     }
+
+    internal fun cachedLayerCount(): Int = layerCache.size()
 
     fun compile(context: Context, variant: Variant): Compiled {
         cache[variant]?.let { return it }
@@ -186,39 +248,56 @@ object InterstellarShapeCompiler {
         val second = now.get(Calendar.SECOND).toFloat()
         val minute = now.get(Calendar.MINUTE).toFloat()
         val hour = now.get(Calendar.HOUR).toFloat() + minute / 60f
-        fun drawLayer(res: Int, degrees: Float) {
-            val layer = android.graphics.BitmapFactory.decodeResource(context.resources, res)
+        val raster = (277f * scale).roundToInt().coerceIn(2, MAX_LAYER_RASTER)
+        val layerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { isFilterBitmap = true }
+        fun drawLayer(layerName: String, degrees: Float) {
+            val key = LayerKey(variant, layerName, style, raster, raster)
+            val cached = layerCache.get(key)
+            val layer = cached ?: compileLayer(context, layerRes(variant, layerName, style), raster)
                 ?: return
+            val retained = cached != null || layerCache.put(key, layer)
             val saved = canvas.save()
             canvas.rotate(degrees, 138.5f, 138.5f)
             canvas.drawBitmap(
                 layer,
                 null,
                 RectF(0f, 0f, 277f, 277f),
-                Paint(Paint.ANTI_ALIAS_FLAG).apply { isFilterBitmap = true },
+                layerPaint,
             )
             canvas.restoreToCount(saved)
-            layer.recycle()
+            if (!retained) layer.recycle()
         }
         when (variant) {
             Variant.ENDURANCE -> {
-                drawLayer(layerRes(variant, "seconds", style), second * 6f)
-                drawLayer(layerRes(variant, "hour", style), hour * 30f)
-                drawLayer(layerRes(variant, "minute", style), minute * 6f)
+                drawLayer("seconds", second * 6f)
+                drawLayer("hour", hour * 30f)
+                drawLayer("minute", minute * 6f)
             }
             Variant.ANALOG -> {
-                drawLayer(layerRes(variant, "seconds", style), second * 6f)
-                drawLayer(layerRes(variant, "hour", style), hour * 30f)
-                drawLayer(layerRes(variant, "minute", style), minute * 6f)
+                drawLayer("seconds", second * 6f)
+                drawLayer("hour", hour * 30f)
+                drawLayer("minute", minute * 6f)
             }
             Variant.ANALOG_2 -> {
-                drawLayer(layerRes(variant, "dial", style), 0f)
-                drawLayer(layerRes(variant, "hour", style), hour * 30f)
-                drawLayer(layerRes(variant, "minute", style), minute * 6f)
+                drawLayer("dial", 0f)
+                drawLayer("hour", hour * 30f)
+                drawLayer("minute", minute * 6f)
             }
         }
         canvas.restore()
         return bitmap
+    }
+
+    private fun compileLayer(
+        context: Context,
+        res: Int,
+        raster: Int,
+    ): Bitmap? {
+        val decoded = BitmapFactory.decodeResource(context.resources, res) ?: return null
+        if (decoded.width == raster && decoded.height == raster) return decoded
+        val scaled = Bitmap.createScaledBitmap(decoded, raster, raster, true)
+        if (scaled !== decoded) decoded.recycle()
+        return scaled
     }
 
     internal fun layerRes(variant: Variant, layer: String, style: WidgetStyle): Int {

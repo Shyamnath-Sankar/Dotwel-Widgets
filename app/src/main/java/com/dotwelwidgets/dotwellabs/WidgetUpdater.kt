@@ -5,8 +5,59 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
+
+/**
+ * Leading/trailing throttle used by the media update bridge. It never runs more
+ * than once per [intervalMillis] while still allowing one trailing run so the
+ * final media state is applied after a burst.
+ */
+internal class MediaUpdateThrottle(
+    private val intervalMillis: Long,
+    private val clock: () -> Long = { SystemClock.uptimeMillis() },
+) {
+    private var lastRunAt: Long? = null
+
+    @Synchronized
+    fun nextDelayMillis(): Long {
+        val last = lastRunAt ?: return 0L
+        val elapsed = clock() - last
+        return if (elapsed >= intervalMillis) 0L else intervalMillis - elapsed
+    }
+
+    @Synchronized
+    fun markRun() {
+        lastRunAt = clock()
+    }
+}
 
 object WidgetUpdater {
+    private const val MEDIA_UPDATE_INTERVAL_MILLIS = 500L
+
+    private val mediaProviders = listOf(
+        Material3ExpandedMediaProvider::class.java,
+        Material3MediaOutputProvider::class.java,
+        MiniMediaPlayerProvider::class.java,
+        MinimalMediaPlayerProvider::class.java,
+        MinimalMediaPlayer2Provider::class.java,
+        MinimalMediaPlayer3Provider::class.java,
+        NothingMasterWidgetProvider::class.java,
+        NothingMediaPlayerProvider::class.java,
+        NothingMediaPlayer2Provider::class.java,
+        NothingMediaPlayer3Provider::class.java,
+        UniversalMediaPlayerProvider::class.java,
+        MaterialNotificationWidgetProvider::class.java,
+    )
+
+    private val mediaHandler = Handler(Looper.getMainLooper())
+    private val mediaThrottle = MediaUpdateThrottle(MEDIA_UPDATE_INTERVAL_MILLIS)
+    private val mediaScheduleLock = Any()
+
+    @Volatile
+    private var mediaUpdatePending = false
+
     val providers: List<Class<out BaseWidgetProvider>> = listOf(
         ClockWidgetProvider::class.java,
         DateWidgetProvider::class.java,
@@ -94,21 +145,29 @@ object WidgetUpdater {
     }
 
     fun updateMediaProviders(context: Context) {
+        val app = context.applicationContext
+        if (!hasPlacedMediaWidgets(app)) return
+        val delay = synchronized(mediaScheduleLock) {
+            if (mediaUpdatePending) return
+            mediaUpdatePending = true
+            mediaThrottle.nextDelayMillis()
+        }
+        mediaHandler.postDelayed({
+            synchronized(mediaScheduleLock) {
+                mediaUpdatePending = false
+                mediaThrottle.markRun()
+            }
+            if (!hasPlacedMediaWidgets(app)) return@postDelayed
+            val manager = AppWidgetManager.getInstance(app)
+            mediaProviders.forEach { updateProvider(app, manager, it) }
+        }, delay)
+    }
+
+    internal fun hasPlacedMediaWidgets(context: Context): Boolean {
         val manager = AppWidgetManager.getInstance(context)
-        listOf(
-            Material3ExpandedMediaProvider::class.java,
-            Material3MediaOutputProvider::class.java,
-            MiniMediaPlayerProvider::class.java,
-            MinimalMediaPlayerProvider::class.java,
-            MinimalMediaPlayer2Provider::class.java,
-            MinimalMediaPlayer3Provider::class.java,
-            NothingMasterWidgetProvider::class.java,
-            NothingMediaPlayerProvider::class.java,
-            NothingMediaPlayer2Provider::class.java,
-            NothingMediaPlayer3Provider::class.java,
-            UniversalMediaPlayerProvider::class.java,
-            MaterialNotificationWidgetProvider::class.java,
-        ).forEach { updateProvider(context, manager, it) }
+        return mediaProviders.any { provider ->
+            manager.getAppWidgetIds(ComponentName(context, provider)).isNotEmpty()
+        }
     }
 
     fun updateBatteryProviders(context: Context) {
