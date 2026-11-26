@@ -208,7 +208,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         null
     }
 
-    private fun tapIntent(context: Context): Intent? {
+    protected open fun tapIntent(context: Context): Intent? {
         tapCategory?.let { category ->
             return Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, category)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

@@ -83,6 +83,20 @@ object WidgetPreviewRenderer {
                 QuotePrefs.quoteForToday(context),
                 includeBackground = false,
             )
+            PreviewKind.BLUETOOTH_STATUS -> StatusTileRenderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                BluetoothStatusState.read(context),
+            )
+            PreviewKind.WIFI_STATUS -> StatusTileRenderer.render(
+                context,
+                size.width,
+                size.height,
+                style,
+                WifiStatusState.read(context),
+            )
             PreviewKind.KWGT_BATTERY -> KwgtBatteryRenderer.render(
                 context,
                 size.width,

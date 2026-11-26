@@ -544,4 +544,36 @@
     <string name="mode_away_sampled">Sampled estimate · tap to cycle</string>
     <string name="media_volume_up">Raise media volume</string>
     <string name="media_volume_down">Lower media volume</string>
+
+    <string name="category_status">Connectivity</string>
+    <string name="status_off">Off</string>
+    <string name="status_on">On</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="status_tile_preview_description">Connectivity status tile</string>
+    <string name="status_tile_fallback_format">%1$s · %2$s</string>
+    <string name="bt_status_label_text">BLUETOOTH</string>
+    <string name="wifi_status_label_text">WI-FI</string>
+    <string name="bt_status_permission_needed">Live status off</string>
+    <string name="bt_status_content_description">Bluetooth status: %1$s</string>
+    <string name="wifi_status_content_description">Wi-Fi status: %1$s</string>
+    <string name="catalog_bt_status_desc">A 1x1 Bluetooth tile showing Off, On or Connected with a readable device name. Live state is optional and off by default until you allow Bluetooth access. Tapping opens Android Bluetooth settings.</string>
+    <string name="catalog_wifi_status_desc">A 1x1 Wi-Fi tile showing Off, On, Connected or Disconnected with the network name when Android exposes it. Uses Wi-Fi state access only, not location. Tapping opens the Internet panel.</string>
+    <string name="ledger_ready_status">Native status tile included. Build-only verification here; runtime not verified.</string>
+    <string name="widget_bt_status_label">Dotwel Bluetooth Status</string>
+    <string name="widget_bt_status_description">A 1x1 Bluetooth status tile. Live state needs optional Bluetooth access; tapping opens system Bluetooth settings.</string>
+    <string name="widget_wifi_status_label">Dotwel Wi-Fi Status</string>
+    <string name="widget_wifi_status_description">A 1x1 Wi-Fi status tile. Shows Off, On, Connected or Disconnected without location access; tapping opens the Internet panel.</string>
+    <string name="pin_bt_status_confirmed">Bluetooth Status added. Live state stays off until you allow Bluetooth access.</string>
+    <string name="pin_wifi_status_confirmed">Wi-Fi Status added to your home screen.</string>
+    <string name="mode_bluetooth_status">Bluetooth · optional live status</string>
+    <string name="mode_wifi_status">Wi-Fi · no location access</string>
+    <string name="bt_access_title">Bluetooth status access</string>
+    <string name="bt_access_explain">Live Bluetooth state and the connected device name need the Android Bluetooth permission. This is optional and off by default. Without it the tile shows a neutral Bluetooth glyph and still opens system Bluetooth settings. Declining leaves the rest of the app and all other widgets fully usable.</string>
+    <string name="bt_access_status">Bluetooth access: %1$s</string>
+    <string name="bt_access_granted">allowed</string>
+    <string name="bt_access_denied">not allowed</string>
+    <string name="bt_access_allow">Allow Bluetooth access</string>
+    <string name="bt_access_add_without">Add without live status</string>
+    <string name="bt_access_close">Close</string>
 </resources>

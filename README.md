@@ -4,9 +4,10 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 ## Current checkpoint (0.1.8, versionCode 9)
 
 - `com.dotwelwidgets.dotwellabs`, minSdk 26, compile/target SDK 36.
-- Forty-three registered providers: dot clock, date, Analog Bold, Analog Scale,
-  world clock, quotes, thirty-seven native KWGT-Widgets preset ports, and the
-  twelve media/notification providers. The full 40-preset source-port status is
+- Fifty-seven registered providers: dot clock, date, Analog Bold, Analog Scale,
+  world clock, quotes, thirty-seven native KWGT-Widgets preset ports, the
+  twelve media/notification providers, and two connectivity status tiles
+  (Bluetooth and Wi-Fi). The full 40-preset source-port status is
   in `docs/KWGT-LEDGER.md`; 37 presets are implemented and 3 remain blocked or
   unavailable. `Nothing_Analog_` and `Nothing_Analog_2` are the exact
   source-seconds ports: their native second hands are offered only on Android
@@ -75,9 +76,12 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   bitmap updates, `INTERNET` used only by the opt-in Open-Meteo weather/air-quality
   refresh, and an off-by-default notification-listener service for the media and
   notification widgets. The listener is bound only after you enable Android
-  notification access yourself; the app never grants it. No foreground service,
-  accessibility, overlay, location, calendar or boot permission. Widget updates
-  read caches only and never perform network I/O.
+  notification access yourself; the app never grants it. The Bluetooth status
+  tile asks for optional `BLUETOOTH_CONNECT` only when you choose live status;
+  declining leaves the tile working as a neutral settings shortcut. The Wi-Fi
+  tile reads `ACCESS_WIFI_STATE` and never requests location. No foreground
+  service, accessibility, overlay, location, calendar or boot permission.
+  Widget updates read caches only and never perform network I/O.
 
 ## Limits
 
@@ -102,6 +106,12 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   not advertise the action. Interstellar seconds-driven source layers are
   sampled at each widget update, not live; this limitation is stated in the
   catalog and ledger.
+- The Bluetooth and Wi-Fi tiles are status shortcuts, not switches: Android 10+
+  blocks apps from toggling Wi-Fi and Android 13+ blocks toggling Bluetooth.
+  Tapping opens the system Bluetooth settings or Internet panel. Wi-Fi has no
+  manifest state broadcast and Bluetooth live state is off by default, so the
+  tiles refresh on widget update/resize, app refresh and the documented-exempt
+  Bluetooth connection broadcasts; they do not claim instant background state.
 
 Build with `./gradlew assembleDebug`. See `docs/ATTRIBUTION.md` for third-party
 notices, `docs/KWGT-LEDGER.md` for the 40-preset status, and
