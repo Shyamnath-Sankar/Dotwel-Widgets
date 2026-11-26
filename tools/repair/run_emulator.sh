@@ -2,6 +2,15 @@
 set -u
 PKG=com.dotwelwidgets.dotwellabs
 OUT=runtime-evidence
+WRAPPER_START=$(date +%s)
+# The workflow wraps this script in `timeout 1250s`. Reserve 90 s for the
+# post-gallery teardown and evidence push, and hand the gallery an absolute
+# deadline so its own budget cannot start late and overrun the wrapper.
+OUTER_WRAPPER=${GALLERY_OUTER_TIMEOUT_SECONDS:-1250}
+TEARDOWN_MARGIN=${GALLERY_SWEEP_TEARDOWN_RESERVE_SECONDS:-90}
+GALLERY_MIN_SECONDS=${GALLERY_SWEEP_MIN_SECONDS:-300}
+GALLERY_DEADLINE=$((WRAPPER_START + OUTER_WRAPPER - TEARDOWN_MARGIN))
+export GALLERY_SWEEP_DEADLINE_EPOCH=$GALLERY_DEADLINE
 mkdir -p "$OUT"
 adb install -r /tmp/dotwel-fixture.apk
 adb install -r /tmp/dotwel-test.apk
@@ -11,8 +20,16 @@ adb shell input keyevent 82
 adb shell settings put system screen_off_timeout 2147483647
 function sweep() {
   local name=$1
+  local now limit setup_left
+  now=$(date +%s)
+  # Do not let the two pre-gallery instrumentation sweeps consume the whole
+  # wrapper: keep at least GALLERY_MIN_SECONDS for the Add/pin sweep.
+  setup_left=$((GALLERY_DEADLINE - now - GALLERY_MIN_SECONDS))
+  limit=420
+  [ "$setup_left" -lt "$limit" ] && limit=$setup_left
+  [ "$limit" -lt 60 ] && limit=60
   adb shell run-as "$PKG" rm -rf no_backup/repair-evidence
-  timeout 420s adb shell am instrument -w "$PKG.test/com.dotwelwidgets.dotwellabs.RepairInstrumentation" | tee "$OUT/instrument-$name.txt"
+  timeout "${limit}s" adb shell am instrument -w "$PKG.test/com.dotwelwidgets.dotwellabs.RepairInstrumentation" | tee "$OUT/instrument-$name.txt"
   mkdir -p "$OUT/$name"
   adb exec-out run-as "$PKG" sh -c 'cd no_backup/repair-evidence && tar cf - .' > "/tmp/evidence-$name.tar"
   tar xf "/tmp/evidence-$name.tar" -C "$OUT/$name"
