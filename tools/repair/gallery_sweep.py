@@ -82,6 +82,49 @@ def find(root, text, exact=True):
                         for k in ('text', 'content-desc'))), None)
 
 
+def crash_close_button(root):
+    """Return the system crash dialog's close button, or None.
+
+    The "Dotwel Widgets keeps stopping" dialog exposes
+    ``android:id/aerr_close``; older/translated builds may only show the
+    "Close app" label, so both are accepted.
+    """
+    for node in root.iter('node'):
+        resource_id = (node.get('resource-id') or '').strip()
+        if resource_id.endswith('aerr_close'):
+            return node
+    close = find(root, 'Close app')
+    if close is not None:
+        return close
+    if find(root, 'keeps stopping', exact=False) is not None:
+        return find(root, 'App info')
+    return None
+
+
+def dismiss_crash_dialog(victim=None):
+    """Close the system crash dialog and force-stop the app.
+
+    Returns True when the dialog was present. ``victim`` is the result entry
+    that was in flight when the app crashed; it is marked with the distinct
+    ``app crashed`` status instead of a generic gallery failure.
+    """
+    try:
+        root = tree()
+    except BudgetExhausted:
+        raise
+    except Exception:
+        return False
+    close = crash_close_button(root)
+    if close is None:
+        return False
+    if victim is not None:
+        victim['gallery_add'] = 'app crashed'
+        victim.pop('error', None)
+    click(close)
+    adb('shell', 'am', 'force-stop', P, check=False)
+    return True
+
+
 def click(node, top=False):
     if node is None:
         raise RuntimeError('UI target missing')
@@ -383,6 +426,21 @@ def main():
                 mark_not_attempted(results, ix + 1)
                 print(name + ': not attempted - budget exhausted', flush=True)
                 break
+            # A crash can surface after the previous entry was recorded, leaving
+            # the system "keeps stopping" dialog in front of the gallery. Detect
+            # it between entries and attribute it to the entry that was in
+            # flight instead of failing every later entry.
+            if ix > 0:
+                try:
+                    if dismiss_crash_dialog(results[ix - 1]):
+                        needs_hard_recovery = True
+                        consecutive_failures = 0
+                        print(name + ': dismissed previous app crash', flush=True)
+                except BudgetExhausted:
+                    result['gallery_add'] = 'not attempted - budget exhausted'
+                    mark_not_attempted(results, ix + 1)
+                    print(name + ': not attempted - budget exhausted', flush=True)
+                    break
             hard = (needs_hard_recovery or consecutive_failures > 0
                     or (ix > 0 and ix % CHUNK_SIZE == 0))
             try:
@@ -471,23 +529,36 @@ def main():
                 print(name + ': not attempted - budget exhausted', flush=True)
                 break
             except Exception as error:
-                result['error'] = str(error)
-                consecutive_failures += 1
-                if (consecutive_failures >= MAX_CONSECUTIVE_FAILURES
-                        and not stack_reset_done):
-                    stack_reset_done = True
-                    print('{} consecutive gallery failures; resetting the '
-                          'sweep activity stack once'.format(consecutive_failures),
-                          flush=True)
-                    try:
-                        reset_activity_stack()
-                    except BudgetExhausted:
-                        pass
-                    except Exception as reset_error:
-                        print('stack reset failed: ' + str(reset_error),
-                              flush=True)
+                try:
+                    crashed = dismiss_crash_dialog(result)
+                except BudgetExhausted:
+                    result.pop('error', None)
+                    result['gallery_add'] = 'not attempted - budget exhausted'
+                    mark_not_attempted(results, ix + 1)
+                    print(name + ': not attempted - budget exhausted', flush=True)
+                    break
+                if crashed:
                     needs_hard_recovery = True
                     consecutive_failures = 0
+                    print(name + ': app crashed', flush=True)
+                else:
+                    result['error'] = str(error)
+                    consecutive_failures += 1
+                    if (consecutive_failures >= MAX_CONSECUTIVE_FAILURES
+                            and not stack_reset_done):
+                        stack_reset_done = True
+                        print('{} consecutive gallery failures; resetting the '
+                              'sweep activity stack once'.format(
+                                  consecutive_failures), flush=True)
+                        try:
+                            reset_activity_stack()
+                        except BudgetExhausted:
+                            pass
+                        except Exception as reset_error:
+                            print('stack reset failed: ' + str(reset_error),
+                                  flush=True)
+                        needs_hard_recovery = True
+                        consecutive_failures = 0
                 try:
                     capture(name + '-failure')
                 except BudgetExhausted:

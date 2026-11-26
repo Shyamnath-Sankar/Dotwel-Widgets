@@ -36,11 +36,32 @@ FAKE_ADB = textwrap.dedent(
     def out(text):
         sys.stdout.write(text)
 
-    if scenario == "gallery":
+    crash = pathlib.Path(str(state) + ".crash")
+    closed = pathlib.Path(str(state) + ".crash-closed")
+
+    if scenario in ("gallery", "gallery-crash"):
         if args[:3] == ["shell", "wm", "size"]:
             out("Physical size: 1080x2340\\n")
         elif "instrument" in args:
-            out('<hierarchy><node text="Home"/></hierarchy>\\n')
+            if (scenario == "gallery-crash" and crash.exists()
+                    and not closed.exists()):
+                out('<hierarchy>'
+                    '<node resource-id="android:id/aerr_close" text="Close app" '
+                    'bounds="[100,100][300,200]"/>'
+                    '<node text="Dotwel Widgets keeps stopping"/>'
+                    '</hierarchy>\\n')
+            else:
+                out('<hierarchy><node text="CATEGORIES"/>'
+                    '<node content-desc="Open Clock, 3 ready" '
+                    'bounds="[100,300][900,500]"/></hierarchy>\\n')
+        elif args[:2] == ["shell", "input"] and "tap" in args:
+            if scenario == "gallery-crash":
+                if crash.exists() and not closed.exists():
+                    closed.write_text("closed")
+                else:
+                    crash.write_text("crashed")
+                    if closed.exists():
+                        closed.unlink()
         elif "screencap" in args:
             out("PNG")
         elif "dumpsys" in args and "appwidget" in args:
@@ -149,6 +170,24 @@ class FakeAdbSweepsTest(unittest.TestCase):
             entry.get("gallery_add") == "not attempted - budget exhausted"
             for entry in entries
         ))
+
+    def test_gallery_dismisses_crash_dialog_and_marks_crashed_entry(self):
+        write_catalog(self.root)
+        result = self.run_script(GALLERY, {
+            "FAKE_SCENARIO": "gallery-crash",
+            "GALLERY_SWEEP_OPEN_TIMEOUT_SECONDS": "0.5",
+            "GALLERY_SWEEP_ENTRY_RESERVE_SECONDS": "5",
+        })
+        self.assertEqual(result.returncode, 0, result.stderr)
+        entries = self.result("runtime-evidence/gallery/RESULT.json")
+        self.assertEqual(len(entries), 3)
+        self.assertTrue(all(
+            entry.get("gallery_add") == "app crashed" for entry in entries
+        ), entries)
+        self.assertTrue(
+            (self.root / "state.crash-closed").exists(),
+            "the crash dialog close button must be tapped",
+        )
 
     def test_profile_resolves_uid_and_uses_it_for_batterystats(self):
         result = self.run_script(PROFILE, {

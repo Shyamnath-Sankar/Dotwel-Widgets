@@ -107,6 +107,25 @@ class TotalPssParsingTest(unittest.TestCase):
         self.assertIsNone(ps.total_pss_kb(None))
 
 
+class CrashDialogTest(unittest.TestCase):
+    def test_aerr_close_id_detected(self):
+        root = ET.fromstring(
+            '<hierarchy><node resource-id="android:id/aerr_close" '
+            'text="Close app" bounds="[0,0][10,10]"/></hierarchy>')
+        self.assertIsNotNone(gs.crash_close_button(root))
+
+    def test_close_app_text_detected(self):
+        root = ET.fromstring(
+            '<hierarchy><node text="Dotwel Widgets keeps stopping"/>'
+            '<node text="Close app" bounds="[0,0][10,10]"/></hierarchy>')
+        self.assertIsNotNone(gs.crash_close_button(root))
+
+    def test_normal_gallery_is_not_a_crash_dialog(self):
+        root = ET.fromstring(
+            '<hierarchy><node text="CATEGORIES"/></hierarchy>')
+        self.assertIsNone(gs.crash_close_button(root))
+
+
 class DeadlineBudgetTest(unittest.TestCase):
     def test_absolute_deadline_wins_over_elapsed_budget(self):
         clock = [100.0]
