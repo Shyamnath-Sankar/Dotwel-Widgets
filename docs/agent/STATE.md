@@ -2,10 +2,58 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/mini-media-gallery-final-fixes`.
-- No launcher repository, visibility, workflow, signing key, permission,
-  dependency, applicationId, SDK level or 55-provider catalog was changed in
-  this run.
+- Branch: `agent/complete-interstellar-enduranc` (based on the consolidated
+  repair head). No launcher repository, visibility, workflow, signing key,
+  permission, dependency, applicationId, SDK level or provider catalog was
+  changed in this run.
+
+## Interstellar Endurance hour/minute hands
+
+- Phase: complete the Interstellar Endurance widget so it renders hour, minute
+  and seconds hands like the analog variant, in black/translucent/transparent.
+- Root cause (verified against `tools/repair/endurance-source` and
+  `tools/compile_endurance.py`): `Interstellar_Endurance.json` has one top node
+  (the `CLOCK_SECOND` spacecraft layer), so the app only wired the seconds
+  `AnalogClock`. Its top node is byte-identical to
+  `Interstellar_Endurance_Analog.json` top node, so the endurance scene is the
+  analog scene plus the analog hour/minute hands.
+- Fix: the three `layout-v31/widget_interstellar_endurance_*` layouts now keep
+  the endurance seconds `AnalogClock` first (below) and add an
+  `interstellar_clock_endurance_hands` `AnalogClock` with
+  `interstellar_analog_hour_<style>` / `interstellar_analog_minute_<style>`
+  above it. `InterstellarShapeCompiler.layerRes(ENDURANCE, "hour"/"minute")`
+  delegates to the existing `ANALOG` mapping, and the bitmap preview `render()`
+  draws seconds, hour and minute for `ENDURANCE`. No hand geometry was
+  recreated; the existing analog drawables/logic are reused. Base (pre-API 31)
+  layouts stay message-only, matching the analog variant's API 31 gate.
+- Catalog copy for `kwgt_interstellar_endurance` now says hour, minute and
+  seconds hands; the ledger row records the reuse. `docs/` now includes the
+  compile report and the interstellar preview PNGs copied from
+  `agent/endurance-fidelity-final-pass`; the endurance previews are the
+  corrected (hands-included) scene, which is pixel-identical to the analog
+  preview because the source inputs are identical. These are compile previews,
+  not runtime screenshots.
+- Tests: `InterstellarNativeWiringTest.enduranceVariantRendersHourMinuteAndSecondsHandsInAllStyles`
+  covers all three v31 styles, z-order and the reused analog drawables;
+  `endurancePreviewReusesAnalogHourAndMinuteLayers` covers the compiler layer
+  mapping. The old single-seconds endurance assertion was replaced.
+- Verification in this run (JDK 21, Gradle 9.9.1, `--no-daemon`):
+  `./gradlew :app:testDebugUnitTest --tests "*InterstellarNativeWiringTest*"`
+  first failed on the two new assertions (expected RED), then passed after the
+  fix. `./gradlew :app:testDebugUnitTest :app:assembleDebug` ->
+  `BUILD SUCCESSFUL`, 156 tests, 0 failures, 0 errors, 0 skipped.
+  `./gradlew :app:lintDebug` -> `BUILD SUCCESSFUL`, 0 errors, 427 warnings
+  (pre-existing collection warnings; no new lint error). Debug APK
+  `app/build/outputs/apk/debug/app-debug.apk`, sha256
+  `2a954a3306e7f0e0af679953f50d97d57f14cd2576ea68c2dba6862f3a7acb3c`;
+  aapt2 confirms `id/interstellar_clock_endurance_hands` is in the APK.
+- Not verified here: no emulator binary, system image or device is installed in
+  this runner (`adb devices` empty), so actual RemoteViews inflation, hand
+  rotation, placement, resize and style switching are not runtime-verified and
+  are not claimed.
+- Next: on an Android 12+ host, add the Endurance widget in all three styles and
+  confirm three hands move and the gallery preview shows them. Blockers: none
+  in code; runtime check pending.
 
 ## Mini media gallery final fixes (55-provider branch)
 
