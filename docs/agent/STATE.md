@@ -2,10 +2,58 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/fix-gallery-sweep-category-nav`.
+- Branch: `agent/add-widget-resource-profiling`.
 - No launcher repository, visibility, workflow, signing key, permission,
   dependency, applicationId, SDK level or 55-provider catalog was changed in
   this run.
+
+## Widget resource profiling and hotspot fixes
+
+- Phase: resource profiling harness plus three static hotspot wins. Branch
+  `agent/add-widget-resource-profiling`.
+- Part 1 added `tools/repair/profile_sweep.py` and `tools/repair/run_profile.sh`.
+  The sweep assumes a booted emulator with the fixture host and widget app
+  installed, captures a no-widget baseline (app/host `dumpsys meminfo` Total PSS,
+  `dumpsys cpuinfo` top entries, `dumpsys batterystats --uid`, `dumpsys power`
+  wake locks), then places digital, interstellar analog, interstellar endurance,
+  battery, cache-only weather, media (fixture session), photo, quotes and away
+  one at a time, settles 10 s, and captures again plus an `APPWIDGET_UPDATE`
+  tick. It writes `runtime-evidence/profile/RESULT.json` and `SUMMARY.md`,
+  honours `PROFILE_SWEEP_BUDGET_SECONDS` (default 900) and writes partial
+  results. `run_profile.sh` waits for boot, installs the same APKs, grants
+  appwidget bind and notification listener, warms the fixture host without a
+  widget, and runs the sweep under a 1350 s timeout.
+- Verification here: `python3 -m py_compile` and `bash -n` pass. A fake-`adb`
+  simulation measured all 9 representative widgets, and a 1 s budget run wrote
+  the baseline plus nine `not attempted - budget exhausted` entries and exited
+  0. This is harness verification, not device runtime evidence.
+- Part 2 fixes:
+  - `InterstellarShapeCompiler` now compiles each variant/layer/style at the
+    output raster size and reuses it through an 8 MiB byte-bounded LRU
+    (`BoundedLayerCache`) keyed by variant+layer+style+pixel size. This removes
+    the per-update decode/recycle of the 1108 px source layers.
+  - `WidgetUpdater.updateMediaProviders` now returns immediately when no media
+    widget is placed and coalesces bursts through `MediaUpdateThrottle` (500 ms)
+    with one trailing run, so each placed media provider receives at most one
+    update per window.
+  - Lifecycle audit: no widget provider or service registers a
+    receiver/handler/listener that outlives its owner. Media session callbacks
+    and the active-session listener are torn down in
+    `MediaNotificationService.onDestroy`/`onListenerDisconnected` through
+    `MediaSessionRepository.onAccessChanged`; the only process-lifetime receiver
+    is the intentional `DotwelApp` battery listener. No change was needed.
+  - Wake locks: none exist in `app/src`; `NtAwayWidgetProvider` only reads
+    `PowerManager.isInteractive`. Nothing was kept or removed.
+- Verification: `./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+  :app:lintDebug` -> `BUILD SUCCESSFUL`; 164 tests, 0 failures, 0 errors,
+  0 skipped; lint 0 errors, 427 warnings. Debug APK sha256
+  `a310975b8403d7b31408c87937a0d22634ff32053533657a90d4e414dfb22d91`.
+- Not verified here: no emulator/device is attached, so the profile sweep has
+  not produced real `runtime-evidence/profile` numbers, and the 500 ms media
+  coalescing and layer cache were not observed on a live widget host. The next
+  runtime run should execute `tools/repair/run_profile.sh` and compare the
+  table before/after the fixes.
+- Blockers: none in code; device profiling pending.
 
 ## Gallery sweep category navigation + graceful budget
 
