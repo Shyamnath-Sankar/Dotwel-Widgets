@@ -2,10 +2,59 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/mini-media-gallery-final-fixes`.
+- Branch: `agent/fix-gallery-sweep-category-nav`.
 - No launcher repository, visibility, workflow, signing key, permission,
   dependency, applicationId, SDK level or 55-provider catalog was changed in
   this run.
+
+## Gallery sweep category navigation + graceful budget
+
+- Phase: fix `tools/repair/gallery_sweep.py` only; no app, workflow, catalog,
+  applicationId or SDK change.
+- Root cause from run 45845465832 evidence: the first failure
+  (`33-wx_square`) happens immediately after the `32-wx_circle` launcher pin.
+  The failure XML/PNG for entries 33 onward is the launcher **app drawer**, not
+  the app. The old sweep pressed `keyevent 4` (BACK) after the launcher capture;
+  on this host that opens the app drawer, and the next entry's `am start` did
+  not leave the gallery reliably foreground. The old `seek_category` accepted
+  any `CATEGORIES` text or any `Open ` substring and then did 16 fixed swipes,
+  so it reported `Category unavailable` for Weather/Photos/Live extras/Media &
+  notifications even though the Weather sheet had opened for entries 31/32.
+- Fixes in `tools/repair/gallery_sweep.py`:
+  - `open_gallery()` now presses HOME, force-stops, starts `MainActivity`, and
+    waits for a real gallery marker (`CATEGORIES` or `Open <label>, <n> ready`)
+    with up to three attempts before an entry is attempted.
+  - `seek_category()` scrolls the `settings_root` ScrollView forward and then
+    back, re-reading the tree each step, brings the category card into the safe
+    viewport above the bottom navigation, and dumps
+    `category-<label>-failure.png/.xml` when a category is genuinely missing.
+  - After tapping a category, the sweep waits for `Close category` plus an
+    `Add ...` button before treating the sheet as open, retries the tap once,
+    and otherwise reports `Category sheet did not open`.
+  - Launcher-pinned entries now press HOME after capture instead of BACK, so
+    the launcher app drawer is never left in front of the next entry.
+  - `GALLERY_SWEEP_BUDGET_SECONDS` (default 1050) and
+    `GALLERY_SWEEP_ENTRY_RESERVE_SECONDS` (default 45) bound the run. Entries
+    that never start are written to `runtime-evidence/gallery/RESULT.json` as
+    `not attempted - budget exhausted`; `RESULT.json` and the appwidget dump
+    are always written in a `finally` block and the script exits 0.
+  - Prior behaviour is retained: pin-confirmation polling, `Add live/plain`
+    access-dialog recognition, top-of-card taps, and bounded per-entry waits.
+- Verification in this run: `python3 -m py_compile` passes. A fake-`adb`
+  harness (19-entry catalog covering the four failing categories) reached
+  native pin confirmation for 19/19, including the `wx_circle`,
+  `photo_circle` and `media_mini` launcher detours. A 7-entry budget run with
+  `GALLERY_SWEEP_BUDGET_SECONDS=18` ran 4 entries, marked the other 3
+  `not attempted - budget exhausted`, wrote all 7 to RESULT.json and exited 0.
+  A missing-category run wrote `category-nonexistent-failure.xml/.png`,
+  recorded the error, and exited 0. The harness is a simulation, not device
+  runtime evidence.
+- Not verified here: this runner has no emulator or device, so the real 55/55
+  sweep, the four previously failing category sheets and launcher screenshots
+  are not runtime-verified in this run.
+- Next: run the emulator workflow and confirm 55/55 entries (or a clean
+  budget-exhausted tail) with the four category sheets opening.
+- Blockers: none in code; runtime re-verification pending.
 
 ## Mini media gallery final fixes (55-provider branch)
 
