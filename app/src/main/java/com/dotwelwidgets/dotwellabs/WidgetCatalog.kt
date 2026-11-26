@@ -53,6 +53,10 @@ enum class PreviewKind {
     KWGT_DATE_TIME_3,
     BLUETOOTH_STATUS,
     WIFI_STATUS,
+    CELLULAR_STATUS,
+    BATTERY_STATUS,
+    BT_HEADPHONES_WIDE,
+    BT_HEADPHONES_SQUARE,
     INTERSTELLAR_ENDURANCE,
     INTERSTELLAR_ENDURANCE_ANALOG,
     INTERSTELLAR_ENDURANCE_ANALOG_2,
@@ -310,6 +314,56 @@ object WidgetCatalog {
             previewKind = PreviewKind.WIFI_STATUS,
             providerClass = WifiStatusWidgetProvider::class.java,
             pinKind = PinResultReceiver.PIN_KIND_WIFI_STATUS,
+        ),
+        CatalogEntry(
+            id = "cellular_status",
+            name = "Cellular Status",
+            group = WidgetGroup.STATUS,
+            state = ImportState.READY,
+            upstream = "ConnectivityManager · ACCESS_NETWORK_STATE only · opens Internet panel",
+            descriptionRes = R.string.catalog_cellular_status_desc,
+            detailRes = R.string.ledger_ready_status,
+            previewKind = PreviewKind.CELLULAR_STATUS,
+            providerClass = CellularStatusWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_CELLULAR_STATUS,
+        ),
+        CatalogEntry(
+            id = "battery_status",
+            name = "Battery Status",
+            group = WidgetGroup.STATUS,
+            state = ImportState.READY,
+            upstream = "BatteryManager snapshot · bounded inexact refresh · opens power usage",
+            descriptionRes = R.string.catalog_battery_status_desc,
+            detailRes = R.string.ledger_ready_status,
+            previewKind = PreviewKind.BATTERY_STATUS,
+            providerClass = BatteryStatusWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_BATTERY_STATUS,
+        ),
+        CatalogEntry(
+            id = "bt_headphones_wide",
+            name = "Headphones (Wide)",
+            group = WidgetGroup.STATUS,
+            state = ImportState.READY,
+            upstream = "BluetoothDevice.getBatteryLevel reflection · hidden level broadcast · optional BLUETOOTH_CONNECT · opens Bluetooth settings",
+            descriptionRes = R.string.catalog_bt_headphones_wide_desc,
+            detailRes = R.string.ledger_ready_status,
+            previewKind = PreviewKind.BT_HEADPHONES_WIDE,
+            providerClass = BluetoothHeadphonesWideWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_BT_HEADPHONES_WIDE,
+            action = CardAction.BLUETOOTH_ACCESS,
+        ),
+        CatalogEntry(
+            id = "bt_headphones_square",
+            name = "Headphones (Square)",
+            group = WidgetGroup.STATUS,
+            state = ImportState.READY,
+            upstream = "BluetoothDevice.getBatteryLevel reflection · hidden level broadcast · optional BLUETOOTH_CONNECT · opens Bluetooth settings",
+            descriptionRes = R.string.catalog_bt_headphones_square_desc,
+            detailRes = R.string.ledger_ready_status,
+            previewKind = PreviewKind.BT_HEADPHONES_SQUARE,
+            providerClass = BluetoothHeadphonesSquareWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_BT_HEADPHONES_SQUARE,
+            action = CardAction.BLUETOOTH_ACCESS,
         ),
         CatalogEntry(
             id = "kwgt_nothing_battery",
@@ -973,6 +1027,7 @@ enum class WidgetCategory(
             "kwgt_nothing_battery_mini",
             "kwgt_nothing_battery2",
             "kwgt_ios_battery",
+            "battery_status",
         ),
     ),
     QUOTES(
@@ -1005,12 +1060,12 @@ enum class WidgetCategory(
     BLUETOOTH(
         "bluetooth",
         R.string.category_bluetooth,
-        listOf("bt_status"),
+        listOf("bt_status", "bt_headphones_wide", "bt_headphones_square"),
     ),
     WIFI(
         "wifi",
         R.string.category_wifi,
-        listOf("wifi_status"),
+        listOf("wifi_status", "cellular_status"),
     ),
     LIVE(
         "live",
@@ -1095,6 +1150,11 @@ object WidgetModeLabels {
             PreviewKind.KWGT_DATE_TIME_3 -> R.string.mode_kwgt_date_time3
             PreviewKind.BLUETOOTH_STATUS -> R.string.mode_bluetooth_status
             PreviewKind.WIFI_STATUS -> R.string.mode_wifi_status
+            PreviewKind.CELLULAR_STATUS -> R.string.mode_cellular_status
+            PreviewKind.BATTERY_STATUS -> R.string.mode_battery_status
+            PreviewKind.BT_HEADPHONES_WIDE,
+            PreviewKind.BT_HEADPHONES_SQUARE,
+            -> R.string.mode_bt_headphones
             PreviewKind.INTERSTELLAR_ENDURANCE,
             PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG,
             PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG_2,

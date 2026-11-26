@@ -4,12 +4,13 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 ## Current checkpoint (0.1.8, versionCode 9)
 
 - `com.dotwelwidgets.dotwellabs`, minSdk 26, compile/target SDK 36.
-- Fifty-seven registered providers: dot clock, date, Analog Bold, Analog Scale,
+- Sixty-one registered providers: dot clock, date, Analog Bold, Analog Scale,
   world clock, quotes, thirty-seven native KWGT-Widgets preset ports, the
-  twelve media/notification providers, and two connectivity status tiles
-  (Bluetooth and Wi-Fi). The full 40-preset source-port status is
-  in `docs/KWGT-LEDGER.md`; 37 presets are implemented and 3 remain blocked or
-  unavailable. `Nothing_Analog_` and `Nothing_Analog_2` are the exact
+  twelve media/notification providers, four circular connectivity tiles
+  (Bluetooth, Wi-Fi, cellular and battery), and two Bluetooth headphone
+  battery cards (2x1 wide and 2x2 square). The full 40-preset source-port status
+  is in `docs/KWGT-LEDGER.md`; 37 presets are implemented and 3 remain blocked
+  or unavailable. `Nothing_Analog_` and `Nothing_Analog_2` are the exact
   source-seconds ports: their native second hands are offered only on Android
   12+ (`android:hand_second`), the receivers are disabled below API 31, and
   second-tick fps is system configured and may be disabled by the OS.
@@ -77,9 +78,10 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   refresh, and an off-by-default notification-listener service for the media and
   notification widgets. The listener is bound only after you enable Android
   notification access yourself; the app never grants it. The Bluetooth status
-  tile asks for optional `BLUETOOTH_CONNECT` only when you choose live status;
-  declining leaves the tile working as a neutral settings shortcut. The Wi-Fi
-  tile reads `ACCESS_WIFI_STATE` and never requests location. No foreground
+  tile and headphone cards ask for optional `BLUETOOTH_CONNECT` only when you
+  choose live state; declining leaves them working as neutral settings
+  shortcuts. The Wi-Fi tile reads `ACCESS_WIFI_STATE` and never requests
+  location; the cellular tile reads `ACCESS_NETWORK_STATE` only. No foreground
   service, accessibility, overlay, location, calendar or boot permission.
   Widget updates read caches only and never perform network I/O.
 
@@ -106,12 +108,19 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
   not advertise the action. Interstellar seconds-driven source layers are
   sampled at each widget update, not live; this limitation is stated in the
   catalog and ledger.
-- The Bluetooth and Wi-Fi tiles are status shortcuts, not switches: Android 10+
-  blocks apps from toggling Wi-Fi and Android 13+ blocks toggling Bluetooth.
-  Tapping opens the system Bluetooth settings or Internet panel. Wi-Fi has no
+- The Bluetooth, Wi-Fi, cellular and battery tiles are status shortcuts, not
+  switches: Android 10+ blocks apps from toggling Wi-Fi and Android 13+ blocks
+  toggling Bluetooth. Tapping opens the system Bluetooth settings or Internet
+  panel; the battery tile opens power usage where supported. Wi-Fi has no
   manifest state broadcast and Bluetooth live state is off by default, so the
-  tiles refresh on widget update/resize, app refresh and the documented-exempt
-  Bluetooth connection broadcasts; they do not claim instant background state.
+  tiles refresh on widget update/resize, app refresh, the process-lifetime
+  network callback and the documented-exempt Bluetooth connection broadcasts;
+  they do not claim instant background state.
+- Headphone battery reads `BluetoothDevice.getBatteryLevel()` and the hidden
+  battery-level broadcast by reflection/string action. Android does not expose
+  this as public SDK, so a connected device may show "level unavailable" even
+  when the card is working. The hidden headset usage-hint fallback runs only on
+  a short-lived, throttled background thread and is never a hard guarantee.
 
 Build with `./gradlew assembleDebug`. See `docs/ATTRIBUTION.md` for third-party
 notices, `docs/KWGT-LEDGER.md` for the 40-preset status, and

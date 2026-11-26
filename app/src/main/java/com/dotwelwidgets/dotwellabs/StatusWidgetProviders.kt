@@ -11,7 +11,9 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Typeface
+import android.graphics.RectF
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.wifi.SupplicantState
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -32,7 +34,7 @@ object BluetoothAccess {
             PackageManager.PERMISSION_GRANTED
 }
 
-enum class StatusKind { BLUETOOTH, WIFI }
+enum class StatusKind { BLUETOOTH, WIFI, CELLULAR, BATTERY }
 
 enum class ConnectivityState { OFF, ON, CONNECTED, DISCONNECTED, PERMISSION_NEEDED, UNAVAILABLE }
 
@@ -40,19 +42,38 @@ data class StatusSnapshot(
     val kind: StatusKind,
     val state: ConnectivityState,
     val detail: String? = null,
+    val percent: Int? = null,
 ) {
     fun label(context: Context): String = detail?.takeIf { it.isNotBlank() } ?: when (kind) {
         StatusKind.BLUETOOTH -> context.getString(R.string.bt_status_label_text)
         StatusKind.WIFI -> context.getString(R.string.wifi_status_label_text)
+        StatusKind.CELLULAR -> context.getString(R.string.cellular_status_label_text)
+        StatusKind.BATTERY -> context.getString(R.string.battery_status_label_text)
     }
 
-    fun stateText(context: Context): String = when (state) {
-        ConnectivityState.OFF -> context.getString(R.string.status_off)
-        ConnectivityState.ON -> context.getString(R.string.status_on)
-        ConnectivityState.CONNECTED -> context.getString(R.string.status_connected)
-        ConnectivityState.DISCONNECTED -> context.getString(R.string.status_disconnected)
-        ConnectivityState.PERMISSION_NEEDED -> context.getString(R.string.bt_status_permission_needed)
-        ConnectivityState.UNAVAILABLE -> context.getString(R.string.status_unavailable)
+    fun stateText(context: Context): String = if (kind == StatusKind.BATTERY) {
+        percent?.let { "$it%" } ?: context.getString(R.string.status_unavailable)
+    } else {
+        when (state) {
+            ConnectivityState.OFF -> context.getString(R.string.status_off)
+            ConnectivityState.ON -> context.getString(R.string.status_on)
+            ConnectivityState.CONNECTED -> context.getString(R.string.status_connected)
+            ConnectivityState.DISCONNECTED -> context.getString(R.string.status_disconnected)
+            ConnectivityState.PERMISSION_NEEDED -> context.getString(R.string.bt_status_permission_needed)
+            ConnectivityState.UNAVAILABLE -> context.getString(R.string.status_unavailable)
+        }
+    }
+
+    fun active(): Boolean =
+        state == ConnectivityState.ON || state == ConnectivityState.CONNECTED
+
+    /** Short uppercase text for the dot-matrix row inside the circular tile. */
+    fun shortText(): String = when (kind) {
+        StatusKind.BATTERY -> percent?.let { "$it%" } ?: "NA%"
+        StatusKind.CELLULAR -> if (active()) "DATA" else "OFF"
+        StatusKind.BLUETOOTH,
+        StatusKind.WIFI,
+        -> if (active()) "ON" else "OFF"
     }
 }
 
@@ -141,8 +162,77 @@ object WifiStatusState {
     }
 }
 
-/** Original programmatic connectivity glyphs; no font or bitmap asset is bundled. */
+object CellularStatusState {
+    fun read(context: Context): StatusSnapshot {
+        val manager = context.getSystemService(ConnectivityManager::class.java)
+            ?: return StatusSnapshot(StatusKind.CELLULAR, ConnectivityState.UNAVAILABLE)
+        val network = try {
+            manager.activeNetwork
+        } catch (_: SecurityException) {
+            null
+        } ?: return StatusSnapshot(StatusKind.CELLULAR, ConnectivityState.OFF)
+        val capabilities = try {
+            manager.getNetworkCapabilities(network)
+        } catch (_: SecurityException) {
+            null
+        } ?: return StatusSnapshot(StatusKind.CELLULAR, ConnectivityState.OFF)
+        if (!capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+            return StatusSnapshot(StatusKind.CELLULAR, ConnectivityState.OFF)
+        }
+        val online = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        return StatusSnapshot(
+            StatusKind.CELLULAR,
+            if (online) ConnectivityState.CONNECTED else ConnectivityState.ON,
+        )
+    }
+}
+
+object BatteryStatusState {
+    fun read(context: Context): StatusSnapshot {
+        val snapshot = Battery2State.snapshot(context)
+        return StatusSnapshot(
+            StatusKind.BATTERY,
+            if (snapshot.charging) ConnectivityState.ON else ConnectivityState.OFF,
+            percent = snapshot.level.coerceIn(0, 100),
+        )
+    }
+}
+
+/**
+ * Original programmatic control-tile glyphs and dot-matrix status text. The
+ * reference collection's red/white circular tiles are recreated here from
+ * primitives; no font or bitmap asset from that collection is bundled.
+ */
 internal object StatusTileRenderer {
+    private val OFF_WHITE = 0xFFF5F5F3.toInt()
+    private val DARK_GLYPH = 0xFF3A3A38.toInt()
+    private val WHITE = 0xFFFFFFFF.toInt()
+    private val NOTHING_RED = 0xFFD71921.toInt()
+
+    data class TileLayout(
+        val centerX: Float,
+        val centerY: Float,
+        val radius: Float,
+        val glyphCenterY: Float,
+        val textCenterY: Float,
+    )
+
+    fun layout(width: Int, height: Int): TileLayout {
+        val safeWidth = width.coerceAtLeast(1)
+        val safeHeight = height.coerceAtLeast(1)
+        val side = min(safeWidth, safeHeight).toFloat()
+        val centerX = safeWidth / 2f
+        val centerY = safeHeight * 0.43f
+        val radius = side * 0.38f
+        return TileLayout(
+            centerX = centerX,
+            centerY = centerY,
+            radius = radius,
+            glyphCenterY = centerY - radius * 0.12f,
+            textCenterY = centerY + radius * 0.52f,
+        )
+    }
+
     fun render(
         context: Context,
         widthPx: Int,
@@ -154,40 +244,35 @@ internal object StatusTileRenderer {
         val height = heightPx.coerceAtLeast(1)
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        val side = min(width, height).toFloat()
-        val ink = UpstreamNtDraw.ink(context, style)
-        val muted = UpstreamNtDraw.muted(context, style)
-        val accent = UpstreamNtDraw.accent(context, style)
-        val glyphColor = when (snapshot.state) {
-            ConnectivityState.CONNECTED -> accent
-            ConnectivityState.OFF,
-            ConnectivityState.DISCONNECTED,
-            ConnectivityState.UNAVAILABLE,
-            -> muted
-            else -> ink
+        val tile = layout(width, height)
+        val active = snapshot.active()
+        val circleColor = if (active) NOTHING_RED else OFF_WHITE
+        val glyphColor = if (active) WHITE else DARK_GLYPH
+        val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = circleColor
+            if (style == WidgetStyle.TRANSPARENT) {
+                setShadowLayer(6f, 0f, 3f, 0x66000000)
+            }
         }
-        drawGlyph(canvas, snapshot.kind, width / 2f, height * 0.34f, side * 0.30f, glyphColor, style)
-        drawCentered(
+        canvas.drawCircle(tile.centerX, tile.centerY, tile.radius, circlePaint)
+        drawGlyph(
             canvas,
-            snapshot.label(context),
-            width / 2f,
-            height * 0.68f,
-            side * 0.085f,
-            muted,
-            width * 0.9f,
-            medium = false,
-            style = style,
+            snapshot.kind,
+            tile.centerX,
+            tile.glyphCenterY,
+            tile.radius * 0.95f,
+            glyphColor,
+            style,
         )
-        drawCentered(
+        drawDotText(
             canvas,
-            snapshot.stateText(context),
-            width / 2f,
-            height * 0.86f,
-            side * 0.115f,
-            ink,
-            width * 0.9f,
-            medium = true,
-            style = style,
+            snapshot.shortText(),
+            tile.centerX,
+            tile.textCenterY,
+            tile.radius * 1.55f,
+            tile.radius * 0.52f,
+            glyphColor,
+            style,
         )
         return bitmap
     }
@@ -204,7 +289,7 @@ internal object StatusTileRenderer {
         val stroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.color = color
             this.style = Paint.Style.STROKE
-            strokeWidth = max(2f, size * 0.085f)
+            strokeWidth = max(2f, size * 0.075f)
             strokeCap = Paint.Cap.ROUND
             strokeJoin = Paint.Join.ROUND
             if (style == WidgetStyle.TRANSPARENT) {
@@ -224,8 +309,8 @@ internal object StatusTileRenderer {
                 canvas.drawLine(right, bottom - size * 0.22f, cx, mid, stroke)
             }
             StatusKind.WIFI -> {
-                val centerY = cy + size * 0.30f
-                for (radius in floatArrayOf(size * 0.52f, size * 0.36f, size * 0.20f)) {
+                val centerY = cy + size * 0.24f
+                for (radius in floatArrayOf(size * 0.50f, size * 0.35f, size * 0.20f)) {
                     canvas.drawArc(
                         cx - radius,
                         centerY - radius,
@@ -245,42 +330,62 @@ internal object StatusTileRenderer {
                 }
                 canvas.drawCircle(cx, centerY, max(2f, size * 0.055f), dot)
             }
+            StatusKind.CELLULAR -> {
+                val barWidth = size * 0.11f
+                val gap = size * 0.07f
+                val totalWidth = barWidth * 4f + gap * 3f
+                var x = cx - totalWidth / 2f + barWidth / 2f
+                val baseY = cy + size * 0.28f
+                val heights = floatArrayOf(0.28f, 0.44f, 0.60f, 0.76f)
+                heights.forEach { fraction ->
+                    val top = baseY - size * fraction
+                    canvas.drawLine(x, baseY, x, top, stroke)
+                    x += barWidth + gap
+                }
+            }
+            StatusKind.BATTERY -> {
+                val bodyWidth = size * 0.62f
+                val bodyHeight = size * 0.34f
+                val body = RectF(
+                    cx - bodyWidth / 2f,
+                    cy - bodyHeight / 2f,
+                    cx + bodyWidth / 2f,
+                    cy + bodyHeight / 2f,
+                )
+                val corner = bodyHeight * 0.18f
+                canvas.drawRoundRect(body, corner, corner, stroke)
+                val nubWidth = size * 0.07f
+                val nubHeight = bodyHeight * 0.42f
+                val nub = RectF(
+                    body.right,
+                    cy - nubHeight / 2f,
+                    body.right + nubWidth,
+                    cy + nubHeight / 2f,
+                )
+                canvas.drawRoundRect(nub, nubWidth * 0.3f, nubWidth * 0.3f, stroke)
+            }
         }
     }
 
-    private fun drawCentered(
+    private fun drawDotText(
         canvas: Canvas,
         text: String,
         cx: Float,
-        baseline: Float,
-        size: Float,
-        color: Int,
+        cy: Float,
         maxWidth: Float,
-        medium: Boolean,
+        maxHeight: Float,
+        color: Int,
         style: WidgetStyle,
     ) {
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
+        val pitch = DotGlyphFont.fitPitch(text, maxWidth, maxHeight)
+        if (pitch <= 0f) return
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.color = color
-            textSize = size
-            textAlign = Paint.Align.CENTER
-            typeface = Typeface.create(
-                if (medium) "sans-serif-medium" else "sans-serif",
-                Typeface.NORMAL,
-            )
             if (style == WidgetStyle.TRANSPARENT) {
-                setShadowLayer(5f, 0f, 2f, 0x99000000.toInt())
+                setShadowLayer(4f, 0f, 2f, 0x99000000.toInt())
             }
         }
-        canvas.drawText(ellipsize(paint, text, maxWidth), cx, baseline, paint)
-    }
-
-    private fun ellipsize(paint: Paint, text: String, maxWidth: Float): String {
-        if (paint.measureText(text) <= maxWidth) return text
-        var end = text.length
-        while (end > 1 && paint.measureText(text.substring(0, end) + "\u2026") > maxWidth) {
-            end--
-        }
-        return text.substring(0, end) + "\u2026"
+        DotGlyphFont.drawCenteredInk(canvas, text, cx, cy, pitch, paint)
     }
 }
 
@@ -288,6 +393,11 @@ abstract class BaseStatusWidgetProvider : BaseWidgetProvider() {
     override val layoutRes: Int = R.layout.widget_status_tile
     protected abstract fun readStatus(context: Context): StatusSnapshot
     protected abstract val contentDescriptionRes: Int
+
+    protected open fun contentDescription(
+        context: Context,
+        snapshot: StatusSnapshot,
+    ): String = context.getString(contentDescriptionRes, snapshot.stateText(context))
 
     override fun buildViews(context: Context, appWidgetId: Int): RemoteViews {
         val style = WidgetPrefs.style(context)
@@ -301,7 +411,15 @@ abstract class BaseStatusWidgetProvider : BaseWidgetProvider() {
                 StatusTileRenderer.render(context, widthPx, heightPx, style, snapshot)
             },
         ) decorate@{ views, usedBitmap ->
-            views.setTextColor(R.id.status_tile_fallback, UpstreamNtDraw.ink(context, style))
+            views.setInt(
+                R.id.widget_root,
+                "setBackgroundResource",
+                R.drawable.bg_widget_none,
+            )
+            views.setTextColor(
+                R.id.status_tile_fallback,
+                UpstreamNtDraw.ink(context, style),
+            )
             views.setTextViewText(
                 R.id.status_tile_fallback,
                 context.getString(
@@ -313,7 +431,7 @@ abstract class BaseStatusWidgetProvider : BaseWidgetProvider() {
             if (usedBitmap) {
                 views.setContentDescription(
                     R.id.status_tile_bitmap,
-                    context.getString(contentDescriptionRes, snapshot.stateText(context)),
+                    contentDescription(context, snapshot),
                 )
             }
         }
@@ -357,4 +475,38 @@ class WifiStatusWidgetProvider : BaseStatusWidgetProvider() {
         return Intent(Settings.ACTION_WIFI_SETTINGS)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
+}
+
+class CellularStatusWidgetProvider : BaseStatusWidgetProvider() {
+    override val contentDescriptionRes: Int = R.string.cellular_status_content_description
+
+    override fun readStatus(context: Context): StatusSnapshot =
+        CellularStatusState.read(context)
+
+    override fun tapIntent(context: Context): Intent? {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val panel = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            if (context.packageManager.resolveActivity(panel, 0) != null) return panel
+        }
+        return Intent(Settings.ACTION_DATA_ROAMING_SETTINGS)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+}
+
+class BatteryStatusWidgetProvider : BaseStatusWidgetProvider() {
+    override val contentDescriptionRes: Int = R.string.battery_status_content_description
+    override val tapAction: String = Intent.ACTION_POWER_USAGE_SUMMARY
+    override val refreshesBatteryAlarm: Boolean = true
+
+    override fun readStatus(context: Context): StatusSnapshot =
+        BatteryStatusState.read(context)
+
+    override fun contentDescription(
+        context: Context,
+        snapshot: StatusSnapshot,
+    ): String = context.getString(
+        R.string.battery_status_content_description,
+        snapshot.percent?.let { "$it%" } ?: context.getString(R.string.status_unavailable),
+    )
 }

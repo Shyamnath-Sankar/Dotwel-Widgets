@@ -48,6 +48,8 @@ class RemoteViewsLayoutSafetyTest {
         "widget_kwgt_date_time3.xml",
         "widget_interstellar.xml",
         "widget_media.xml",
+        "widget_status_tile.xml",
+        "widget_bt_headphones.xml",
     )
 
     private val remoteViewsSafeTags = setOf(

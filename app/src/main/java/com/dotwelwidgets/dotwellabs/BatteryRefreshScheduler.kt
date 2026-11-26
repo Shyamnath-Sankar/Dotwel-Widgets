@@ -39,6 +39,7 @@ object BatteryRefreshScheduler {
         KwgtBattery2WidgetProvider::class.java,
         KwgtCleanInfoWidgetProvider::class.java,
         IosBatteryWidgetProvider::class.java,
+        BatteryStatusWidgetProvider::class.java,
     )
 
     fun nextTriggerElapsed(nowElapsed: Long): Long = nowElapsed + REFRESH_PERIOD_MILLIS
