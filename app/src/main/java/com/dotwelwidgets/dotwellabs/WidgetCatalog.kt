@@ -13,6 +13,7 @@ enum class WidgetGroup(val labelRes: Int) {
     MEDIA(R.string.category_media),
     MEDIA_PLAYER(R.string.category_media_player),
     KWGT(R.string.category_kwgt),
+    STATUS(R.string.category_status),
     OEM(R.string.category_oem),
 }
 
@@ -50,6 +51,8 @@ enum class PreviewKind {
     KWGT_IOS_BATTERY,
     KWGT_DIGITAL_2,
     KWGT_DATE_TIME_3,
+    BLUETOOTH_STATUS,
+    WIFI_STATUS,
     INTERSTELLAR_ENDURANCE,
     INTERSTELLAR_ENDURANCE_ANALOG,
     INTERSTELLAR_ENDURANCE_ANALOG_2,
@@ -281,6 +284,30 @@ object WidgetCatalog {
             previewKind = PreviewKind.QUOTES,
             providerClass = QuotesWidgetProvider::class.java,
             pinKind = PinResultReceiver.PIN_KIND_QUOTES,
+        ),
+        CatalogEntry(
+            id = "bt_status",
+            name = "Bluetooth Status",
+            group = WidgetGroup.STATUS,
+            state = ImportState.READY,
+            upstream = "BluetoothAdapter state · optional BLUETOOTH_CONNECT · opens system Bluetooth settings",
+            descriptionRes = R.string.catalog_bt_status_desc,
+            detailRes = R.string.ledger_ready_status,
+            previewKind = PreviewKind.BLUETOOTH_STATUS,
+            providerClass = BluetoothStatusWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_BT_STATUS,
+        ),
+        CatalogEntry(
+            id = "wifi_status",
+            name = "Wi-Fi Status",
+            group = WidgetGroup.STATUS,
+            state = ImportState.READY,
+            upstream = "WifiManager · ACCESS_WIFI_STATE only · opens Internet panel",
+            descriptionRes = R.string.catalog_wifi_status_desc,
+            detailRes = R.string.ledger_ready_status,
+            previewKind = PreviewKind.WIFI_STATUS,
+            providerClass = WifiStatusWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_WIFI_STATUS,
         ),
         CatalogEntry(
             id = "kwgt_nothing_battery",
@@ -976,12 +1003,12 @@ enum class WidgetCategory(
     BLUETOOTH(
         "bluetooth",
         R.string.category_bluetooth,
-        emptyList(),
+        listOf("bt_status"),
     ),
     WIFI(
         "wifi",
         R.string.category_wifi,
-        emptyList(),
+        listOf("wifi_status"),
     ),
     LIVE(
         "live",
@@ -1064,6 +1091,8 @@ object WidgetModeLabels {
             PreviewKind.KWGT_IOS_BATTERY -> R.string.mode_ios_battery
             PreviewKind.KWGT_DIGITAL_2 -> R.string.mode_kwgt_digital2
             PreviewKind.KWGT_DATE_TIME_3 -> R.string.mode_kwgt_date_time3
+            PreviewKind.BLUETOOTH_STATUS -> R.string.mode_bluetooth_status
+            PreviewKind.WIFI_STATUS -> R.string.mode_wifi_status
             PreviewKind.INTERSTELLAR_ENDURANCE,
             PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG,
             PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG_2,

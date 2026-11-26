@@ -14,6 +14,8 @@ object WidgetUpdater {
         AnalogScaleWidgetProvider::class.java,
         WorldWidgetProvider::class.java,
         QuotesWidgetProvider::class.java,
+        BluetoothStatusWidgetProvider::class.java,
+        WifiStatusWidgetProvider::class.java,
         BatteryWidgetProvider::class.java,
         BatteryMiniWidgetProvider::class.java,
         KwgtBattery2WidgetProvider::class.java,

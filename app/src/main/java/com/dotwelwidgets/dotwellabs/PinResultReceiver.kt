@@ -59,6 +59,8 @@ class PinResultReceiver : BroadcastReceiver() {
                 R.string.pin_kwgt_interstellar_analog2_confirmed
             PIN_KIND_WEATHER_TEMP -> R.string.pin_weather_temp_confirmed
             PIN_KIND_WEATHER_SUN -> R.string.pin_weather_sun_confirmed
+            PIN_KIND_BT_STATUS -> R.string.pin_bt_status_confirmed
+            PIN_KIND_WIFI_STATUS -> R.string.pin_wifi_status_confirmed
             PIN_KIND_MEDIA_EXPANDED -> R.string.pin_media_expanded_confirmed
             PIN_KIND_MEDIA_OUTPUT -> R.string.pin_media_output_confirmed
             PIN_KIND_MEDIA_MINI -> R.string.pin_media_mini_confirmed
@@ -114,6 +116,8 @@ class PinResultReceiver : BroadcastReceiver() {
         const val PIN_KIND_KWGT_INTERSTELLAR_ANALOG_2 = "kwgt_interstellar_analog_2"
         const val PIN_KIND_WEATHER_TEMP = "weather_temp"
         const val PIN_KIND_WEATHER_SUN = "weather_sun"
+        const val PIN_KIND_BT_STATUS = "bt_status"
+        const val PIN_KIND_WIFI_STATUS = "wifi_status"
         const val PIN_KIND_MEDIA_EXPANDED = "media_expanded"
         const val PIN_KIND_MEDIA_OUTPUT = "media_output"
         const val PIN_KIND_MEDIA_MINI = "media_mini"
