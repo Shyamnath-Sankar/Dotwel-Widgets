@@ -2,10 +2,47 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/fix-gallery-sweep-category-nav`.
-- No launcher repository, visibility, workflow, signing key, permission,
-  dependency, applicationId, SDK level or 55-provider catalog was changed in
-  this run.
+- Branch: `agent/add-bluetooth-and-wi-fi-status`.
+- Latest run added two native connectivity status providers to the existing
+  catalog (55 -> 57 registered providers). No launcher repository, visibility,
+  workflow, signing key, applicationId, SDK level, dependency or version was
+  changed.
+
+## Bluetooth and Wi-Fi status tiles (57-provider branch)
+
+- Phase: add one 1x1 Bluetooth status widget and one 1x1 Wi-Fi status widget
+  through the existing RemoteViews `BaseWidgetProvider` path.
+  `updatePeriodMillis` stays 0; no service, polling, wake lock, exact alarm,
+  new dependency, font or bundled artwork.
+- Bluetooth: `BLUETOOTH` (`maxSdkVersion=30`) plus runtime `BLUETOOTH_CONNECT`.
+  Live state is opt-in, explained in the Add dialog and off by default; without
+  it the tile shows a neutral glyph and "Live status off" and still opens
+  `Settings.ACTION_BLUETOOTH_SETTINGS`. The receiver listens only for
+  `APPWIDGET_UPDATE` and the documented-exempt `ACL_CONNECTED`,
+  `ACL_DISCONNECTED`, `BluetoothHeadset`/`BluetoothA2dp`
+  `CONNECTION_STATE_CHANGED`; `ACTION_STATE_CHANGED` is not manifest-declared
+  because it is not on Android's implicit-broadcast exemption list.
+- Wi-Fi: `ACCESS_WIFI_STATE` only, no location and no manifest Wi-Fi broadcast
+  (neither `WIFI_STATE_CHANGED_ACTION` nor `CONNECTIVITY_ACTION` is exempt).
+  Shows Off/On/Connected/Disconnected plus the SSID when Android exposes it;
+  tap opens `Settings.Panel.ACTION_INTERNET_CONNECTIVITY` on API 29+ and falls
+  back to `Settings.ACTION_WIFI_SETTINGS`.
+- Android 10+ blocks apps from toggling Wi-Fi and Android 13+ blocks toggling
+  Bluetooth, so both tiles are status/settings shortcuts, not switches.
+- Catalog, preview, mode labels, pin kinds, updater, manifest and
+  `CatalogManifestConsistencyTest` are wired to 57 registered providers.
+  Original programmatic glyphs replace any font or bitmap asset.
+- Verified in this run:
+  `./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug`
+  -> `BUILD SUCCESSFUL`; 156 unit tests, 0 failures; lint 0 errors.
+- Not verified here: this runner has no emulator or device. Launcher placement,
+  resize, style switching, real Bluetooth/Wi-Fi state changes, permission
+  grant/deny and tap destinations are not runtime-verified and are not claimed.
+  No screenshot or Play-ready claim.
+- Next: place both tiles on a real launcher, check black/translucent/transparent,
+  resize, Bluetooth grant/deny and tap panels; capture screenshots and the APK
+  checksum.
+- Blockers: none in code; runtime verification pending.
 
 ## Gallery sweep category navigation + graceful budget
 
