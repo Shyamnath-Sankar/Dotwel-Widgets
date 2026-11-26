@@ -1,5 +1,69 @@
 # Build and verification state
 
+## NtWx combined-RemoteViews crash + profile meminfo + gallery crash recovery
+
+- Phase: fix the API 31+ NtWx weather crash and two verification-harness gaps.
+  Branch `agent/fix-ntwx-weather-widget-remote`, cut from the consolidated tip
+  `a65e5541`. No catalog, applicationId, SDK level, workflow YAML, permission,
+  service or unrelated widget source was changed.
+- Defect 1 root cause: `BaseNtWxWidgetProvider.buildViews` called
+  `super.buildViews`, then added the `WX_NEXT` click intent. On API 31+ with host
+  exact sizes, `BaseWeatherWidgetProvider.buildBitmapViews` returns a combined
+  `RemoteViews(Map<SizeF, RemoteViews>)`; modifying that combined object throws
+  `RemoteViews specifying separate layouts for orientation or size cannot be
+  modified`. It only fired for multi-page NtWx kinds with a weather snapshot.
+- Defect 1 fix: `BaseWeatherWidgetProvider` now exposes
+  `decorateWeatherViews(views, context, appWidgetId, usedBitmap)`, invoked for
+  every per-size view inside the existing `buildBitmapViews` decorate callback,
+  before the view enters the size map. `BaseNtWxWidgetProvider` overrides it to
+  add the page-cycling click intent; `buildViews` now only sets `renderingPage`
+  and delegates to `super`. The root tap still cycles pages on multi-page kinds
+  with a snapshot.
+- Post-combination audit: `NtWxWidgetProviders.kt` was the only provider that
+  called `super.buildViews` and then mutated the result. Every other
+  `buildViews`/`buildTargetBitmapViews` override passes its click/background
+  configuration through the per-size `decorate`/`decorateTarget` callback
+  (`Clock`, `Date`, analog providers, `Quotes`, `World`, `NtAway`, `NtPhoto`,
+  status/headphone/media/battery and the KWGT providers). No other fix needed.
+- Regression: new `NtWxCombinedRemoteViewsTest` seeds a weather snapshot, sets
+  two exact host sizes and builds the real `NtWxCircleProvider` (3 pages). It
+  asserts the result is the combined RemoteViews and that the decorate hook runs
+  once per size. With the old post-combination mutation temporarily restored,
+  the test fails with the expected `RuntimeException`; with the fix it passes.
+- Defect 2 root cause: emulator `dumpsys meminfo` prints `TOTAL PSS:   18,732`;
+  the old `TOTAL PSS:\s*(\d+)` never matched, so every `totalPssKb` was null.
+  `total_pss_kb` now accepts optional thousands separators, an optional colon,
+  and `TOTAL`/`TOTAL ... kB` variants, strips commas before `int()`. When PSS
+  parsing still fails after retries, `meminfo` writes the first 40 raw lines to
+  `runtime-evidence/profile/raw/<label>-meminfo.txt` (app) and
+  `<label>-host-meminfo.txt` (host).
+- Hardening: `gallery_sweep.py` detects the system crash dialog via
+  `android:id/aerr_close` or the `Close app`/`keeps stopping` labels. It clicks
+  Close app, marks the in-flight entry with the distinct `app crashed` status,
+  force-stops the app and continues with the next entry using hard recovery.
+  The between-entry path also catches a dialog that appears after the previous
+  entry was recorded, so one crash no longer cascades through the remaining
+  entries.
+- Verified in this run:
+  - `python3 -m py_compile tools/repair/*.py` passes.
+  - `python3 tools/repair/test_sweep_helpers.py` -> 25 tests, 0 failures
+    (includes comma PSS and crash-dialog detection).
+  - `python3 tools/repair/test_fake_adb_sweeps.py` -> 6 tests, 0 failures
+    (comma PSS `18,732`, raw meminfo on failure, and a crash-dialog run where
+    every entry is marked `app crashed` while the sweep continues).
+  - `./gradlew --no-daemon :app:testDebugUnitTest` -> `BUILD SUCCESSFUL`;
+    166 tests, 0 failures, 0 errors, 0 skipped.
+  - `./gradlew --no-daemon :app:assembleDebug` -> `BUILD SUCCESSFUL`; debug APK
+    sha256 `207e8bd2c5e2e597fad049881c13a93bced850abdadc838a614e441ff8e86b96`.
+- Not verified here: no emulator or device is attached. The real NtWx multi-page
+  weather update, the actual system crash dialog dismissal, and real
+  comma-formatted PSS readings are not runtime-verified and are not claimed.
+  No screenshot, Play-ready or completion claim is made.
+- Next: rerun the consolidated gallery/profile workflows. Expect the affected
+  weather entry to be the only `app crashed` row (later entries still attempted),
+  and every profile `totalPssKb` (including baseline) to be non-null.
+- Blockers: none in code; emulator re-verification pending.
+
 ## Current harness repair: gallery relaunch + profile uid
 
 - Phase: repair harness only. Branch `agent/fix-gallery-sweep-relaunch-fl`,
