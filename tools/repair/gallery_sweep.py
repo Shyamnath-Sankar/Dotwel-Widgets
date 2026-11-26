@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """Real gallery UI/Add and selected launcher pins. No source mutations or owner data."""
-import subprocess as sp,pathlib,time,re,json,xml.etree.ElementTree as ET
+import subprocess as sp,pathlib,time,re,json,os,sys,xml.etree.ElementTree as ET
 P='com.dotwelwidgets.dotwellabs'; OUT=pathlib.Path('runtime-evidence/gallery');OUT.mkdir(parents=True,exist_ok=True)
+BUDGET=float(os.environ.get('GALLERY_SWEEP_BUDGET_SECONDS','1050'))
+ENTRY_RESERVE=float(os.environ.get('GALLERY_SWEEP_ENTRY_RESERVE_SECONDS','45'))
+START=time.monotonic()
 entries=json.loads(pathlib.Path('runtime-evidence/ready/catalog.json').read_text());results=[]
 # catalog.json is grouped by category; this is the sheet index for each entry.
 positions={};seen={}
 for ix,e in enumerate(entries):
  positions[ix]=seen.get(e['category'],0);seen[e['category']]=positions[ix]+1
 
+def remaining():return BUDGET-(time.monotonic()-START)
 def adb(*args,check=True):
  r=sp.run(['adb',*args],capture_output=True,timeout=30)
  if check and r.returncode:raise RuntimeError(r.stderr.decode(errors='replace'))
@@ -28,7 +32,7 @@ def capture(name,root=None):
  try:(OUT/(name+'.xml')).write_bytes(ET.tostring(root if root is not None else tree()))
  except Exception:pass
 def wait(predicate,timeout=6.0):
- end=time.time()+timeout;last=None
+ end=time.time()+max(0.0,min(timeout,remaining()));last=None
  while True:
   try:
    last=tree();value=predicate(last)
@@ -102,7 +106,7 @@ def access_fallback(root):
    return node
  return None
 def wait_pin(timeout=10.0):
- end=time.time()+timeout;plain_clicks=0;last=None
+ end=time.time()+max(0.0,min(timeout,remaining()));plain_clicks=0;last=None
  while True:
   try:last=tree()
   except Exception:last=None
@@ -120,6 +124,12 @@ def wait_pin(timeout=10.0):
 try:
  for ix,e in enumerate(entries):
   name=f'{ix+1:02d}-{e["id"]}';result=dict(e);results.append(result)
+  if remaining()<=ENTRY_RESERVE:
+   result['gallery_add']='not attempted - budget exhausted'
+   for rest in entries[ix+1:]:
+    skipped=dict(rest);skipped['gallery_add']='not attempted - budget exhausted';results.append(skipped)
+   print(f'{name}: not attempted - budget exhausted',flush=True)
+   break
   try:
    if open_gallery() is None:raise RuntimeError('Gallery did not load')
    click(seek_category(e['category']),top=True)
@@ -165,3 +175,4 @@ finally:
  try:(OUT/'appwidget-dump.txt').write_bytes(adb('shell','dumpsys','appwidget'))
  except Exception:pass
  print(json.dumps(results,indent=2))
+sys.exit(0)
