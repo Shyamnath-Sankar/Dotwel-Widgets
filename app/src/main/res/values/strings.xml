@@ -426,10 +426,10 @@
     <string name="media_action_clear">CLEAR</string>
     <string name="media_preview_description">Media widget preview</string>
     <string name="media_content_description">%1$s · %2$s</string>
-    <string name="media_empty_access_off">Notification access is off. Tap to read the explanation and open Android settings.</string>
-    <string name="media_empty_no_notification">No notification to show. Tap for access details.</string>
-    <string name="media_empty_no_metadata">The player has no readable title yet. Tap to open the app.</string>
-    <string name="media_empty_no_session">No active media session. Tap for access details.</string>
+    <string name="media_empty_access_off">Notification access is off. Tap for details.</string>
+    <string name="media_empty_no_notification">No active media notification. Tap for details.</string>
+    <string name="media_empty_no_metadata">No readable title yet. Tap to open the app.</string>
+    <string name="media_empty_no_session">No active media session. Tap for details.</string>
     <string name="media_access_title">Media &amp; notification access</string>
     <string name="media_access_explain">These widgets are off until you enable Android notification access yourself. That access can read notifications and media metadata, and allows the supported playback controls on this device. The app keeps notification text and cover art in memory only, masks message text unless you explicitly opt in, never uploads it and does not use it for contacts or background networking. Declining leaves the rest of the app and other widgets fully usable.</string>
     <string name="media_access_open">Open Android notification access</string>

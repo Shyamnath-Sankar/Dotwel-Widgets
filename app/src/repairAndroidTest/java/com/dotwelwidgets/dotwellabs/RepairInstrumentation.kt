@@ -3,6 +3,7 @@ package com.dotwelwidgets.dotwellabs
 import android.app.Instrumentation
 import android.content.*
 import android.os.*
+import com.dotwelwidgets.dotwellabs.media.MediaAccess
 import java.io.File
 import org.json.JSONArray
 import org.json.JSONObject
@@ -17,6 +18,7 @@ class RepairInstrumentation:Instrumentation() {
         val results=JSONArray()
         val failures=JSONArray()
         try {
+            if(MediaAccess.isGranted(targetContext)) startMediaFixture()
             val catalog=JSONArray()
             for(category in WidgetCategory.values()) for(entry in WidgetCatalog.readyEntries(category)) {
                 catalog.put(JSONObject().put("id",entry.id).put("name",entry.name).put("provider",entry.providerClass!!.name).put("category",targetContext.getString(category.labelRes)).put("action",entry.action.name))
@@ -53,8 +55,7 @@ class RepairInstrumentation:Instrumentation() {
                                         if(button?.visibility==android.view.View.VISIBLE && button.width>1) clicked=button.performClick()
                                     }
                                     if(clicked) {
-                                        Thread.sleep(350)
-                                        check(events.exists() && events.readText().drop(before).contains(expected)) { "transport callback missing: $expected" }
+                                        check(waitForMediaEvent(events,before,expected)) { "transport callback missing: $expected" }
                                     }
                                 }
                             }
@@ -73,5 +74,36 @@ class RepairInstrumentation:Instrumentation() {
             out.putInt("providerCount",results.length());out.putInt("failureCount",failures.length())
             finish(if(failures.length()==0)-1 else 1,out)
         } catch(error:Throwable) { out.putString("error",error.toString());finish(1,out) }
+    }
+
+    /**
+     * The instrumentation starts in a fresh target process, which would destroy
+     * any session created before `am instrument`. Publish the fixture here so the
+     * synthetic session and its metadata exist before the first host read.
+     */
+    private fun startMediaFixture() {
+        val events=File(targetContext.noBackupFilesDir,"repair-media-events.txt")
+        val before=if(events.exists()) events.readText().length else 0
+        targetContext.startActivity(
+            Intent(targetContext,RepairMediaActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+        check(waitForMediaEvent(events,before,"state:",8_000)) {
+            "media fixture did not publish an active session"
+        }
+    }
+
+    private fun waitForMediaEvent(
+        events:File,
+        before:Int,
+        expected:String,
+        timeoutMs:Long=2_500,
+    ):Boolean {
+        val end=SystemClock.uptimeMillis()+timeoutMs
+        while(SystemClock.uptimeMillis()<end) {
+            if(events.exists() && events.readText().drop(before).contains(expected)) return true
+            Thread.sleep(100)
+        }
+        return false
     }
 }

@@ -29,7 +29,6 @@ class RepairMediaActivity:Activity() {
                 override fun onAdjustVolume(direction:Int) { log("volume:$direction");setCurrentVolume((currentVolume+direction).coerceIn(0,10)) }
             })
             s.setSessionActivity(PendingIntent.getActivity(this,9301,Intent(this,RepairMediaActivity::class.java),PendingIntent.FLAG_IMMUTABLE))
-            s.isActive=true
         }
         fixtureTitle=input.getStringExtra("title") ?: "Fixture Track"
         publish(input.getBooleanExtra("playing",true))
@@ -38,11 +37,12 @@ class RepairMediaActivity:Activity() {
     private fun publish(play:Boolean) {
         val player=session ?: return
         playing=play
-        val art=Bitmap.createBitmap(600,300,Bitmap.Config.ARGB_8888)
+        // Small art keeps the metadata binder transaction well below its limit.
+        val art=Bitmap.createBitmap(256,256,Bitmap.Config.ARGB_8888)
         Canvas(art).apply {
             drawColor(Color.BLUE)
-            drawRect(0f,0f,200f,300f,Paint().apply { color=Color.RED })
-            drawRect(400f,0f,600f,300f,Paint().apply { color=Color.GREEN })
+            drawRect(0f,0f,86f,256f,Paint().apply { color=Color.RED })
+            drawRect(170f,0f,256f,256f,Paint().apply { color=Color.GREEN })
         }
         player.setMetadata(MediaMetadata.Builder().putString(MediaMetadata.METADATA_KEY_TITLE,fixtureTitle)
             .putString(MediaMetadata.METADATA_KEY_ARTIST,"Synthetic Artist")
@@ -50,6 +50,8 @@ class RepairMediaActivity:Activity() {
             .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART,art).build())
         player.setPlaybackState(PlaybackState.Builder().setActions(PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE or PlaybackState.ACTION_SKIP_TO_NEXT or PlaybackState.ACTION_SKIP_TO_PREVIOUS)
             .setState(if(play) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED,65_000,if(play)1f else 0f,SystemClock.elapsedRealtime()).build())
+        // Active only after readable metadata and a transport state exist.
+        player.isActive=true
         log("state:$fixtureTitle:$play")
     }
     private fun log(value:String) { File(noBackupFilesDir,"repair-media-events.txt").appendText("$value\n") }

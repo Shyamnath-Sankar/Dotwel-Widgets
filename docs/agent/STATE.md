@@ -2,9 +2,60 @@
 
 - Candidate: Dotwel Widgets 0.1.8 (versionCode 9), debug only. Package name
   `com.dotwelwidgets.dotwellabs` is unchanged.
-- Branch: `agent/ios-fit-45365430996`.
+- Branch: `agent/mini-media-gallery-final-fixes`.
 - No launcher repository, visibility, workflow, signing key, permission,
-  dependency or provider set was changed in this run.
+  dependency, applicationId, SDK level or 55-provider catalog was changed in
+  this run.
+
+## Mini media gallery final fixes (55-provider branch)
+
+- Phase: three targeted repairs on the repaired 55-provider collection, no
+  refactor outside the named files.
+- FIX 1 (visible clipping): `media_empty_access_off`, `media_empty_no_notification`,
+  `media_empty_no_metadata` and `media_empty_no_session` are now the short
+  sentences requested in the task. `widget_media.xml` keeps `maxLines="3"` and
+  adds `android:ellipsize="end"` to `@+id/media_message`. This addresses the
+  clipped sentence in `media_mini-BLACK-180.png`; the 180dp screenshot is not
+  recaptured here because this runner has no emulator.
+- FIX 2 (synthetic media not registering): `RepairMediaActivity` now sets the
+  metadata (title/artist/duration) and `STATE_PLAYING` transport state with
+  PLAY_PAUSE/SKIP_NEXT/SKIP_PREVIOUS actions and a position **before**
+  `isActive = true`, and logs the state line after activation. Album art is
+  256x256 so the metadata binder transaction stays well below its limit. The
+  ready instrumentation now starts the fixture itself after notification access
+  is granted, because `am instrument` starts a fresh target process and destroys
+  any session created before it. It polls the fixture event file for `state:`
+  before the first host read, and polls up to 2.5 s for each transport callback
+  instead of using a fixed 350 ms sleep. Fixtures remain behind
+  `-PrepairFixtures` only.
+- FIX 3 (gallery sweep): `tools/repair/gallery_sweep.py` now polls for the native
+  pin confirmation instead of reading one immediate tree. It recognises the
+  actual `Add to home screen` confirmation and the clock access dialog's
+  `Add live ...`/`Add plain ...` positive buttons (the old code only looked for
+  the word `plain`, which missed the analog/KWGT dialogs). Category cards are
+  tapped near their top instead of at the centre, because the Weather/Photos
+  cards sit under the app's bottom navigation at the centre point. Within a
+  category the sweep fast-forwards the sheet with fixed Next taps and one tree
+  read instead of a tree round-trip per page. Fixed sleeps around the Add flow
+  are replaced with condition waits, and the 66 s/3 s launcher kill waits are
+  reduced to a short bounded capture so all 55 entries fit the 1250 s budget.
+  Full minute-tick kill evidence is still a separate focused check.
+- Verification in this run:
+  `./gradlew --no-daemon testDebugUnitTest` -> `BUILD SUCCESSFUL`, 154 tests,
+  0 failures, 0 errors, 0 skipped. `./gradlew --no-daemon assembleDebug` ->
+  `BUILD SUCCESSFUL`. `./gradlew --no-daemon -PrepairFixtures assembleDebug
+  assembleDebugAndroidTest` -> `BUILD SUCCESSFUL`, so the fixture and ready
+  instrumentation compile. The ordinary merged manifest and the built
+  `app-debug.apk` contain no RepairHost/RepairMedia/RepairWeather/BIND_APPWIDGET
+  entries (checked with aapt2). Ordinary debug APK sha256:
+  `f9f2d3affe8528cb422e888d60325acaadd94d2cba61572a2ceb7977ede62c6d`.
+- Not verified here: no emulator or device is available in this runner, so the
+  ready-suite media callbacks, the 55/55 gallery Add sweep, the 180dp clipping
+  screenshot and any launcher placement are **not** runtime-verified. The next
+  emulator run should confirm `media_master` transport events include `state:`,
+  that all 55 entries reach native pin confirmation, and recapture
+  `media_mini-BLACK-180.png`.
+- Blockers: none in code; runtime re-verification pending.
 
 ## 26th provider build repair (Orbit native preview)
 
