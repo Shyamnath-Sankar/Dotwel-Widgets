@@ -1,5 +1,6 @@
 package com.dotwelwidgets.dotwellabs
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.AlertDialog
@@ -13,6 +14,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -55,6 +57,7 @@ class MainActivity : Activity() {
     }
     private var exactAlarmReceiverRegistered = false
     private var pendingEntryAfterAccess: CatalogEntry? = null
+    private var pendingBluetoothEntry: CatalogEntry? = null
     private var upcomingBuilt = false
     private var sheetDialog: Dialog? = null
     private val initialRender = Runnable { refreshTilePreviews() }
@@ -770,6 +773,13 @@ class MainActivity : Activity() {
                     showMediaAccessDialog()
                 }
             }
+            CardAction.BLUETOOTH_ACCESS -> {
+                if (BluetoothAccess.isGranted(this)) {
+                    requestPin(entry)
+                } else {
+                    showBluetoothAccessDialog(entry)
+                }
+            }
             CardAction.NONE -> requestPin(entry)
         }
     }
@@ -842,6 +852,65 @@ class MainActivity : Activity() {
             }
             .setNegativeButton(R.string.media_close, null)
             .show()
+    }
+
+    private fun showBluetoothAccessDialog(entry: CatalogEntry) {
+        val content = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = (resources.displayMetrics.density * 20).toInt()
+            setPadding(pad, pad, pad, pad)
+        }
+        content.addView(
+            TextView(this).apply {
+                text = getString(
+                    R.string.bt_access_status,
+                    getString(R.string.bt_access_denied),
+                )
+                setTextColor(Color.WHITE)
+                textSize = 14f
+            },
+        )
+        content.addView(
+            TextView(this).apply {
+                text = getString(R.string.bt_access_explain)
+                setTextColor(Color.LTGRAY)
+                textSize = 13f
+                setPadding(0, dp(12), 0, 0)
+            },
+        )
+        AlertDialog.Builder(this)
+            .setTitle(R.string.bt_access_title)
+            .setView(content)
+            .setPositiveButton(R.string.bt_access_allow) { _, _ ->
+                pendingBluetoothEntry = entry
+                requestPermissions(
+                    arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+                    BLUETOOTH_PERMISSION_REQUEST,
+                )
+            }
+            .setNegativeButton(R.string.bt_access_add_without) { _, _ ->
+                requestPin(entry)
+            }
+            .setNeutralButton(R.string.bt_access_close, null)
+            .show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode != BLUETOOTH_PERMISSION_REQUEST) return
+        val entry = pendingBluetoothEntry ?: return
+        pendingBluetoothEntry = null
+        val granted = grantResults.isNotEmpty() &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        if (!granted) {
+            Toast.makeText(this, R.string.bt_access_denied, Toast.LENGTH_LONG).show()
+        }
+        refreshTilePreviews()
+        requestPin(entry)
     }
 
     private fun showMinuteAccessDialog(entry: CatalogEntry) {
@@ -1165,5 +1234,6 @@ class MainActivity : Activity() {
             "com.dotwelwidgets.dotwellabs.extra.OPEN_WEATHER"
         const val EXTRA_SHOW_MEDIA_ACCESS =
             "com.dotwelwidgets.dotwellabs.extra.SHOW_MEDIA_ACCESS"
+        const val BLUETOOTH_PERMISSION_REQUEST = 4101
     }
 }

@@ -82,6 +82,7 @@ enum class CardAction {
     WORLD_ZONES,
     WEATHER,
     MEDIA_ACCESS,
+    BLUETOOTH_ACCESS,
 }
 
 data class CatalogEntry(
@@ -296,6 +297,7 @@ object WidgetCatalog {
             previewKind = PreviewKind.BLUETOOTH_STATUS,
             providerClass = BluetoothStatusWidgetProvider::class.java,
             pinKind = PinResultReceiver.PIN_KIND_BT_STATUS,
+            action = CardAction.BLUETOOTH_ACCESS,
         ),
         CatalogEntry(
             id = "wifi_status",
