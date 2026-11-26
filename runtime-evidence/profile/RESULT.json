@@ -1,0 +1,75 @@
+{
+  "package": "com.dotwelwidgets.dotwellabs",
+  "hostPackage": "com.dotwelwidgets.dotwellabs",
+  "budgetSeconds": 900.0,
+  "settleSeconds": 10.0,
+  "startedAtMillis": 1795720427126,
+  "baseline": {
+    "label": "baseline",
+    "atMillis": 1795720427384,
+    "app": {
+      "package": "com.dotwelwidgets.dotwellabs",
+      "totalPssKb": null
+    },
+    "host": {
+      "package": "com.dotwelwidgets.dotwellabs",
+      "totalPssKb": null
+    },
+    "cpu": {
+      "appPercent": null,
+      "top": [
+        "Load: 2.36 / 0.56 / 0.19",
+        "CPU usage from 27685ms to 14669ms ago (2026-11-26 19:13:19.258 to 2026-11-26 19:13:32.274):",
+        "  61% 555/system_server: 50% user + 10% kernel / faults: 60824 minor 2285 major",
+        "  55% 431/surfaceflinger: 0.8% user + 55% kernel / faults: 3520 minor",
+        "  5.3% 561/kworker/1:8H-kverityd: 0% user + 5.3% kernel",
+        "  3.3% 470/logcat: 0.2% user + 3.1% kernel",
+        "  2% 54/kworker/0:1H-kverityd: 0% user + 2% kernel",
+        "  1.6% 146/servicemanager: 0% user + 1.5% kernel / faults: 84 minor",
+        "  1.4% 480/installd: 0.5% user + 0.9% kernel / faults: 217 minor",
+        "  0.9% 144/logd: 0.3% user + 0.6% kernel / faults: 666 minor",
+        "  0.8% 478/idmap2d: 0.7% user + 0% kernel / faults: 3255 minor 15 major",
+        "  0.4% 1/init: 0% user + 0.4% kernel / faults: 257 minor",
+        "  0.3% 10/kworker/u4:0-loop27: 0% user + 0.3% kernel",
+        "  0.3% 43/kswapd0: 0% user + 0.3% kernel",
+        "  0.3% 215/apexd: 0.1% user + 0.1% kernel / faults: 2193 minor",
+        "  0.2% 16/rcu_preempt: 0.2% user + 0% kernel",
+        "  0.2% 26/ksoftirqd/1: 0% user + 0.2% kernel",
+        "  0.2% 34/kcompactd0: 0% user + 0.2% kernel"
+      ]
+    },
+    "wakeLocks": {
+      "count": 20,
+      "held": [
+        "PARTIAL_WAKE_LOCK                 '*telephony-radio*' ACQ=-1s469ms (uid=1001 pid=1093 ws=WorkSource{1001 com.android.phone})",
+        "PARTIAL_WAKE_LOCK                 'Application creation -> Application.onCreate -> Startup Listeners -> AfterPackageReplaced -> StartupAfterPackageReplaced' ACQ=-8s488ms (uid=10144 pid=1652)",
+        "PARTIAL_WAKE_LOCK                 '*job*/com.google.android.providers.media.module/com.android.providers.media.MediaService' ACQ=-7s390ms (uid=1000 pid=555 ws=WorkSource{10207 com.google.android.providers.media.module})",
+        "PARTIAL_WAKE_LOCK                 'AmbientIndication' ACQ=-6s939ms (uid=10181 pid=931)",
+        "PARTIAL_WAKE_LOCK                 'CMWakeLock' ACQ=-5s854ms (uid=10143 pid=1218 ws=WorkSource{10143 com.google.android.gms})",
+        "PARTIAL_WAKE_LOCK                 '*job*/com.google.android.partnersetup/.ClientIdJobService' ACQ=-5s545ms (uid=1000 pid=555 ws=WorkSource{10131 com.google.android.partnersetup})",
+        "PARTIAL_WAKE_LOCK                 'Icing' ACQ=-4s337ms (uid=10143 pid=1402 ws=WorkSource{10143 com.google.android.gms})",
+        "PARTIAL_WAKE_LOCK                 '*job*/com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService' ACQ=-4s45ms (uid=1000 pid=555 ws=WorkSource{10144 com.google.android.googlequicksearchbox})",
+        "PARTIAL_WAKE_LOCK                 '*job*/com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService' ACQ=-4s11ms (uid=1000 pid=555 ws=WorkSource{10144 com.google.android.googlequicksearchbox})",
+        "PARTIAL_WAKE_LOCK                 '*job*/com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService' ACQ=-2s861ms (uid=1000 pid=555 ws=WorkSource{10144 com.google.android.googlequicksearchbox})",
+        "PARTIAL_WAKE_LOCK                 '*job*/com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService' ACQ=-2s370ms (uid=1000 pid=555 ws=WorkSource{10144 com.google.android.googlequicksearchbox})",
+        "PARTIAL_WAKE_LOCK                 'NetworkLocationLocator' ACQ=-2s247ms (uid=10143 pid=1218 ws=WorkSource{10135 com.google.android.as})",
+        "PARTIAL_WAKE_LOCK                 '*job*/com.google.android.googlequicksearchbox/com.google.android.apps.gsa.tasks.BackgroundTasksJobService' ACQ=-2s236ms (uid=1000 pid=555 ws=WorkSource{10144 com.google.android.googlequicksearchbox})",
+        "PARTIAL_WAKE_LOCK                 '*job*/@androidx.work.systemjobscheduler@com.google.android.googlequicksearchbox/androidx.work.impl.background.systemjob.SystemJobService' ACQ=-1s469ms (uid=1000 pid=555 ws=WorkSource{10144 com.google.android.googlequicksearchbox})",
+        "PARTIAL_WAKE_LOCK                 'AudioMix' ACQ=-1s289ms (uid=1041)",
+        "PARTIAL_WAKE_LOCK                 'AudioMix' ACQ=-1s288ms (uid=1041)",
+        "PARTIAL_WAKE_LOCK                 'Application creation -> Application.onCreate -> Startup Listeners -> AfterPackageReplaced -> StartupAfterPackageReplaced' ACQ=-640ms (uid=10144 pid=1652)",
+        "PARTIAL_WAKE_LOCK                 'CallbackRunner' ACQ=-40ms (uid=10143 pid=1218 ws=WorkSource{10143 com.google.android.gms})",
+        "PARTIAL_WAKE_LOCK                 'GCM_CONN_ALARM' ACQ=-33ms (uid=10143 pid=1218 ws=WorkSource{10143 com.google.android.gms})",
+        "PARTIAL_WAKE_LOCK                 'GCM_WORK' ACQ=-39ms (uid=10143 pid=1218 ws=WorkSource{10143 com.google.android.gms})"
+      ]
+    },
+    "battery": {
+      "uid": null,
+      "excerpt": []
+    }
+  },
+  "widgets": [],
+  "uid": null,
+  "finishedAtMillis": 1795720427911,
+  "limits": "Isolated fixture AppWidgetHost measurements only; not a launcher placement, performance pass or Play claim. Synthetic media/weather fixtures are labelled where used."
+}
