@@ -53,6 +53,8 @@ enum class PreviewKind {
     KWGT_DATE_TIME_3,
     BLUETOOTH_STATUS,
     WIFI_STATUS,
+    CELLULAR_STATUS,
+    BATTERY_STATUS,
     INTERSTELLAR_ENDURANCE,
     INTERSTELLAR_ENDURANCE_ANALOG,
     INTERSTELLAR_ENDURANCE_ANALOG_2,
@@ -310,6 +312,30 @@ object WidgetCatalog {
             previewKind = PreviewKind.WIFI_STATUS,
             providerClass = WifiStatusWidgetProvider::class.java,
             pinKind = PinResultReceiver.PIN_KIND_WIFI_STATUS,
+        ),
+        CatalogEntry(
+            id = "cellular_status",
+            name = "Cellular Status",
+            group = WidgetGroup.STATUS,
+            state = ImportState.READY,
+            upstream = "ConnectivityManager · ACCESS_NETWORK_STATE only · opens Internet panel",
+            descriptionRes = R.string.catalog_cellular_status_desc,
+            detailRes = R.string.ledger_ready_status,
+            previewKind = PreviewKind.CELLULAR_STATUS,
+            providerClass = CellularStatusWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_CELLULAR_STATUS,
+        ),
+        CatalogEntry(
+            id = "battery_status",
+            name = "Battery Status",
+            group = WidgetGroup.STATUS,
+            state = ImportState.READY,
+            upstream = "BatteryManager snapshot · bounded inexact refresh · opens power usage",
+            descriptionRes = R.string.catalog_battery_status_desc,
+            detailRes = R.string.ledger_ready_status,
+            previewKind = PreviewKind.BATTERY_STATUS,
+            providerClass = BatteryStatusWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_BATTERY_STATUS,
         ),
         CatalogEntry(
             id = "kwgt_nothing_battery",
@@ -973,6 +999,7 @@ enum class WidgetCategory(
             "kwgt_nothing_battery_mini",
             "kwgt_nothing_battery2",
             "kwgt_ios_battery",
+            "battery_status",
         ),
     ),
     QUOTES(
@@ -1010,7 +1037,7 @@ enum class WidgetCategory(
     WIFI(
         "wifi",
         R.string.category_wifi,
-        listOf("wifi_status"),
+        listOf("wifi_status", "cellular_status"),
     ),
     LIVE(
         "live",
@@ -1095,6 +1122,8 @@ object WidgetModeLabels {
             PreviewKind.KWGT_DATE_TIME_3 -> R.string.mode_kwgt_date_time3
             PreviewKind.BLUETOOTH_STATUS -> R.string.mode_bluetooth_status
             PreviewKind.WIFI_STATUS -> R.string.mode_wifi_status
+            PreviewKind.CELLULAR_STATUS -> R.string.mode_cellular_status
+            PreviewKind.BATTERY_STATUS -> R.string.mode_battery_status
             PreviewKind.INTERSTELLAR_ENDURANCE,
             PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG,
             PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG_2,

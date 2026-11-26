@@ -25,7 +25,7 @@ class CatalogManifestConsistencyTest {
     @Test
     fun catalogContainsTheBatchProviderCountWithoutStubs() {
         val registered = WidgetCatalog.entries.filter { it.providerClass != null }
-        assertEquals(57, registered.size)
+        assertEquals(59, registered.size)
         assertEquals(registered.size, registered.map { it.id }.toSet().size)
         assertTrue(registered.all { it.descriptionRes != 0 })
         assertTrue(registered.all { it.pinKind != null })

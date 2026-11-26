@@ -67,6 +67,8 @@ object WidgetUpdater {
         QuotesWidgetProvider::class.java,
         BluetoothStatusWidgetProvider::class.java,
         WifiStatusWidgetProvider::class.java,
+        CellularStatusWidgetProvider::class.java,
+        BatteryStatusWidgetProvider::class.java,
         BatteryWidgetProvider::class.java,
         BatteryMiniWidgetProvider::class.java,
         KwgtBattery2WidgetProvider::class.java,
@@ -175,6 +177,12 @@ object WidgetUpdater {
         BatteryRefreshScheduler.providers.forEach { provider ->
             updateProvider(context, manager, provider)
         }
+    }
+
+    fun updateConnectivityProviders(context: Context) {
+        val manager = AppWidgetManager.getInstance(context)
+        updateProvider(context, manager, WifiStatusWidgetProvider::class.java)
+        updateProvider(context, manager, CellularStatusWidgetProvider::class.java)
     }
 
     private fun updateProvider(

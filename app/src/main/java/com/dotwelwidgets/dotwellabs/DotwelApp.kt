@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.BatteryManager
 import android.os.Build
 import com.dotwelwidgets.dotwellabs.weather.WeatherCache
@@ -45,6 +47,23 @@ class DotwelApp : Application() {
         }
     }
 
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            WidgetUpdater.updateConnectivityProviders(this@DotwelApp)
+        }
+
+        override fun onLost(network: Network) {
+            WidgetUpdater.updateConnectivityProviders(this@DotwelApp)
+        }
+
+        override fun onCapabilitiesChanged(
+            network: Network,
+            networkCapabilities: android.net.NetworkCapabilities,
+        ) {
+            WidgetUpdater.updateConnectivityProviders(this@DotwelApp)
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         WeatherCache.attach(this)
@@ -58,6 +77,11 @@ class DotwelApp : Application() {
             )
         } else {
             registerReceiver(batteryChangedReceiver, filter)
+        }
+        try {
+            getSystemService(ConnectivityManager::class.java)
+                ?.registerDefaultNetworkCallback(networkCallback)
+        } catch (_: RuntimeException) {
         }
     }
 }
