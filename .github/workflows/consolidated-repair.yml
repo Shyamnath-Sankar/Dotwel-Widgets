@@ -67,6 +67,21 @@ jobs:
           git add runtime-evidence
           git commit -m 'test: preserve consolidated repair evidence'
           git push origin HEAD
+      - name: Publish ordinary APK to downloads branch
+        if: always()
+        run: |
+          set -eu
+          if [ -f /tmp/ordinary/dotwel-widgets-debug.apk ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git switch -c "downloads/widgets-apk-${GITHUB_RUN_ID}"
+            mkdir -p checkpoints
+            cp /tmp/ordinary/dotwel-widgets-debug.apk checkpoints/dotwel-widgets-debug.apk
+            cp /tmp/ordinary/SHA256.txt checkpoints/dotwel-widgets-debug-SHA256.txt
+            git add checkpoints
+            git commit -m 'checkpoint: ordinary debug APK'
+            git push origin HEAD
+          fi
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -75,3 +90,4 @@ jobs:
             /tmp/ordinary/
             runtime-evidence/
             app/build/reports/
+
