@@ -1,0 +1,38 @@
+{
+  "label": "photo_circle-settled",
+  "atMillis": 1795731085258,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 0.53 / 3.07 / 1.76",
+      "CPU usage from 15687ms to 10114ms ago (2026-11-26 22:11:09.485 to 2026-11-26 22:11:15.058):",
+      "  0.8% 27/kworker/1:0-kdmflush/254:46: 0% user + 0.8% kernel",
+      "  0.7% 381/android.hardware.sensors-service.multihal: 0.3% user + 0.3% kernel",
+      "  0.5% 407/android.hardware.graphics.composer3-service.ranchu: 0.1% user + 0.3% kernel",
+      "  0.5% 556/system_server: 0.1% user + 0.3% kernel / faults: 79 minor",
+      "  0.3% 432/surfaceflinger: 0% user + 0.3% kernel",
+      "  0% 76/kworker/1:3H-kverityd: 0% user + 0% kernel",
+      "  0% 1431/com.google.android.gms: 0% user + 0% kernel / faults: 10 minor 739 major",
+      "  0% 1568/com.google.android.googlequicksearchbox:search: 0% user + 0% kernel / faults: 14 minor 1303 major",
+      "  0% 3811/com.google.android.apps.messaging:rcs: 0% user + 0% kernel / faults: 201 minor",
+      " +0% 5838/dumpsys: 0% user + 0% kernel",
+      "1.1% TOTAL: 0.3% user + 0.7% kernel + 0% softirq"
+    ]
+  },
+  "wakeLocks": {
+    "count": 0,
+    "held": []
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}

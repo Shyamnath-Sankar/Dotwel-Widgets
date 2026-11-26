@@ -1,0 +1,40 @@
+{
+  "label": "media_mini-after-tick",
+  "atMillis": 1795731068029,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 0.62 / 3.18 / 1.78",
+      "CPU usage from 9219ms to 4119ms ago (2026-11-26 22:10:58.724 to 2026-11-26 22:11:03.824):",
+      "  1.1% 556/system_server: 0.9% user + 0.1% kernel / faults: 335 minor",
+      "  0.9% 27/kworker/1:0-kdmflush/254:46: 0% user + 0.9% kernel",
+      "  0.5% 381/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+      "  0.1% 905/com.android.systemui: 0% user + 0% kernel / faults: 345 minor 2 major",
+      "  0.3% 407/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+      "  0.3% 432/surfaceflinger: 0.1% user + 0.1% kernel / faults: 1 minor 1 major",
+      "  0% 146/servicemanager: 0% user + 0% kernel",
+      "  0.1% 170/kworker/0:2-slub_flushwq: 0% user + 0.1% kernel",
+      "  0.1% 441/adbd: 0% user + 0.1% kernel / faults: 5014 minor",
+      "  0.1% 1431/com.google.android.gms: 0.1% user + 0% kernel / faults: 25 minor 293 major",
+      "  0% 1436/com.google.android.as: 0% user + 0% kernel / faults: 20 minor",
+      " +0% 5788/dumpsys: 0% user + 0% kernel",
+      "2.3% TOTAL: 1% user + 1.1% kernel + 0% softirq"
+    ]
+  },
+  "wakeLocks": {
+    "count": 0,
+    "held": []
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}

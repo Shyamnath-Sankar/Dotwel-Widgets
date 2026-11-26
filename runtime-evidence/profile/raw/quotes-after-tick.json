@@ -1,0 +1,40 @@
+{
+  "label": "quotes-after-tick",
+  "atMillis": 1795731120910,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 0.4 / 2.72 / 1.69",
+      "CPU usage from 9197ms to 4115ms ago (2026-11-26 22:11:51.627 to 2026-11-26 22:11:56.709):",
+      "  0.1% 27/kworker/1:0-kdmflush/254:46: 0% user + 0.1% kernel",
+      "  0.5% 381/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+      "  0.5% 556/system_server: 0.3% user + 0.1% kernel / faults: 50 minor 1 major",
+      "  0.3% 407/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+      "  0.3% 1426/kworker/1:3-virtio_vsock: 0% user + 0.3% kernel",
+      "  0% 2321/com.google.android.gms.unstable: 0% user + 0% kernel / faults: 48 minor 650 major",
+      "  0.1% 432/surfaceflinger: 0% user + 0.1% kernel",
+      "  0.1% 441/adbd: 0% user + 0.1% kernel / faults: 5021 minor",
+      "  0% 866/android.hardware.biometrics.fingerprint-service.ranchu: 0% user + 0% kernel",
+      "  0.1% 1211/com.google.android.gms.persistent: 0.1% user + 0% kernel / faults: 2 minor",
+      "  0% 1568/com.google.android.googlequicksearchbox:search: 0% user + 0% kernel / faults: 14 minor 700 major",
+      " +0% 5986/dumpsys: 0% user + 0% kernel",
+      "1.1% TOTAL: 0.3% user + 0.7% kernel"
+    ]
+  },
+  "wakeLocks": {
+    "count": 0,
+    "held": []
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}

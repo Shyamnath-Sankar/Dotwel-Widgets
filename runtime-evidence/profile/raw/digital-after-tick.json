@@ -1,0 +1,41 @@
+{
+  "label": "digital-after-tick",
+  "atMillis": 1795730926552,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 6.47 / 5.09 / 2.07",
+      "CPU usage from 9199ms to 4117ms ago (2026-11-26 22:08:37.265 to 2026-11-26 22:08:42.347):",
+      "  0.5% 556/system_server: 0.3% user + 0.1% kernel / faults: 154 minor 6 major",
+      "  0.3% 381/android.hardware.sensors-service.multihal: 0.1% user + 0.1% kernel",
+      "  0.3% 407/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+      "  0% 10/kworker/u4:0-loop17: 0% user + 0% kernel",
+      "  0% 28/kworker/1:0H-kverityd: 0% user + 0% kernel",
+      "  0.1% 432/surfaceflinger: 0% user + 0.1% kernel",
+      "  0.1% 441/adbd: 0.1% user + 0% kernel / faults: 5025 minor",
+      "  0% 905/com.android.systemui: 0% user + 0% kernel / faults: 216 minor 5 major",
+      "  0% 1343/com.google.android.apps.wellbeing: 0% user + 0% kernel / faults: 77 minor 89 major",
+      "  0.1% 1426/kworker/1:3-virtio_vsock: 0% user + 0.1% kernel",
+      " +0% 5198/dumpsys: 0% user + 0% kernel",
+      "1.5% TOTAL: 0.6% user + 0.7% kernel + 0% iowait"
+    ]
+  },
+  "wakeLocks": {
+    "count": 1,
+    "held": [
+      "PARTIAL_WAKE_LOCK                 '*telephony-radio*' ACQ=-58s335ms (uid=1001 pid=1073 ws=WorkSource{1001 com.android.phone})"
+    ]
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}

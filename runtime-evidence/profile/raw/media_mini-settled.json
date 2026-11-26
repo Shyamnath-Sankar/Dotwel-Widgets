@@ -1,0 +1,37 @@
+{
+  "label": "media_mini-settled",
+  "atMillis": 1795731058784,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 0.95 / 3.46 / 1.83",
+      "CPU usage from 23894ms to 18322ms ago (2026-11-26 22:10:34.804 to 2026-11-26 22:10:40.376):",
+      "  0.8% 27/kworker/1:0-kdmflush/254:46: 0% user + 0.8% kernel",
+      "  0.5% 381/android.hardware.sensors-service.multihal: 0.1% user + 0.3% kernel",
+      "  0.5% 556/system_server: 0.1% user + 0.3% kernel / faults: 52 minor",
+      "  0.1% 407/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.1% kernel",
+      "  0.1% 432/surfaceflinger: 0% user + 0.1% kernel",
+      "  0.1% 441/adbd: 0.1% user + 0% kernel / faults: 4192 minor",
+      "  0% 974/com.android.networkstack.process: 0% user + 0% kernel / faults: 295 minor",
+      "  0% 1105/com.android.bluetooth: 0% user + 0% kernel / faults: 125 minor 169 major",
+      " +0% 5677/dumpsys: 0% user + 0% kernel",
+      "0.6% TOTAL: 0.3% user + 0.2% kernel"
+    ]
+  },
+  "wakeLocks": {
+    "count": 0,
+    "held": []
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}

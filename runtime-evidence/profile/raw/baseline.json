@@ -1,0 +1,40 @@
+{
+  "label": "baseline",
+  "atMillis": 1795730900127,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 9.83 / 5.53 / 2.13",
+      "CPU usage from 5854ms to 592ms ago (2026-11-26 22:08:14.184 to 2026-11-26 22:08:19.447):",
+      "  3.2% 556/system_server: 0.5% user + 2.6% kernel / faults: 469 minor 1 major",
+      "  0.5% 441/adbd: 0% user + 0.5% kernel / faults: 14220 minor",
+      "  0.3% 407/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.3% kernel",
+      "  0.3% 1211/com.google.android.gms.persistent: 0.1% user + 0.1% kernel / faults: 206 minor",
+      "  0.3% 1426/kworker/1:3-virtio_vsock: 0% user + 0.3% kernel",
+      "  0% 26/ksoftirqd/1: 0% user + 0% kernel",
+      "  0.1% 432/surfaceflinger: 0% user + 0.1% kernel",
+      "  0.1% 483/logcat: 0% user + 0.1% kernel",
+      "  0% 3555/com.google.android.apps.safetyhub: 0% user + 0% kernel / faults: 31 minor 770 major",
+      " +0% 5098/dumpsys: 0% user + 0% kernel",
+      "4.3% TOTAL: 1.1% user + 3.2% kernel"
+    ]
+  },
+  "wakeLocks": {
+    "count": 1,
+    "held": [
+      "PARTIAL_WAKE_LOCK                 '*telephony-radio*' ACQ=-31s911ms (uid=1001 pid=1073 ws=WorkSource{1001 com.android.phone})"
+    ]
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}

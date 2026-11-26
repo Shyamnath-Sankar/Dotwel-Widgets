@@ -1,0 +1,43 @@
+{
+  "label": "kwgt_nothing_battery-after-tick",
+  "atMillis": 1795731005882,
+  "app": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "host": {
+    "package": "com.dotwelwidgets.dotwellabs",
+    "totalPssKb": null
+  },
+  "cpu": {
+    "appPercent": null,
+    "top": [
+      "Load: 1.85 / 3.95 / 1.91",
+      "CPU usage from 9266ms to 4123ms ago (2026-11-26 22:09:56.530 to 2026-11-26 22:10:01.672):",
+      "  0.3% 905/com.android.systemui: 0.2% user + 0% kernel / faults: 759 minor 2417 major",
+      "  0.9% 1426/kworker/1:3-virtio_vsock: 0% user + 0.9% kernel",
+      "  0.7% 381/android.hardware.sensors-service.multihal: 0.1% user + 0.5% kernel",
+      "  0.5% 407/android.hardware.graphics.composer3-service.ranchu: 0% user + 0.5% kernel",
+      "  0.3% 432/surfaceflinger: 0% user + 0.3% kernel / faults: 2 minor 1 major",
+      "  0.3% 556/system_server: 0% user + 0.3% kernel / faults: 54 minor 1 major",
+      "  0% 1187/com.google.android.apps.nexuslauncher: 0% user + 0% kernel / faults: 4 minor",
+      "  0% 1/init: 0% user + 0% kernel / faults: 1 minor",
+      "  0% 170/kworker/0:2-slub_flushwq: 0% user + 0% kernel",
+      "  0% 441/adbd: 0% user + 0% kernel / faults: 10898 minor",
+      "  0.1% 483/logcat: 0% user + 0.1% kernel",
+      "  0% 1073/com.android.phone: 0% user + 0% kernel / faults: 33 minor",
+      "  0% 1678/wpa_supplicant: 0% user + 0% kernel / faults: 2 major",
+      "  0% 2321/com.google.android.gms.unstable: 0% user + 0% kernel / faults: 33 minor 1342 major",
+      " +0% 5528/dumpsys: 0% user + 0% kernel",
+      "2.2% TOTAL: 1% user + 1.1% kernel"
+    ]
+  },
+  "wakeLocks": {
+    "count": 0,
+    "held": []
+  },
+  "battery": {
+    "uid": null,
+    "excerpt": []
+  }
+}
