@@ -1,0 +1,160 @@
+{
+  "provenance": {
+    "source": "https://github.com/AumGupta/KWGT-Widgets",
+    "file": "widgets/Nothing_Digital3.kwgt!preset.json",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": "Author font payloads, tap intent strings and any email fields were removed. Layer geometry, colour formulas, minute thresholds and text expressions only."
+  },
+  "preset_info": {
+    "author": "Om Gupta",
+    "title": "NothingDigital3",
+    "version": 13,
+    "width": 415,
+    "height": 542
+  },
+  "globals": {
+    "side": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$",
+    "bg": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$",
+    "fg": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$",
+    "accent": "$ce(gv(fg), alpha, 35)$",
+    "primary": "#FFD71921",
+    "accent2": "$ce(gv(fg), alpha, 15)$"
+  },
+  "background": {
+    "internal_type": "ShapeModule",
+    "internal_title": "Bg",
+    "internal_globals": {
+      "shape_width": "side",
+      "shape_height": "h",
+      "paint_color": "bg"
+    },
+    "internal_formulas": {
+      "shape_corners": "$gv(side)/5$"
+    },
+    "paint_color": "#FF1B1B1D",
+    "tap": "removed; the native provider uses ACTION_SHOW_ALARMS"
+  },
+  "pattern": {
+    "internal_type": "StackLayerModule",
+    "internal_title": "Pattern",
+    "config_stacking": "VERTICAL_RIGHT",
+    "internal_formulas": {
+      "position_offset_x": "$gv(side)/8.5$",
+      "config_margin": "-$gv(side)/21.875$"
+    },
+    "circle_grid": {
+      "internal_title": "Circle Grid",
+      "config_stacking": "HORIZONTAL_CENTER",
+      "internal_formulas": {
+        "config_margin": "$gv(side)/(277/12)$"
+      },
+      "column_stacking": "VERTICAL_CENTER",
+      "column_margin": "$gv(side)/(277/12)$",
+      "dot_shape": "CIRCLE",
+      "dot_formula": "$gv(side)/(277/48)$",
+      "columns": [
+        [
+          {"paint_color": "primary", "text_expression": "$tc(up,df(hh))$", "text_family": "DotGlyphFont"},
+          {"paint_color": "accent"},
+          {"paint_color": "accent"},
+          {"paint_color": "$if(df(mm)>39, gv(accent), gv(accent2))$"}
+        ],
+        [
+          {"paint_color": "primary", "text_expression": "$tc(up,df(mm))$", "text_family": "DotGlyphFont"},
+          {"paint_color": "accent", "text_expression": "$tc(up,df(aa))$", "text_family": "DotGlyphFont", "text_globals": {"paint_color": "bg"}},
+          {"paint_color": "$if(df(mm)>9, gv(accent), gv(accent2))$"},
+          {"paint_color": "accent2"}
+        ],
+        [
+          {"paint_color": "accent2"},
+          {"paint_color": "$if(df(mm)>49, gv(accent), gv(accent2))$"},
+          {"paint_color": "$if(df(mm)>29, gv(accent), gv(accent2))$"},
+          {"paint_color": "accent2"}
+        ],
+        [
+          {"paint_color": "accent2"},
+          {"paint_color": "accent2"},
+          {"paint_color": "accent2"},
+          {"paint_color": "accent2"}
+        ]
+      ],
+      "text_modules": [
+        {
+          "internal_title": "Hour",
+          "text_expression": "$tc(up,df(hh))$",
+          "text_family": "DotGlyphFont",
+          "internal_formulas": {
+            "text_size": "$gv(side)/(277/22)$",
+            "position_padding_top": "$gv(side)/(277/3)$",
+            "position_padding_bottom": "$gv(side)/(277/2)$",
+            "position_padding_left": "$gv(side)/(277/2)$"
+          }
+        },
+        {
+          "internal_title": "Minute",
+          "text_expression": "$tc(up,df(mm))$",
+          "text_family": "DotGlyphFont",
+          "internal_formulas": {
+            "text_size": "$gv(side)/(277/22)$",
+            "position_padding_top": "$gv(side)/(277/3)$",
+            "position_padding_bottom": "$gv(side)/(277/2)$"
+          }
+        },
+        {
+          "internal_title": "AmPm",
+          "text_expression": "$tc(up,df(aa))$",
+          "text_family": "DotGlyphFont",
+          "internal_globals": {"paint_color": "bg"},
+          "internal_formulas": {
+            "text_size": "$gv(side)/(277/22)$",
+            "position_padding_top": "$gv(side)/(277/3)$",
+            "position_padding_bottom": "$gv(side)/(277/2)$",
+            "position_padding_left": "$gv(side)/(277/2)$"
+          }
+        }
+      ]
+    },
+    "joint_helpers": {
+      "vertical_joints": {
+        "config_margin": "$gv(side)/(277/40)$",
+        "child_margin": "$gv(side)/(277/10.5)$",
+        "block": {"shape_type": "RECT", "size": "$gv(side)/(277/20)$"},
+        "mask": {"config_margin": "$gv(side)/(277/10)$", "circles": 2, "circle_size": "$gv(side)/(277/20)$"},
+        "visibility": ["NEVER", "NEVER", "ALWAYS", "ALWAYS"]
+      },
+      "horizontal_joints": {
+        "config_margin": "$gv(side)/(277/40)$",
+        "child_margin": "$gv(side)/(277/10.5)$",
+        "block": {"shape_type": "RECT", "size": "$gv(side)/(277/20)$"},
+        "mask": {"config_margin": "$gv(side)/(277/10)$", "circles": 2, "circle_size": "$gv(side)/(277/20)$"},
+        "visibility_formulas": [
+          ["ALWAYS", "ALWAYS", "$if(df(mm)>9, ALWAYS, NEVER)$", "NEVER"],
+          ["NEVER", "NEVER", "$if(df(mm)>29, ALWAYS, NEVER)$", "NEVER"],
+          ["NEVER", "$if(df(mm)>39, ALWAYS, NEVER)$", "$if(df(mm)>49, ALWAYS, NEVER)$", "NEVER"]
+        ]
+      }
+    }
+  },
+  "dotwel_conversion": {
+    "provider": "KwgtDigital3WidgetProvider",
+    "renderer": "KwgtDigital3Renderer",
+    "retained": [
+      "side = min(width, height)",
+      "rounded corners = side / 5",
+      "4 by 4 circle grid with side * 48 / 277 diameters and side * 12 / 277 margins",
+      "Pattern offset side / 8.5 right and side / 21.875 up, clamped only when the host is too narrow",
+      "primary #D71921 text cells, accent = fg at 35% alpha, accent2 = fg at 15% alpha",
+      "minute thresholds mm > 9, mm > 29, mm > 39 and mm > 49",
+      "uppercase df(hh), df(mm) and df(aa) text modules",
+      "tap on the background uses ACTION_SHOW_ALARMS"
+    ],
+    "substitutions": [
+      "ndot-47.ttf replaced by app-owned DotGlyphFont 5x7 dot glyphs",
+      "author text-cell padding approximated by a centred fitted text region",
+      "source helper joint layers reproduced from the explicit ancestor/child visibility tables as cut-out bars so translucent joints never double-paint over dots",
+      "access-off widget draws the same dot matrix without text and overlays live platform TextClocks for hh, mm and aa"
+    ]
+  }
+}

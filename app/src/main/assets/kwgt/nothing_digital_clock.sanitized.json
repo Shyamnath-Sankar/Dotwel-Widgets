@@ -1,0 +1,263 @@
+{
+  "provenance": {
+    "source": "https://github.com/AumGupta/KWGT-Widgets",
+    "file": "widgets/Nothing_Digital_Clock.kwgt!preset.json",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": "Author contact field, launch-app tap events, font payload/reference and bundled preview images were removed. Layer geometry, colour formulas, rotate modes, inactive toggle values and structure are retained."
+  },
+  "preset_info": {
+    "title": "NothingDigitalClock",
+    "description": "Digital clock based on Nothing OS.",
+    "features": "ANALOG_CLOCK",
+    "version": 13,
+    "width": 415,
+    "height": 542
+  },
+  "globals": {
+    "bg": {
+      "type": "COLOR",
+      "value": "#FF1B1B1D",
+      "toggles": 10,
+      "global_formula": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$"
+    },
+    "hour": {
+      "type": "COLOR",
+      "value": "#FFD71921",
+      "global_formula": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$",
+      "active_note": "no toggles field, so the source global formula has no active flag; the native hour dot keeps the source primary red #FFD71921"
+    },
+    "minute": {
+      "type": "COLOR",
+      "value": "#FF6C696E",
+      "toggles": 10,
+      "global_formula": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$",
+      "active_note": "toggles 10, so the source minute global formula is active; dark mode resolves white and light mode resolves ink"
+    },
+    "orbits": {
+      "type": "COLOR",
+      "value": "#80FFFFFF",
+      "toggles": 10,
+      "global_formula": "$if(si(darkmode)=1, #80FFFFFF, #801B1B1D)$"
+    },
+    "side": {
+      "type": "NUMBER",
+      "min": 0,
+      "max": 720,
+      "toggles": 10,
+      "global_formula": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$"
+    }
+  },
+  "root": {
+    "internal_toggles": {
+      "config_scale_value": 0
+    },
+    "internal_formulas": {
+      "config_scale_value": "$mu(floor, if(si(rwidth)<si(rheight),si(rwidth),si(rheight))/3)$"
+    },
+    "internal_globals": {
+      "config_scale_value": "radius"
+    }
+  },
+  "layers": [
+    {
+      "internal_title": "Bg",
+      "type": "ShapeModule",
+      "shape_type": "CIRCLE",
+      "shape_width": 277.0,
+      "shape_height": 80,
+      "paint_stroke": 3.0,
+      "internal_toggles": {
+        "paint_color": 100,
+        "shape_width": 100
+      },
+      "internal_globals": {
+        "paint_color": "bg",
+        "shape_width": "side"
+      }
+    },
+    {
+      "internal_title": "Inner Circle",
+      "type": "ShapeModule",
+      "shape_type": "CIRCLE",
+      "shape_width": 164.0,
+      "shape_corners": 360,
+      "internal_toggles": {
+        "paint_color": 100,
+        "shape_width": 10
+      },
+      "internal_globals": {
+        "paint_color": "minute"
+      },
+      "internal_formulas": {
+        "shape_width": "$gv(side)/(277/164)$"
+      }
+    },
+    {
+      "internal_title": "Time",
+      "type": "TextModule",
+      "text_expression": null,
+      "text_expression_note": "The source Time TextModule omits text_expression. The embedded upstream preview clearly shows 02:11, so Dotwel records an explicit preview-led hh:mm default repair. This is not a claim that a literal source expression was present.",
+      "text_size": 46.0,
+      "text_align": "CENTER",
+      "position_offset_x": 3.0,
+      "position_offset_y": -4.0,
+      "internal_toggles": {
+        "paint_color": 100,
+        "text_size": 10,
+        "position_offset_x": 10,
+        "position_offset_y": 10
+      },
+      "internal_globals": {
+        "paint_color": "bg"
+      },
+      "internal_formulas": {
+        "text_size": "$gv(side)/(277/46)$",
+        "position_offset_x": "$gv(side)/(277/3)$",
+        "position_offset_y": "-$gv(side)/(277/4)$"
+      }
+    },
+    {
+      "internal_title": "Minute Orbit",
+      "type": "ShapeModule",
+      "shape_type": "CIRCLE",
+      "shape_width": 245.0,
+      "shape_height": 80,
+      "paint_style": "STROKE",
+      "paint_stroke": 0.5,
+      "paint_color": "#80FFFFFF",
+      "internal_toggles": {
+        "paint_color": 100,
+        "shape_width": 10,
+        "paint_stroke": 10
+      },
+      "internal_globals": {
+        "paint_color": "orbits",
+        "shape_width": "radius"
+      },
+      "internal_formulas": {
+        "shape_width": "$gv(side)/(277/245)$",
+        "paint_stroke": "$gv(side)/(277/0.5)$"
+      }
+    },
+    {
+      "internal_title": "Hour Orbit",
+      "type": "ShapeModule",
+      "shape_type": "CIRCLE",
+      "shape_width": 205.0,
+      "shape_height": 80,
+      "paint_style": "STROKE",
+      "paint_stroke": 0.5,
+      "paint_color": "#80FFFFFF",
+      "internal_toggles": {
+        "paint_color": 100,
+        "shape_width": 10,
+        "paint_stroke": 10
+      },
+      "internal_globals": {
+        "paint_color": "orbits",
+        "shape_width": "radius"
+      },
+      "internal_formulas": {
+        "shape_width": "$gv(side)/(277/205)$",
+        "paint_stroke": "$gv(side)/(277/0.5)$"
+      }
+    },
+    {
+      "internal_title": "Hours Hand",
+      "type": "OverlapLayerModule",
+      "config_rotate_mode": "CLOCK_HOUR_SMOOTH",
+      "config_rotate_offset": 90.0,
+      "internal_toggles": {
+        "config_rotate_mode": 0
+      },
+      "internal_formulas": {
+        "config_rotate_mode": "CLOCK_SECOND"
+      },
+      "rotate_note": "The stored config_rotate_mode is CLOCK_HOUR_SMOOTH. The formula value CLOCK_SECOND and toggle 0 are inactive and must not add a seconds hand.",
+      "stack": {
+        "config_stacking": "HORIZONTAL_CENTER",
+        "dot": {
+          "type": "ShapeModule",
+          "shape_type": "CIRCLE",
+          "shape_width": 12.0,
+          "position_padding_right": 202.0,
+          "internal_toggles": {
+            "paint_color": 100,
+            "shape_width": 10,
+            "position_padding_right": 10
+          },
+          "internal_globals": {
+            "paint_color": "hour"
+          },
+          "internal_formulas": {
+            "shape_width": "$gv(side)/(277/12)$",
+            "position_padding_right": "$gv(side)/(277/204)$"
+          }
+        }
+      }
+    },
+    {
+      "internal_title": "Minutes Hand",
+      "type": "OverlapLayerModule",
+      "config_rotate_mode": "CLOCK_MINUTE",
+      "config_rotate_offset": 90.0,
+      "internal_toggles": {
+        "config_rotate_mode": 0
+      },
+      "internal_formulas": {
+        "config_rotate_mode": "CLOCK_SECOND"
+      },
+      "rotate_note": "The stored config_rotate_mode is CLOCK_MINUTE. The formula value CLOCK_SECOND and toggle 0 are inactive and must not add a seconds hand.",
+      "stack": {
+        "config_stacking": "HORIZONTAL_CENTER",
+        "dot": {
+          "type": "ShapeModule",
+          "shape_type": "CIRCLE",
+          "shape_width": 12.0,
+          "position_padding_right": 245.0,
+          "internal_toggles": {
+            "paint_color": 100,
+            "shape_width": 10,
+            "position_padding_right": 10
+          },
+          "internal_globals": {
+            "paint_color": "minute"
+          },
+          "internal_formulas": {
+            "shape_width": "$gv(side)/(277/12)$",
+            "position_padding_right": "$gv(side)/(277/245)$"
+          }
+        }
+      }
+    }
+  ],
+  "dotwel_conversion": {
+    "provider": "KwgtOrbitClockWidgetProvider",
+    "layouts": [
+      "widget_kwgt_orbit_black",
+      "widget_kwgt_orbit_translucent",
+      "widget_kwgt_orbit_transparent"
+    ],
+    "retained": [
+      "side = min(width, height)",
+      "277 outer circle with the source bg formula",
+      "164 inner circle with the active minute formula (white in dark mode)",
+      "central hh:mm at source text size 46/277 and offsets +3/-4, drawn by a live platform TextClock",
+      "205 hour orbit and 245 minute orbit, each a 0.5 stroke",
+      "12 hour dot in source primary red #D71921",
+      "12 minute dot, white on the black style",
+      "CLOCK_HOUR_SMOOTH hour rotation and CLOCK_MINUTE minute rotation",
+      "config_rotate_offset 90 and the horizontal-stack right paddings 204/245 that place the dot centres at radius 102/122.5"
+    ],
+    "substitutions": [
+      "author dot font replaced by the Android platform sans-serif family",
+      "source launch-app tap event replaced by AlarmClock.ACTION_SHOW_ALARMS",
+      "stored CLOCK_SECOND formula values with toggle 0 left inactive; no seconds hand and no API 31 restriction added",
+      "native 12-o'clock dot vectors plus platform AnalogClock rotation absorb the source 90 offset; at the preview 02:11 the hour dot is around 2 and the minute dot just after 2",
+      "the outer bg/inner circle/orbits are static vectors; the hour and minute dots are transparent-canvas hand vectors matching the 277 intrinsic"
+    ],
+    "preview_led_repair": "The Time layer has no source text_expression. The embedded upstream preview shows 02:11, so the native TextClock uses hh:mm (12-hour, zero-padded) and HH:mm (24-hour, zero-padded). This is a documented preview-led repair, not a literal source expression."
+  }
+}

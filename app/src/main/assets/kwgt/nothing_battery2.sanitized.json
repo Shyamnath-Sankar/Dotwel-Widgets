@@ -1,0 +1,267 @@
+{
+  "_source": {
+    "repository": "https://github.com/AumGupta/KWGT-Widgets",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "file": "widgets/Nothing_Battery2.kwgt!preset.json",
+    "title": "NothingBattery2",
+    "author": "Om Gupta",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": [
+      "author contact field removed",
+      "author tap action payloads removed",
+      "author font family payloads and font file names removed",
+      "no upstream font file, preset package or preview image is bundled"
+    ],
+    "corrections": [
+      "source height 542 and the missing h global are fitted to the host height; the vertical stack is centred, not cropped",
+      "literal body/clip/progress/nub values are scaled from the author 277 design reference",
+      "discharge time is never fabricated; only a real charging estimate is shown"
+    ]
+  },
+  "preset_info": {
+    "title": "NothingBattery2",
+    "width": 415,
+    "height": 542,
+    "version": 13
+  },
+  "preset_root": {
+    "internal_type": "RootLayerModule",
+    "globals_list": {
+      "side": {
+        "type": "NUMBER",
+        "global_formula": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$"
+      },
+      "fg": {
+        "type": "COLOR",
+        "global_formula": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "bg": {
+        "type": "COLOR",
+        "global_formula": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "primary": {
+        "type": "COLOR",
+        "note": "no value in source; REMAINING paint fallback #FFD71921 is retained"
+      },
+      "accent": {
+        "type": "COLOR",
+        "global_formula": "$ce(gv(fg), alpha, 50)$"
+      }
+    },
+    "viewgroup_items": [
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Bg",
+        "internal_toggles": {
+          "shape_width": 100,
+          "shape_height": 100,
+          "paint_color": 100,
+          "shape_corners": 10
+        },
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "h",
+          "paint_color": "bg"
+        },
+        "shape_corners": 58,
+        "internal_formulas": {
+          "shape_corners": "$gv(side)/5$"
+        },
+        "paint_color": "#FF1B1B1D"
+      },
+      {
+        "internal_type": "StackLayerModule",
+        "internal_title": "Info",
+        "internal_toggles": {
+          "position_offset_x": 0
+        },
+        "internal_formulas": {
+          "position_offset_x": "$gv(side)/8.5$ "
+        },
+        "internal_globals": {
+          "position_offset_x": "side"
+        },
+        "viewgroup_items": [
+          {
+            "internal_type": "TextModule",
+            "text_expression": "BATTERY",
+            "text_size": 32.0,
+            "internal_toggles": {
+              "paint_color": 100,
+              "text_size": 10
+            },
+            "internal_globals": {
+              "paint_color": "fg"
+            },
+            "internal_formulas": {
+              "text_size": "$gv(side)/18$"
+            },
+            "position_padding_bottom": 16.0
+          },
+          {
+            "internal_type": "StackLayerModule",
+            "internal_title": "Battery",
+            "config_stacking": "HORIZONTAL_CENTER",
+            "config_margin": 5.0,
+            "viewgroup_items": [
+              {
+                "internal_type": "OverlapLayerModule",
+                "viewgroup_items": [
+                  {
+                    "internal_type": "ShapeModule",
+                    "internal_title": "Border",
+                    "internal_toggles": {
+                      "shape_width": 0,
+                      "paint_color": 100
+                    },
+                    "internal_formulas": {
+                      "shape_width": "$gv(side)/1.42$"
+                    },
+                    "shape_type": "RECT",
+                    "shape_height": 78.0,
+                    "shape_corners": 14.0,
+                    "paint_style": "STROKE",
+                    "paint_stroke": 3.5,
+                    "shape_width": 195.0,
+                    "internal_globals": {
+                      "paint_color": "fg"
+                    }
+                  },
+                  {
+                    "internal_type": "ShapeModule",
+                    "internal_toggles": {
+                      "shape_width": 0
+                    },
+                    "internal_formulas": {
+                      "shape_width": "$gv(side)/1.53$"
+                    },
+                    "shape_type": "RECT",
+                    "shape_height": 64.0,
+                    "shape_corners": 7.0,
+                    "internal_title": "Clip",
+                    "fx_mask": "CLIP_NEXT",
+                    "shape_width": 179.0
+                  },
+                  {
+                    "internal_type": "ProgressModule",
+                    "internal_toggles": {
+                      "style_size": 0,
+                      "progress_level": 10,
+                      "progress_rotate_mode": 10,
+                      "color_fgcolor": 100,
+                      "color_bgcolor": 100
+                    },
+                    "internal_formulas": {
+                      "style_size": "$gv(side)/1.5$",
+                      "progress_level": "$bi(level)$"
+                    },
+                    "progress_progress": "CUSTOM",
+                    "progress_mode": "SHAPES",
+                    "progress_count": 16.0,
+                    "style_size": 184.0,
+                    "style_shape": "RECT",
+                    "style_width": 60.0,
+                    "style_height": 64.0,
+                    "internal_globals": {
+                      "color_fgcolor": "fg",
+                      "color_bgcolor": "accent"
+                    }
+                  }
+                ]
+              },
+              {
+                "internal_type": "ShapeModule",
+                "shape_type": "RECT",
+                "shape_width": 5.0,
+                "shape_height": 28.0,
+                "shape_corners": 360,
+                "internal_toggles": {
+                  "paint_color": 100
+                },
+                "internal_globals": {
+                  "paint_color": "fg"
+                }
+              }
+            ]
+          },
+          {
+            "internal_type": "StackLayerModule",
+            "config_stacking": "HORIZONTAL_BOTTOM",
+            "viewgroup_items": [
+              {
+                "internal_type": "TextModule",
+                "text_expression": "$bi(level)$",
+                "text_size": 32.0,
+                "internal_toggles": {
+                  "paint_color": 100,
+                  "text_size": 10
+                },
+                "internal_globals": {
+                  "paint_color": "fg"
+                },
+                "internal_formulas": {
+                  "text_size": "$gv(side)/4.5$"
+                }
+              },
+              {
+                "internal_type": "TextModule",
+                "text_expression": "%",
+                "text_size": 32.0,
+                "internal_toggles": {
+                  "paint_color": 100,
+                  "text_size": 10
+                },
+                "internal_globals": {
+                  "paint_color": "fg"
+                },
+                "internal_formulas": {
+                  "text_size": "$gv(side)/10$"
+                }
+              }
+            ]
+          },
+          {
+            "internal_type": "StackLayerModule",
+            "config_stacking": "HORIZONTAL_BOTTOM",
+            "config_margin": 8.0,
+            "viewgroup_items": [
+              {
+                "internal_type": "TextModule",
+                "text_expression": "$tf(bi(fullempty), h)$H$tf(bi(fullempty), m)$M",
+                "text_size": 32.0,
+                "internal_toggles": {
+                  "paint_color": 100,
+                  "text_size": 10
+                },
+                "internal_globals": {
+                  "paint_color": "fg"
+                },
+                "internal_formulas": {
+                  "text_size": "$gv(side)/15$"
+                },
+                "note": "native Android uses only BatteryManager.computeChargeTimeRemaining while charging; otherwise -- is shown"
+              },
+              {
+                "internal_type": "TextModule",
+                "text_expression": "REMAINING",
+                "text_size": 32.0,
+                "internal_toggles": {
+                  "paint_color": 100,
+                  "text_size": 10
+                },
+                "internal_globals": {
+                  "paint_color": "primary"
+                },
+                "internal_formulas": {
+                  "text_size": "$gv(side)/15$"
+                },
+                "paint_color": "#FFD71921"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

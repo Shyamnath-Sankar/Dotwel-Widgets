@@ -1,0 +1,384 @@
+{
+  "endurance": {
+    "top_nodes": 1,
+    "layers": {
+      "seconds_black": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "progress_tick": 61,
+          "progress": 6,
+          "overlap": 49,
+          "shape": 85,
+          "shape_rect": 65,
+          "color_fg": 83,
+          "shape_rtri": 8,
+          "stack": 93,
+          "clear_shape": 121,
+          "color_fgl": 1,
+          "shape_oval": 2,
+          "clip_all": 3,
+          "shape_tri": 10,
+          "color_None": 1
+        }
+      },
+      "seconds_translucent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "progress_tick": 61,
+          "progress": 6,
+          "overlap": 49,
+          "shape": 85,
+          "shape_rect": 65,
+          "color_fg": 83,
+          "shape_rtri": 8,
+          "stack": 93,
+          "clear_shape": 121,
+          "color_fgl": 1,
+          "shape_oval": 2,
+          "clip_all": 3,
+          "shape_tri": 10,
+          "color_None": 1
+        }
+      },
+      "seconds_transparent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "progress_tick": 61,
+          "progress": 6,
+          "overlap": 49,
+          "shape": 85,
+          "shape_rect": 65,
+          "color_fg": 83,
+          "shape_rtri": 8,
+          "stack": 93,
+          "clear_shape": 121,
+          "color_fgl": 1,
+          "shape_oval": 2,
+          "clip_all": 3,
+          "shape_tri": 10,
+          "color_None": 1
+        }
+      }
+    },
+    "unsupported": [],
+    "scene_counts": {
+      "progress_tick": 61,
+      "progress": 6,
+      "overlap": 49,
+      "shape": 85,
+      "shape_rect": 65,
+      "color_fg": 83,
+      "shape_rtri": 8,
+      "stack": 93,
+      "clear_shape": 121,
+      "color_fgl": 1,
+      "shape_oval": 2,
+      "clip_all": 3,
+      "shape_tri": 10,
+      "color_None": 1
+    }
+  },
+  "analog": {
+    "top_nodes": 3,
+    "layers": {
+      "seconds_black": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "progress_tick": 61,
+          "progress": 6,
+          "overlap": 49,
+          "shape": 85,
+          "shape_rect": 65,
+          "color_fg": 83,
+          "shape_rtri": 8,
+          "stack": 93,
+          "clear_shape": 121,
+          "color_fgl": 1,
+          "shape_oval": 2,
+          "clip_all": 3,
+          "shape_tri": 10,
+          "color_None": 1
+        }
+      },
+      "hour_black": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "shape": 1,
+          "shape_tri": 1,
+          "color_hour": 1,
+          "overlap": 2
+        }
+      },
+      "minute_black": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "shape": 1,
+          "shape_tri": 1,
+          "color_minute": 1,
+          "overlap": 2
+        }
+      },
+      "seconds_translucent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "progress_tick": 61,
+          "progress": 6,
+          "overlap": 49,
+          "shape": 85,
+          "shape_rect": 65,
+          "color_fg": 83,
+          "shape_rtri": 8,
+          "stack": 93,
+          "clear_shape": 121,
+          "color_fgl": 1,
+          "shape_oval": 2,
+          "clip_all": 3,
+          "shape_tri": 10,
+          "color_None": 1
+        }
+      },
+      "hour_translucent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "shape": 1,
+          "shape_tri": 1,
+          "color_hour": 1,
+          "overlap": 2
+        }
+      },
+      "minute_translucent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "shape": 1,
+          "shape_tri": 1,
+          "color_minute": 1,
+          "overlap": 2
+        }
+      },
+      "seconds_transparent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "progress_tick": 61,
+          "progress": 6,
+          "overlap": 49,
+          "shape": 85,
+          "shape_rect": 65,
+          "color_fg": 83,
+          "shape_rtri": 8,
+          "stack": 93,
+          "clear_shape": 121,
+          "color_fgl": 1,
+          "shape_oval": 2,
+          "clip_all": 3,
+          "shape_tri": 10,
+          "color_None": 1
+        }
+      },
+      "hour_transparent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "shape": 1,
+          "shape_tri": 1,
+          "color_hour": 1,
+          "overlap": 2
+        }
+      },
+      "minute_transparent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "shape": 1,
+          "shape_tri": 1,
+          "color_minute": 1,
+          "overlap": 2
+        }
+      }
+    },
+    "unsupported": [],
+    "scene_counts": {
+      "progress_tick": 61,
+      "progress": 6,
+      "overlap": 53,
+      "shape": 87,
+      "shape_rect": 65,
+      "color_fg": 83,
+      "shape_rtri": 8,
+      "stack": 93,
+      "clear_shape": 121,
+      "color_fgl": 1,
+      "shape_oval": 2,
+      "clip_all": 3,
+      "shape_tri": 12,
+      "color_None": 1,
+      "color_hour": 1,
+      "color_minute": 1
+    }
+  },
+  "analog2": {
+    "top_nodes": 3,
+    "layers": {
+      "dial_black": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "progress_tick": 61,
+          "progress": 6,
+          "overlap": 48,
+          "shape": 85,
+          "shape_rect": 65,
+          "color_fg": 83,
+          "shape_rtri": 8,
+          "stack": 93,
+          "clear_shape": 121,
+          "color_fgl": 1,
+          "shape_oval": 2,
+          "clip_all": 3,
+          "shape_tri": 10,
+          "color_None": 1
+        }
+      },
+      "hour_black": {
+        "prims": 1,
+        "unsupported": [
+          "MULTIPLY approximated as source color; needs pixel validation"
+        ],
+        "counts": {
+          "multiply_shape": 1,
+          "shape": 1,
+          "shape_rect": 1,
+          "color_hour": 1,
+          "overlap": 1
+        }
+      },
+      "minute_black": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "shape": 1,
+          "shape_tri": 1,
+          "color_minute": 1,
+          "overlap": 2
+        }
+      },
+      "dial_translucent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "progress_tick": 61,
+          "progress": 6,
+          "overlap": 48,
+          "shape": 85,
+          "shape_rect": 65,
+          "color_fg": 83,
+          "shape_rtri": 8,
+          "stack": 93,
+          "clear_shape": 121,
+          "color_fgl": 1,
+          "shape_oval": 2,
+          "clip_all": 3,
+          "shape_tri": 10,
+          "color_None": 1
+        }
+      },
+      "hour_translucent": {
+        "prims": 1,
+        "unsupported": [
+          "MULTIPLY approximated as source color; needs pixel validation"
+        ],
+        "counts": {
+          "multiply_shape": 1,
+          "shape": 1,
+          "shape_rect": 1,
+          "color_hour": 1,
+          "overlap": 1
+        }
+      },
+      "minute_translucent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "shape": 1,
+          "shape_tri": 1,
+          "color_minute": 1,
+          "overlap": 2
+        }
+      },
+      "dial_transparent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "progress_tick": 61,
+          "progress": 6,
+          "overlap": 48,
+          "shape": 85,
+          "shape_rect": 65,
+          "color_fg": 83,
+          "shape_rtri": 8,
+          "stack": 93,
+          "clear_shape": 121,
+          "color_fgl": 1,
+          "shape_oval": 2,
+          "clip_all": 3,
+          "shape_tri": 10,
+          "color_None": 1
+        }
+      },
+      "hour_transparent": {
+        "prims": 1,
+        "unsupported": [
+          "MULTIPLY approximated as source color; needs pixel validation"
+        ],
+        "counts": {
+          "multiply_shape": 1,
+          "shape": 1,
+          "shape_rect": 1,
+          "color_hour": 1,
+          "overlap": 1
+        }
+      },
+      "minute_transparent": {
+        "prims": 1,
+        "unsupported": [],
+        "counts": {
+          "shape": 1,
+          "shape_tri": 1,
+          "color_minute": 1,
+          "overlap": 2
+        }
+      }
+    },
+    "unsupported": [
+      "MULTIPLY approximated as source color; needs pixel validation"
+    ],
+    "scene_counts": {
+      "progress_tick": 61,
+      "progress": 6,
+      "overlap": 51,
+      "shape": 87,
+      "shape_rect": 66,
+      "color_fg": 83,
+      "shape_rtri": 8,
+      "stack": 93,
+      "clear_shape": 121,
+      "color_fgl": 1,
+      "shape_oval": 2,
+      "clip_all": 3,
+      "shape_tri": 11,
+      "color_None": 1,
+      "multiply_shape": 1,
+      "color_hour": 1,
+      "color_minute": 1
+    }
+  }
+}

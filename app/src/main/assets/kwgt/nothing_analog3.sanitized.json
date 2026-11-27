@@ -1,0 +1,93 @@
+{
+  "provenance": {
+    "source": "https://github.com/AumGupta/KWGT-Widgets",
+    "file": "widgets/Nothing_Analog_3.kwgt!preset.json",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": "Author email, the launch-app tap intent, font payloads and any asset references were removed. Layer geometry, shape formulas and colour formulas only. The source has no seconds layer."
+  },
+  "preset_info": {
+    "author": "Om Gupta",
+    "title": "NothingAnalog3",
+    "version": 13,
+    "width": 415,
+    "height": 542
+  },
+  "globals": {
+    "bg": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$",
+    "fg": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$",
+    "side": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$"
+  },
+  "dial": {
+    "internal_type": "ShapeModule",
+    "internal_title": "Border",
+    "internal_globals": {
+      "paint_color": "bg",
+      "shape_width": "side"
+    },
+    "shape_type": "CIRCLE",
+    "shape_width": 277.0,
+    "shape_height": 80,
+    "paint_stroke": 3.0,
+    "native_port": "The native provider uses a filled 138.5-radius vector dial in the 277 viewport instead of the source stroke."
+  },
+  "minute_hand": {
+    "internal_type": "OverlapLayerModule",
+    "internal_title": "Minutes Hand",
+    "config_rotate_mode": "CLOCK_MINUTE",
+    "hand": {
+      "internal_type": "ShapeModule",
+      "internal_globals": {
+        "paint_color": "fg"
+      },
+      "shape_type": "RECT",
+      "shape_height": 112.0,
+      "shape_corners": 360,
+      "paint_style": "STROKE",
+      "paint_stroke": 2.0,
+      "internal_formulas": {
+        "shape_width": "$gv(side)/13.85$",
+        "shape_height": "$gv(side)/2.475$",
+        "position_padding_bottom": "$gv(side)/2.988$",
+        "paint_stroke": "$gv(side)/138.5$"
+      }
+    }
+  },
+  "hour_hand": {
+    "internal_type": "OverlapLayerModule",
+    "internal_title": "Hours Hand",
+    "config_rotate_mode": "CLOCK_HOUR_SMOOTH",
+    "hand": {
+      "internal_type": "ShapeModule",
+      "internal_globals": {
+        "paint_color": "fg"
+      },
+      "shape_type": "RECT",
+      "shape_height": 82.0,
+      "shape_corners": 360,
+      "paint_style": "STROKE",
+      "paint_stroke": 2.0,
+      "internal_formulas": {
+        "shape_width": "$gv(side)/13.85$",
+        "shape_height": "$gv(side)/3.3765$",
+        "position_padding_bottom": "$gv(side)/4.4675$",
+        "paint_stroke": "$gv(side)/138.5$"
+      }
+    }
+  },
+  "native_port": {
+    "provider": "KwgtAnalog3WidgetProvider",
+    "clock": "android.widget.AnalogClock",
+    "viewport": 277,
+    "dial_radius": 138.5,
+    "hand_width": "$gv(side)/13.85$ = 20 at side 277",
+    "hand_stroke": "$gv(side)/138.5$ = 2 at side 277",
+    "capsule_radius": 10,
+    "minute_height": "$gv(side)/2.475$",
+    "minute_center_y": "138.5 - ($gv(side)/2.988) / 2",
+    "hour_height": "$gv(side)/3.3765$",
+    "hour_center_y": "138.5 - ($gv(side)/4.4675) / 2",
+    "tap": "removed; the native provider uses ACTION_SHOW_ALARMS"
+  }
+}

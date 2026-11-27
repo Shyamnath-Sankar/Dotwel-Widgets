@@ -1,0 +1,166 @@
+{
+  "_source": {
+    "repository": "https://github.com/AumGupta/KWGT-Widgets",
+    "commit": "96ca27be4cbff35efec5a86c64dd39fd065c958f",
+    "file": "widgets/Nothing_Battery_Mini.kwgt!preset.json",
+    "title": "NothingBatteryMini",
+    "author": "Om Gupta",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": [
+      "preset_info.email removed",
+      "no bundled font is referenced by this preset"
+    ]
+  },
+  "preset_info": {
+    "title": "NothingBatteryMini",
+    "width": 415,
+    "height": 226,
+    "version": 13
+  },
+  "preset_root": {
+    "internal_type": "RootLayerModule",
+    "globals_list": {
+      "side": { "type": "NUMBER", "global_formula": "277" },
+      "bg": {
+        "type": "COLOR",
+        "global_formula": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "fg": {
+        "type": "COLOR",
+        "global_formula": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "primary": { "type": "COLOR", "value": "#FFD71921" },
+      "accent ": {
+        "type": "COLOR",
+        "global_formula": "$ce(gv(fg), alpha, 20)$"
+      },
+      "h": { "type": "NUMBER", "global_formula": "151" },
+      "w": { "type": "NUMBER", "global_formula": "251" }
+    },
+    "viewgroup_items": [
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Bg",
+        "shape_type": "RECT",
+        "shape_corners": 58,
+        "paint_color": "#FF1B1B1D",
+        "internal_globals": {
+          "shape_width": "side",
+          "shape_height": "h",
+          "paint_color": "bg"
+        },
+        "internal_formulas": {
+          "shape_corners": "$gv(side)/2$"
+        }
+      },
+      {
+        "internal_type": "OverlapLayerModule",
+        "viewgroup_items": [
+          {
+            "internal_type": "StackLayerModule",
+            "internal_title": "Progress",
+            "config_stacking": "VERTICAL_CENTER",
+            "config_margin": 4.0,
+            "viewgroup_items": [
+              {
+                "internal_type": "ProgressModule",
+                "progress_level": "$bi(level)$",
+                "style_size": "$gv(w)/1.38$",
+                "internal_globals": {
+                  "style_size": "side",
+                  "color_fgcolor": "primary",
+                  "color_bgcolor": "accent "
+                },
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.38$",
+                  "progress_level": "$bi(level)$"
+                }
+              },
+              {
+                "internal_type": "ProgressModule",
+                "style_size": "$gv(w)/1.23$",
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.23$",
+                  "progress_level": "$bi(level)$"
+                }
+              },
+              {
+                "internal_type": "ProgressModule",
+                "style_size": "$gv(w)/1.1$",
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.1$",
+                  "progress_level": "$bi(level)$"
+                }
+              },
+              {
+                "internal_type": "ProgressModule",
+                "style_size": "$gv(w)/1.1$",
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.1$",
+                  "progress_level": "$bi(level)$"
+                }
+              },
+              {
+                "internal_type": "ProgressModule",
+                "style_size": "$gv(w)/1.005$",
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.005$",
+                  "progress_level": "$bi(level)$"
+                }
+              },
+              {
+                "internal_type": "ProgressModule",
+                "style_size": "$gv(w)/1.005$",
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.005$",
+                  "progress_level": "$bi(level)$"
+                }
+              },
+              {
+                "internal_type": "ProgressModule",
+                "style_size": "$gv(w)/1.005$",
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.005$",
+                  "progress_level": "$bi(level)$"
+                }
+              },
+              {
+                "internal_type": "ProgressModule",
+                "style_size": "$gv(w)/1.1$",
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.1$",
+                  "progress_level": "$bi(level)$"
+                }
+              },
+              {
+                "internal_type": "ProgressModule",
+                "style_size": "$gv(w)/1.1$",
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.1$",
+                  "progress_level": "$bi(level)$"
+                }
+              },
+              {
+                "internal_type": "ProgressModule",
+                "style_size": "$gv(w)/1.23$",
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.23$",
+                  "progress_level": "$bi(level)$"
+                }
+              },
+              {
+                "internal_type": "ProgressModule",
+                "style_size": "$gv(w)/1.38$",
+                "internal_formulas": {
+                  "style_size": "$gv(w)/1.38$",
+                  "progress_level": "$bi(level)$"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

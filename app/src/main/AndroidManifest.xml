@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".DotwelApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/weather_backup_rules"
+        android:fullBackupContent="@xml/weather_backup_rules_legacy"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Dotwel">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".ClockWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_clock_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/clock_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".DateWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_date_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/date_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".AnalogBoldWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_analog_bold_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/analog_bold_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".AnalogScaleWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_analog_scale_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/analog_scale_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".WorldWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_world_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/world_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".QuotesWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_quotes_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quotes_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".BatteryWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_battery_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/battery_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".BatteryMiniWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_battery_mini_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/battery_mini_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtBattery2WidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_battery2_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+                <action android:name="android.intent.action.POWER_CONNECTED" />
+                <action android:name="android.intent.action.POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_battery2_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".IosBatteryWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_ios_battery_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+                <action android:name="android.intent.action.POWER_CONNECTED" />
+                <action android:name="android.intent.action.POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/ios_battery_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtDateTimeWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_datetime_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_datetime_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtDateTime2WidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_datetime2_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_datetime2_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtDigital4WidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_digital4_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_digital4_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtDigital3WidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_digital3_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_digital3_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtGradientClockWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_gradient_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_gradient_clock_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtAnalog2WidgetProvider"
+            android:enabled="@bool/kwgt_analog_seconds_available"
+            android:exported="true"
+            android:label="@string/widget_kwgt_analog2_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_analog2_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtFutureWidgetProvider"
+            android:enabled="@bool/kwgt_analog_seconds_available"
+            android:exported="true"
+            android:label="@string/widget_kwgt_future_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_future_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtAnalog3WidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_analog3_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_analog3_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtAnalogSecondsWidgetProvider"
+            android:enabled="@bool/kwgt_analog_seconds_available"
+            android:exported="true"
+            android:label="@string/widget_kwgt_analog_seconds_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_analog_seconds_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtAnalog5WidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_analog5_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_analog5_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtAnalog5TransparentWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_analog5clear_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_analog5clear_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtOrbitClockWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_orbit_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_orbit_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtMiniCalendarWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_mini_calendar_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_mini_calendar_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtCleanInfoWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_clean_info_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_clean_info_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".NothingTempWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_weather_temp_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_temp_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".NothingSunInfoWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_weather_sun_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_sun_widget_info" />
+        </receiver>
+
+
+
+        <receiver
+            android:name=".KwgtDigital2WidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_digital2_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_digital2_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtDateTime3WidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_kwgt_date_time3_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kwgt_date_time3_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtInterstellarEnduranceProvider"
+            android:exported="true"
+            android:label="@string/widget_interstellar_endurance_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/interstellar_endurance_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtInterstellarEnduranceAnalogProvider"
+            android:exported="true"
+            android:label="@string/widget_interstellar_analog_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/interstellar_endurance_analog_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".KwgtInterstellarEnduranceAnalog2Provider"
+            android:exported="true"
+            android:label="@string/widget_interstellar_analog2_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/interstellar_endurance_analog2_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".Material3ExpandedMediaProvider"
+            android:exported="true"
+            android:label="@string/widget_media_expanded_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_m3_expanded_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".Material3MediaOutputProvider"
+            android:exported="true"
+            android:label="@string/widget_media_output_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_m3_output_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".MiniMediaPlayerProvider"
+            android:exported="true"
+            android:label="@string/widget_media_mini_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_mini_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".MinimalMediaPlayerProvider"
+            android:exported="true"
+            android:label="@string/widget_media_minimal_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_minimal_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".MinimalMediaPlayer2Provider"
+            android:exported="true"
+            android:label="@string/widget_media_minimal2_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_minimal2_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".MinimalMediaPlayer3Provider"
+            android:exported="true"
+            android:label="@string/widget_media_minimal3_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_minimal3_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".NothingMasterWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_media_master_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_master_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".NothingMediaPlayerProvider"
+            android:exported="true"
+            android:label="@string/widget_media_player_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_player_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".NothingMediaPlayer2Provider"
+            android:exported="true"
+            android:label="@string/widget_media_player2_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_player2_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".NothingMediaPlayer3Provider"
+            android:exported="true"
+            android:label="@string/widget_media_player3_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_player3_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".UniversalMediaPlayerProvider"
+            android:exported="true"
+            android:label="@string/widget_media_universal_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_universal_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".MaterialNotificationWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_media_notification_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/media_notification_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".BluetoothStatusWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_bt_status_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+                <action android:name="android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/bt_status_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".WifiStatusWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_wifi_status_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/wifi_status_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".CellularStatusWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_cellular_status_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/cellular_status_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".BatteryStatusWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_battery_status_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+                <action android:name="android.intent.action.POWER_CONNECTED" />
+                <action android:name="android.intent.action.POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/battery_status_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".BluetoothHeadphonesWideWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_bt_headphones_wide_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+                <action android:name="android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.device.action.BATTERY_LEVEL_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/bt_headphones_wide_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".BluetoothHeadphonesSquareWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_bt_headphones_square_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+                <action android:name="android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.device.action.BATTERY_LEVEL_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/bt_headphones_square_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".BluetoothBatteryLevelsWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_bt_battery_levels_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+                <action android:name="android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.device.action.BATTERY_LEVEL_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/bt_battery_levels_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".media.MediaNotificationService"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".media.MediaActionReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".BatteryRefreshReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".MinuteTickReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".PinResultReceiver"
+            android:exported="false" />
+
+        <receiver android:name=".NtWxCircleProvider" android:exported="true" android:label="@string/widget_ntwx_circle">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_circle_info" />
+        </receiver>
+        <receiver android:name=".NtWxSquareProvider" android:exported="true" android:label="@string/widget_ntwx_square">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_square_info" />
+        </receiver>
+        <receiver android:name=".NtWxRectProvider" android:exported="true" android:label="@string/widget_ntwx_rect">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_rect_info" />
+        </receiver>
+        <receiver android:name=".NtWxComboProvider" android:exported="true" android:label="@string/widget_ntwx_combo">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_combo_info" />
+        </receiver>
+        <receiver android:name=".NtWxSunsetProvider" android:exported="true" android:label="@string/widget_ntwx_sunset">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_sunset_info" />
+        </receiver>
+        <receiver android:name=".NtWxAirProvider" android:exported="true" android:label="@string/widget_ntwx_air">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_air_info" />
+        </receiver>
+        <receiver android:name=".NtWxW1TempProvider" android:exported="true" android:label="@string/widget_ntwx_w1temp">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_w1temp_info" />
+        </receiver>
+        <receiver android:name=".NtWxW1StatusProvider" android:exported="true" android:label="@string/widget_ntwx_w1status">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_w1status_info" />
+        </receiver>
+        <receiver android:name=".NtWxW1RainProvider" android:exported="true" android:label="@string/widget_ntwx_w1rain">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ntwx_w1rain_info" />
+        </receiver>
+        <activity android:name=".NtPhotoConfigActivity" android:exported="false" />
+        <receiver android:name=".NtPhotoCircleProvider" android:exported="true" android:label="@string/widget_photo_circle">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/photo_circle_info" />
+        </receiver>
+        <receiver android:name=".NtPhotoRectProvider" android:exported="true" android:label="@string/widget_photo_rect">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/photo_rect_info" />
+        </receiver>
+        <receiver android:name=".NtAwayWidgetProvider" android:exported="true" android:label="@string/widget_away">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/away_info" />
+        </receiver>
+    </application>
+
+</manifest>

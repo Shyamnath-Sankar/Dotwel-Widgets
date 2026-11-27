@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_gallery_card"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/card_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minHeight="40dp"
+        android:textColor="@color/widget_ink"
+        android:textSize="15sp" />
+
+    <FrameLayout
+        android:id="@+id/card_preview_frame"
+        android:layout_width="match_parent"
+        android:layout_height="104dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/bg_widget_black"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/card_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/gallery_preview_description"
+            android:scaleType="fitCenter" />
+
+        <TextClock
+            android:id="@+id/card_preview_clock"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:autoSizeMaxTextSize="58sp"
+            android:autoSizeMinTextSize="20sp"
+            android:autoSizeStepGranularity="2sp"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="monospace"
+            android:format12Hour="@string/clock_format_12"
+            android:format24Hour="@string/clock_format_24"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:letterSpacing="0.04"
+            android:lineSpacingMultiplier="0.9"
+            android:maxLines="2"
+            android:textColor="@color/widget_ink"
+            android:textSize="46sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <AnalogClock
+            android:id="@+id/card_preview_analog"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/analog_preview_description"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/card_preview_world"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/card_world_label_a"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/widget_muted"
+                android:textSize="10sp" />
+
+            <TextClock
+                android:id="@+id/card_world_clock_a"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoSizeMaxTextSize="24sp"
+                android:autoSizeMinTextSize="11sp"
+                android:autoSizeStepGranularity="2sp"
+                android:autoSizeTextType="uniform"
+                android:fontFamily="sans-serif-condensed"
+                android:format12Hour="@string/world_time_format_12"
+                android:format24Hour="@string/world_time_format_24"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/card_world_label_b"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/widget_muted"
+                android:textSize="10sp" />
+
+            <TextClock
+                android:id="@+id/card_world_clock_b"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoSizeMaxTextSize="24sp"
+                android:autoSizeMinTextSize="11sp"
+                android:autoSizeStepGranularity="2sp"
+                android:autoSizeTextType="uniform"
+                android:fontFamily="sans-serif-condensed"
+                android:format12Hour="@string/world_time_format_12"
+                android:format24Hour="@string/world_time_format_24"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/card_preview_datetime"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="4dp"
+            android:visibility="gone">
+
+            <TextClock
+                android:id="@+id/card_datetime_weekday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="monospace"
+                android:format12Hour="EEE"
+                android:format24Hour="EEE"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextClock
+                android:id="@+id/card_datetime_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="monospace"
+                android:format12Hour="hh:mma"
+                android:format24Hour="hh:mma"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/dot_accent"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextClock
+                android:id="@+id/card_datetime_month"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="monospace"
+                android:format12Hour="MMMM"
+                android:format24Hour="MMMM"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextClock
+                    android:id="@+id/card_datetime_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:format12Hour="d"
+                    android:format24Hour="d"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/card_datetime_suffix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/card_add"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/dot_accent"
+        android:text="@string/gallery_add_short"
+        android:textColor="@android:color/white"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/card_preview_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:background="@drawable/bg_chip"
+        android:paddingStart="7dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="7dp"
+        android:paddingBottom="2dp"
+        android:text="@string/preview_badge"
+        android:textColor="@color/widget_ink"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/card_status_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:lineSpacingExtra="1dp"
+        android:maxLines="2"
+        android:textColor="@color/widget_muted"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/card_secondary"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="6dp"
+        android:backgroundTint="#1B1E24"
+        android:textColor="@color/widget_ink"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+</LinearLayout>

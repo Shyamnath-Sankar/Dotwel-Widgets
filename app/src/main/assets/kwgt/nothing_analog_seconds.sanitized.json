@@ -1,0 +1,181 @@
+{
+  "preset_info": {
+    "author": "Om Gupta",
+    "description": "An analog clock based on Nothing OS.",
+    "features": "ANALOG_CLOCK",
+    "pflags": 0,
+    "height": 542,
+    "locked": false,
+    "release": 377435216,
+    "title": "NothingAnalog",
+    "version": 13,
+    "width": 415,
+    "xscreens": 0,
+    "yscreens": 0
+  },
+  "preset_root": {
+    "internal_type": "RootLayerModule",
+    "globals_list": {
+      "bg": {
+        "index": 3,
+        "type": "COLOR",
+        "title": "Bg",
+        "value": "#FF1B1B1D",
+        "toggles": 10,
+        "global_formula": "$if(si(darkmode)=0, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "hour": {
+        "index": 4,
+        "type": "COLOR",
+        "title": "Hour",
+        "value": "#FFFFFFFF",
+        "toggles": 10,
+        "global_formula": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$"
+      },
+      "minute": {
+        "index": 5,
+        "type": "COLOR",
+        "title": "Minute",
+        "value": "#FF6C696E"
+      },
+      "seconds": {
+        "index": 6,
+        "type": "COLOR",
+        "title": "Seconds",
+        "value": "#FFD71921"
+      },
+      "side": {
+        "index": 8,
+        "type": "NUMBER",
+        "title": "side",
+        "min": 0,
+        "max": 720,
+        "toggles": 10,
+        "global_formula": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$"
+      }
+    },
+    "internal_toggles": {
+      "config_scale_value": 0
+    },
+    "internal_formulas": {
+      "config_scale_value": "$mu(floor, if(si(rwidth)<si(rheight),si(rwidth),si(rheight))/3)$"
+    },
+    "internal_globals": {
+      "config_scale_value": "radius"
+    },
+    "viewgroup_items": [
+      {
+        "internal_type": "ShapeModule",
+        "internal_title": "Border",
+        "internal_toggles": {
+          "paint_color": 100,
+          "shape_width": 100
+        },
+        "internal_globals": {
+          "paint_color": "bg",
+          "shape_width": "side"
+        },
+        "shape_type": "CIRCLE",
+        "shape_width": 277.0,
+        "paint_stroke": 3.0,
+        "shape_height": 80
+      },
+      {
+        "internal_type": "OverlapLayerModule",
+        "internal_title": "Hours Hand",
+        "config_rotate_mode": "CLOCK_HOUR_SMOOTH",
+        "viewgroup_items": [
+          {
+            "internal_type": "ShapeModule",
+            "internal_toggles": {
+              "paint_color": 100,
+              "shape_width": 10,
+              "shape_height": 10,
+              "position_padding_bottom": 10
+            },
+            "internal_globals": {
+              "paint_color": "hour"
+            },
+            "position_padding_bottom": 60.0,
+            "shape_type": "RECT",
+            "shape_width": 24.0,
+            "shape_height": 82.0,
+            "shape_corners": 360,
+            "internal_formulas": {
+              "shape_width": "$gv(side)/11.54$",
+              "shape_height": "$gv(side)/3.378$",
+              "position_padding_bottom": "$gv(side)/4.616$"
+            }
+          }
+        ]
+      },
+      {
+        "internal_type": "OverlapLayerModule",
+        "internal_title": "Minutes Hand",
+        "config_rotate_mode": "CLOCK_MINUTE",
+        "viewgroup_items": [
+          {
+            "internal_type": "ShapeModule",
+            "internal_toggles": {
+              "paint_color": 100,
+              "shape_width": 10,
+              "shape_height": 10,
+              "position_padding_bottom": 10
+            },
+            "internal_globals": {
+              "paint_color": "minute"
+            },
+            "position_padding_bottom": 101.0,
+            "shape_type": "RECT",
+            "shape_width": 10.0,
+            "shape_height": 112.0,
+            "shape_corners": 360,
+            "internal_formulas": {
+              "shape_width": "$gv(side)/27.7$",
+              "shape_height": "$gv(side)/2.473$",
+              "position_padding_bottom": "$gv(side)/2.7426$"
+            }
+          }
+        ]
+      },
+      {
+        "internal_type": "OverlapLayerModule",
+        "internal_title": "Seconds Hand",
+        "config_rotate_mode": "MANUAL",
+        "internal_toggles": {
+          "config_rotate_mode": 10
+        },
+        "internal_formulas": {
+          "config_rotate_mode": "CLOCK_SECOND"
+        },
+        "config_rotate_offset": 90.0,
+        "viewgroup_items": [
+          {
+            "internal_type": "StackLayerModule",
+            "config_stacking": "HORIZONTAL_CENTER",
+            "viewgroup_items": [
+              {
+                "internal_type": "ShapeModule",
+                "internal_toggles": {
+                  "paint_color": 100,
+                  "shape_width": 10,
+                  "position_padding_right": 10
+                },
+                "internal_globals": {
+                  "paint_color": "seconds"
+                },
+                "shape_type": "CIRCLE",
+                "shape_width": 12.0,
+                "position_padding_right": 242.0,
+                "internal_formulas": {
+                  "shape_width": "$gv(side)/23.08$",
+                  "position_padding_right": "$gv(side)/1.145$"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

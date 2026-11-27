@@ -1,0 +1,180 @@
+{
+  "provenance": {
+    "source": "https://github.com/AumGupta/KWGT-Widgets",
+    "file": "widgets/Nothing_Analog_2.kwgt!preset.json",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2024 Om Gupta",
+    "sanitized": "Author email, launch-app tap intent, font payloads and raster assets were removed. Layer geometry, shape formulas, colour formulas and toggle states are retained."
+  },
+  "preset_info": {
+    "author": "Om Gupta",
+    "title": "NothingAnalog2",
+    "version": 13,
+    "width": 415,
+    "height": 542
+  },
+  "globals": {
+    "bg": "$if(si(darkmode)=1, #FF1B1B1D, #FFFFFFFF)$",
+    "hour": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$",
+    "minute": "$if(si(darkmode)=1, #FFFFFFFF, #FF1B1B1D)$",
+    "seconds": "#FFD71921",
+    "side": "$if(si(rwidth)>si(rheight), si(rheight), si(rwidth))$"
+  },
+  "actual_source_check": {
+    "canvas": "415 x 542",
+    "design_dial": "filled circle width 277, radius 138.5",
+    "note": "The actual preset uses 277, not 279. All hand, tick and centre coordinates below are taken from the actual preset.json, not from a preview image."
+  },
+  "layers": [
+    {
+      "internal_type": "ShapeModule",
+      "internal_title": "Border",
+      "shape_type": "CIRCLE",
+      "shape_width": 277.0,
+      "paint_stroke": 3.0,
+      "paint_color": "bg",
+      "internal_toggles": { "paint_color": 100, "shape_width": 100 },
+      "internal_globals": { "paint_color": "bg", "shape_width": "side" },
+      "native_port": "filled 277 circle vector in the bg colour; the native port fills the source border rather than drawing only its 3-unit stroke"
+    },
+    {
+      "internal_type": "OverlapLayerModule",
+      "internal_title": "Hours Hand",
+      "config_rotate_mode": "CLOCK_HOUR_SMOOTH",
+      "shape_type": "RECT",
+      "shape_width": 6.0,
+      "shape_height": 74.0,
+      "position_padding_bottom": 64.0,
+      "shape_corners": 0,
+      "paint_color": "hour",
+      "internal_toggles": { "paint_color": 100, "shape_width": 10, "shape_height": 10, "position_padding_bottom": 10 },
+      "internal_globals": { "paint_color": "hour" },
+      "internal_formulas": {
+        "shape_width": "$gv(side)/(277/6)$",
+        "shape_height": "$gv(side)/(277/74)$",
+        "position_padding_bottom": "$gv(side)/(277/64)$"
+      },
+      "native_port": "sharp 6 x 74 rect, centre Y 138.5 - 64/2 = 106.5, no corners"
+    },
+    {
+      "internal_type": "OverlapLayerModule",
+      "internal_title": "Minutes Hand",
+      "config_rotate_mode": "CLOCK_MINUTE",
+      "shape_type": "RECT",
+      "shape_width": 6.0,
+      "shape_height": 100.0,
+      "position_padding_bottom": 112.0,
+      "shape_corners": 0,
+      "paint_color": "minute",
+      "internal_toggles": { "paint_color": 100, "shape_width": 10, "shape_height": 10, "position_padding_bottom": 10 },
+      "internal_globals": { "paint_color": "minute" },
+      "internal_formulas": {
+        "shape_height": "$gv(side)/(277/100)$",
+        "position_padding_bottom": "$gv(side)/(277/112)$"
+      },
+      "native_port": "sharp 6 x 100 rect, centre Y 138.5 - 112/2 = 82.5, no corners"
+    },
+    {
+      "internal_type": "OverlapLayerModule",
+      "internal_title": "Seconds Hand",
+      "config_rotate_mode": "MANUAL",
+      "config_rotate_mode_formula": "CLOCK_SECOND",
+      "config_rotate_offset": 90.0,
+      "internal_toggles": { "config_rotate_mode": 10 },
+      "internal_formulas": { "config_rotate_mode": "CLOCK_SECOND" },
+      "shape_type": "RECT",
+      "shape_width": 130.0,
+      "shape_height": 3.0,
+      "position_padding_right": 100.0,
+      "config_stacking": "HORIZONTAL_CENTER",
+      "paint_color": "seconds",
+      "internal_toggles_shape": { "paint_color": 100, "shape_width": 10, "shape_height": 10, "position_padding_right": 10 },
+      "internal_globals": { "paint_color": "seconds" },
+      "internal_formulas_shape": {
+        "shape_width": "$gv(side)/(277/130)$",
+        "shape_height": "$gv(side)/(277/3)$",
+        "position_padding_right": "$gv(side)/(277/100)$"
+      },
+      "native_port": "full-viewport red rect 3 wide, 130 long, vertical at zero seconds, x 137..140, centre Y 88.5, extent 23.5..153.5; the native CLOCK_SECOND rotation supplies the source 90 degree offset"
+    },
+    {
+      "internal_type": "ProgressModule",
+      "internal_title": "Hour ticks",
+      "progress_progress": "CUSTOM",
+      "progress_max": 12.0,
+      "progress_level": 12.0,
+      "progress_mode": "SHAPES",
+      "progress_count": 12.0,
+      "style_style": "CIRCLE",
+      "style_size": 250.0,
+      "style_shape": "RECT",
+      "style_width": 8.0,
+      "style_height": 16.5,
+      "color_fgcolor": "hour",
+      "color_bgcolor": "hour",
+      "internal_toggles": { "color_fgcolor": 100, "color_bgcolor": 100, "style_size": 10, "style_width": 10, "style_height": 10 },
+      "internal_globals": { "color_fgcolor": "hour", "color_bgcolor": "hour" },
+      "internal_formulas": {
+        "style_size": "$gv(side)/(277/250)$",
+        "style_width": "$gv(side)/(277/8)$",
+        "style_height": "$gv(side)/(277/16.5)$"
+      },
+      "native_port": "12 evenly rotated 8 x 16.5 rects whose centres lie on the style_size 250 ring (radius 125), in the hour ink"
+    },
+    {
+      "internal_type": "ProgressModule",
+      "internal_title": "Minute ticks",
+      "progress_progress": "CUSTOM",
+      "progress_max": 60.0,
+      "progress_level": 60.0,
+      "progress_mode": "SHAPES",
+      "progress_count": 60.0,
+      "style_style": "CIRCLE",
+      "style_size": 258.0,
+      "style_shape": "RECT",
+      "style_width": 11.0,
+      "style_height": 8.0,
+      "color_fgcolor": "hour",
+      "color_bgcolor": "hour",
+      "internal_toggles": { "color_fgcolor": 100, "color_bgcolor": 100, "style_size": 10, "style_width": 10, "style_height": 10 },
+      "internal_globals": { "color_fgcolor": "hour", "color_bgcolor": "hour" },
+      "internal_formulas": {
+        "style_size": "$gv(side)/(277/258)$",
+        "style_height": "$gv(side)/(277/8)$",
+        "style_width": "$gv(side)/(277/11)$"
+      },
+      "native_port": "60 evenly rotated 11 x 8 rects whose centres lie on the style_size 258 ring (radius 129), in the hour ink"
+    },
+    {
+      "internal_type": "ShapeModule",
+      "internal_title": "Centre",
+      "shape_width": 16.0,
+      "shape_corners": 360,
+      "paint_color": "seconds",
+      "internal_toggles": { "paint_color": 100, "shape_width": 10 },
+      "internal_globals": { "paint_color": "seconds" },
+      "internal_formulas": { "shape_width": "$gv(side)/(277/16)$" },
+      "native_port": "red 16-diameter circle centred at 138.5,138.5, drawn last and on top of the hands"
+    }
+  ],
+  "native_port": {
+    "provider": "KwgtAnalog2WidgetProvider",
+    "clock": "android.widget.AnalogClock",
+    "overlay": "transparent full-viewport ImageView with fitCenter above the clock",
+    "viewport": 277,
+    "dial_center": 138.5,
+    "hour": "6 x 74, centre Y 106.5, no corners",
+    "minute": "6 x 100, centre Y 82.5, no corners",
+    "second": "3 x 130, vertical at zero, centre Y 88.5, extent 23.5..153.5",
+    "hour_ticks": "12 x (8 tangential x 16.5 radial) on radius 125",
+    "minute_ticks": "60 x (11 tangential x 8 radial) on radius 129",
+    "centre": "red circle diameter 16",
+    "api_gate": "android:hand_second only in layout-v31; receiver disabled below API 31 by kwgt_analog_seconds_available",
+    "tap": "source launch-app intent removed; the native provider uses ACTION_SHOW_ALARMS"
+  },
+  "uncertainties": {
+    "minute_width": "The minute ShapeModule has an active shape_width toggle but no shape_width formula, so the raw source width 6 is correct. It is not overridden by a missing formula.",
+    "centre_type": "The centre ShapeModule has no explicit shape_type. Kustom's default shape type is CIRCLE, so the native port uses a 16-diameter circle. This default is documented rather than invented as a new geometry.",
+    "non_square_host": "The AnalogClock and the overlay both use match_parent, and the overlay uses fitCenter. Runtime parity of the tick ring with the native hand centre on a non-square host is not verified in this runner and is not claimed."
+  }
+}
