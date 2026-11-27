@@ -57,6 +57,7 @@ enum class PreviewKind {
     BATTERY_STATUS,
     BT_HEADPHONES_WIDE,
     BT_HEADPHONES_SQUARE,
+    BT_BATTERY_LEVELS,
     INTERSTELLAR_ENDURANCE,
     INTERSTELLAR_ENDURANCE_ANALOG,
     INTERSTELLAR_ENDURANCE_ANALOG_2,
@@ -363,6 +364,19 @@ object WidgetCatalog {
             previewKind = PreviewKind.BT_HEADPHONES_SQUARE,
             providerClass = BluetoothHeadphonesSquareWidgetProvider::class.java,
             pinKind = PinResultReceiver.PIN_KIND_BT_HEADPHONES_SQUARE,
+            action = CardAction.BLUETOOTH_ACCESS,
+        ),
+        CatalogEntry(
+            id = "bt_battery_levels",
+            name = "Bluetooth Battery Levels",
+            group = WidgetGroup.STATUS,
+            state = ImportState.READY,
+            upstream = "BatteryManager phone level · BluetoothDevice.getBatteryLevel reflection · hidden level broadcast · optional BLUETOOTH_CONNECT · opens Bluetooth settings",
+            descriptionRes = R.string.catalog_bt_battery_levels_desc,
+            detailRes = R.string.ledger_ready_status,
+            previewKind = PreviewKind.BT_BATTERY_LEVELS,
+            providerClass = BluetoothBatteryLevelsWidgetProvider::class.java,
+            pinKind = PinResultReceiver.PIN_KIND_BT_BATTERY_LEVELS,
             action = CardAction.BLUETOOTH_ACCESS,
         ),
         CatalogEntry(
@@ -1060,7 +1074,7 @@ enum class WidgetCategory(
     BLUETOOTH(
         "bluetooth",
         R.string.category_bluetooth,
-        listOf("bt_status", "bt_headphones_wide", "bt_headphones_square"),
+        listOf("bt_status", "bt_headphones_wide", "bt_headphones_square", "bt_battery_levels"),
     ),
     WIFI(
         "wifi",
@@ -1155,6 +1169,7 @@ object WidgetModeLabels {
             PreviewKind.BT_HEADPHONES_WIDE,
             PreviewKind.BT_HEADPHONES_SQUARE,
             -> R.string.mode_bt_headphones
+            PreviewKind.BT_BATTERY_LEVELS -> R.string.mode_bt_battery_levels
             PreviewKind.INTERSTELLAR_ENDURANCE,
             PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG,
             PreviewKind.INTERSTELLAR_ENDURANCE_ANALOG_2,

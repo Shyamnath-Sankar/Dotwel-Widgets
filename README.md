@@ -4,16 +4,17 @@ Nothing OS-inspired Android home-screen widgets by Dotwel Labs
 ## Current checkpoint (0.1.8, versionCode 9)
 
 - `com.dotwelwidgets.dotwellabs`, minSdk 26, compile/target SDK 36.
-- Sixty-one registered providers: dot clock, date, Analog Bold, Analog Scale,
+- Sixty-two registered providers: dot clock, date, Analog Bold, Analog Scale,
   world clock, quotes, thirty-seven native KWGT-Widgets preset ports, the
   twelve media/notification providers, four circular connectivity tiles
-  (Bluetooth, Wi-Fi, cellular and battery), and two Bluetooth headphone
-  battery cards (2x1 wide and 2x2 square). The full 40-preset source-port status
-  is in `docs/KWGT-LEDGER.md`; 37 presets are implemented and 3 remain blocked
-  or unavailable. `Nothing_Analog_` and `Nothing_Analog_2` are the exact
-  source-seconds ports: their native second hands are offered only on Android
-  12+ (`android:hand_second`), the receivers are disabled below API 31, and
-  second-tick fps is system configured and may be disabled by the OS.
+  (Bluetooth, Wi-Fi, cellular and battery), two Bluetooth headphone
+  battery cards (2x1 wide and 2x2 square), and a 2x2 multi-device Bluetooth
+  battery-levels card (phone plus each connected device). The full 40-preset
+  source-port status is in `docs/KWGT-LEDGER.md`; 37 presets are implemented and
+  3 remain blocked or unavailable. `Nothing_Analog_` and `Nothing_Analog_2` are
+  the exact source-seconds ports: their native second hands are offered only on
+  Android 12+ (`android:hand_second`), the receivers are disabled below API 31,
+  and second-tick fps is system configured and may be disabled by the OS.
 - The front screen is a category grid: a dotted HOME heading, a short subtitle,
   an actionable dotted-update control, and rounded square category tiles with a
   real representative preview or a Dotwel motif. Each tile shows the category

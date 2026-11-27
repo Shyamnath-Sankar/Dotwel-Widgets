@@ -162,43 +162,60 @@ object BluetoothHeadphonesState {
     }
 
     @SuppressLint("MissingPermission")
-    private fun connectedHeadphones(manager: BluetoothManager): BluetoothDevice? {
+    internal fun connectedDevices(manager: BluetoothManager): List<BluetoothDevice> {
         val profiles = intArrayOf(
             BluetoothProfile.A2DP,
             BluetoothProfile.HEADSET,
             BluetoothProfile.GATT,
         )
+        val seen = LinkedHashMap<String, BluetoothDevice>()
         for (profile in profiles) {
             val devices = try {
                 manager.getConnectedDevices(profile)
             } catch (_: RuntimeException) {
                 null
             }
-            if (devices.isNullOrEmpty()) continue
-            return devices.firstOrNull { safeName(it) != null } ?: devices.first()
+            devices.orEmpty().forEach { device ->
+                val key = safeAddress(device) ?: device.hashCode().toString()
+                seen.putIfAbsent(key, device)
+            }
         }
-        return null
+        return seen.values.toList()
     }
 
+    private fun connectedHeadphones(manager: BluetoothManager): BluetoothDevice? {
+        val devices = connectedDevices(manager)
+        return devices.firstOrNull { safeName(it) != null } ?: devices.firstOrNull()
+    }
+
+    internal fun cachedLevel(address: String): Int? = cache[address]
+
     @SuppressLint("MissingPermission")
-    private fun safeName(device: BluetoothDevice): String? = try {
+    internal fun safeName(device: BluetoothDevice): String? = try {
         device.name?.takeIf { it.isNotBlank() }
     } catch (_: SecurityException) {
         null
     }
 
     @SuppressLint("MissingPermission")
-    private fun safeAddress(device: BluetoothDevice): String? = try {
+    internal fun safeAddress(device: BluetoothDevice): String? = try {
         device.address?.takeIf { it.isNotBlank() }
     } catch (_: SecurityException) {
         null
     }
 
-    private fun readDeviceBattery(device: BluetoothDevice): Int? = try {
+    internal fun readDeviceBattery(device: BluetoothDevice): Int? = try {
         val method = device.javaClass.getMethod("getBatteryLevel")
         (method.invoke(device) as? Int)?.takeIf { it in 0..100 }
     } catch (_: Throwable) {
         null
+    }
+
+    internal fun readDeviceCharging(device: BluetoothDevice): Boolean = try {
+        val method = device.javaClass.getMethod("isCharging")
+        method.invoke(device) as? Boolean ?: false
+    } catch (_: Throwable) {
+        false
     }
 
     @Suppress("DEPRECATION")

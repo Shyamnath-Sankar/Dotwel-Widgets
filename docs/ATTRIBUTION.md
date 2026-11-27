@@ -366,7 +366,7 @@ the app from About & source credits > View MIT license texts.
   `Nothing_Date_Time2`, `Nothing_Digital4`, `Nothing_Digital3`,
   `Nothing_Digital`, and `Nothing_Mini_Calender` are implemented in this
   checkpoint (15 of 40); the rest remain pending or dependency-blocked and are
-  not claimed as imported. All 21 registered providers are build-verified only
+  not claimed as imported. All 62 registered providers are build-verified only
   and remain runtime-unverified.
 
 ## Doto font (SIL Open Font License 1.1)
