@@ -2,6 +2,7 @@ package com.dotwelwidgets.dotwellabs
 
 import android.graphics.Bitmap
 import java.io.File
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,6 +44,30 @@ class BatterySurfaceRenderTest {
             } finally {
                 bitmap.recycle()
             }
+        }
+    }
+
+    @Test
+    fun miniProgressBarShowsRedFillOnALightGrayRemainderTrack() {
+        val bitmap = ReferenceBatterySurface.render(
+            RuntimeEnvironment.getApplication(),
+            BatterySurfaceKind.SMALL_PROGRESSBAR,
+            400,
+            260,
+            75,
+            false,
+            WidgetStyle.BLACK,
+        )
+        try {
+            save(bitmap, "battery-mini-light-track")
+            assertTrue("red fill", bitmap.contains(red))
+            assertEquals(
+                "light-gray remainder track",
+                ReferenceBatterySurface.TRACK_SOFT,
+                bitmap.getPixel(360, 130),
+            )
+        } finally {
+            bitmap.recycle()
         }
     }
 
