@@ -22,6 +22,11 @@ class HeadphonesChromeTest {
     }
 
     @Test
+    fun earbudsAndStatusUseTheReferenceBlackInk() {
+        assertEquals(0xFF1D1B20.toInt(), BluetoothHeadphonesRenderer.GLYPH_INK)
+    }
+
+    @Test
     fun connectedStateReadsAsConnected() {
         val connected = BluetoothHeadphonesSnapshot(
             HeadphonesState.CONNECTED,
