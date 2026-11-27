@@ -1,5 +1,51 @@
 # Build and verification state
 
+## Reference design match: app chrome + control tiles + headphone cards
+
+- Phase: Part 1 app chrome and Part 2.1 / 2.3 are done on branch
+  `agent/design-match-copy-reference-ui` (commits `b5a692d`, `d97a249`,
+  `f878ecc`). No applicationId, minSdk, targetSdk, workflow, permission,
+  service or provider-count change; all 61 widgets remain registered.
+- Reference: `com.dci.dev.somethingwidgets` v2.00.11 preview PNGs were fetched
+  to `/tmp/swref` (87 files) only. No reference PNG, font, drawable or
+  decompiled code is in the repository or APK; `git status --porcelain` was
+  checked before every commit.
+- App chrome: pure `#000000` canvas and window background; fixed top bar with a
+  red dot plus `LIVE_SYSTEM_DISPLAY` on the left and `ID: DW-MOD-01` on the
+  right in small gray monospace caps; white Doto headline and red Doto
+  subtitle; centred `DOTWEL WIDGETS` footer; category cards `#FEF7FF` with 24dp
+  corners on black; full-screen black category pager with swipe left/right, a
+  cell-size label (e.g. `2 × 2 cells`), a red `Add widget` pill and the existing
+  `requestPinAppWidget` path. Doto (OFL) is bundled at `res/font/doto.ttf` with
+  its licence at `res/raw/doto_ofl.txt`; `docs/ATTRIBUTION.md` records both the
+  font and the /tmp-only reference.
+- Control tiles: `StatusTileRenderer` now draws one filled circle at 93% of the
+  cell with one centred glyph and no ON/OFF text. ON is `#D71921` with a white
+  glyph, OFF is `#FFFFFF` with a black glyph. The battery tile is a white disc
+  with black dot-matrix `NN%`. Tap destinations are unchanged.
+- Headphones: wide and square cards now use a `#FEF7FF` full-bleed rounded
+  surface, black earbuds with a small red accent dot, `CONNECTED` in black
+  dot-matrix, a level-coloured `NN%` (`#6A9C89` at >=30, `#D71921` below) and a
+  gray `#777379` plain-sans device name. The old NA HEADPHONES + progress-bar
+  layout is removed.
+- Sliders: no brightness or volume slider widget exists in this build, so
+  Part 2.2 is not applicable; nothing was invented or added.
+- Verified in this run:
+  `./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+  :app:lintDebug` -> `BUILD SUCCESSFUL`; 179 tests, 0 failures, 0 errors,
+  0 skipped; lint 0 errors. Debug APK sha256
+  `6ee2b82b264e0dbaff340dfdfd093582a5f02cc5ba11dbb3c72173478ef1a7c8`.
+- Not verified here: this runner has no emulator or device. The new chrome,
+  category pager, pinned status tiles, headphone cards and style variants are
+  not runtime-verified and are not claimed; no screenshot or Play-ready claim.
+- Next: Part 2.4 multi-device Bluetooth battery rows, then 2.5 media controls
+  and 2.6 battery surfaces in that order; then place every family on a launcher,
+  check resize/style and capture real screenshots.
+- Blockers: Part 2.4's reference is a multi-row card, but the current catalog
+  only has single-device headphone cards. Adding a provider changes the 61
+  registered-provider count and needs a catalog/manifest/pin/test decision, so
+  it was not done unilaterally in this run.
+
 ## NtWx combined-RemoteViews crash + profile meminfo + gallery crash recovery
 
 - Phase: fix the API 31+ NtWx weather crash and two verification-harness gaps.
