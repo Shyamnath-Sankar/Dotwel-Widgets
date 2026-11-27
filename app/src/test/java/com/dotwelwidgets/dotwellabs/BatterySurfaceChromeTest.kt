@@ -5,8 +5,9 @@ import org.junit.Test
 
 /**
  * Locks the reference battery surfaces: pure white cards, black dot-matrix
- * digits, a neutral track, and a red #D71921 accent only while the level is
- * low. The normal accent is the palette green #6A9C89.
+ * digits, a neutral track, and the reference red #D71921 fill at every known
+ * level (circle, pill and bar alike). The iOS device card keeps a black phone
+ * glyph on a light pink disc with a small gray status word.
  */
 class BatterySurfaceChromeTest {
     @Test
@@ -29,13 +30,29 @@ class BatterySurfaceChromeTest {
     }
 
     @Test
-    fun lowIsRedNormalIsGreenUnknownIsNeutral() {
-        assertEquals(ReferenceBatterySurface.RED, ReferenceBatterySurface.accent(0))
-        assertEquals(ReferenceBatterySurface.RED, ReferenceBatterySurface.accent(24))
-        assertEquals(ReferenceBatterySurface.RED, ReferenceBatterySurface.accent(25))
-        assertEquals(ReferenceBatterySurface.GREEN, ReferenceBatterySurface.accent(26))
-        assertEquals(ReferenceBatterySurface.GREEN, ReferenceBatterySurface.accent(100))
+    fun everyKnownFillUsesTheReferenceRed() {
+        listOf(0, 1, 24, 25, 26, 75, 99, 100).forEach { level ->
+            assertEquals(
+                "level $level fill",
+                ReferenceBatterySurface.RED,
+                ReferenceBatterySurface.accent(level),
+            )
+        }
         assertEquals(ReferenceBatterySurface.GRAY, ReferenceBatterySurface.accent(-1))
+        assertEquals(ReferenceBatterySurface.GRAY, ReferenceBatterySurface.accent(140))
+    }
+
+    @Test
+    fun iosDeviceIconUsesALightPinkDiscAndGrayStatusWord() {
+        assertEquals(0xFFF8D7DA.toInt(), ReferenceBatterySurface.DEVICE_PINK)
+        assertEquals(
+            ReferenceBatterySurface.DEVICE_PINK,
+            ReferenceBatterySurface.deviceCircleColor(),
+        )
+        assertEquals(
+            ReferenceBatterySurface.GRAY,
+            ReferenceBatterySurface.deviceStatusColor(),
+        )
     }
 
     @Test

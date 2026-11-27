@@ -3,11 +3,9 @@ package com.dotwelwidgets.dotwellabs
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import android.graphics.Shader
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -22,10 +20,11 @@ enum class BatterySurfaceKind {
 
 /**
  * Reference battery surfaces. Every surface is a pure white card, the digits are
- * black dot-matrix and the accent is red #D71921 only while the level is low;
- * otherwise the palette green #6A9C89 is used. Unknown levels stay neutral. The
- * card stays white for every style so the reference contrast is preserved,
- * matching the Bluetooth battery card decision.
+ * black dot-matrix and every known fill uses the reference red #D71921 (circle,
+ * pill and bar alike). Unknown levels stay neutral. The iOS device card keeps a
+ * black phone glyph on a light pink disc with a small gray status word. The card
+ * stays white for every style so the reference contrast is preserved, matching
+ * the Bluetooth battery card decision.
  */
 internal object ReferenceBatterySurface {
     const val RED = 0xFFD71921.toInt()
@@ -36,6 +35,7 @@ internal object ReferenceBatterySurface {
     const val TRACK = 0xFFEEEEEE.toInt()
     const val TRACK_SOFT = 0xFFE1E1E1.toInt()
     const val EMPTY_DOT = 0xFFB4B4B8.toInt()
+    const val DEVICE_PINK = 0xFFF8D7DA.toInt()
     const val LOW_THRESHOLD = 25
 
     fun cardColor(style: WidgetStyle): Int = WHITE
@@ -44,9 +44,12 @@ internal object ReferenceBatterySurface {
 
     fun accent(level: Int): Int = when {
         level !in 0..100 -> GRAY
-        isLow(level) -> RED
-        else -> GREEN
+        else -> RED
     }
+
+    fun deviceCircleColor(): Int = DEVICE_PINK
+
+    fun deviceStatusColor(): Int = GRAY
 
     fun digitColor(level: Int): Int = INK
 
@@ -142,22 +145,17 @@ internal object ReferenceBatterySurface {
 
         val fraction = fillFraction(level)
         if (fraction <= 0f) return
-        val accent = accent(level)
         val top = cy + radius - diameter * fraction
         val circle = Path().apply { addCircle(cx, cy, radius, Path.Direction.CW) }
         canvas.save()
         canvas.clipPath(circle)
-        val gradient = LinearGradient(
-            cx,
+        canvas.drawRect(
+            cx - radius,
             top,
-            cx,
+            cx + radius,
             cy + radius,
-            withAlpha(accent, 0x00),
-            accent,
-            Shader.TileMode.CLAMP,
+            fill(accent(level)),
         )
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { shader = gradient }
-        canvas.drawRect(cx - radius, top, cx + radius, cy + radius, paint)
         canvas.restore()
     }
 
@@ -302,18 +300,17 @@ internal object ReferenceBatterySurface {
         val diameter = side * 0.26f
         val cx = pad + diameter / 2f
         val cy = pad + diameter / 2f
-        canvas.drawCircle(cx, cy, diameter / 2f, fill(withAlpha(accent(level), 0x40)))
+        canvas.drawCircle(cx, cy, diameter / 2f, fill(deviceCircleColor()))
         drawPhone(canvas, cx, cy, diameter * 0.52f, INK)
 
-        val labelColor = if (isLow(level)) RED else GRAY
-        drawDotRight(
+        drawStatusRight(
             canvas,
             chargeLabel(charging),
             width - pad,
             height - pad - side * 0.17f,
             width * 0.55f,
             side * 0.050f,
-            labelColor,
+            deviceStatusColor(),
         )
         drawDotRight(
             canvas,
@@ -416,6 +413,36 @@ internal object ReferenceBatterySurface {
         val textWidth = DotGlyphFont.columnsFor(text) * pitch
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
         DotGlyphFont.drawLeft(canvas, text, right - textWidth, centerY, pitch, paint)
+    }
+
+    private fun drawStatusRight(
+        canvas: Canvas,
+        value: String,
+        right: Float,
+        centerY: Float,
+        maxWidth: Float,
+        textSize: Float,
+        color: Int,
+    ) {
+        if (value.isEmpty()) return
+        val paint = Paint(
+            Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG,
+        ).apply {
+            this.color = color
+            this.textSize = textSize.coerceAtLeast(4f)
+            textAlign = Paint.Align.RIGHT
+            typeface = android.graphics.Typeface.create(
+                "sans-serif",
+                android.graphics.Typeface.NORMAL,
+            )
+        }
+        val measured = paint.measureText(value)
+        if (measured > maxWidth && measured > 0f) {
+            paint.textSize *= maxWidth / measured
+        }
+        val metrics = paint.fontMetrics
+        val baseline = centerY - (metrics.ascent + metrics.descent) / 2f
+        canvas.drawText(value, right, baseline, paint)
     }
 
     private fun drawDotCenter(
