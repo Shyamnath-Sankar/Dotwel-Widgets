@@ -1,5 +1,62 @@
 # Build and verification state
 
+## Design-match refinements: headphones, universal media, mini battery
+
+- Phase: three reference refinements on branch
+  `agent/design-match-copy-reference-ui`, commits `5b52c51` (headphones),
+  `e54e09b` (universal media) and `a760511` (mini battery). No applicationId,
+  minSdk, targetSdk, workflow, permission, service, dependency, provider count
+  or catalog change; the collection stays at 62 providers.
+- Headphones (`bt_headphones_wide`, `bt_headphones_square`):
+  `BluetoothHeadphonesRenderer` now draws a soft light-gray halo/blob
+  (`HALO = #E9E7EC`, with a 0x55-alpha outer ring) behind the black earbuds and
+  keeps the red `#D71921` accent dot. The wide icon grew from
+  `min(0.62h, 0.20w)` to `min(0.78h, 0.24w)` and the square icon from
+  `0.32 side` to `0.36 side`, with the square icon moved to `0.25h` so the halo
+  clears the status line. `CONNECTED` and the percentage stay dot-matrix; the
+  device name stays the clean gray `sans-serif` line (`#777379` on cards,
+  white in the transparent style).
+- Universal media (`media_universal`, the `media_controls` reference card):
+  `ReferenceMediaCard.universalLayout` now uses `0.03 side` padding and a
+  `min(0.40w, 0.72h)` cover-art box, so the art is 40% of the 918-wide design
+  card and remains top-left. Artist/title boxes were tightened to `0.10 side`
+  and `0.14 side` so the larger art does not overlap the bottom-left red
+  artist / black title. The note + black play button stay top-right. The
+  universal touch geometry reads the same layout, so the play hit box follows
+  the new position; other media kinds are unchanged.
+- Battery mini (`kwgt_nothing_battery_mini`, `SMALL_PROGRESSBAR`):
+  `ReferenceBatterySurface.drawSmallProgressBar` now paints the remainder pill
+  with `TRACK_SOFT = #E1E1E1` instead of the darker `GRAY`, so the red
+  `#D71921` fill reads on a light-gray track. The black percentage and the
+  other battery surfaces are unchanged.
+- TDD: `HeadphonesChromeTest` gained a size + halo assertion and
+  `HeadphonesFixtureRenderTest` asserts an exact `#E9E7EC` halo pixel in every
+  style; both failed first at the old geometry/colour. `MediaUniversalChromeTest`
+  was changed to require 38-42% card-width art and `<= 0.04 side` padding; it
+  failed first at the old 29.5% art. `BatterySurfaceRenderTest` gained a
+  remainder-track pixel assertion at `(360,130)`; it failed first against the
+  dark-gray track and passed after the `TRACK_SOFT` change.
+- Fixtures inspected: `app/build/fixture-pixels/headphones-*-fixture.png` show
+  the larger glyph and halo; `media-UNIVERSAL-BLACK.png` shows the larger
+  top-left art and bottom-left red/black text; `battery-mini-light-track.png`
+  shows the red fill on the light-gray pill. These are Robolectric renders, not
+  launcher screenshots.
+- Verified in this run:
+  `./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+  :app:lintDebug` -> `BUILD SUCCESSFUL`; 224 tests, 0 failures, 0 errors,
+  0 skipped; lint 0 errors, 458 warnings; debug APK sha256
+  `1580bc218048d71dc800fda8714c1d63312a2020f6627ed166dfdd2ba3fef77d`.
+- Not verified here: no emulator or device is attached. Launcher placement,
+  resize/style switching, real Bluetooth names/levels, real media sessions,
+  tap destinations and the runtime halo/art scaling are not runtime-verified
+  and are not claimed. No screenshot or Play-ready claim.
+- Next: place both headphone cards, `media_universal` and
+  `kwgt_nothing_battery_mini` on a real launcher in all three styles; confirm
+  the halo, larger art, gray name, red/black media text, light-gray battery
+  track, resize and tap targets; capture real screenshots plus the APK
+  checksum.
+- Blockers: no emulator/device in this runner; runtime verification pending.
+
 ## Repair: headphone earbuds and status black ink
 
 - Phase: one design-match colour repair on branch
