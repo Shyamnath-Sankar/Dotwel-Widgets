@@ -18,7 +18,6 @@ import android.os.Looper
 import android.os.SystemClock
 import android.provider.Settings
 import android.text.TextPaint
-import android.text.TextUtils
 import android.widget.RemoteViews
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
@@ -239,7 +238,85 @@ internal object BluetoothHeadphonesRenderer {
     private val RED = 0xFFD71921.toInt()
     private val TRANSPARENT_NAME = 0xCCFFFFFF.toInt()
 
+    const val NAME_WIDTH_ESTIMATE = 0.68f
+    const val NAME_HEIGHT_FACTOR = 1.25f
+
+    data class TextBox(
+        val left: Float,
+        val top: Float,
+        val right: Float,
+        val bottom: Float,
+    ) {
+        val width: Float get() = right - left
+        val height: Float get() = bottom - top
+        val centerX: Float get() = (left + right) / 2f
+        val centerY: Float get() = (top + bottom) / 2f
+    }
+
+    data class HeadphonesLayout(
+        val icon: TextBox,
+        val status: TextBox,
+        val percent: TextBox,
+        val name: TextBox,
+        val cardRadius: Float,
+    )
+
     fun cardColor(style: WidgetStyle): Int = CARD
+
+    /** Gallery-only fixture; placed widgets still read the real Bluetooth state. */
+    fun previewSnapshot(): BluetoothHeadphonesSnapshot = BluetoothHeadphonesSnapshot(
+        HeadphonesState.CONNECTED,
+        "Nothing Ear (1)",
+        100,
+    )
+
+    fun fittedNameSize(text: String, maxWidth: Float, maxHeight: Float): Float {
+        if (text.isEmpty()) return 0f
+        val byWidth = maxWidth / (text.length * NAME_WIDTH_ESTIMATE)
+        val byHeight = maxHeight / NAME_HEIGHT_FACTOR
+        return min(byWidth, byHeight).coerceAtLeast(0f)
+    }
+
+    fun layout(widthPx: Float, heightPx: Float, square: Boolean): HeadphonesLayout {
+        val width = widthPx.coerceAtLeast(1f)
+        val height = heightPx.coerceAtLeast(1f)
+        val side = min(width, height)
+        val cardRadius = side * 0.16f
+        if (square) {
+            val iconSize = side * 0.32f
+            fun box(cx: Float, cy: Float, w: Float, h: Float) = TextBox(
+                cx - w / 2f,
+                cy - h / 2f,
+                cx + w / 2f,
+                cy + h / 2f,
+            )
+            return HeadphonesLayout(
+                icon = box(width / 2f, height * 0.26f, iconSize, iconSize),
+                status = box(width / 2f, height * 0.52f, width * 0.86f, height * 0.12f),
+                percent = box(width / 2f, height * 0.66f, width * 0.60f, height * 0.14f),
+                name = box(width / 2f, height * 0.82f, width * 0.86f, height * 0.075f),
+                cardRadius = cardRadius,
+            )
+        }
+        val iconSize = min(height * 0.62f, width * 0.20f)
+        val textLeft = width * 0.33f
+        val textRight = width * 0.95f
+        val textCenter = (textLeft + textRight) / 2f
+        val textWidth = textRight - textLeft
+        fun box(cx: Float, cy: Float, w: Float, h: Float) = TextBox(
+            cx - w / 2f,
+            cy - h / 2f,
+            cx + w / 2f,
+            cy + h / 2f,
+        )
+        return HeadphonesLayout(
+            icon = box(width * 0.17f, height * 0.50f, iconSize, iconSize),
+            status = box(textCenter, height * 0.32f, textWidth, height * 0.30f),
+            percent = box(textCenter, height * 0.58f, textWidth, height * 0.24f),
+            name = box(textCenter, height * 0.84f, textWidth, height * 0.18f),
+            cardRadius = cardRadius,
+        )
+    }
 
     fun batteryColor(percent: Int?): Int = when {
         percent == null -> NAME_GRAY
@@ -304,39 +381,42 @@ internal object BluetoothHeadphonesRenderer {
         ink: Int,
         nameColor: Int,
     ) {
-        val iconSize = min(height * 0.62f, width * 0.20f)
-        drawEarbuds(canvas, width * 0.17f, height * 0.50f, iconSize, ink, style)
-        val textLeft = width * 0.33f
-        val textRight = width * 0.95f
-        val textCenter = (textLeft + textRight) / 2f
-        val textWidth = textRight - textLeft
+        val layout = layout(width.toFloat(), height.toFloat(), square = false)
+        drawEarbuds(
+            canvas,
+            layout.icon.centerX,
+            layout.icon.centerY,
+            layout.icon.width,
+            ink,
+            style,
+        )
         drawDotText(
             canvas,
             statusWord(snapshot),
-            textCenter,
-            height * 0.32f,
-            textWidth,
-            height * 0.30f,
+            layout.status.centerX,
+            layout.status.centerY,
+            layout.status.width,
+            layout.status.height,
             ink,
             style,
         )
         drawDotText(
             canvas,
             percentText(snapshot.percent),
-            textCenter,
-            height * 0.58f,
-            textWidth,
-            height * 0.24f,
+            layout.percent.centerX,
+            layout.percent.centerY,
+            layout.percent.width,
+            layout.percent.height,
             batteryColor(snapshot.percent),
             style,
         )
         drawName(
             canvas,
             snapshot.name ?: "HEADPHONES",
-            textCenter,
-            height * 0.84f,
-            textWidth,
-            height * 0.16f,
+            layout.name.centerX,
+            layout.name.centerY,
+            layout.name.width,
+            layout.name.height,
             nameColor,
             style,
         )
@@ -351,35 +431,42 @@ internal object BluetoothHeadphonesRenderer {
         ink: Int,
         nameColor: Int,
     ) {
-        val iconSize = min(width, height) * 0.32f
-        drawEarbuds(canvas, width / 2f, height * 0.26f, iconSize, ink, style)
+        val layout = layout(width.toFloat(), height.toFloat(), square = true)
+        drawEarbuds(
+            canvas,
+            layout.icon.centerX,
+            layout.icon.centerY,
+            layout.icon.width,
+            ink,
+            style,
+        )
         drawDotText(
             canvas,
             statusWord(snapshot),
-            width / 2f,
-            height * 0.52f,
-            width * 0.86f,
-            height * 0.12f,
+            layout.status.centerX,
+            layout.status.centerY,
+            layout.status.width,
+            layout.status.height,
             ink,
             style,
         )
         drawDotText(
             canvas,
             percentText(snapshot.percent),
-            width / 2f,
-            height * 0.66f,
-            width * 0.60f,
-            height * 0.14f,
+            layout.percent.centerX,
+            layout.percent.centerY,
+            layout.percent.width,
+            layout.percent.height,
             batteryColor(snapshot.percent),
             style,
         )
         drawName(
             canvas,
             snapshot.name ?: "HEADPHONES",
-            width / 2f,
-            height * 0.82f,
-            width * 0.86f,
-            height * 0.075f,
+            layout.name.centerX,
+            layout.name.centerY,
+            layout.name.width,
+            layout.name.height,
             nameColor,
             style,
         )
@@ -413,7 +500,9 @@ internal object BluetoothHeadphonesRenderer {
         for (sign in intArrayOf(-1, 1)) {
             val bulbCx = cx + sign * gap / 2f
             canvas.drawCircle(bulbCx, bulbCy, bulbRadius, paint)
-            canvas.drawCircle(bulbCx, bulbCy, bulbRadius * 0.30f, accentPaint)
+            if (sign > 0) {
+                canvas.drawCircle(bulbCx, bulbCy, bulbRadius * 0.30f, accentPaint)
+            }
             val stemTop = bulbCy + bulbRadius * 0.55f
             canvas.drawRoundRect(
                 RectF(
@@ -456,26 +545,26 @@ internal object BluetoothHeadphonesRenderer {
         cx: Float,
         cy: Float,
         maxWidth: Float,
-        textSize: Float,
+        maxHeight: Float,
         color: Int,
         style: WidgetStyle,
     ) {
         val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             this.color = color
-            this.textSize = textSize.coerceAtLeast(6f)
+            this.textSize = fittedNameSize(text, maxWidth, maxHeight).coerceAtLeast(4f)
             textAlign = Paint.Align.CENTER
             typeface = Typeface.create("sans-serif", Typeface.NORMAL)
             if (style == WidgetStyle.TRANSPARENT) {
                 setShadowLayer(4f, 0f, 2f, 0x99000000.toInt())
             }
         }
-        val fitted = TextUtils.ellipsize(
-            text,
-            paint,
-            maxWidth.coerceAtLeast(1f),
-            TextUtils.TruncateAt.END,
-        ).toString()
-        canvas.drawText(fitted, cx, cy, paint)
+        val measured = paint.measureText(text)
+        if (measured > maxWidth.coerceAtLeast(1f) && measured > 0f) {
+            paint.textSize *= maxWidth / measured
+        }
+        val metrics = paint.fontMetrics
+        val baseline = cy - (metrics.ascent + metrics.descent) / 2f
+        canvas.drawText(text, cx, baseline, paint)
     }
 }
 

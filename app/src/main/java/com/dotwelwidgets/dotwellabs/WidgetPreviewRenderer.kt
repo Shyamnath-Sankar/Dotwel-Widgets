@@ -118,7 +118,7 @@ object WidgetPreviewRenderer {
                 size.width,
                 size.height,
                 style,
-                BluetoothHeadphonesState.read(context),
+                BluetoothHeadphonesRenderer.previewSnapshot(),
                 entry.previewKind == PreviewKind.BT_HEADPHONES_SQUARE,
             )
             PreviewKind.BT_BATTERY_LEVELS -> BluetoothBatteryLevelsRenderer.render(
