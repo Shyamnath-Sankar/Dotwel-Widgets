@@ -7,13 +7,7 @@ object MediaTouchGeometry {
 
     fun design(kind:MediaWidgetKind):Controls {
         if (kind == MediaWidgetKind.NOTIFICATION) {
-            val rect = ReferenceMediaCard.clearRect(kind)
-            return Controls(
-                null,
-                null,
-                null,
-                Box(rect.left, rect.top, rect.right, rect.bottom),
-            )
+            return Controls(null, null, null, clearBox(kind))
         }
         val controls = ReferenceMediaCard.controlLayout(kind)
         fun box(cx:Float,cy:Float,half:Float)=Box(cx-half,cy-half,cx+half,cy+half)
@@ -33,6 +27,13 @@ object MediaTouchGeometry {
                 null
             },
         )
+    }
+
+    fun clearBox(kind:MediaWidgetKind):Box {
+        val width=kind.designWidth
+        val height=kind.designHeight
+        val side=minOf(width,height)
+        return Box(width-side*0.30f,height-side*0.22f,width-side*0.06f,height-side*0.04f)
     }
 
     fun map(box:Box,kind:MediaWidgetKind,width:Float,height:Float):Box {

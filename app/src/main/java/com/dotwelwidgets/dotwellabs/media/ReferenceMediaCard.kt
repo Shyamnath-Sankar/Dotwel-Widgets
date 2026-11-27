@@ -84,15 +84,8 @@ internal object ReferenceMediaCard {
     }
 
     fun clearRect(kind: MediaWidgetKind): RectF {
-        val width = kind.designWidth
-        val height = kind.designHeight
-        val side = min(width, height)
-        return RectF(
-            width - side * 0.30f,
-            height - side * 0.22f,
-            width - side * 0.06f,
-            height - side * 0.04f,
-        )
+        val box = MediaTouchGeometry.clearBox(kind)
+        return RectF(box.left, box.top, box.right, box.bottom)
     }
 
     fun draw(canvas: Canvas, kind: MediaWidgetKind, snapshot: MediaSnapshot) {
