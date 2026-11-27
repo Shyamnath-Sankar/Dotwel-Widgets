@@ -40,6 +40,13 @@ import kotlin.math.min
  * Each bitmap is drawn from its own received raster width/height with one
  * uniform `min(width, height) / 290` scale, so the provider never mixes host
  * coordinates with the raster or applies a second scale.
+ *
+ * The visible card now follows the battery_with_device_icon reference: a black
+ * phone glyph on a light pink #F8D7DA disc at the top-left, a small gray status
+ * word above a black dot-matrix percentage at the bottom-right, all on the
+ * white reference card. The legacy source helpers below are retained for
+ * provenance and unit coverage; [render] delegates to
+ * [ReferenceBatterySurface] so the widget and gallery preview agree.
  */
 object IosBatteryRenderer {
     const val SOURCE_COMPONENT_SIDE = 290f

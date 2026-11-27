@@ -8,9 +8,8 @@ import android.graphics.Bitmap
  * `assets/kwgt/nothing_battery.sanitized.json` for provenance, but the visible
  * surface now follows the reference battery family: a white #FFFFFF card, the
  * charge state in gray dot-matrix, the real level in black dot-matrix and a
- * bottom-right circular progress whose accent is red #D71921 only while low,
- * otherwise the palette green #6A9C89. No value is invented and the real level
- * still comes from [BatteryState].
+ * bottom-right circular progress filled with the reference red #D71921. No
+ * value is invented and the real level still comes from [BatteryState].
  */
 object KwgtBatteryRenderer {
     fun render(

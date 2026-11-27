@@ -61,8 +61,13 @@ class WidgetFixtureRenderTest {
             canSkipPrevious=true,capturedAtMillis=now,volumeFraction=.6f,canAdjustVolume=true)
         for(kind in com.dotwelwidgets.dotwellabs.media.MediaWidgetKind.values()) {
             for(style in WidgetStyle.values()) {
+                val state = if (kind == com.dotwelwidgets.dotwellabs.media.MediaWidgetKind.UNIVERSAL) {
+                    fixtureMedia.copy(isPlaying = false)
+                } else {
+                    fixtureMedia
+                }
                 save(com.dotwelwidgets.dotwellabs.media.MediaRenderers.render(context,kind,300,240,style,
-                    fixtureMedia,ready),"media-${kind.name}-${style.name}")
+                    state,ready),"media-${kind.name}-${style.name}")
             }
         }
         save(NtPhotoRenderer.render(context,-1,240,240,true,WidgetStyle.BLACK),"photo-empty-circle")
