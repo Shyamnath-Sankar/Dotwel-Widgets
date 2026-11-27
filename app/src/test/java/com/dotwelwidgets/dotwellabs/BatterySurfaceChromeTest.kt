@@ -24,6 +24,8 @@ class BatterySurfaceChromeTest {
         assertEquals(0xFF000000.toInt(), ReferenceBatterySurface.INK)
         assertEquals(0xFFFFFFFF.toInt(), ReferenceBatterySurface.WHITE)
         assertEquals(0xFFEEEEEE.toInt(), ReferenceBatterySurface.TRACK)
+        assertEquals(0xFFE1E1E1.toInt(), ReferenceBatterySurface.TRACK_SOFT)
+        assertEquals(0xFFB4B4B8.toInt(), ReferenceBatterySurface.EMPTY_DOT)
     }
 
     @Test
@@ -37,10 +39,18 @@ class BatterySurfaceChromeTest {
     }
 
     @Test
-    fun digitsAreBlackExceptWhenLow() {
-        assertEquals(ReferenceBatterySurface.INK, ReferenceBatterySurface.digitColor(75))
-        assertEquals(ReferenceBatterySurface.INK, ReferenceBatterySurface.digitColor(-1))
-        assertEquals(ReferenceBatterySurface.RED, ReferenceBatterySurface.digitColor(20))
+    fun digitsStayBlackAtEveryLevel() {
+        listOf(-1, 0, 20, 75, 100, 140).forEach { level ->
+            assertEquals(
+                ReferenceBatterySurface.INK,
+                ReferenceBatterySurface.digitColor(level),
+            )
+        }
+    }
+
+    @Test
+    fun emptyDotMatchesReferenceGray() {
+        assertEquals(0xFFB4B4B8.toInt(), ReferenceBatterySurface.EMPTY_DOT)
     }
 
     @Test
@@ -61,6 +71,16 @@ class BatterySurfaceChromeTest {
         assertEquals(0, ReferenceBatterySurface.verticalFilledDots(-5, 100))
         assertEquals(100, ReferenceBatterySurface.verticalFilledDots(140, 100))
         assertEquals(15, ReferenceBatterySurface.verticalFilledDots(75, 20))
+    }
+
+    @Test
+    fun verticalDotsFillEveryColumnEvenly() {
+        assertEquals(15, ReferenceBatterySurface.verticalFilledPerColumn(75, 20))
+        assertEquals(5, ReferenceBatterySurface.verticalFilledPerColumn(24, 20))
+        assertEquals(0, ReferenceBatterySurface.verticalFilledPerColumn(0, 20))
+        assertEquals(20, ReferenceBatterySurface.verticalFilledPerColumn(100, 20))
+        assertEquals(0, ReferenceBatterySurface.verticalFilledPerColumn(-5, 20))
+        assertEquals(20, ReferenceBatterySurface.verticalFilledPerColumn(140, 20))
     }
 
     @Test

@@ -34,8 +34,8 @@ internal object ReferenceBatterySurface {
     const val INK = 0xFF000000.toInt()
     const val GRAY = 0xFF777379.toInt()
     const val TRACK = 0xFFEEEEEE.toInt()
-    const val TRACK_SOFT = 0xFFF4F3F3.toInt()
-    const val EMPTY_DOT = 0xFFBDBDBD.toInt()
+    const val TRACK_SOFT = 0xFFE1E1E1.toInt()
+    const val EMPTY_DOT = 0xFFB4B4B8.toInt()
     const val LOW_THRESHOLD = 25
 
     fun cardColor(style: WidgetStyle): Int = WHITE
@@ -48,8 +48,7 @@ internal object ReferenceBatterySurface {
         else -> GREEN
     }
 
-    fun digitColor(level: Int): Int =
-        if (level in 0..100 && isLow(level)) RED else INK
+    fun digitColor(level: Int): Int = INK
 
     fun percentText(level: Int): String =
         if (level in 0..100) "$level%" else "--"
@@ -61,6 +60,12 @@ internal object ReferenceBatterySurface {
         if (total <= 0) return 0
         val clamped = level.coerceIn(0, 100)
         return (clamped / 100f * total).roundToInt()
+    }
+
+    fun verticalFilledPerColumn(level: Int, rows: Int): Int {
+        if (rows <= 0) return 0
+        val clamped = level.coerceIn(0, 100)
+        return (clamped / 100f * rows).roundToInt().coerceIn(0, rows)
     }
 
     fun chargeLabel(charging: Boolean): String =
@@ -201,8 +206,7 @@ internal object ReferenceBatterySurface {
     ) {
         val columns = 5
         val rows = 20
-        val total = columns * rows
-        val filled = verticalFilledDots(level, total)
+        val perColumn = verticalFilledPerColumn(level, rows)
         val pad = side * 0.07f
         val left = pad
         val top = pad
@@ -214,11 +218,11 @@ internal object ReferenceBatterySurface {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         for (column in 0 until columns) {
             for (row in 0 until rows) {
-                val index = column * rows + (rows - 1 - row)
+                val fromBottom = rows - 1 - row
                 paint.color = when {
-                    index < filled -> INK
-                    index == filled -> accent(level)
-                    else -> EMPTY_DOT
+                    fromBottom >= perColumn -> EMPTY_DOT
+                    column == 0 && fromBottom == perColumn - 1 -> accent(level)
+                    else -> INK
                 }
                 canvas.drawCircle(
                     left + cellWidth * (column + 0.5f),
@@ -242,7 +246,7 @@ internal object ReferenceBatterySurface {
         val cx = pad + diameter / 2f
         val cy = height / 2f
         canvas.drawCircle(cx, cy, diameter / 2f, fill(TRACK_SOFT))
-        drawPhone(canvas, cx, cy, diameter * 0.52f, INK)
+        drawDischargeBolt(canvas, cx, cy, diameter * 0.62f, accent(level))
         drawDotRight(
             canvas,
             percentText(level),
@@ -298,7 +302,7 @@ internal object ReferenceBatterySurface {
         val diameter = side * 0.26f
         val cx = pad + diameter / 2f
         val cy = pad + diameter / 2f
-        canvas.drawCircle(cx, cy, diameter / 2f, fill(withAlpha(accent(level), 0x33)))
+        canvas.drawCircle(cx, cy, diameter / 2f, fill(withAlpha(accent(level), 0x40)))
         drawPhone(canvas, cx, cy, diameter * 0.52f, INK)
 
         val labelColor = if (isLow(level)) RED else GRAY
@@ -339,6 +343,30 @@ internal object ReferenceBatterySurface {
             maxHeight,
             GRAY,
         )
+    }
+
+    private fun drawDischargeBolt(
+        canvas: Canvas,
+        cx: Float,
+        cy: Float,
+        size: Float,
+        color: Int,
+    ) {
+        val halfWidth = size * 0.16f
+        val top = cy - size * 0.28f
+        val neck = cy + size * 0.02f
+        val bottom = cy + size * 0.34f
+        val path = Path().apply {
+            moveTo(cx - halfWidth, top)
+            lineTo(cx + halfWidth, top)
+            lineTo(cx + halfWidth, neck)
+            lineTo(cx + size * 0.30f, neck)
+            lineTo(cx, bottom)
+            lineTo(cx - size * 0.30f, neck)
+            lineTo(cx - halfWidth, neck)
+            close()
+        }
+        canvas.drawPath(path, fill(color))
     }
 
     private fun drawPhone(canvas: Canvas, cx: Float, cy: Float, size: Float, color: Int) {
