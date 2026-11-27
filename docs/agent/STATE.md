@@ -1,5 +1,86 @@
 # Build and verification state
 
+## Part 2.6: reference battery surfaces (62 providers)
+
+- Phase: Part 2.6, the last reference UI/UX part. Branch
+  `agent/design-match-copy-reference-ui`; partial checkpoint `398ff5d`, baseline
+  repair `9d63dcf`, battery finish `8802ba1` (this entry is a follow-up docs
+  commit). No applicationId, minSdk, targetSdk, workflow, permission, service,
+  dependency, network path or provider-count change. Provider count stays 62 and
+  `CatalogManifestConsistencyTest` still asserts 62.
+- Reference: `com.dci.dev.somethingwidgets` v2.00.11 previews
+  `widget_preview_battery_circle_progress.png`,
+  `battery_glow_progress`, `battery_vertical_dots`, `battery_text_arc`,
+  `battery_small_progressbar` and `battery_with_device_icon` were re-fetched to
+  `/tmp/swref` only. No reference PNG, font, drawable or decompiled code is in
+  the repository or APK; `git status --porcelain` was checked before every
+  commit. Colours were sampled from the PNGs (red `#D71921`, empty dot
+  `#B4B4B8`, glow track `#818181`, small-bar track `#8D8C8F`) to guide the
+  original drawing code.
+- Surface family: `ReferenceBatterySurface.kt` now draws all six reference
+  kinds and every surface is a pure white `#FFFFFF` rounded card for every
+  style. Digits are black `#000000` dot-matrix at every level (matching the
+  reference 24%/75% readouts). The accent is red `#D71921` only while the level
+  is low (`<= 25`), otherwise the palette green `#6A9C89`; unknown levels use
+  the neutral gray `#777379`. This deliberately replaces the reference's
+  always-red fills so the task's "red accent only when low" rule holds, and it
+  keeps the Dotwel headphone-battery palette consistent.
+- Existing widget mapping (no provider added):
+  - `kwgt_nothing_battery` / `BatteryWidgetProvider` / `KwgtBatteryRenderer`
+    -> `CIRCLE_PROGRESS` (gray charge label, black level, bottom-right outlined
+    circle with an accent gradient fill).
+  - `kwgt_nothing_battery2` / `KwgtBattery2WidgetProvider` /
+    `KwgtBattery2Renderer` -> `GLOW_PROGRESS` (gray charge label, `0 50 100`
+    scale, rounded track with accent fill plus a soft glow).
+  - `kwgt_nothing_battery_mini` / `BatteryMiniWidgetProvider` /
+    `KwgtBatteryMiniRenderer` -> `SMALL_PROGRESSBAR` (black level on the left,
+    small rounded track/fill on the right).
+  - `kwgt_ios_battery` / `IosBatteryWidgetProvider` / `IosBatteryRenderer` ->
+    `WITH_DEVICE_ICON` (tinted accent disc, original phone glyph, gray charge
+    label that turns red when low, black level).
+  - The `battery_status` 1x1 tile keeps its Part 2.1 control-disc design.
+- `VERTICAL_DOTS` and `TEXT_ARC` are implemented and fixture-rendered because
+  the task lists their references, but no current provider maps to them and
+  adding a provider is forbidden. Vertical dots now fill all five columns
+  equally bottom-up (5 x 20, matching the reference) with the accent marker on
+  the top filled dot of the first column, instead of sequential column fill.
+  Text arc is a light disc with an original downward discharge glyph and a
+  black level; it is not wired to a widget.
+- Baseline repair: the previous checkpoint left
+  `AwesomeBatchLogicTest.mediaHitAreasMapTheSameDesignSpaceAsTheBitmap` red.
+  `MediaTouchGeometry.design(NOTIFICATION)` built its box from
+  `android.graphics.RectF`, which is a zero stub in plain JVM tests. Added a
+  primitive `MediaTouchGeometry.clearBox()` and made
+  `ReferenceMediaCard.clearRect()` delegate to it; device drawing is unchanged.
+- TDD: `BatterySurfaceChromeTest` was changed first to require black digits at
+  every level, `EMPTY_DOT` `#B4B4B8`, `TRACK_SOFT` `#E1E1E1` and even
+  per-column dot fill; those assertions failed against the checkpoint and then
+  passed after the implementation. The media fix was red before and green
+  after.
+- Verified in this run:
+  `./gradlew --no-daemon :app:testDebugUnitTest` -> `BUILD SUCCESSFUL`;
+  197 tests, 0 failures, 0 errors, 0 skipped. `./gradlew --no-daemon
+  :app:assembleDebug :app:lintDebug` -> `BUILD SUCCESSFUL`; lint 0 errors,
+  458 warnings; debug APK sha256
+  `cc8482f198cb99e767d5ef64c928160f9f94f4bce4c52c7fdc2a7c2b1f5e0d3f`.
+  All six kinds were rendered by `WidgetFixtureRenderTest` to
+  `app/build/fixture-pixels/battery-*` and inspected against the previews.
+- Not verified here: this runner has no emulator or device. The fixture PNGs
+  are Robolectric bitmap renders, not launcher placement or runtime
+  screenshots. Resize, style switching, real level/charging changes, low-battery
+  colour transitions and tap destinations are not runtime-verified and are not
+  claimed; no Play-ready claim.
+- Next: run the emulator/launcher check for all four battery widgets (2x2 and
+  2x1), confirm white cards, black digits, green normal / red low fills, and
+  capture real screenshots plus the APK checksum.
+- Blockers: no emulator/device in this runner; runtime verification pending.
+
+DESIGN MATCH COMPLETE
+
+Parts 1, 2.1, 2.3, 2.4, 2.5 and 2.6 are implemented. Part 2.2 is not applicable
+(no slider widget exists). This marker records design/code completion only; the
+runtime/launcher verification listed above is still outstanding.
+
 ## Part 2.4: multi-device Bluetooth battery-levels card (62 providers)
 
 - Phase: Part 2.4 of the reference UI/UX continuation. Branch

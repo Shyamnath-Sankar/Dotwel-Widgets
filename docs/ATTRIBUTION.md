@@ -393,7 +393,19 @@ preview PNGs, fonts, drawables and decompiled code were kept strictly under
 widget and app-chrome element is redrawn with Dotwel's own code, platform
 widgets and the OFL Doto font.
 
+### Battery surface references
 
+The six previews `widget_preview_battery_circle_progress.png`,
+`battery_glow_progress`, `battery_vertical_dots`, `battery_text_arc`,
+`battery_small_progressbar` and `battery_with_device_icon` were measured only.
+They were not copied into the repository or APK. `ReferenceBatterySurface.kt`
+recreates the layouts with original drawing code: white rounded cards, black
+dot-matrix digits, red `#D71921` only at low level, green `#6A9C89` otherwise,
+and original programmatic glyphs (no font or bitmap asset). The four existing
+battery widgets use the circle-progress, glow-progress, small-progressbar and
+device-icon surfaces; the vertical-dots and text-arc surfaces are implemented
+but not assigned because adding a provider would change the 62-provider
+checkpoint.
 
 - The upstream AwesomeAWidgets APK, decompiled OEM `net.oneplus.*` classes, and
   OEM resources.
