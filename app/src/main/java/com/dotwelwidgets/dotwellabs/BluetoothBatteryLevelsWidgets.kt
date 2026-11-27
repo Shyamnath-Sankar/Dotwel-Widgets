@@ -47,6 +47,16 @@ data class BluetoothBatteryLevelsSnapshot(
     val rows: List<BluetoothBatteryRow> = emptyList(),
 )
 
+internal data class BatteryRowFrame(
+    val left: Float,
+    val top: Float,
+    val right: Float,
+    val bottom: Float,
+) {
+    val width: Float get() = right - left
+    val height: Float get() = bottom - top
+}
+
 /**
  * Reads the local phone level plus every connected Bluetooth device for the
  * reference multi-row battery card. It adds no service, polling loop or
@@ -191,12 +201,21 @@ object BluetoothBatteryLevelsReader {
 
 internal object BluetoothBatteryLevelsRenderer {
     private const val WHITE = 0xFFFFFFFF.toInt()
+    private const val CARD = 0xFFFEF7FF.toInt()
     private const val TRACK = 0xFFF4F3F3.toInt()
     private const val FILL = 0xFFD71921.toInt()
     private const val INK = 0xFF000000.toInt()
     private const val MAX_ROWS = 4
+    private const val INSET_FRACTION = 0.03f
+    private const val CARD_RADIUS_FRACTION = 0.16f
+    private const val ROW_HEIGHT_FRACTION = 0.16f
+    private const val ROW_GAP_FRACTION = 0.035f
+    private const val ROW_PAD_FRACTION = 0.05f
 
-    fun cardColor(style: WidgetStyle): Int = WHITE
+    fun cardColor(style: WidgetStyle): Int = CARD
+
+    fun cardRadius(widthPx: Int, heightPx: Int): Float =
+        min(widthPx.coerceAtLeast(1), heightPx.coerceAtLeast(1)) * CARD_RADIUS_FRACTION
 
     fun trackColor(): Int = TRACK
 
@@ -213,6 +232,32 @@ internal object BluetoothBatteryLevelsRenderer {
     fun fillFraction(percent: Int?): Float =
         (percent ?: 0).coerceIn(0, 100) / 100f
 
+    /**
+     * Fixed pill height keeps a single source from stretching into one
+     * card-sized red squircle. Rows keep the reference height regardless of
+     * how many sources are present and are centred as a group.
+     */
+    fun rowFrames(widthPx: Int, heightPx: Int, rowCount: Int): List<BatteryRowFrame> {
+        val width = widthPx.coerceAtLeast(1)
+        val height = heightPx.coerceAtLeast(1)
+        val count = rowCount.coerceIn(0, MAX_ROWS)
+        if (count == 0) return emptyList()
+        val side = min(width, height).toFloat()
+        val inset = side * INSET_FRACTION
+        val rowHeight = side * ROW_HEIGHT_FRACTION
+        val gap = side * ROW_GAP_FRACTION
+        val stackHeight = count * rowHeight + (count - 1) * gap
+        val contentTop = inset
+        val contentBottom = height - inset
+        val stackTop = contentTop + ((contentBottom - contentTop) - stackHeight) / 2f
+        val left = inset + side * ROW_PAD_FRACTION
+        val right = width - inset - side * ROW_PAD_FRACTION
+        return List(count) { index ->
+            val top = stackTop + index * (rowHeight + gap)
+            BatteryRowFrame(left, top, right, top + rowHeight)
+        }
+    }
+
     fun render(
         context: Context,
         widthPx: Int,
@@ -224,9 +269,9 @@ internal object BluetoothBatteryLevelsRenderer {
         val height = heightPx.coerceAtLeast(1)
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        val side = min(width, height)
-        val inset = side * 0.035f
-        val radius = side * 0.10f
+        val side = min(width, height).toFloat()
+        val inset = side * INSET_FRACTION
+        val radius = cardRadius(width, height)
         val cardPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = cardColor(style)
         }
@@ -243,18 +288,10 @@ internal object BluetoothBatteryLevelsRenderer {
             return bitmap
         }
 
-        val pad = side * 0.045f
-        val contentLeft = inset + pad
-        val contentRight = width - inset - pad
-        val contentTop = inset + pad
-        val contentBottom = height - inset - pad
-        val gap = side * 0.028f
-        val rowHeight = (
-            (contentBottom - contentTop) - gap * (rows.size - 1)
-            ) / rows.size
+        val frames = rowFrames(width, height, rows.size)
         rows.forEachIndexed { index, row ->
-            val top = contentTop + index * (rowHeight + gap)
-            drawRow(canvas, row, contentLeft, top, contentRight, top + rowHeight)
+            val frame = frames[index]
+            drawRow(canvas, row, frame.left, frame.top, frame.right, frame.bottom)
         }
         return bitmap
     }
@@ -325,10 +362,7 @@ internal object BluetoothBatteryLevelsRenderer {
         }
 
         val nameLeft = left + height * 0.82f
-        val nameRight = min(
-            if (fraction > 0f) fillRight else right,
-            percentRight - height * 0.10f,
-        )
+        val nameRight = percentRight - height * 0.10f
         val nameMaxWidth = max(
             nameRight - nameLeft,
             (right - left) * 0.28f,
