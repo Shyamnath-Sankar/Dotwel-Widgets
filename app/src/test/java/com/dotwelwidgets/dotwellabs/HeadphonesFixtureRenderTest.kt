@@ -27,6 +27,7 @@ class HeadphonesFixtureRenderTest {
     private val green = 0xFF6A9C89.toInt()
     private val red = 0xFFD71921.toInt()
     private val gray = 0xFF777379.toInt()
+    private val halo = 0xFFE9E7EC.toInt()
 
     @Test
     fun wideAndSquareFixtureCardsPaintEveryReferenceLine() {
@@ -92,6 +93,10 @@ class HeadphonesFixtureRenderTest {
                         "$name red earbud dot",
                         bitmap.containsIn(layout.icon, red),
                     )
+                    assertTrue(
+                        "$name light-gray halo behind the earbuds",
+                        bitmap.containsOpaqueExactIn(layout.icon, halo),
+                    )
                 } finally {
                     bitmap.recycle()
                 }
@@ -153,6 +158,10 @@ class HeadphonesFixtureRenderTest {
                 bitmap.containsIn(layout.percent, percentColor),
             )
             assertTrue("$name red earbud dot", bitmap.containsIn(layout.icon, red))
+            assertTrue(
+                "$name light-gray halo behind the earbuds",
+                bitmap.containsOpaqueExactIn(layout.icon, halo),
+            )
             assertTrue("$name gray device name", bitmap.containsIn(layout.name, gray))
         } finally {
             bitmap.recycle()
