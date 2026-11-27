@@ -280,7 +280,7 @@ internal object ReferenceBatterySurface {
         val barTop = height / 2f - barHeight / 2f
         val rect = RectF(barLeft, barTop, barRight, barTop + barHeight)
         val radius = barHeight / 2f
-        canvas.drawRoundRect(rect, radius, radius, fill(GRAY))
+        canvas.drawRoundRect(rect, radius, radius, fill(TRACK_SOFT))
         val fraction = fillFraction(level)
         if (fraction > 0f) {
             val filled = RectF(barLeft, barTop, barLeft + barWidth * fraction, rect.bottom)
