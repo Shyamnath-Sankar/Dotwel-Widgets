@@ -4,25 +4,19 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
- * Locks the reference multi-device Bluetooth battery card: a pure white
- * #FFFFFF surface, light #F4F3F3 rounded tracks, a red #D71921 proportional
- * fill, and black dot-matrix device name / percentage text.
+ * Locks the reference multi-device Bluetooth battery card: a light #FEF7FF
+ * surface, light #F4F3F3 rounded tracks, a red #D71921 proportional fill,
+ * and black dot-matrix device name / percentage text.
  */
 class BluetoothBatteryLevelsChromeTest {
     @Test
-    fun cardUsesTheReferenceWhiteSurface() {
-        assertEquals(
-            0xFFFFFFFF.toInt(),
-            BluetoothBatteryLevelsRenderer.cardColor(WidgetStyle.BLACK),
-        )
-        assertEquals(
-            0xFFFFFFFF.toInt(),
-            BluetoothBatteryLevelsRenderer.cardColor(WidgetStyle.TRANSLUCENT),
-        )
-        assertEquals(
-            0xFFFFFFFF.toInt(),
-            BluetoothBatteryLevelsRenderer.cardColor(WidgetStyle.TRANSPARENT),
-        )
+    fun cardUsesTheReferenceLightSurface() {
+        WidgetStyle.values().forEach { style ->
+            assertEquals(
+                0xFFFEF7FF.toInt(),
+                BluetoothBatteryLevelsRenderer.cardColor(style),
+            )
+        }
     }
 
     @Test
