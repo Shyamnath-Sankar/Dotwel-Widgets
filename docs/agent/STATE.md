@@ -1,5 +1,27 @@
 # Build and verification state
 
+## Checkpoint: photo-configure-fix debug APK
+
+- Phase: checkpoint the CI-built debug APK for the photo widget configure fix
+  (merge commit `1b1fa955`, PR #17). Branch
+  `agent/checkpoint-the-debug-apk-with`; APK commit `b2212149`. No app code,
+  manifest, workflow, catalog, applicationId or SDK level was changed.
+- Source artifact: `dotwel-widgets-debug` from successful CI run `46022335367`
+  (`push` on `main`, head `1b1fa955`); the equivalent PR #17 run is
+  `46020367641`. The downloaded artifact contained `debug/app-debug.apk`.
+- Checkpoint file: `checkpoints/DotwelWidgets.photo-configure-fix.debug.apk`
+  - sha256: `87a3e4298a9bb70981a7b3850b457366a62063f60fc006a9bf6d109d8ab54c1f`
+  - size: `2071017` bytes
+  - package `com.dotwelwidgets.dotwellabs`, versionCode `9`, versionName
+    `0.1.8`, minSdk `26`, targetSdk/compileSdk `36`.
+- Verified in this run: artifact download and unzip, `unzip -t` reports no
+  errors, and `aapt2 dump badging` reports the expected package/version/SDK.
+  This is a build-artifact checkpoint only; the photo configure flow is still
+  not runtime-verified (no emulator/device in this runner).
+- Next: share the checkpoint download and, when a device is available, confirm
+  the photo picker opens immediately when `photo_circle`/`photo_rect` are added.
+- Blockers: runtime verification pending; no emulator/device here.
+
 ## Fix: photo widget configure flow on add
 
 - Phase: photo widget configure fix. Branch `agent/fix-the-photo-widget-configure`,
