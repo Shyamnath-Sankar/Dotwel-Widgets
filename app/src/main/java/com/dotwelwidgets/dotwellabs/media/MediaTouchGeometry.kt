@@ -11,6 +11,14 @@ object MediaTouchGeometry {
         }
         val controls = ReferenceMediaCard.controlLayout(kind)
         fun box(cx:Float,cy:Float,half:Float)=Box(cx-half,cy-half,cx+half,cy+half)
+        if (kind == MediaWidgetKind.UNIVERSAL) {
+            val layout = ReferenceMediaCard.universalLayout(kind)
+            return Controls(
+                previous = null,
+                play = box(layout.playCenterX, layout.playCenterY, layout.playRadius * 1.7f),
+                next = null,
+            )
+        }
         val volumeHalf = controls.skipSize * 1.8f
         return Controls(
             previous = box(controls.previousCenterX, controls.centerY, volumeHalf),
