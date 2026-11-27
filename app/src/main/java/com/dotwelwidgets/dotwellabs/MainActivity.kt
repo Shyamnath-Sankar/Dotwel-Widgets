@@ -47,6 +47,7 @@ import com.dotwelwidgets.dotwellabs.weather.WeatherController
 import com.dotwelwidgets.dotwellabs.weather.WeatherDisplay
 import com.dotwelwidgets.dotwellabs.weather.WeatherSettings
 import java.util.UUID
+import kotlin.math.ceil
 
 class MainActivity : Activity() {
     private val handler = Handler(Looper.getMainLooper())
@@ -84,9 +85,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setBackgroundDrawable(
-            DottedBackgroundDrawable(resources.displayMetrics.density),
-        )
+        window.setBackgroundDrawable(ColorDrawable(Color.BLACK))
         setContentView(R.layout.activity_main)
         applySystemBarInsets()
 
@@ -207,12 +206,17 @@ class MainActivity : Activity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
         window.setDecorFitsSystemWindows(false)
         val root = findViewById<View>(R.id.settings_root)
+        val topBar = findViewById<View>(R.id.top_bar)
         val nav = findViewById<View>(R.id.bottom_nav)
         val navParams = nav.layoutParams as ViewGroup.MarginLayoutParams
         val baseLeft = root.paddingLeft
         val baseTop = root.paddingTop
         val baseRight = root.paddingRight
         val baseBottom = root.paddingBottom
+        val barLeft = topBar.paddingLeft
+        val barTop = topBar.paddingTop
+        val barRight = topBar.paddingRight
+        val barBottom = topBar.paddingBottom
         val navLeft = navParams.leftMargin
         val navRight = navParams.rightMargin
         val navBottom = navParams.bottomMargin
@@ -225,6 +229,12 @@ class MainActivity : Activity() {
                 baseTop + bars.top,
                 baseRight + bars.right,
                 baseBottom + bars.bottom,
+            )
+            topBar.setPadding(
+                barLeft + bars.left,
+                barTop + bars.top,
+                barRight + bars.right,
+                barBottom,
             )
             navParams.setMargins(
                 navLeft + bars.left,
@@ -321,7 +331,7 @@ class MainActivity : Activity() {
         column.addView(
             TextView(this).apply {
                 text = label
-                setTextColor(getColor(R.color.widget_ink))
+                setTextColor(getColor(R.color.dotwel_white))
                 textSize = 13f
                 setPadding(0, dp(8), 0, 0)
             },
@@ -333,7 +343,7 @@ class MainActivity : Activity() {
         column.addView(
             TextView(this).apply {
                 text = count
-                setTextColor(getColor(R.color.widget_muted))
+                setTextColor(getColor(R.color.dotwel_gray))
                 textSize = 11f
                 setPadding(0, dp(2), 0, 0)
             },
@@ -389,9 +399,9 @@ class MainActivity : Activity() {
         var selected = 0
         val dialog = Dialog(this)
         sheetDialog = dialog
-        val style = WidgetPrefs.style(this)
 
         val root = FrameLayout(this).apply {
+            setBackgroundColor(Color.BLACK)
             setPadding(dp(14), dp(14), dp(14), dp(14))
             clipToPadding = false
         }
@@ -401,7 +411,7 @@ class MainActivity : Activity() {
         }
         val sheet = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setBackgroundResource(R.drawable.bg_sheet_surface)
+            setBackgroundColor(Color.BLACK)
             setPadding(dp(18), dp(16), dp(18), dp(18))
         }
         scroll.addView(
@@ -427,9 +437,10 @@ class MainActivity : Activity() {
         header.addView(
             TextView(this).apply {
                 text = getString(category.labelRes)
-                textSize = 19f
-                setTypeface(Typeface.DEFAULT_BOLD)
-                setTextColor(getColor(R.color.widget_ink))
+                textSize = 24f
+                typeface = resources.getFont(R.font.doto)
+                isAllCaps = true
+                setTextColor(getColor(R.color.dotwel_white))
             },
             LinearLayout.LayoutParams(
                 0,
@@ -456,28 +467,30 @@ class MainActivity : Activity() {
         )
 
         val previewFrame = SwipeFrameLayout(this).apply {
-            setBackgroundResource(style.backgroundRes)
-            setPadding(dp(12), dp(12), dp(12), dp(12))
+            setBackgroundResource(R.drawable.bg_preview_card)
+            setPadding(dp(16), dp(16), dp(16), dp(16))
         }
         sheet.addView(
             previewFrame,
             LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                dp(240),
+                dp(260),
             ).apply { topMargin = dp(14) },
         )
 
         val nameView = TextView(this).apply {
-            textSize = 18f
-            setTypeface(Typeface.DEFAULT_BOLD)
-            setTextColor(getColor(R.color.widget_ink))
+            textSize = 22f
+            typeface = resources.getFont(R.font.doto)
+            isAllCaps = true
+            setTextColor(getColor(R.color.dotwel_white))
             setPadding(0, dp(14), 0, 0)
         }
         sheet.addView(nameView, matchWrap())
 
         val sizeView = TextView(this).apply {
             textSize = 12f
-            setTextColor(getColor(R.color.widget_muted))
+            typeface = Typeface.MONOSPACE
+            setTextColor(getColor(R.color.dotwel_gray))
             setPadding(0, dp(4), 0, 0)
         }
         sheet.addView(sizeView, matchWrap())
@@ -491,7 +504,7 @@ class MainActivity : Activity() {
 
         val descView = TextView(this).apply {
             textSize = 12f
-            setTextColor(getColor(R.color.widget_muted))
+            setTextColor(getColor(R.color.dotwel_gray))
             setLineSpacing(dp(2).toFloat(), 1f)
             setPadding(0, dp(4), 0, 0)
         }
@@ -559,10 +572,26 @@ class MainActivity : Activity() {
             ).apply { topMargin = dp(8) },
         )
 
+        sheet.addView(
+            TextView(this).apply {
+                text = getString(R.string.chrome_footer)
+                gravity = Gravity.CENTER
+                typeface = Typeface.MONOSPACE
+                letterSpacing = 0.18f
+                isAllCaps = true
+                setTextColor(getColor(R.color.dotwel_gray))
+                textSize = 10f
+            },
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            ).apply { topMargin = dp(20) },
+        )
+
         fun rebind() {
             val entry = entries[selected]
             nameView.text = entry.name
-            sizeView.text = providerSizeText(entry)
+            sizeView.text = providerCellSizeText(entry)
             modeView.text = WidgetModeLabels.label(this, entry)
             val weatherNote = if (entry.group == WidgetGroup.WEATHER) {
                 "\n\n" + weatherStatusSummary()
@@ -693,7 +722,7 @@ class MainActivity : Activity() {
             LinearLayout.LayoutParams.WRAP_CONTENT,
         )
 
-    private fun providerSizeText(entry: CatalogEntry): String {
+    private fun providerCellSizeText(entry: CatalogEntry): String {
         val info = WidgetCatalog.providerInfo(this, entry)
             ?: return getString(R.string.sheet_size_unknown)
         val minWidth = info.minWidth
@@ -701,8 +730,17 @@ class MainActivity : Activity() {
         if (minWidth <= 0 || minHeight <= 0) {
             return getString(R.string.sheet_size_unknown)
         }
-        return getString(R.string.sheet_size_format, minWidth, minHeight)
+        return getString(
+            R.string.sheet_size_cells_format,
+            cellCount(minWidth),
+            cellCount(minHeight),
+            minWidth,
+            minHeight,
+        )
     }
+
+    private fun cellCount(minDp: Int): Int =
+        ceil((minDp + 30).toDouble() / 70.0).toInt().coerceAtLeast(1)
 
     private fun readyEntryCount(): Int = WidgetCatalog.entries.count {
         it.state == ImportState.READY && it.providerClass != null
@@ -1160,8 +1198,10 @@ class MainActivity : Activity() {
     private fun showLicenseDialog() {
         val awesome = readRawText(R.raw.awesomeawidgets_mit)
         val kwgt = readRawText(R.raw.kwgt_widgets_mit)
+        val doto = readRawText(R.raw.doto_ofl)
         val body = "AwesomeAWidgets\n================\n\n$awesome\n\n" +
-            "KWGT-Widgets\n================\n\n$kwgt"
+            "KWGT-Widgets\n================\n\n$kwgt\n\n" +
+            "Doto font\n================\n\n$doto"
         AlertDialog.Builder(this)
             .setTitle(R.string.about_license_title)
             .setMessage(body)

@@ -369,7 +369,31 @@ the app from About & source credits > View MIT license texts.
   not claimed as imported. All 21 registered providers are build-verified only
   and remain runtime-unverified.
 
-## Not included
+## Doto font (SIL Open Font License 1.1)
+
+The app chrome uses the Doto dot-matrix font for its headline, subtitle and
+section titles. It is an open-source Google Fonts family:
+
+- Upstream: https://github.com/google/fonts/tree/main/ofl/doto
+- File: `app/src/main/res/font/doto.ttf`
+  (`Doto[ROND,wght].ttf`, 456,924 bytes, TrueType).
+- Licence: SIL Open Font License 1.1, copyright 2024 The Doto Project Authors.
+  The full text is bundled at `app/src/main/res/raw/doto_ofl.txt` and is
+  reachable from About & source credits > View MIT license texts.
+- No proprietary font (including `ndot-47.ttf`, NType, Lettera, Product Sans)
+  is bundled. The programmatic `DotGlyphFont` renderer remains in use for the
+  widget artwork.
+
+## Something OS Widgets visual reference
+
+`com.dci.dev.somethingwidgets` v2.00.11 was downloaded during development only
+to measure layout, colour and proportions for the reference-match task. Its
+preview PNGs, fonts, drawables and decompiled code were kept strictly under
+`/tmp` on the build runner and are not part of this repository or the APK. Every
+widget and app-chrome element is redrawn with Dotwel's own code, platform
+widgets and the OFL Doto font.
+
+
 
 - The upstream AwesomeAWidgets APK, decompiled OEM `net.oneplus.*` classes, and
   OEM resources.
