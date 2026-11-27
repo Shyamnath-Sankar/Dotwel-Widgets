@@ -17,10 +17,21 @@ object MediaTouchGeometry {
         }
         val controls = ReferenceMediaCard.controlLayout(kind)
         fun box(cx:Float,cy:Float,half:Float)=Box(cx-half,cy-half,cx+half,cy+half)
+        val volumeHalf = controls.skipSize * 1.8f
         return Controls(
-            previous = box(controls.previousCenterX, controls.centerY, controls.skipSize * 1.8f),
+            previous = box(controls.previousCenterX, controls.centerY, volumeHalf),
             play = box(controls.playCenterX, controls.centerY, controls.playRadius * 1.7f),
-            next = box(controls.nextCenterX, controls.centerY, controls.skipSize * 1.8f),
+            next = box(controls.nextCenterX, controls.centerY, volumeHalf),
+            volumeUp = if (kind == MediaWidgetKind.NOTHING_PLAYER_3) {
+                box(controls.volumeUpCenterX, controls.volumeCenterY, volumeHalf)
+            } else {
+                null
+            },
+            volumeDown = if (kind == MediaWidgetKind.NOTHING_PLAYER_3) {
+                box(controls.volumeDownCenterX, controls.volumeCenterY, volumeHalf)
+            } else {
+                null
+            },
         )
     }
 

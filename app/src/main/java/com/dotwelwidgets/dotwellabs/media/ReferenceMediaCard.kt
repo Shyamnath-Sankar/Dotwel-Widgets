@@ -54,6 +54,9 @@ internal object ReferenceMediaCard {
         val centerY: Float,
         val playRadius: Float,
         val skipSize: Float,
+        val volumeUpCenterX: Float,
+        val volumeDownCenterX: Float,
+        val volumeCenterY: Float,
     )
 
     fun controlLayout(kind: MediaWidgetKind): ControlLayout {
@@ -66,13 +69,17 @@ internal object ReferenceMediaCard {
         val nextX = width - pad - skipSize * 0.9f
         val playX = nextX - playRadius - skipSize * 0.7f
         val previousX = playX - playRadius - skipSize * 0.7f
+        val centerY = pad + playRadius
         return ControlLayout(
             previousCenterX = previousX,
             playCenterX = playX,
             nextCenterX = nextX,
-            centerY = pad + playRadius,
+            centerY = centerY,
             playRadius = playRadius,
             skipSize = skipSize,
+            volumeUpCenterX = playX,
+            volumeDownCenterX = previousX,
+            volumeCenterY = centerY + playRadius * 2.4f,
         )
     }
 
@@ -172,6 +179,28 @@ internal object ReferenceMediaCard {
                 controls.skipSize,
                 previous = false,
                 color = BLACK,
+            )
+        }
+        if (kind == MediaWidgetKind.NOTHING_PLAYER_3) {
+            val volumeColor = if (snapshot.canAdjustVolume) BLACK else GRAY
+            val volumePaint = MediaDraw.text(volumeColor, controls.skipSize * 1.4f, bold = true)
+            MediaDraw.drawText(
+                canvas,
+                volumePaint,
+                "+",
+                controls.volumeUpCenterX,
+                controls.volumeCenterY + controls.skipSize * 0.5f,
+                controls.skipSize * 2f,
+                Paint.Align.CENTER,
+            )
+            MediaDraw.drawText(
+                canvas,
+                volumePaint,
+                "-",
+                controls.volumeDownCenterX,
+                controls.volumeCenterY + controls.skipSize * 0.5f,
+                controls.skipSize * 2f,
+                Paint.Align.CENTER,
             )
         }
     }
