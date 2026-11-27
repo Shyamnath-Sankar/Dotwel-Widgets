@@ -21,6 +21,7 @@ import kotlin.math.min
  */
 internal object ReferenceMediaCard {
     private const val WHITE = 0xFFFFFFFF.toInt()
+    private const val CARD = 0xFFFEF7FF.toInt()
     private const val RED = 0xFFD71921.toInt()
     private const val BLACK = 0xFF000000.toInt()
     private const val GRAY = 0xFF777379.toInt()
@@ -28,9 +29,85 @@ internal object ReferenceMediaCard {
 
     fun cardColor(style: WidgetStyle): Int = WHITE
 
+    fun cardColor(kind: MediaWidgetKind, style: WidgetStyle): Int =
+        if (kind == MediaWidgetKind.UNIVERSAL) CARD else cardColor(style)
+
     fun artistColor(): Int = RED
 
     fun titleColor(): Int = BLACK
+
+    fun noteColor(): Int = BLACK
+
+    fun playButtonColor(): Int = BLACK
+
+    data class FloatBox(
+        val left: Float,
+        val top: Float,
+        val right: Float,
+        val bottom: Float,
+    ) {
+        val width: Float get() = right - left
+        val height: Float get() = bottom - top
+        val centerX: Float get() = (left + right) / 2f
+        val centerY: Float get() = (top + bottom) / 2f
+
+        fun width(): Float = width
+        fun height(): Float = height
+    }
+
+    data class UniversalLayout(
+        val art: FloatBox,
+        val artCorner: Float,
+        val noteCenterX: Float,
+        val noteCenterY: Float,
+        val noteSize: Float,
+        val playCenterX: Float,
+        val playCenterY: Float,
+        val playRadius: Float,
+        val artistLeft: Float,
+        val artistRight: Float,
+        val artistCenterY: Float,
+        val titleLeft: Float,
+        val titleRight: Float,
+        val titleCenterY: Float,
+        val titleBottom: Float,
+    )
+
+    fun universalLayout(kind: MediaWidgetKind): UniversalLayout {
+        val width = kind.designWidth
+        val height = kind.designHeight
+        val side = min(width, height)
+        val pad = side * 0.06f
+        val artSize = side * 0.50f
+        val art = FloatBox(pad, pad, pad + artSize, pad + artSize)
+        val noteSize = side * 0.17f
+        val noteCenterX = width - pad - side * 0.10f
+        val noteCenterY = pad + side * 0.10f
+        val playRadius = side * 0.075f
+        val playCenterY = noteCenterY + noteSize / 2f + side * 0.04f + playRadius
+        val titleHeight = side * 0.16f
+        val titleCenterY = height - pad - titleHeight / 2f
+        val artistHeight = side * 0.12f
+        val artistCenterY =
+            titleCenterY - titleHeight / 2f - side * 0.02f - artistHeight / 2f
+        return UniversalLayout(
+            art = art,
+            artCorner = side * 0.05f,
+            noteCenterX = noteCenterX,
+            noteCenterY = noteCenterY,
+            noteSize = noteSize,
+            playCenterX = noteCenterX,
+            playCenterY = playCenterY,
+            playRadius = playRadius,
+            artistLeft = pad,
+            artistRight = width - pad,
+            artistCenterY = artistCenterY,
+            titleLeft = pad,
+            titleRight = width - pad,
+            titleCenterY = titleCenterY,
+            titleBottom = height - pad,
+        )
+    }
 
     fun displayText(value: String?, fallback: String): String {
         val cleaned = value?.trim().orEmpty()
@@ -95,6 +172,11 @@ internal object ReferenceMediaCard {
         val pad = side * 0.055f
         val radius = side * 0.10f
 
+        if (kind == MediaWidgetKind.UNIVERSAL) {
+            drawUniversal(canvas, kind, snapshot)
+            return
+        }
+
         canvas.drawRoundRect(
             RectF(0f, 0f, width, height),
             radius,
@@ -116,6 +198,133 @@ internal object ReferenceMediaCard {
         if (kind == MediaWidgetKind.NOTIFICATION) {
             drawClear(canvas, kind)
         }
+    }
+
+    private fun drawUniversal(
+        canvas: Canvas,
+        kind: MediaWidgetKind,
+        snapshot: MediaSnapshot,
+    ) {
+        val layout = universalLayout(kind)
+        val cardRadius = min(kind.designWidth, kind.designHeight) * 0.035f
+        canvas.drawRoundRect(
+            RectF(0f, 0f, kind.designWidth, kind.designHeight),
+            cardRadius,
+            cardRadius,
+            MediaDraw.fill(cardColor(kind, WidgetStyle.BLACK)),
+        )
+        MediaDraw.cover(
+            canvas,
+            snapshot.albumArt,
+            RectF(
+                layout.art.left,
+                layout.art.top,
+                layout.art.right,
+                layout.art.bottom,
+            ),
+            layout.artCorner,
+            ART_FALLBACK,
+        )
+        drawMusicNote(
+            canvas,
+            layout.noteCenterX,
+            layout.noteCenterY,
+            layout.noteSize,
+            noteColor(),
+        )
+        canvas.drawCircle(
+            layout.playCenterX,
+            layout.playCenterY,
+            layout.playRadius,
+            MediaDraw.fill(playButtonColor()),
+        )
+        MediaDraw.drawPlayPause(
+            canvas,
+            layout.playCenterX,
+            layout.playCenterY,
+            layout.playRadius * 1.15f,
+            snapshot.isPlaying,
+            WHITE,
+        )
+        val titleValue = displayText(
+            snapshot.notification?.title ?: snapshot.title,
+            "Nothing playing",
+        )
+        val artistValue = displayText(
+            snapshot.notification?.text ?: snapshot.artist,
+            if (snapshot.accessGranted) "Unknown artist" else "Media access off",
+        )
+        drawDotLine(
+            canvas,
+            artistValue,
+            layout.artistLeft,
+            layout.artistCenterY,
+            (layout.artistRight - layout.artistLeft).coerceAtLeast(1f),
+            min(kind.designWidth, kind.designHeight) * 0.12f,
+            artistColor(),
+        )
+        drawDotLine(
+            canvas,
+            titleValue,
+            layout.titleLeft,
+            layout.titleCenterY,
+            (layout.titleRight - layout.titleLeft).coerceAtLeast(1f),
+            min(kind.designWidth, kind.designHeight) * 0.16f,
+            titleColor(),
+        )
+    }
+
+    private fun drawMusicNote(
+        canvas: Canvas,
+        centerX: Float,
+        centerY: Float,
+        size: Float,
+        color: Int,
+    ) {
+        val paint = MediaDraw.fill(color)
+        val headWidth = size * 0.34f
+        val headHeight = size * 0.24f
+        val headLeft = centerX - size * 0.30f
+        val headTop = centerY + size * 0.22f
+        canvas.drawOval(
+            RectF(
+                headLeft,
+                headTop,
+                headLeft + headWidth,
+                headTop + headHeight,
+            ),
+            paint,
+        )
+        val stemX = headLeft + headWidth * 0.82f
+        canvas.drawRect(
+            stemX - size * 0.035f,
+            centerY - size * 0.44f,
+            stemX + size * 0.035f,
+            headTop + headHeight * 0.45f,
+            paint,
+        )
+        val flag = android.graphics.Path().apply {
+            moveTo(stemX + size * 0.035f, centerY - size * 0.44f)
+            cubicTo(
+                stemX + size * 0.34f,
+                centerY - size * 0.34f,
+                stemX + size * 0.30f,
+                centerY - size * 0.12f,
+                stemX + size * 0.05f,
+                centerY - size * 0.10f,
+            )
+            lineTo(stemX + size * 0.035f, centerY - size * 0.20f)
+            cubicTo(
+                stemX + size * 0.24f,
+                centerY - size * 0.24f,
+                stemX + size * 0.24f,
+                centerY - size * 0.34f,
+                stemX + size * 0.035f,
+                centerY - size * 0.38f,
+            )
+            close()
+        }
+        canvas.drawPath(flag, paint)
     }
 
     private fun drawClear(canvas: Canvas, kind: MediaWidgetKind) {
