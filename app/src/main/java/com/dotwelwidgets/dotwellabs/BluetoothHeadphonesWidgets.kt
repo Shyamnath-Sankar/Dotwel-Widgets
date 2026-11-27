@@ -230,9 +230,8 @@ object BluetoothHeadphonesState {
 }
 
 internal object BluetoothHeadphonesRenderer {
-    private val WHITE = 0xFFFFFFFF.toInt()
     private val CARD = 0xFFFEF7FF.toInt()
-    private val INK = 0xFF000000.toInt()
+    val GLYPH_INK = 0xFF1D1B20.toInt()
     private val NAME_GRAY = 0xFF777379.toInt()
     private val GREEN = 0xFF6A9C89.toInt()
     private val RED = 0xFFD71921.toInt()
@@ -362,7 +361,7 @@ internal object BluetoothHeadphonesRenderer {
                 cardPaint,
             )
         }
-        val ink = if (style == WidgetStyle.TRANSPARENT) WHITE else INK
+        val ink = GLYPH_INK
         val nameColor = if (style == WidgetStyle.TRANSPARENT) TRANSPARENT_NAME else NAME_GRAY
         if (square) {
             drawSquare(canvas, width, height, style, snapshot, ink, nameColor)

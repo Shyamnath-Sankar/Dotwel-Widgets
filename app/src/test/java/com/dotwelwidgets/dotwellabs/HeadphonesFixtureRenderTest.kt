@@ -2,6 +2,8 @@ package com.dotwelwidgets.dotwellabs
 
 import android.graphics.Bitmap
 import java.io.File
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,7 +22,8 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class HeadphonesFixtureRenderTest {
     private val card = 0xFFFEF7FF.toInt()
-    private val ink = 0xFF000000.toInt()
+    private val ink = 0xFF1D1B20.toInt()
+    private val white = 0xFFFFFFFF.toInt()
     private val green = 0xFF6A9C89.toInt()
     private val red = 0xFFD71921.toInt()
     private val gray = 0xFF777379.toInt()
@@ -43,6 +46,57 @@ class HeadphonesFixtureRenderTest {
             snapshot = BluetoothHeadphonesRenderer.previewSnapshot(),
             percentColor = green,
         )
+    }
+
+    @Test
+    fun earbudsAndStatusStayReferenceBlackInEveryStyle() {
+        assertEquals(ink, BluetoothHeadphonesRenderer.GLYPH_INK)
+        for (style in WidgetStyle.values()) {
+            for (square in listOf(false, true)) {
+                val width = 110
+                val height = if (square) 110 else 40
+                val name = "headphones-${if (square) "square" else "wide"}" +
+                    "-${style.name.lowercase()}-black-ink"
+                val bitmap = BluetoothHeadphonesRenderer.render(
+                    RuntimeEnvironment.getApplication(),
+                    width,
+                    height,
+                    style,
+                    BluetoothHeadphonesRenderer.previewSnapshot(),
+                    square,
+                )
+                try {
+                    save(bitmap, name)
+                    val layout = BluetoothHeadphonesRenderer.layout(
+                        width.toFloat(),
+                        height.toFloat(),
+                        square,
+                    )
+                    assertTrue(
+                        "$name earbuds solid #1D1B20",
+                        bitmap.containsOpaqueExactIn(layout.icon, ink),
+                    )
+                    assertFalse(
+                        "$name earbuds are not white",
+                        bitmap.containsOpaqueExactIn(layout.icon, white),
+                    )
+                    assertTrue(
+                        "$name status black dot ink",
+                        bitmap.containsIn(layout.status, ink),
+                    )
+                    assertFalse(
+                        "$name status is not white",
+                        bitmap.containsOpaqueExactIn(layout.status, white),
+                    )
+                    assertTrue(
+                        "$name red earbud dot",
+                        bitmap.containsIn(layout.icon, red),
+                    )
+                } finally {
+                    bitmap.recycle()
+                }
+            }
+        }
     }
 
     @Test
@@ -132,6 +186,32 @@ class HeadphonesFixtureRenderTest {
         for (y in top..bottom) {
             for (x in left..right) {
                 if (near(getPixel(x, y), color)) return true
+            }
+        }
+        return false
+    }
+
+    private fun Bitmap.containsOpaqueExactIn(
+        box: BluetoothHeadphonesRenderer.TextBox,
+        color: Int,
+    ): Boolean {
+        val expected = color and 0x00FFFFFF
+        return scan(box) { pixel ->
+            (pixel ushr 24) == 0xFF && (pixel and 0x00FFFFFF) == expected
+        }
+    }
+
+    private fun Bitmap.scan(
+        box: BluetoothHeadphonesRenderer.TextBox,
+        match: (Int) -> Boolean,
+    ): Boolean {
+        val left = box.left.toInt().coerceIn(0, width - 1)
+        val top = box.top.toInt().coerceIn(0, height - 1)
+        val right = box.right.toInt().coerceIn(0, width - 1)
+        val bottom = box.bottom.toInt().coerceIn(0, height - 1)
+        for (y in top..bottom) {
+            for (x in left..right) {
+                if (match(getPixel(x, y))) return true
             }
         }
         return false
