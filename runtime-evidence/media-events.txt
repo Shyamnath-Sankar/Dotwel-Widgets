@@ -1,0 +1,70 @@
+state:Fixture Track:true
+state:Fixture Track:true
+pause
+state:Fixture Track:false
+next
+state:Fixture Next:false
+previous
+state:Fixture Previous:false
+play
+state:Fixture Previous:true
+next
+state:Fixture Next:true
+previous
+state:Fixture Previous:true
+pause
+state:Fixture Previous:false
+next
+state:Fixture Next:false
+previous
+state:Fixture Previous:false
+play
+state:Fixture Previous:true
+next
+state:Fixture Next:true
+previous
+state:Fixture Previous:true
+pause
+state:Fixture Previous:false
+next
+state:Fixture Next:false
+previous
+state:Fixture Previous:false
+play
+state:Fixture Previous:true
+next
+state:Fixture Next:true
+previous
+state:Fixture Previous:true
+pause
+state:Fixture Previous:false
+next
+state:Fixture Next:false
+previous
+state:Fixture Previous:false
+play
+state:Fixture Previous:true
+next
+state:Fixture Next:true
+previous
+state:Fixture Previous:true
+pause
+state:Fixture Previous:false
+next
+state:Fixture Next:false
+previous
+state:Fixture Previous:false
+play
+state:Fixture Previous:true
+next
+state:Fixture Next:true
+previous
+state:Fixture Previous:true
+volume:1
+volume:-1
+pause
+state:Fixture Previous:false
+next
+state:Fixture Next:false
+previous
+state:Fixture Previous:false
