@@ -1,5 +1,43 @@
 # Build and verification state
 
+## Repair: bt_battery_levels reference rows
+
+- Phase: one design-match repair on branch
+  `agent/design-match-copy-reference-ui`. No applicationId, minSdk, targetSdk,
+  workflow, permission, service, dependency, provider count or catalog change;
+  the collection stays at 62 providers.
+- Defect: with only the phone row present, the old renderer divided the whole
+  content height by the row count, so one source became a card-sized red
+  squircle with row-scaled dot digits and a bolt.
+- Fix: `BluetoothBatteryLevelsRenderer` now draws a `#FEF7FF` card with the
+  `0.16 x min-side` radius used by the headphone card, and fixed-height
+  full-width row pills through `rowFrames`: `0.16 x min-side` height,
+  `0.035 x min-side` gap, `0.05 x min-side` horizontal padding, vertically
+  centred. A single source is a short pill; one to four rows share equal height
+  and even gaps. The `#F4F3F3` track, proportional `#D71921` fill, black
+  glyph/name/percentage and charging-only bolt are unchanged. Names may now use
+  the full row width instead of being clamped inside the fill, so they no
+  longer shrink to unreadable pitches at low levels.
+- TDD: new `BluetoothBatteryLevelsRowsTest` (7 tests) and Robolectric
+  `BluetoothBatteryLevelsRenderTest` (2 tests) failed first (missing row API and
+  wrong white card), then passed. The render test writes
+  `app/build/fixture-pixels/bt-battery-levels-rows.png` and asserts `#FEF7FF`
+  card, `#D71921` fill and `#F4F3F3` track pixels; the fixture was inspected and
+  shows two separate pills instead of one squircle.
+- Verified in this run:
+  `./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+  :app:lintDebug` -> `BUILD SUCCESSFUL`; 207 tests, 0 failures, 0 errors,
+  0 skipped; lint 0 errors, 458 warnings; debug APK sha256
+  `0c78806c8355dc3400fa9f95267ee8327ba9a0d98d8f6febc9a778f24e13b751`.
+- Not verified here: no emulator or device is attached. Launcher placement,
+  resize/style switching, real phone/device levels, the charging bolt and
+  broadcast refresh are not runtime-verified and are not claimed. The fixture
+  PNG is a Robolectric render, not a launcher screenshot.
+- Next: place `bt_battery_levels` on a real launcher at 2x2 and resized shapes;
+  confirm the phone-only one-row and multi-row layouts, the charging bolt, and
+  capture real screenshots plus the APK checksum.
+- Blockers: no emulator/device in this runner; runtime verification pending.
+
 ## Part 2.6: reference battery surfaces (62 providers)
 
 - Phase: Part 2.6, the last reference UI/UX part. Branch
