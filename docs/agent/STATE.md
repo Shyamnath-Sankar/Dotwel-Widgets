@@ -1,5 +1,45 @@
 # Build and verification state
 
+## Repair: headphone earbuds and status black ink
+
+- Phase: one design-match colour repair on branch
+  `agent/design-match-copy-reference-ui`. No applicationId, minSdk, targetSdk,
+  workflow, permission, service, dependency, provider count or catalog change;
+  the collection stays at 62 providers.
+- Defect: on `bt_headphones_wide` and `bt_headphones_square` the earbuds glyph
+  and the CONNECTED status word used the style-dependent ink, so the
+  transparent/fixture state drew both white. The reference draws solid black
+  earbuds with a small red dot and black dot-matrix status text.
+- Fix: `BluetoothHeadphonesRenderer` now has `GLYPH_INK = #1D1B20` and uses it
+  for both the earbuds fill and the status dot-matrix text in every style, so
+  the gallery fixture state and the placed-widget render share the same ink.
+  The red earbud dot (`#D71921`), the level percentage (`#6A9C89` at >=30,
+  `#D71921` below) and the gray `#777379` device name are unchanged. The card
+  remains `#FEF7FF` for black/translucent and the transparent style still omits
+  the card.
+- TDD: `HeadphonesFixtureRenderTest` gained a case that renders the wide and
+  square fixture in BLACK, TRANSLUCENT and TRANSPARENT, asserts a solid
+  `#1D1B20` earbud pixel, a near-`#1D1B20` status pixel, the red dot, and no
+  opaque white pixel in the icon or status box. It failed first at the earbud
+  assertion (and the status assertion for transparent), then passed.
+  `HeadphonesChromeTest` also locks `GLYPH_INK == #1D1B20`; the existing
+  `containsIn` expectation was updated from `#000000` to `#1D1B20`.
+- Verified in this run:
+  `./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+  :app:lintDebug` -> `BUILD SUCCESSFUL`; 222 tests, 0 failures, 0 errors,
+  0 skipped; lint 0 errors, 458 warnings; debug APK sha256
+  `55a5cdae50934eea60b41f85bfb2e94e34d63cb3c06778e435aee828409a242b`.
+  The fixture PNGs (`app/build/fixture-pixels/headphones-*`) are Robolectric
+  renders, not launcher screenshots.
+- Not verified here: no emulator or device is attached. Launcher placement,
+  resize/style switching, real Bluetooth state and tap destinations are not
+  runtime-verified and are not claimed. No screenshot or Play-ready claim.
+- Next: place `bt_headphones_wide` and `bt_headphones_square` on a real
+  launcher in all three styles; confirm black earbuds/status, green percentage,
+  gray name, the red dot, resize and tap-to-Bluetooth-settings; capture real
+  screenshots plus the APK checksum.
+- Blockers: no emulator/device in this runner; runtime verification pending.
+
 ## Repair: bt_battery_levels reference rows
 
 - Phase: one design-match repair on branch
