@@ -67,9 +67,11 @@ internal object ReferenceMediaCard {
         val artistLeft: Float,
         val artistRight: Float,
         val artistCenterY: Float,
+        val artistHeight: Float,
         val titleLeft: Float,
         val titleRight: Float,
         val titleCenterY: Float,
+        val titleHeight: Float,
         val titleBottom: Float,
     )
 
@@ -77,19 +79,19 @@ internal object ReferenceMediaCard {
         val width = kind.designWidth
         val height = kind.designHeight
         val side = min(width, height)
-        val pad = side * 0.06f
-        val artSize = side * 0.50f
+        val pad = side * 0.03f
+        val artSize = min(width * 0.40f, height * 0.72f)
         val art = FloatBox(pad, pad, pad + artSize, pad + artSize)
         val noteSize = side * 0.17f
         val noteCenterX = width - pad - side * 0.10f
         val noteCenterY = pad + side * 0.10f
         val playRadius = side * 0.075f
         val playCenterY = noteCenterY + noteSize / 2f + side * 0.04f + playRadius
-        val titleHeight = side * 0.16f
+        val titleHeight = side * 0.14f
         val titleCenterY = height - pad - titleHeight / 2f
-        val artistHeight = side * 0.12f
+        val artistHeight = side * 0.10f
         val artistCenterY =
-            titleCenterY - titleHeight / 2f - side * 0.02f - artistHeight / 2f
+            titleCenterY - titleHeight / 2f - side * 0.012f - artistHeight / 2f
         return UniversalLayout(
             art = art,
             artCorner = side * 0.05f,
@@ -102,9 +104,11 @@ internal object ReferenceMediaCard {
             artistLeft = pad,
             artistRight = width - pad,
             artistCenterY = artistCenterY,
+            artistHeight = artistHeight,
             titleLeft = pad,
             titleRight = width - pad,
             titleCenterY = titleCenterY,
+            titleHeight = titleHeight,
             titleBottom = height - pad,
         )
     }
@@ -260,7 +264,7 @@ internal object ReferenceMediaCard {
             layout.artistLeft,
             layout.artistCenterY,
             (layout.artistRight - layout.artistLeft).coerceAtLeast(1f),
-            min(kind.designWidth, kind.designHeight) * 0.12f,
+            layout.artistHeight,
             artistColor(),
         )
         drawDotLine(
@@ -269,7 +273,7 @@ internal object ReferenceMediaCard {
             layout.titleLeft,
             layout.titleCenterY,
             (layout.titleRight - layout.titleLeft).coerceAtLeast(1f),
-            min(kind.designWidth, kind.designHeight) * 0.16f,
+            layout.titleHeight,
             titleColor(),
         )
     }

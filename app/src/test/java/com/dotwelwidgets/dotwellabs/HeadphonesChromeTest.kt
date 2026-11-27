@@ -1,6 +1,7 @@
 package com.dotwelwidgets.dotwellabs
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -24,6 +25,21 @@ class HeadphonesChromeTest {
     @Test
     fun earbudsAndStatusUseTheReferenceBlackInk() {
         assertEquals(0xFF1D1B20.toInt(), BluetoothHeadphonesRenderer.GLYPH_INK)
+    }
+
+    @Test
+    fun earbudsGrowAndSitOnALightGrayHalo() {
+        val wide = BluetoothHeadphonesRenderer.layout(110f, 40f, square = false)
+        assertTrue(
+            "wide earbuds are larger than the old 22px glyph",
+            wide.icon.width >= 40f * 0.62f,
+        )
+        val square = BluetoothHeadphonesRenderer.layout(110f, 110f, square = true)
+        assertTrue(
+            "square earbuds are larger than the old 0.32 side glyph",
+            square.icon.width >= 110f * 0.35f,
+        )
+        assertEquals(0xFFE9E7EC.toInt(), BluetoothHeadphonesRenderer.HALO)
     }
 
     @Test

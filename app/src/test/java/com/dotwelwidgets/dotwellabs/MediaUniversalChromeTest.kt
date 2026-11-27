@@ -31,15 +31,16 @@ class MediaUniversalChromeTest {
     }
 
     @Test
-    fun artIsLargeAndAnchoredTopLeft() {
+    fun artIsAboutFortyPercentOfTheCardWidthAndAnchoredTopLeft() {
         val layout = ReferenceMediaCard.universalLayout(kind)
         val side = min(kind.designWidth, kind.designHeight)
-        assertTrue(layout.art.width() >= side * 0.42f)
-        assertTrue(layout.art.height() >= side * 0.42f)
-        assertTrue(layout.art.left <= side * 0.08f)
-        assertTrue(layout.art.top <= side * 0.08f)
+        assertTrue(layout.art.width() >= kind.designWidth * 0.38f)
+        assertTrue(layout.art.width() <= kind.designWidth * 0.42f)
+        assertTrue(layout.art.height() >= kind.designWidth * 0.38f)
+        assertTrue(layout.art.left <= side * 0.04f)
+        assertTrue(layout.art.top <= side * 0.04f)
         assertTrue(layout.art.right < kind.designWidth * 0.60f)
-        assertTrue(layout.art.bottom < kind.designHeight * 0.70f)
+        assertTrue(layout.art.bottom < layout.artistCenterY)
         assertTrue(layout.artCorner > 0f)
     }
 
