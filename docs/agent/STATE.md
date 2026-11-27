@@ -1,5 +1,63 @@
 # Build and verification state
 
+## Part 2.4: multi-device Bluetooth battery-levels card (62 providers)
+
+- Phase: Part 2.4 of the reference UI/UX continuation. Branch
+  `agent/design-match-copy-reference-ui`, commit `44cf84a` (this entry is a
+  follow-up docs commit). No applicationId, minSdk, targetSdk, workflow,
+  permission, service, dependency or network change. Provider count is now 62.
+- Reference: `com.dci.dev.somethingwidgets` v2.00.11 preview
+  `widget_preview_bluetooth_battery_levels_.png` fetched to `/tmp/swref` only.
+  No reference PNG, font, drawable or decompiled code is in the repository or
+  APK; `git status --porcelain` was checked before the commit.
+- New provider: `BluetoothBatteryLevelsWidgetProvider` (`bt_battery_levels`),
+  a 2x2 READY STATUS catalog entry, `PreviewKind.BT_BATTERY_LEVELS`,
+  `PIN_KIND_BT_BATTERY_LEVELS`, manifest receiver
+  `@xml/bt_battery_levels_widget_info`, layout
+  `widget_bt_battery_levels.xml`, `WidgetUpdater.providers` and the
+  headphones/battery broadcast update list. The pin flow reuses the existing
+  optional `BLUETOOTH_CONNECT` dialog (`CardAction.BLUETOOTH_ACCESS`).
+- Reference rendering: pure white `#FFFFFF` card, one pill row per battery
+  source, light `#F4F3F3` track, red `#D71921` fill proportional to the level,
+  black device glyph and black dot-matrix uppercase device name inside the
+  fill, right-aligned black dot-matrix `NN%`, and a small black bolt when
+  charging. Rows are capped at four. The card stays white for every style so
+  the reference contrast is preserved; this is recorded as a deliberate choice.
+- Data: the first row is the local `PHONE` level from `BatteryManager` (the
+  reference shows a PHONE row); then each connected A2DP/HEADSET/GATT device,
+  de-duplicated by address. Device levels use the existing hidden
+  `BluetoothDevice.getBatteryLevel()` reflection and the existing hidden
+  battery-level broadcast cache. Charging uses a fail-closed `isCharging`
+  reflection for devices and `BATTERY_PROPERTY_STATUS` for the phone. No new
+  permission, polling loop, service, alarm or network path was added.
+- Shared helpers: `BluetoothHeadphonesState.connectedDevices()` now returns all
+  connected devices, and `safeName`/`safeAddress`/`readDeviceBattery` plus a new
+  `readDeviceCharging` are internal so the new card reuses them. The existing
+  headphone cards keep their previous first-device behaviour.
+- Tests: new `BluetoothBatteryLevelsChromeTest` locks the white card, track and
+  fill colours, uppercase/percent text, proportional clamped fill and the
+  phone-first snapshot. `CatalogManifestConsistencyTest` is deliberately
+  updated 61 -> 62, and `RemoteViewsLayoutSafetyTest` parses the new layout.
+  TDD red-green was observed: the stub renderer and the 62 guard failed first,
+  then the real implementation passed.
+- Verified in this run:
+  `./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+  :app:lintDebug` -> `BUILD SUCCESSFUL`; 184 tests, 0 failures, 0 errors,
+  0 skipped; lint 0 errors, 459 warnings; debug APK sha256
+  `cd891f01e974ed43e9e2dd96b9ab8fe5381b1c1896915009e08de81f535ea6c9`.
+- Not verified here: this runner has no emulator or device. Launcher placement,
+  resize, style switching, real phone/device battery values, charging bolts,
+  broadcast refreshes and tap destinations are not runtime-verified and are not
+  claimed; no screenshot or Play-ready claim.
+- Next: Part 2.5 media controls and Part 2.6 battery surfaces. The current
+  STATE.md only names those phases; it has no detailed per-widget spec, so the
+  next run should re-fetch the reference previews (`widget_preview_media_*`,
+  `widget_preview_battery_*`) and translate them explicitly before editing.
+  Then place every family on a launcher, check resize/style and capture real
+  screenshots.
+- Blockers: Part 2.5/2.6 design details are not present in the repository;
+  runtime verification pending.
+
 ## Reference design match: app chrome + control tiles + headphone cards
 
 - Phase: Part 1 app chrome and Part 2.1 / 2.3 are done on branch
