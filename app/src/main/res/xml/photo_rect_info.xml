@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="com.dotwelwidgets.dotwellabs.NtPhotoConfigActivity"
     android:description="@string/widget_weather_temp_description"
     android:initialLayout="@layout/widget_weather_temp"
     android:minHeight="110dp"
