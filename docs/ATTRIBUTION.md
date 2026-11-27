@@ -366,10 +366,46 @@ the app from About & source credits > View MIT license texts.
   `Nothing_Date_Time2`, `Nothing_Digital4`, `Nothing_Digital3`,
   `Nothing_Digital`, and `Nothing_Mini_Calender` are implemented in this
   checkpoint (15 of 40); the rest remain pending or dependency-blocked and are
-  not claimed as imported. All 21 registered providers are build-verified only
+  not claimed as imported. All 62 registered providers are build-verified only
   and remain runtime-unverified.
 
-## Not included
+## Doto font (SIL Open Font License 1.1)
+
+The app chrome uses the Doto dot-matrix font for its headline, subtitle and
+section titles. It is an open-source Google Fonts family:
+
+- Upstream: https://github.com/google/fonts/tree/main/ofl/doto
+- File: `app/src/main/res/font/doto.ttf`
+  (`Doto[ROND,wght].ttf`, 456,924 bytes, TrueType).
+- Licence: SIL Open Font License 1.1, copyright 2024 The Doto Project Authors.
+  The full text is bundled at `app/src/main/res/raw/doto_ofl.txt` and is
+  reachable from About & source credits > View MIT license texts.
+- No proprietary font (including `ndot-47.ttf`, NType, Lettera, Product Sans)
+  is bundled. The programmatic `DotGlyphFont` renderer remains in use for the
+  widget artwork.
+
+## Something OS Widgets visual reference
+
+`com.dci.dev.somethingwidgets` v2.00.11 was downloaded during development only
+to measure layout, colour and proportions for the reference-match task. Its
+preview PNGs, fonts, drawables and decompiled code were kept strictly under
+`/tmp` on the build runner and are not part of this repository or the APK. Every
+widget and app-chrome element is redrawn with Dotwel's own code, platform
+widgets and the OFL Doto font.
+
+### Battery surface references
+
+The six previews `widget_preview_battery_circle_progress.png`,
+`battery_glow_progress`, `battery_vertical_dots`, `battery_text_arc`,
+`battery_small_progressbar` and `battery_with_device_icon` were measured only.
+They were not copied into the repository or APK. `ReferenceBatterySurface.kt`
+recreates the layouts with original drawing code: white rounded cards, black
+dot-matrix digits, red `#D71921` only at low level, green `#6A9C89` otherwise,
+and original programmatic glyphs (no font or bitmap asset). The four existing
+battery widgets use the circle-progress, glow-progress, small-progressbar and
+device-icon surfaces; the vertical-dots and text-arc surfaces are implemented
+but not assigned because adding a provider would change the 62-provider
+checkpoint.
 
 - The upstream AwesomeAWidgets APK, decompiled OEM `net.oneplus.*` classes, and
   OEM resources.

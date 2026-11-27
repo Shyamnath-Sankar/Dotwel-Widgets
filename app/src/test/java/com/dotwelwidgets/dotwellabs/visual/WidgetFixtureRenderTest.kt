@@ -67,5 +67,14 @@ class WidgetFixtureRenderTest {
         }
         save(NtPhotoRenderer.render(context,-1,240,240,true,WidgetStyle.BLACK),"photo-empty-circle")
         save(NtPhotoRenderer.render(context,-1,360,180,false,WidgetStyle.BLACK),"photo-empty-rect")
+        for(kind in BatterySurfaceKind.values()) {
+            val wide = kind in listOf(BatterySurfaceKind.TEXT_ARC, BatterySurfaceKind.SMALL_PROGRESSBAR)
+            val width = if(wide) 360 else 240
+            val height = if(wide) 180 else 240
+            save(ReferenceBatterySurface.render(context,kind,width,height,24,false,WidgetStyle.BLACK),
+                "battery-${kind.name}-low")
+            save(ReferenceBatterySurface.render(context,kind,width,height,75,false,WidgetStyle.BLACK),
+                "battery-${kind.name}-normal")
+        }
     }
 }

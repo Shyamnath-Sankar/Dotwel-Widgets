@@ -1,5 +1,190 @@
 # Build and verification state
 
+## Part 2.6: reference battery surfaces (62 providers)
+
+- Phase: Part 2.6, the last reference UI/UX part. Branch
+  `agent/design-match-copy-reference-ui`; partial checkpoint `398ff5d`, baseline
+  repair `9d63dcf`, battery finish `8802ba1` (this entry is a follow-up docs
+  commit). No applicationId, minSdk, targetSdk, workflow, permission, service,
+  dependency, network path or provider-count change. Provider count stays 62 and
+  `CatalogManifestConsistencyTest` still asserts 62.
+- Reference: `com.dci.dev.somethingwidgets` v2.00.11 previews
+  `widget_preview_battery_circle_progress.png`,
+  `battery_glow_progress`, `battery_vertical_dots`, `battery_text_arc`,
+  `battery_small_progressbar` and `battery_with_device_icon` were re-fetched to
+  `/tmp/swref` only. No reference PNG, font, drawable or decompiled code is in
+  the repository or APK; `git status --porcelain` was checked before every
+  commit. Colours were sampled from the PNGs (red `#D71921`, empty dot
+  `#B4B4B8`, glow track `#818181`, small-bar track `#8D8C8F`) to guide the
+  original drawing code.
+- Surface family: `ReferenceBatterySurface.kt` now draws all six reference
+  kinds and every surface is a pure white `#FFFFFF` rounded card for every
+  style. Digits are black `#000000` dot-matrix at every level (matching the
+  reference 24%/75% readouts). The accent is red `#D71921` only while the level
+  is low (`<= 25`), otherwise the palette green `#6A9C89`; unknown levels use
+  the neutral gray `#777379`. This deliberately replaces the reference's
+  always-red fills so the task's "red accent only when low" rule holds, and it
+  keeps the Dotwel headphone-battery palette consistent.
+- Existing widget mapping (no provider added):
+  - `kwgt_nothing_battery` / `BatteryWidgetProvider` / `KwgtBatteryRenderer`
+    -> `CIRCLE_PROGRESS` (gray charge label, black level, bottom-right outlined
+    circle with an accent gradient fill).
+  - `kwgt_nothing_battery2` / `KwgtBattery2WidgetProvider` /
+    `KwgtBattery2Renderer` -> `GLOW_PROGRESS` (gray charge label, `0 50 100`
+    scale, rounded track with accent fill plus a soft glow).
+  - `kwgt_nothing_battery_mini` / `BatteryMiniWidgetProvider` /
+    `KwgtBatteryMiniRenderer` -> `SMALL_PROGRESSBAR` (black level on the left,
+    small rounded track/fill on the right).
+  - `kwgt_ios_battery` / `IosBatteryWidgetProvider` / `IosBatteryRenderer` ->
+    `WITH_DEVICE_ICON` (tinted accent disc, original phone glyph, gray charge
+    label that turns red when low, black level).
+  - The `battery_status` 1x1 tile keeps its Part 2.1 control-disc design.
+- `VERTICAL_DOTS` and `TEXT_ARC` are implemented and fixture-rendered because
+  the task lists their references, but no current provider maps to them and
+  adding a provider is forbidden. Vertical dots now fill all five columns
+  equally bottom-up (5 x 20, matching the reference) with the accent marker on
+  the top filled dot of the first column, instead of sequential column fill.
+  Text arc is a light disc with an original downward discharge glyph and a
+  black level; it is not wired to a widget.
+- Baseline repair: the previous checkpoint left
+  `AwesomeBatchLogicTest.mediaHitAreasMapTheSameDesignSpaceAsTheBitmap` red.
+  `MediaTouchGeometry.design(NOTIFICATION)` built its box from
+  `android.graphics.RectF`, which is a zero stub in plain JVM tests. Added a
+  primitive `MediaTouchGeometry.clearBox()` and made
+  `ReferenceMediaCard.clearRect()` delegate to it; device drawing is unchanged.
+- TDD: `BatterySurfaceChromeTest` was changed first to require black digits at
+  every level, `EMPTY_DOT` `#B4B4B8`, `TRACK_SOFT` `#E1E1E1` and even
+  per-column dot fill; those assertions failed against the checkpoint and then
+  passed after the implementation. The media fix was red before and green
+  after.
+- Verified in this run:
+  `./gradlew --no-daemon :app:testDebugUnitTest` -> `BUILD SUCCESSFUL`;
+  197 tests, 0 failures, 0 errors, 0 skipped. `./gradlew --no-daemon
+  :app:assembleDebug :app:lintDebug` -> `BUILD SUCCESSFUL`; lint 0 errors,
+  458 warnings; debug APK sha256
+  `cc8482f198cb99e767d5ef64c928160f9f94f4bce4c52c7fdc2a7c2b1f5e0d3f`.
+  All six kinds were rendered by `WidgetFixtureRenderTest` to
+  `app/build/fixture-pixels/battery-*` and inspected against the previews.
+- Not verified here: this runner has no emulator or device. The fixture PNGs
+  are Robolectric bitmap renders, not launcher placement or runtime
+  screenshots. Resize, style switching, real level/charging changes, low-battery
+  colour transitions and tap destinations are not runtime-verified and are not
+  claimed; no Play-ready claim.
+- Next: run the emulator/launcher check for all four battery widgets (2x2 and
+  2x1), confirm white cards, black digits, green normal / red low fills, and
+  capture real screenshots plus the APK checksum.
+- Blockers: no emulator/device in this runner; runtime verification pending.
+
+DESIGN MATCH COMPLETE
+
+Parts 1, 2.1, 2.3, 2.4, 2.5 and 2.6 are implemented. Part 2.2 is not applicable
+(no slider widget exists). This marker records design/code completion only; the
+runtime/launcher verification listed above is still outstanding.
+
+## Part 2.4: multi-device Bluetooth battery-levels card (62 providers)
+
+- Phase: Part 2.4 of the reference UI/UX continuation. Branch
+  `agent/design-match-copy-reference-ui`, commit `44cf84a` (this entry is a
+  follow-up docs commit). No applicationId, minSdk, targetSdk, workflow,
+  permission, service, dependency or network change. Provider count is now 62.
+- Reference: `com.dci.dev.somethingwidgets` v2.00.11 preview
+  `widget_preview_bluetooth_battery_levels_.png` fetched to `/tmp/swref` only.
+  No reference PNG, font, drawable or decompiled code is in the repository or
+  APK; `git status --porcelain` was checked before the commit.
+- New provider: `BluetoothBatteryLevelsWidgetProvider` (`bt_battery_levels`),
+  a 2x2 READY STATUS catalog entry, `PreviewKind.BT_BATTERY_LEVELS`,
+  `PIN_KIND_BT_BATTERY_LEVELS`, manifest receiver
+  `@xml/bt_battery_levels_widget_info`, layout
+  `widget_bt_battery_levels.xml`, `WidgetUpdater.providers` and the
+  headphones/battery broadcast update list. The pin flow reuses the existing
+  optional `BLUETOOTH_CONNECT` dialog (`CardAction.BLUETOOTH_ACCESS`).
+- Reference rendering: pure white `#FFFFFF` card, one pill row per battery
+  source, light `#F4F3F3` track, red `#D71921` fill proportional to the level,
+  black device glyph and black dot-matrix uppercase device name inside the
+  fill, right-aligned black dot-matrix `NN%`, and a small black bolt when
+  charging. Rows are capped at four. The card stays white for every style so
+  the reference contrast is preserved; this is recorded as a deliberate choice.
+- Data: the first row is the local `PHONE` level from `BatteryManager` (the
+  reference shows a PHONE row); then each connected A2DP/HEADSET/GATT device,
+  de-duplicated by address. Device levels use the existing hidden
+  `BluetoothDevice.getBatteryLevel()` reflection and the existing hidden
+  battery-level broadcast cache. Charging uses a fail-closed `isCharging`
+  reflection for devices and `BATTERY_PROPERTY_STATUS` for the phone. No new
+  permission, polling loop, service, alarm or network path was added.
+- Shared helpers: `BluetoothHeadphonesState.connectedDevices()` now returns all
+  connected devices, and `safeName`/`safeAddress`/`readDeviceBattery` plus a new
+  `readDeviceCharging` are internal so the new card reuses them. The existing
+  headphone cards keep their previous first-device behaviour.
+- Tests: new `BluetoothBatteryLevelsChromeTest` locks the white card, track and
+  fill colours, uppercase/percent text, proportional clamped fill and the
+  phone-first snapshot. `CatalogManifestConsistencyTest` is deliberately
+  updated 61 -> 62, and `RemoteViewsLayoutSafetyTest` parses the new layout.
+  TDD red-green was observed: the stub renderer and the 62 guard failed first,
+  then the real implementation passed.
+- Verified in this run:
+  `./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+  :app:lintDebug` -> `BUILD SUCCESSFUL`; 184 tests, 0 failures, 0 errors,
+  0 skipped; lint 0 errors, 459 warnings; debug APK sha256
+  `cd891f01e974ed43e9e2dd96b9ab8fe5381b1c1896915009e08de81f535ea6c9`.
+- Not verified here: this runner has no emulator or device. Launcher placement,
+  resize, style switching, real phone/device battery values, charging bolts,
+  broadcast refreshes and tap destinations are not runtime-verified and are not
+  claimed; no screenshot or Play-ready claim.
+- Next: Part 2.5 media controls and Part 2.6 battery surfaces. The current
+  STATE.md only names those phases; it has no detailed per-widget spec, so the
+  next run should re-fetch the reference previews (`widget_preview_media_*`,
+  `widget_preview_battery_*`) and translate them explicitly before editing.
+  Then place every family on a launcher, check resize/style and capture real
+  screenshots.
+- Blockers: Part 2.5/2.6 design details are not present in the repository;
+  runtime verification pending.
+
+## Reference design match: app chrome + control tiles + headphone cards
+
+- Phase: Part 1 app chrome and Part 2.1 / 2.3 are done on branch
+  `agent/design-match-copy-reference-ui` (commits `b5a692d`, `d97a249`,
+  `f878ecc`). No applicationId, minSdk, targetSdk, workflow, permission,
+  service or provider-count change; all 61 widgets remain registered.
+- Reference: `com.dci.dev.somethingwidgets` v2.00.11 preview PNGs were fetched
+  to `/tmp/swref` (87 files) only. No reference PNG, font, drawable or
+  decompiled code is in the repository or APK; `git status --porcelain` was
+  checked before every commit.
+- App chrome: pure `#000000` canvas and window background; fixed top bar with a
+  red dot plus `LIVE_SYSTEM_DISPLAY` on the left and `ID: DW-MOD-01` on the
+  right in small gray monospace caps; white Doto headline and red Doto
+  subtitle; centred `DOTWEL WIDGETS` footer; category cards `#FEF7FF` with 24dp
+  corners on black; full-screen black category pager with swipe left/right, a
+  cell-size label (e.g. `2 × 2 cells`), a red `Add widget` pill and the existing
+  `requestPinAppWidget` path. Doto (OFL) is bundled at `res/font/doto.ttf` with
+  its licence at `res/raw/doto_ofl.txt`; `docs/ATTRIBUTION.md` records both the
+  font and the /tmp-only reference.
+- Control tiles: `StatusTileRenderer` now draws one filled circle at 93% of the
+  cell with one centred glyph and no ON/OFF text. ON is `#D71921` with a white
+  glyph, OFF is `#FFFFFF` with a black glyph. The battery tile is a white disc
+  with black dot-matrix `NN%`. Tap destinations are unchanged.
+- Headphones: wide and square cards now use a `#FEF7FF` full-bleed rounded
+  surface, black earbuds with a small red accent dot, `CONNECTED` in black
+  dot-matrix, a level-coloured `NN%` (`#6A9C89` at >=30, `#D71921` below) and a
+  gray `#777379` plain-sans device name. The old NA HEADPHONES + progress-bar
+  layout is removed.
+- Sliders: no brightness or volume slider widget exists in this build, so
+  Part 2.2 is not applicable; nothing was invented or added.
+- Verified in this run:
+  `./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug
+  :app:lintDebug` -> `BUILD SUCCESSFUL`; 179 tests, 0 failures, 0 errors,
+  0 skipped; lint 0 errors. Debug APK sha256
+  `6ee2b82b264e0dbaff340dfdfd093582a5f02cc5ba11dbb3c72173478ef1a7c8`.
+- Not verified here: this runner has no emulator or device. The new chrome,
+  category pager, pinned status tiles, headphone cards and style variants are
+  not runtime-verified and are not claimed; no screenshot or Play-ready claim.
+- Next: Part 2.4 multi-device Bluetooth battery rows, then 2.5 media controls
+  and 2.6 battery surfaces in that order; then place every family on a launcher,
+  check resize/style and capture real screenshots.
+- Blockers: Part 2.4's reference is a multi-row card, but the current catalog
+  only has single-device headphone cards. Adding a provider changes the 61
+  registered-provider count and needs a catalog/manifest/pin/test decision, so
+  it was not done unilaterally in this run.
+
 ## NtWx combined-RemoteViews crash + profile meminfo + gallery crash recovery
 
 - Phase: fix the API 31+ NtWx weather crash and two verification-harness gaps.
