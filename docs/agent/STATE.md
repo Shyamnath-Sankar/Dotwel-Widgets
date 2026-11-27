@@ -1,5 +1,25 @@
 # Build and verification state
 
+## Fix: photo widget configure flow on add
+
+- Phase: photo widget configure fix. Branch `agent/fix-the-photo-widget-configure`,
+  commit `812e44b1`. No Kotlin, permission, workflow, catalog, applicationId or
+  SDK change; only the two photo widget info XMLs and one manifest activity.
+- Done: `photo_circle_info.xml` and `photo_rect_info.xml` now declare
+  `android:configure="com.dotwelwidgets.dotwellabs.NtPhotoConfigActivity"` on the
+  `appwidget-provider` root (all existing attributes unchanged).
+  `NtPhotoConfigActivity` in `AndroidManifest.xml` is now
+  `android:exported="true"` with an intent-filter containing only
+  `android.appwidget.action.APPWIDGET_CONFIGURE`, so the picker opens when the
+  widget is added instead of only on a later tap.
+- Verified in this run: `git diff` shows exactly the three intended edits; no
+  Gradle build was run (not requested by the task). The untracked `w/` directory
+  in the worktree was left untouched.
+- Next: build/install the debug APK and place `photo_circle` and `photo_rect` on
+  a launcher to confirm the picker opens immediately on add, then re-open on tap,
+  and capture real screenshots.
+- Blockers: no emulator/device in this runner; runtime confirmation pending.
+
 ## Design-match refinements: headphones, universal media, mini battery
 
 - Phase: three reference refinements on branch
