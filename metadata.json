@@ -1,0 +1,6 @@
+{
+  "name": "AnyWidgets",
+  "description": "Nothing OS-inspired monochromatic Android home screen widgets suite with 56 customizable widgets including Nighting OLED clocks, Wi-Fi/Bluetooth/Internet & Buds controls, Photo Studio frames, Quotes, and live device telemetry.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

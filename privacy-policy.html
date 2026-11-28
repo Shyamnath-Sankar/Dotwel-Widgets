@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Privacy Policy for AnyWidgets, an offline, on-device home screen widget app by Dotwellabs.">
+  <title>Privacy Policy — AnyWidgets by Dotwellabs</title>
+  <style>
+    :root {
+      --bg: #f7f7f5;
+      --panel: #ffffff;
+      --ink: #101010;
+      --muted: #5b5b5b;
+      --line: #dcdcd8;
+      --chip: #ecece8;
+      --mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #080808;
+        --panel: #111111;
+        --ink: #f2f2f0;
+        --muted: #a2a29e;
+        --line: #2c2c2c;
+        --chip: #1b1b1b;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 0 22px 80px; }
+    .hero {
+      margin: 0 -22px 34px;
+      padding: 64px 22px 46px;
+      border-bottom: 1px solid var(--line);
+      background-color: var(--panel);
+      background-image: radial-gradient(var(--line) 1px, transparent 1px);
+      background-size: 20px 20px;
+      background-position: center top;
+    }
+    .hero-inner { max-width: 860px; margin: 0 auto; }
+    .eyebrow, .label, .toc-title, .toc a, .meta, .footer, th {
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .eyebrow { font-size: 12px; color: var(--muted); margin: 0 0 20px; }
+    h1 {
+      font-family: var(--mono);
+      font-size: clamp(2.4rem, 8vw, 4.2rem);
+      line-height: 1.05;
+      letter-spacing: -.05em;
+      margin: 0 0 18px;
+    }
+    .meta { font-size: 11px; color: var(--muted); margin: 0 0 22px; }
+    .lede { max-width: 62ch; font-size: 1.05rem; color: var(--muted); margin: 0; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin: 0 0 38px;
+    }
+    .summary > div { background: var(--panel); padding: 18px 20px; }
+    .label { display: block; font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+    .summary strong { font-size: .95rem; font-weight: 600; }
+    .toc {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 18px 20px;
+      margin: 0 0 44px;
+    }
+    .toc-title { font-size: 10px; color: var(--muted); margin: 0 0 12px; }
+    .toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 28px; }
+    .toc li { break-inside: avoid; margin: 4px 0; }
+    .toc a { font-size: 11px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); }
+    .toc a:hover, .toc a:focus { border-bottom-color: var(--ink); }
+    section { margin: 0 0 44px; scroll-margin-top: 24px; }
+    h2 {
+      font-family: var(--mono);
+      font-size: 1.05rem;
+      letter-spacing: -.01em;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+      margin: 0 0 18px;
+    }
+    h2 .num { color: var(--muted); margin-right: 10px; }
+    h3 { font-size: .95rem; margin: 26px 0 8px; }
+    p { margin: 0 0 14px; }
+    ul { margin: 0 0 14px; padding-left: 22px; }
+    li { margin: 6px 0; }
+    a { color: inherit; text-underline-offset: 3px; }
+    code {
+      font-family: var(--mono);
+      font-size: .88em;
+      background: var(--chip);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .callout {
+      border-left: 3px solid var(--ink);
+      background: var(--panel);
+      padding: 16px 20px;
+      margin: 0 0 20px;
+    }
+    .callout p:last-child { margin-bottom: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 0 0 18px; font-size: .9rem; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: 10px; color: var(--muted); font-weight: 400; }
+    td:first-child { font-family: var(--mono); font-size: .85rem; white-space: nowrap; }
+    .footer { border-top: 1px solid var(--line); padding-top: 22px; font-size: 10px; color: var(--muted); }
+    @media (max-width: 620px) {
+      .summary, .toc ol { grid-template-columns: 1fr; columns: 1; }
+      .hero { padding-top: 44px; }
+    }
+    @media print {
+      body { background: #fff; color: #000; font-size: 11pt; }
+      .hero { background: #fff; border-color: #bbb; }
+      .toc { display: none; }
+      .summary > div, .callout { background: #fff; }
+      * { border-color: #bbb !important; }
+      a { text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">Dotwellabs / AnyWidgets / Legal</p>
+        <h1>Privacy<br>Policy</h1>
+        <p class="meta">Effective date: 28 November 2026 &nbsp;·&nbsp; Last updated: 28 November 2026</p>
+        <p class="lede">This policy explains how AnyWidgets handles information. The short version: almost none of it leaves your phone. The app is designed to work entirely on your device, with no account, no analytics, no advertising, and no network access.</p>
+      </div>
+    </header>
+
+    <div class="summary" role="group" aria-label="Privacy summary">
+      <div><span class="label">Data sent to us</span><strong>None</strong></div>
+      <div><span class="label">Internet permission</span><strong>Not requested</strong></div>
+      <div><span class="label">Accounts / ads / analytics</span><strong>None</strong></div>
+      <div><span class="label">Data storage</span><strong>On your device</strong></div>
+    </div>
+
+    <nav class="toc" aria-label="Contents">
+      <p class="toc-title">Contents</p>
+      <ol>
+        <li><a href="#who">Who we are</a></li>
+        <li><a href="#scope">Scope</a></li>
+        <li><a href="#collect">Information we handle</a></li>
+        <li><a href="#permissions">Permissions explained</a></li>
+        <li><a href="#use">How we use it</a></li>
+        <li><a href="#sharing">Sharing &amp; third parties</a></li>
+        <li><a href="#backup">Storage &amp; backup</a></li>
+        <li><a href="#security">Security</a></li>
+        <li><a href="#choices">Your choices &amp; deletion</a></li>
+        <li><a href="#children">Children's privacy</a></li>
+        <li><a href="#changes">Changes</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ol>
+    </nav>
+
+    <main>
+      <section id="who">
+        <h2><span class="num">01</span>Who we are</h2>
+        <p>AnyWidgets (package <code>com.dotwellabs.anywidgets</code>) is a home screen widget application published by <strong>Dotwellabs</strong>. For the purposes of this policy, Dotwellabs is the controller of any information handled by the app.</p>
+        <p>You can reach us at <a href="mailto:dotwelmail@gmail.com">dotwelmail@gmail.com</a>.</p>
+      </section>
+
+      <section id="scope">
+        <h2><span class="num">02</span>Scope</h2>
+        <p>This policy applies to the AnyWidgets Android app only. It does not cover other apps, your device's operating system, Google Play, or any third-party service you may choose to open from a widget. Those services have their own privacy policies.</p>
+        <div class="callout">
+          <p><strong>Important:</strong> AnyWidgets does not request the <code>android.permission.INTERNET</code> permission. The application code contains no network calls, so it cannot transmit information to Dotwellabs or anyone else.</p>
+        </div>
+      </section>
+
+      <section id="collect">
+        <h2><span class="num">03</span>Information we handle</h2>
+        <p>All information described below is read, stored, and displayed locally on your device. It is never uploaded or sent off-device by the app.</p>
+
+        <h3>Widget preferences and settings</h3>
+        <p>Your widget layouts, widget types, custom names, goals, counters, timers, checklist states, and display settings (theme, 12/24-hour clock, night hours, refresh interval, eco mode) are stored in a local database and local preferences on your device.</p>
+
+        <h3>Device telemetry shown in widgets</h3>
+        <p>To render live status widgets, the app reads the following values from your device at the time a widget is drawn:</p>
+        <ul>
+          <li>Battery level, charging status, temperature, voltage, and reported battery health.</li>
+          <li>Internal storage used/total and RAM used/total.</li>
+          <li>Wi-Fi and Bluetooth radio on/off state; whether Wi-Fi, cellular, or Ethernet is active; and whether the connection is metered.</li>
+          <li>Connected audio output (speaker, wired headset, or wireless buds) and, when available, the product name of the connected audio device; media volume and whether music is playing.</li>
+          <li>Power Save Mode status, device uptime, and the current date/time.</li>
+        </ul>
+        <p>These readings are used only to draw the numbers and dots you see on your home screen. No location, contacts, call log, SMS, browsing history, or precise geolocation is accessed.</p>
+
+        <h3>Photos you choose</h3>
+        <p>If you use a Photo Studio widget, you select an image through the Android Photo Picker. The app makes a downscaled copy (maximum 640 pixels on the longest side) into its own private storage so the widget can display it. The app does not browse your photo library in the background and does not request storage permission. We do not receive or see these images.</p>
+
+        <h3>Astronomical information</h3>
+        <p>Moon phase and related lunar details are calculated locally from your device clock. The app does not request location permission and does not send location data anywhere.</p>
+      </section>
+
+      <section id="permissions">
+        <h2><span class="num">04</span>Permissions explained</h2>
+        <p>AnyWidgets requests only two normal, install-time permissions. It requests no "dangerous" runtime permissions.</p>
+        <table>
+          <thead>
+            <tr><th>Permission</th><th>Why it is used</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ACCESS_NETWORK_STATE</td>
+              <td>To display whether the device is online, which connection type is active, and whether the network is metered.</td>
+            </tr>
+            <tr>
+              <td>ACCESS_WIFI_STATE</td>
+              <td>To display whether Wi-Fi is enabled for the Wi-Fi status widget.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Bluetooth, audio device, battery, and storage/RAM states are read through standard Android system APIs that do not require dangerous permissions. Wi-Fi, Internet, and Bluetooth widgets open the Android system Settings panels so you can make changes yourself; the app does not toggle those settings on your behalf. A widget can also send a media play/pause key event to the Android audio system.</p>
+      </section>
+
+      <section id="use">
+        <h2><span class="num">05</span>How we use information</h2>
+        <p>We use the locally available information for a single purpose: to render and refresh the widgets you place on your home screen, and to remember your settings between launches. We do not use it for profiling, advertising, marketing, research, or automated decision-making.</p>
+      </section>
+
+      <section id="sharing">
+        <h2><span class="num">06</span>Sharing &amp; third parties</h2>
+        <p>We do not sell, rent, or share your information with third parties. AnyWidgets contains no advertising SDKs, analytics SDKs, crash-reporting services, social logins, or tracking tools that collect data.</p>
+        <p>The app uses standard Android platform and AndroidX libraries (such as Room, DataStore, and WorkManager) that operate locally. Google Play may process limited information about app installs and device compatibility as described in <a href="https://policies.google.com/privacy">Google's Privacy Policy</a>; that processing is governed by Google, not by this policy.</p>
+      </section>
+
+      <section id="backup">
+        <h2><span class="num">07</span>Storage &amp; backup</h2>
+        <p>Your settings, widget configurations, and chosen photos are stored on your device in app-private storage that other apps cannot normally read. They remain there until you delete them, clear the app's data, or uninstall the app.</p>
+        <p>Android Auto Backup is enabled for the app using the system's default rules. This means a copy of your app data may be uploaded to your Google account's cloud backup and restored if you set up a new device or reinstall the app. You can control this in your device's Settings under <strong>System &gt; Backup</strong>. Deleting the app does not automatically delete copies held by Google's backup service.</p>
+      </section>
+
+      <section id="security">
+        <h2><span class="num">08</span>Security</h2>
+        <p>Since the app has no network access and keeps data in app-private storage, the primary risks are physical access to an unlocked device or a device-level backup. We follow Android's recommended storage and permission practices, including the Android Photo Picker and system Settings Panels, to minimise the data the app can reach. No system is perfectly secure, but the app is designed to collect as little as possible.</p>
+      </section>
+
+      <section id="choices">
+        <h2><span class="num">09</span>Your choices &amp; data deletion</h2>
+        <ul>
+          <li><strong>Widgets:</strong> remove a widget from your home screen, or delete a saved widget from the app's My Widgets screen.</li>
+          <li><strong>Photos:</strong> delete the corresponding widget, or remove the photo from your device as you normally would; the app's downscaled copy is removed with the app's data.</li>
+          <li><strong>All local data:</strong> go to Android Settings &gt; Apps &gt; AnyWidgets &gt; Storage &gt; Clear data, or uninstall the app. Uninstalling removes all app-private data on that device.</li>
+          <li><strong>Cloud backups:</strong> manage or delete backups in your Google account, or turn off Auto Backup in Android Settings.</li>
+        </ul>
+        <p>Because we do not receive any of your data, there is no account to close and no server-side record for us to delete. If you have questions, email <a href="mailto:dotwelmail@gmail.com">dotwelmail@gmail.com</a>.</p>
+      </section>
+
+      <section id="children">
+        <h2><span class="num">10</span>Children's privacy</h2>
+        <p>AnyWidgets is not directed at children under 13 (or the applicable age of digital consent in your region), and we do not knowingly collect information from children. The app does not collect personal information from anyone, and it contains no interactive features designed to attract children.</p>
+      </section>
+
+      <section id="changes">
+        <h2><span class="num">11</span>Changes to this policy</h2>
+        <p>If the app's behaviour changes, we will update this page and revise the "Last updated" date above. If a change materially affects how information is handled, we will make it clear in the app or in the app's store listing.</p>
+      </section>
+
+      <section id="contact">
+        <h2><span class="num">12</span>Contact</h2>
+        <p>For questions, requests, or concerns about this policy or about AnyWidgets, contact:</p>
+        <p><strong>Dotwellabs</strong><br>
+        Email: <a href="mailto:dotwelmail@gmail.com">dotwelmail@gmail.com</a></p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Dotwellabs / AnyWidgets — Privacy Policy — Effective 28 November 2026</p>
+    </footer>
+  </div>
+</body>
+</html>

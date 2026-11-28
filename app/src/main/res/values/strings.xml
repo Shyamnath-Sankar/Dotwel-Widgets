@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">AnyWidgets</string>
+    <string name="widget_provider_small_label">AnyWidgets 2×2</string>
+    <string name="widget_provider_wide_label">AnyWidgets 4×2</string>
+    <string name="widget_provider_large_label">AnyWidgets 4×4</string>
+    <string name="widget_provider_description">Nothing OS-inspired monochrome &amp; OLED Night home screen widgets</string>
+    <string name="nav_explore">Home</string>
+    <string name="nav_my_widgets">My Widgets</string>
+    <string name="nav_settings">Power</string>
+    <string name="cd_back">Navigate back</string>
+    <string name="cd_search">Search widgets</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="cd_refresh_widgets">Refresh home widgets</string>
+    <string name="cd_pin_widget">Pin widget to home screen</string>
+    <string name="cd_save_widget">Save widget preset</string>
+    <string name="cd_delete_widget">Delete saved widget</string>
+    <string name="cd_duplicate_widget">Duplicate widget preset</string>
+    <string name="cd_edit_widget">Customize widget</string>
+</resources>
