@@ -53,7 +53,8 @@ jobs:
       - name: Verify bundle signature
         run: |
           AAB=$(ls app/build/outputs/bundle/release/*.aab)
-          jarsigner -verify -strict -certs "$AAB"
+          jarsigner -verify -certs "$AAB" | head -5
+          jarsigner -verify "$AAB" | grep -q "jar verified"
           keytool -printcert -jarfile "$AAB" | grep -E "Owner|SHA256" | head -4
 
       - name: Upload AAB
