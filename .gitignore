@@ -22,3 +22,4 @@ debug.keystore
 *.keystore
 keystore.properties
 my-upload-key.jks
+*.aab
